@@ -1,11 +1,17 @@
 import React from 'react';
+import { Router, Route, Switch } from 'react-router-dom';
+import { createBrowserHistory } from 'history';
 import MainPage from './components/pages/MainPage/MainPage';
+
+const hist = createBrowserHistory();
 
 const App = () => {
   return (
-    <div>
-      <MainPage />
-    </div>
+    <Router history={hist}>
+      <Switch>
+        <Route path="/" component={MainPage} />
+      </Switch>
+    </Router>
   );
 };
 

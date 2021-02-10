@@ -1,6 +1,6 @@
-import { container, title } from "../../../styles/global";
+import { container, title } from "../../../assets/styles/global";
 
-const appStyle = {
+const mainPageStyle = {
   container: {
     zIndex: "12",
     color: "#FFFFFF",
@@ -33,4 +33,4 @@ const appStyle = {
   }
 };
 
-export default appStyle;
+export default mainPageStyle;

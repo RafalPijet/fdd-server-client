@@ -44,7 +44,7 @@ const Jumbotron: React.FC<Props> = (props) => {
       style={{
         ...style,
         transform: transform,
-        backgroundImage: 'url(' + image + ')',
+        backgroundImage: `url(${image})`,
       }}
     >
       {children}
