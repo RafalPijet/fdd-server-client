@@ -1,4 +1,4 @@
-import { title } from '../../../assets/styles/global';
+import { title } from '../../../styles/global';
 
 const messageStyle = {
     section: {
@@ -10,7 +10,8 @@ const messageStyle = {
       marginTop: "30px",
       minHeight: "32px",
       textDecoration: "none",
-      textAlign: "center"
+      textAlign: "center",
+      fontSize: "1.5em"
     },
     description: {
       color: "#999",

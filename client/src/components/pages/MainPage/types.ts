@@ -12,3 +12,5 @@ export interface StyleProps {
 
 export type PropsClasses = Record<keyof StyleProps, string>;
 export const useStyles = makeStyles<Theme, StyleProps>(() => styles as any);
+
+

@@ -1,4 +1,4 @@
-import { container, title } from "../../../assets/styles/global";
+import { container, title } from "../../../styles/global";
 
 const mainPageStyle = {
   container: {

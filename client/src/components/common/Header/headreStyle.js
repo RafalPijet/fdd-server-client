@@ -10,7 +10,7 @@ import {
     transition,
     boxShadow,
     drawerWidth
- } from '../../../assets/styles/global';
+ } from '../../../styles/global';
 
  const headerStyle = {
     appBar: {
