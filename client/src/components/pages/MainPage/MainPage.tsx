@@ -10,6 +10,7 @@ import GridItem from '../../common/Grid/GridItem';
 import Header from '../../common/Header/Header';
 import Jumbotron from '../../common/Jumbotron/Jumbotron';
 import MessageSection from '../../features/MessageSection/MessageSection';
+import Footer from '../../common/Footer/Footer';
 
 const MainPage: React.FC = () => {
   const classes: PropsClasses = useStyles({} as StyleProps);
@@ -40,6 +41,7 @@ const MainPage: React.FC = () => {
         <MessageSection />
         <MessageSection />
       </div>
+      <Footer />
     </div>
   );
 };
