@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Input from '@material-ui/core/Input';
-import { PropsClasses, useStyles, StyleProps, Props } from './types';
+import { PropsClasses, useStyles, StyleProps, Props } from './CustomInputStyle';
 
 const CustomInput: React.FC<Props> = (props) => {
   const classes: PropsClasses = useStyles({} as StyleProps);

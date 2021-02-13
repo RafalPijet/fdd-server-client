@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { List, ListItem } from '@material-ui/core';
 import Favorite from '@material-ui/icons/Favorite';
-import { PropsClasses, useStyles, StyleProps, Props } from './types';
+import { PropsClasses, useStyles, StyleProps, Props } from './FooterStyle';
 
 const Footer: React.FC<Props> = (props) => {
   const classes: PropsClasses = useStyles({} as StyleProps);

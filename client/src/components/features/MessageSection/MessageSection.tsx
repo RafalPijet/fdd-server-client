@@ -1,10 +1,16 @@
 import React from 'react';
-import { PropsClasses, useStyles, StyleProps, Props } from './types';
-import { Typography, Button } from '@material-ui/core';
+import {
+  PropsClasses,
+  useStyles,
+  StyleProps,
+  Props,
+} from './MessageSectionStyle';
+import { Typography } from '@material-ui/core';
 
 import GridContainer from '../../common/Grid/GridContainer';
 import GridItem from '../../common/Grid/GridItem';
 import CustomInput from '../../common/CustomInput/CustomInput';
+import CustomButton from '../../common/CustomButton/CustomButton';
 
 const MessageSection: React.FC<Props> = (props) => {
   const classes: PropsClasses = useStyles({} as StyleProps);
@@ -55,9 +61,9 @@ const MessageSection: React.FC<Props> = (props) => {
                 />
               </GridItem>
               <GridItem container justify="center">
-                <Button variant="outlined" color="primary">
+                <CustomButton setColor="primary" setSize="md">
                   Wyślij
-                </Button>
+                </CustomButton>
               </GridItem>
             </GridContainer>
           </form>

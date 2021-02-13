@@ -7,7 +7,7 @@ import Button from '@material-ui/core/Button';
 import Hidden from '@material-ui/core/Hidden';
 import Drawer from '@material-ui/core/Drawer';
 import Menu from '@material-ui/icons/Menu';
-import { Props, PropsClasses, useStyles, StyleProps } from './types';
+import { Props, PropsClasses, useStyles, StyleProps } from './HeaderStyle';
 
 const Header: React.FC<Props> = (props) => {
   const {
@@ -63,6 +63,7 @@ const Header: React.FC<Props> = (props) => {
     [classes.absolute]: absolute,
     [classes.fixed]: fixed,
   });
+
   const brandComponent = <Button className={classes.title}>{brand}</Button>;
 
   return (

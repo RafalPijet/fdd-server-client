@@ -1,5 +1,5 @@
 import React from 'react';
-import { PropsClasses, useStyles, StyleProps } from './types';
+import { PropsClasses, useStyles, StyleProps } from './MainPageStyle';
 import classNames from 'classnames';
 import image from '../../../images/jumbotronMain.jpg';
 
