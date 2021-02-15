@@ -11,4 +11,5 @@ export type AvailableColors =
     "facebook" |
     "twitter" |
     "google" |
-    "github"
+    "github" |
+    "black"

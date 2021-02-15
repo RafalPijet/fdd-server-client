@@ -154,7 +154,7 @@ const headerStyle = (theme: Theme) => ({
     }
 })
 
-type Colors = Exclude<AvailableColors, "facebook" | "twitter" | "google" | "github">
+type Colors = Exclude<AvailableColors, "facebook" | "twitter" | "google" | "github" | "black">
 
 export interface Props {
     color: Colors;

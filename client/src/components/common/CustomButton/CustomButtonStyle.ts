@@ -333,7 +333,7 @@ const buttonStyle = (theme: Theme) => ({
 })
 
 export interface Props extends ButtonProps {
-    setColor: Exclude<AvailableColors, "dark">;
+    setColor: Exclude<AvailableColors, "dark" | "black">;
     setSize: "sm" | "lg" | "md";
     simple?: boolean;
     round?: boolean;

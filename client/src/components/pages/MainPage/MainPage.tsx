@@ -11,6 +11,7 @@ import Header from '../../common/Header/Header';
 import Jumbotron from '../../common/Jumbotron/Jumbotron';
 import MessageSection from '../../features/MessageSection/MessageSection';
 import Footer from '../../common/Footer/Footer';
+import HeaderLinks from '../../common/HeaderLinks/HeaderLinks';
 
 const MainPage: React.FC = () => {
   const classes: PropsClasses = useStyles({} as StyleProps);
@@ -25,6 +26,7 @@ const MainPage: React.FC = () => {
           height: 400,
           color: 'white',
         }}
+        rightLinks={<HeaderLinks />}
       />
       <Jumbotron filter image={image}>
         <div className={classes.container}>
