@@ -1,8 +1,7 @@
 import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
 import { makeStyles } from '@material-ui/core/styles';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import { AvailableColors } from '../../../types/global';
-import { LinkProps } from 'react-router-dom';
+import { AvailableHoverColors } from '../../../types/global';
 import { ButtonProps } from '@material-ui/core';
 import {
     defaultFont,
@@ -127,12 +126,6 @@ const customDropdownStyle = (theme: Theme) => ({
     dropdownItemRTL: {
         textAlign: "right"
     },
-    dropdownDividerItem: {
-        margin: "5px 0",
-        backgroundColor: "rgba(0, 0, 0, 0.12)",
-        height: "1px",
-        overflow: "hidden"
-    },
     buttonIcon: {
         width: "20px",
         height: "20px"
@@ -154,40 +147,21 @@ const customDropdownStyle = (theme: Theme) => ({
     caretRTL: {
         marginRight: "4px"
     },
-    dropdownHeader: {
-        display: "block",
-        padding: "0.1875rem 1.25rem",
-        fontSize: "0.75rem",
-        lineHeight: "1.428571",
-        color: "#777",
-        whiteSpace: "nowrap",
-        fontWeight: "inherit",
-        marginTop: "10px",
-        minHeight: "unset",
-        "&:hover,&:focus": {
-            backgroundColor: "transparent",
-            cursor: "auto"
-        }
-    },
     noLiPadding: {
         padding: "0"
     }
 });
 
 export interface Props {
-    hoverColor: Exclude<AvailableColors,
-        "transparent" | "white" | "facebook" | "twitter" | "google" | "github" | "dark">
+    hoverColor: AvailableHoverColors,
     buttonText: React.ReactNode,
     buttonIcon: OverridableComponent<SvgIconTypeMap>,
-    dropdownList: LinkProps[],
+    dropdownList: React.ReactNode[],
     buttonProps: ButtonProps,
-    dropup: boolean,
-    dropdownHeader: React.ReactNode,
-    rtlActive: boolean,
-    caret: boolean,
-    left: boolean,
+    rtlActive?: boolean,
+    caret?: boolean,
     noLiPadding: boolean,
-    onClick: React.MouseEventHandler
+    onClick?: React.MouseEventHandler
 }
 
 export interface StyleProps {
@@ -195,22 +169,20 @@ export interface StyleProps {
     dropdown: BaseCSSProperties;
     menuList: BaseCSSProperties;
     popperResponsive: BaseCSSProperties;
-    dropdownItem: BaseCSSProperties
-    blackHover: BaseCSSProperties
-    primaryHover: BaseCSSProperties
-    infoHover: BaseCSSProperties
-    successHover: BaseCSSProperties
-    warningHover: BaseCSSProperties
-    dangerHover: BaseCSSProperties
-    roseHover: BaseCSSProperties
-    dropdownItemRTL: BaseCSSProperties
-    dropdownDividerItem: BaseCSSProperties
-    buttonIcon: BaseCSSProperties
-    caret: BaseCSSProperties
-    caretActive: BaseCSSProperties
-    caretRTL: BaseCSSProperties
-    dropdownHeader: BaseCSSProperties
-    noLiPadding: BaseCSSProperties
+    dropdownItem: BaseCSSProperties;
+    blackHover: BaseCSSProperties;
+    primaryHover: BaseCSSProperties;
+    infoHover: BaseCSSProperties;
+    successHover: BaseCSSProperties;
+    warningHover: BaseCSSProperties;
+    dangerHover: BaseCSSProperties;
+    roseHover: BaseCSSProperties;
+    dropdownItemRTL: BaseCSSProperties;
+    buttonIcon: BaseCSSProperties;
+    caret: BaseCSSProperties;
+    caretActive: BaseCSSProperties;
+    caretRTL: BaseCSSProperties;
+    noLiPadding: BaseCSSProperties;
 }
 
 export type PropsClasses = Record<keyof StyleProps, string>;

@@ -13,3 +13,12 @@ export type AvailableColors =
     "google" |
     "github" |
     "black"
+
+export type AvailableHoverColors =
+    "blackHover" |
+    "primaryHover" |
+    "infoHover" |
+    "successHover" |
+    "warningHover" |
+    "dangerHover" |
+    "roseHover"
