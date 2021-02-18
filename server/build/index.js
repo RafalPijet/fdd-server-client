@@ -30,6 +30,8 @@ var helmet_1 = __importDefault(require("helmet"));
 var dotenv = __importStar(require("dotenv"));
 var routes_1 = require("./routes");
 require("./controllers/LoginController");
+require("./controllers/UserController");
+var middleware_1 = require("./middleware");
 dotenv.config();
 var app = express_1.default();
 app.use(cors_1.default());
@@ -44,6 +46,7 @@ app.use(function (req, res, next) {
     next();
 });
 app.use(routes_1.AppRouter.getInstance());
+app.use(middleware_1.errorMiddleware);
 mongoose_1.default.connect(process.env.DB, {
     useNewUrlParser: true,
     useUnifiedTopology: true,

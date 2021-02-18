@@ -28,7 +28,7 @@ const userSchema = new Schema({
     resetTokenExpiration: Date
 })
 
-const UserModel = mongoose.model('User', userSchema);
+export const UserModel = mongoose.model('User', userSchema);
 export const buildUser = (data: IUser) => {
     return new UserModel(data);
 }

@@ -1,5 +1,8 @@
 import 'reflect-metadata';
+import { ValidatorKeys } from './'
 import { AppRouter, Methods, MetadataKeys } from '../../routes';
+import { validationMiddleware } from '../../middleware';
+import { availableDto, LoginDto } from '../../dtoClasses';
 
 export const controller = (routePrefix: string) => {
     return (target: Function) => {
@@ -9,9 +12,15 @@ export const controller = (routePrefix: string) => {
             const routeHandler = target.prototype[key];
             const path = Reflect.getMetadata(MetadataKeys.path, target.prototype, key);
             const method: Methods = Reflect.getMetadata(MetadataKeys.method, target.prototype, key);
+            const validationKey: ValidatorKeys = Reflect.getMetadata(MetadataKeys.validator, target.prototype, key) || ValidatorKeys.null;
 
             if (path) {
-                router[method](`${routePrefix}${path}`, routeHandler);
+                if (validationKey !== ValidatorKeys.null) {
+                    const validator = validationMiddleware(availableDto[validationKey]);
+                    router[method](`${routePrefix}${path}`, validator, routeHandler);
+                } else {
+                    router[method](`${routePrefix}${path}`, routeHandler);
+                }
             }
         }
     }

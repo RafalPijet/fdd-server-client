@@ -1,20 +1,20 @@
 import { Request, Response, NextFunction } from 'express';
-import { controller } from './decorators';
+import { controller, bodyValidator, ValidatorKeys } from './decorators';
 import { post } from '../routes';
-import { buildUser, IUser } from '../models';
+import HttpException from '../exceptions/HttpException';
+import { UserModel } from '../models';
 
 @controller('/auth')
 class LoginController {
     @post('/login')
+    @bodyValidator(ValidatorKeys.login)
     async postLogin(req: Request, res: Response, next: NextFunction): Promise<void> {
 
         try {
-            const user: IUser = req.body;
-            const newUser = buildUser(user);
-            await newUser.save();
-            res.status(201).json({ message: "Response has been done.", user: user })
+            // await UserModel.findById('');
+            res.status(201).json({ message: "Response has been done." })
         } catch (err) {
-            res.status(500).json(err)
+            next(new HttpException(404, `User not found. - ${err}`))
         }
     }
 }

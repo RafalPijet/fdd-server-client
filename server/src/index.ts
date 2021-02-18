@@ -1,11 +1,13 @@
 import express, { Request, Response, NextFunction } from 'express';
-import mongoose, { Connection, Error } from 'mongoose';
+import mongoose, { Connection } from 'mongoose';
 import cors from 'cors';
 import sanitize from 'express-mongo-sanitize';
 import helmet from 'helmet';
 import * as dotenv from 'dotenv';
 import { AppRouter } from './routes';
 import "./controllers/LoginController";
+import "./controllers/UserController";
+import { errorMiddleware } from './middleware'
 dotenv.config();
 
 const app = express();
@@ -22,6 +24,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     next();
 });
 app.use(AppRouter.getInstance());
+app.use(errorMiddleware);
 
 mongoose.connect(process.env.DB!, {
     useNewUrlParser: true,
