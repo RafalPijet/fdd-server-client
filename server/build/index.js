@@ -60,3 +60,4 @@ db.on('error', function (err) { return console.log("Error connection: " + err); 
 app.listen(3001, function () {
     console.log('Server started at port 3001');
 });
+//# sourceMappingURL=index.js.map

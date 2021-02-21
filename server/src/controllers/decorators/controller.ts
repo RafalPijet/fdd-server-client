@@ -2,7 +2,12 @@ import 'reflect-metadata';
 import { ValidatorKeys } from './'
 import { AppRouter, Methods, MetadataKeys } from '../../routes';
 import { validationMiddleware } from '../../middleware';
-import { availableDto, LoginDto } from '../../dtoClasses';
+import { LoginDto, addUserDto } from '../../dtoClasses';
+
+export const availableDto = {
+    1: LoginDto,
+    2: addUserDto
+}
 
 export const controller = (routePrefix: string) => {
     return (target: Function) => {

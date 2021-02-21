@@ -3,7 +3,8 @@ import { MetadataKeys } from '../../routes';
 
 export enum ValidatorKeys {
     null,
-    login
+    login,
+    addUser
 }
 
 export const bodyValidator = (validKey: ValidatorKeys) => {
