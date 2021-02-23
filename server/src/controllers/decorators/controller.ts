@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import { authMiddleware } from '../../middleware';
 import { ValidatorKeys } from './'
 import { AppRouter, Methods, MetadataKeys } from '../../routes';
 import { validationMiddleware } from '../../middleware';
@@ -22,9 +23,9 @@ export const controller = (routePrefix: string) => {
             if (path) {
                 if (validationKey !== ValidatorKeys.null) {
                     const validator = validationMiddleware(availableDto[validationKey]);
-                    router[method](`${routePrefix}${path}`, validator, routeHandler);
+                    router[method](`${routePrefix}${path}`, routePrefix !== "/auth" ? authMiddleware : [], validator, routeHandler);
                 } else {
-                    router[method](`${routePrefix}${path}`, routeHandler);
+                    router[method](`${routePrefix}${path}`, routePrefix !== "/auth" ? authMiddleware : [], routeHandler);
                 }
             }
         }

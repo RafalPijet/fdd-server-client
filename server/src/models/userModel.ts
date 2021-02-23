@@ -2,12 +2,13 @@ import mongoose, { Schema } from 'mongoose';
 import { UserStatus } from './';
 
 export interface IUser {
+    _id?: string;
     status: UserStatus;
     firstName: string;
     lastName: string;
     phone: string;
     email: string;
-    password: string;
+    password: string | undefined;
     zipCode: string;
     locality: string;
     street: string;

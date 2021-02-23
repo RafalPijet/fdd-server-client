@@ -3,9 +3,10 @@ import mongoose, { Connection } from 'mongoose';
 import cors from 'cors';
 import sanitize from 'express-mongo-sanitize';
 import helmet from 'helmet';
+import cookieParser from 'cookie-parser';
 import * as dotenv from 'dotenv';
 import { AppRouter } from './routes';
-import "./controllers/LoginController";
+import "./controllers/AuthController";
 import "./controllers/UserController";
 import { errorMiddleware } from './middleware'
 dotenv.config();
@@ -23,6 +24,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     res.setHeader('Access-Control-Allow-Headers', "Content-Type, Authorization");
     next();
 });
+app.use(cookieParser());
 app.use(AppRouter.getInstance());
 app.use(errorMiddleware);
 
