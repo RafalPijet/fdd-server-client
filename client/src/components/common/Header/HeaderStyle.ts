@@ -161,9 +161,9 @@ export interface Props {
     rightLinks?: ReactNode;
     leftLinks?: ReactNode;
     brand: string;
-    fixed: boolean;
+    fixed?: boolean;
     absolute?: boolean;
-    changeColorOnScroll: {
+    changeColorOnScroll?: {
         height: number;
         color: Colors
     }

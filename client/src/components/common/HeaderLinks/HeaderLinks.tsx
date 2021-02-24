@@ -20,6 +20,7 @@ const HeaderList: React.FC<Props> = (props) => {
           setColor="transparent"
           setSize="md"
           className={classes.navLink}
+          href="http://localhost:3000"
         >
           <HomeIcon className={classes.icons} />
           Home
@@ -30,9 +31,10 @@ const HeaderList: React.FC<Props> = (props) => {
           setColor="transparent"
           setSize="md"
           className={classes.navLink}
+          href="http://localhost:3000/login"
         >
           <GroupIcon className={classes.icons} />
-          Second menu
+          Login
         </CustomButton>
       </ListItem>
       <ListItem className={classes.listItem}>

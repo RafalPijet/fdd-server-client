@@ -38,22 +38,23 @@ const Header: React.FC<Props> = (props) => {
   };
 
   const headerColorChange = (): void => {
-    // const { color, changeColorOnScroll } = props;
-    const windowsScrollTop = window.pageYOffset;
-    if (windowsScrollTop > changeColorOnScroll.height) {
-      document.body
-        .getElementsByTagName('header')[0]
-        .classList.remove(classes[color]);
-      document.body
-        .getElementsByTagName('header')[0]
-        .classList.add(classes[changeColorOnScroll.color]);
-    } else {
-      document.body
-        .getElementsByTagName('header')[0]
-        .classList.add(classes[color]);
-      document.body
-        .getElementsByTagName('header')[0]
-        .classList.remove(classes[changeColorOnScroll.color]);
+    if (changeColorOnScroll) {
+      const windowsScrollTop = window.pageYOffset;
+      if (windowsScrollTop > changeColorOnScroll.height) {
+        document.body
+          .getElementsByTagName('header')[0]
+          .classList.remove(classes[color]);
+        document.body
+          .getElementsByTagName('header')[0]
+          .classList.add(classes[changeColorOnScroll.color]);
+      } else {
+        document.body
+          .getElementsByTagName('header')[0]
+          .classList.add(classes[color]);
+        document.body
+          .getElementsByTagName('header')[0]
+          .classList.remove(classes[changeColorOnScroll.color]);
+      }
     }
   };
 
