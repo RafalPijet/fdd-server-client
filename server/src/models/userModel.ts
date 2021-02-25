@@ -10,7 +10,7 @@ export interface IUser {
     email: string;
     password: string | undefined;
     zipCode: string;
-    locality: string;
+    town: string;
     street: string;
     number: string;
 }
@@ -23,7 +23,7 @@ const userSchema = new Schema({
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     zipCode: { type: String, required: true },
-    locality: { type: String, required: true },
+    town: { type: String, required: true },
     street: { type: String, required: true },
     number: { type: String, required: true },
     resetToken: String,

@@ -86,6 +86,7 @@ const customInputStyle = (theme: Theme) => ({
 });
 
 export interface Props {
+    value?: string;
     labelText: string;
     labelProps?: InputLabelProps;
     id: string;
@@ -95,6 +96,10 @@ export interface Props {
     error?: boolean;
     success?: boolean;
     white?: boolean;
+    onChange?: ((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void);
+    mask?: boolean;
+    formatMask?: string;
+    iconType?: "edit" | "phone" | "done"
 }
 
 export interface StyleProps {

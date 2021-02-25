@@ -24,12 +24,15 @@ export class addUserDto implements IUser {
     public zipCode: string;
     @IsString()
     @IsNotEmpty()
-    public locality: string;
+    @MinLength(3)
+    public town: string;
     @IsString()
     @IsNotEmpty()
+    @MinLength(3)
     public street: string;
     @IsString()
     @IsNotEmpty()
+    @MinLength(1)
     public number: string;
     constructor(status: UserStatus,
         firstName: string,
@@ -38,7 +41,7 @@ export class addUserDto implements IUser {
         email: string,
         password: string,
         zipCode: string,
-        locality: string,
+        town: string,
         street: string,
         number: string
     ) {
@@ -49,7 +52,7 @@ export class addUserDto implements IUser {
         this.email = email;
         this.password = password;
         this.zipCode = zipCode;
-        this.locality = locality;
+        this.town = town;
         this.street = street;
         this.number = number;
     }

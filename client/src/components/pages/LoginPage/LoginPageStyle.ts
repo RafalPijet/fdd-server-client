@@ -111,5 +111,23 @@ export enum ServiceOptions {
     register
 }
 
+export interface IUserRegister {
+    firstName: string;
+    lastName: string;
+    phone: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+    zipCode: string;
+    town: string;
+    street: string;
+    number: string;
+}
+
+export interface IUserLogin {
+    email: string;
+    password: string;
+}
+
 export type PropsClasses = Record<keyof StyleProps, string>;
 export const useStyles = makeStyles(loginPageStyle as any);

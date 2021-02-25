@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   PropsClasses,
   useStyles,
   StyleProps,
   ServiceOptions,
+  IUserLogin,
+  IUserRegister,
 } from './LoginPageStyle';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import BottomNavigation from '@material-ui/core/BottomNavigation';
@@ -23,25 +25,103 @@ import {
   Lock,
   ExitToApp,
   HowToReg,
-  PhoneIphone,
   Edit,
+  Done,
+  LockOpen,
 } from '@material-ui/icons';
 import image from '../../../images/loginBackground.jpg';
 
 const LoginPage: React.FC = () => {
   const classes: PropsClasses = useStyles({} as StyleProps);
   const [cardAnimation, setCardAnimation] = useState(true);
+  const [register, setRegister] = useState<IUserRegister>({
+    firstName: '',
+    lastName: '',
+    phone: '(+48)      ',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    zipCode: '',
+    town: '',
+    street: '',
+    number: '',
+  });
+  const [isError, setIsError] = useState<Record<keyof IUserRegister, boolean>>({
+    firstName: false,
+    lastName: false,
+    phone: false,
+    email: false,
+    password: false,
+    confirmPassword: false,
+    zipCode: false,
+    town: false,
+    street: false,
+    number: false,
+  });
+  const [login, setLogin] = useState<IUserLogin>({
+    email: '',
+    password: '',
+  });
   const [serviceType, setServiceType] = useState<ServiceOptions>(
     ServiceOptions.login
   );
   setTimeout(() => {
     setCardAnimation(false);
   }, 700);
+
+  useEffect(() => {
+    setIsError({
+      ...isError,
+      firstName: register.firstName.length > 0 && register.firstName.length < 3,
+      lastName: register.lastName.length > 0 && register.lastName.length < 3,
+      phone: register.phone.length !== 11,
+      email:
+        (!register.email.includes('@') || !register.email.includes('.')) &&
+        register.email.length !== 0,
+      password:
+        register.password.length > 0 &&
+        register.confirmPassword.length > 0 &&
+        register.password !== register.confirmPassword,
+      confirmPassword:
+        register.password.length > 0 &&
+        register.confirmPassword.length > 0 &&
+        register.password !== register.confirmPassword,
+      zipCode:
+        register.zipCode.length > 0 &&
+        register.zipCode.replaceAll('_', '').replace('-', '').length !== 5,
+      town: register.town.length > 0 && register.town.length < 3,
+      street: register.town.length > 0 && register.town.length < 3,
+    });
+  }, [register]);
+
   const handleType = (
     event: React.ChangeEvent<{}>,
     newValue: ServiceOptions
   ) => {
     setServiceType(newValue);
+  };
+  //   const handleTextField = (
+  //     fildName: keyof IUserRegister | keyof IUserLogin
+  //   ) => (event: React.ChangeEvent<HTMLInputElement>) => {
+  //     setRegister({ ...register, [fildName]: event.target.value });
+  //   };
+  const handleTextField = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    serviceType === ServiceOptions.register
+      ? event.target.id === 'phone'
+        ? setRegister({
+            ...register,
+            phone: event.target.value
+              .replaceAll('_', '')
+              .replaceAll('-', '')
+              .replace('(', '')
+              .replace(')', '')
+              .replace('+', '')
+              .replace(' ', ''),
+          })
+        : setRegister({ ...register, [event.target.id!]: event.target.value })
+      : setLogin({ ...login, [event.target.id]: event.target.value });
   };
   return (
     <div>
@@ -112,14 +192,22 @@ const LoginPage: React.FC = () => {
                           <CustomInput
                             labelText="Imię..."
                             id="firstName"
+                            value={register.firstName}
+                            error={isError.firstName}
                             formControlProps={{
                               fullWidth: true,
                             }}
+                            onChange={handleTextField}
                             inputProps={{
                               type: 'text',
                               endAdornment: (
                                 <InputAdornment position="end">
-                                  <Edit className={classes.inputIconsColor} />
+                                  {!isError.firstName &&
+                                  register.firstName.length > 0 ? (
+                                    <Done className={classes.inputIconsColor} />
+                                  ) : (
+                                    <Edit className={classes.inputIconsColor} />
+                                  )}
                                 </InputAdornment>
                               ),
                             }}
@@ -127,14 +215,22 @@ const LoginPage: React.FC = () => {
                           <CustomInput
                             labelText="Nazwisko..."
                             id="lastName"
+                            value={register.lastName}
+                            error={isError.lastName}
                             formControlProps={{
                               fullWidth: true,
                             }}
+                            onChange={handleTextField}
                             inputProps={{
                               type: 'text',
                               endAdornment: (
                                 <InputAdornment position="end">
-                                  <Edit className={classes.inputIconsColor} />
+                                  {!isError.lastName &&
+                                  register.lastName.length > 0 ? (
+                                    <Done className={classes.inputIconsColor} />
+                                  ) : (
+                                    <Edit className={classes.inputIconsColor} />
+                                  )}
                                 </InputAdornment>
                               ),
                               autoComplete: 'off',
@@ -143,18 +239,21 @@ const LoginPage: React.FC = () => {
                           <CustomInput
                             labelText="Telefon..."
                             id="phone"
+                            mask
+                            iconType={
+                              !isError.phone && !register.phone.includes('+')
+                                ? 'done'
+                                : 'phone'
+                            }
+                            formatMask="(+99) 999-999-999"
+                            value={register.phone}
+                            error={isError.phone}
                             formControlProps={{
                               fullWidth: true,
                             }}
+                            onChange={handleTextField}
                             inputProps={{
                               type: 'text',
-                              endAdornment: (
-                                <InputAdornment position="end">
-                                  <PhoneIphone
-                                    className={classes.inputIconsColor}
-                                  />
-                                </InputAdornment>
-                              ),
                               autoComplete: 'off',
                             }}
                           />
@@ -166,16 +265,27 @@ const LoginPage: React.FC = () => {
                         md={serviceType === ServiceOptions.register ? 4 : 12}
                       >
                         <CustomInput
+                          error={isError.email}
                           labelText="Adres email..."
                           id="email"
+                          value={
+                            serviceType === ServiceOptions.register
+                              ? register.email
+                              : login.email
+                          }
                           formControlProps={{
                             fullWidth: true,
                           }}
+                          onChange={handleTextField}
                           inputProps={{
                             type: 'email',
                             endAdornment: (
                               <InputAdornment position="end">
-                                <Email className={classes.inputIconsColor} />
+                                {!isError.email && register.email.length > 0 ? (
+                                  <Done className={classes.inputIconsColor} />
+                                ) : (
+                                  <Email className={classes.inputIconsColor} />
+                                )}
                               </InputAdornment>
                             ),
                           }}
@@ -183,14 +293,28 @@ const LoginPage: React.FC = () => {
                         <CustomInput
                           labelText="Hasło..."
                           id="password"
+                          value={
+                            serviceType === ServiceOptions.register
+                              ? register.password
+                              : login.password
+                          }
+                          error={isError.password}
                           formControlProps={{
                             fullWidth: true,
                           }}
+                          onChange={handleTextField}
                           inputProps={{
                             type: 'password',
                             endAdornment: (
                               <InputAdornment position="end">
-                                <Lock className={classes.inputIconsColor} />
+                                {!isError.password &&
+                                register.password.length > 0 ? (
+                                  <LockOpen
+                                    className={classes.inputIconsColor}
+                                  />
+                                ) : (
+                                  <Lock className={classes.inputIconsColor} />
+                                )}
                               </InputAdornment>
                             ),
                             autoComplete: 'off',
@@ -200,14 +324,28 @@ const LoginPage: React.FC = () => {
                           <CustomInput
                             labelText="Potwierdź hasło..."
                             id="confirmPassword"
+                            value={register.confirmPassword}
+                            error={isError.confirmPassword}
                             formControlProps={{
                               fullWidth: true,
                             }}
+                            onChange={handleTextField}
                             inputProps={{
                               type: 'password',
                               endAdornment: (
                                 <InputAdornment position="end">
-                                  <Lock className={classes.inputIconsColor} />
+                                  <InputAdornment position="end">
+                                    {!isError.confirmPassword &&
+                                    register.confirmPassword.length > 0 ? (
+                                      <LockOpen
+                                        className={classes.inputIconsColor}
+                                      />
+                                    ) : (
+                                      <Lock
+                                        className={classes.inputIconsColor}
+                                      />
+                                    )}
+                                  </InputAdornment>
                                 </InputAdornment>
                               ),
                               autoComplete: 'off',
@@ -223,30 +361,44 @@ const LoginPage: React.FC = () => {
                         >
                           <CustomInput
                             labelText="Kod pocztowy..."
+                            mask
+                            iconType={
+                              !isError.zipCode &&
+                              !register.zipCode.includes('_') &&
+                              register.zipCode.length > 0
+                                ? 'done'
+                                : 'edit'
+                            }
+                            formatMask="99-999"
                             id="zipCode"
+                            value={register.zipCode}
+                            error={isError.zipCode}
                             formControlProps={{
                               fullWidth: true,
                             }}
+                            onChange={handleTextField}
                             inputProps={{
                               type: 'text',
-                              endAdornment: (
-                                <InputAdornment position="end">
-                                  <Edit className={classes.inputIconsColor} />
-                                </InputAdornment>
-                              ),
                             }}
                           />
                           <CustomInput
                             labelText="Miejscowość..."
-                            id="locality"
+                            id="town"
+                            value={register.town}
+                            error={isError.town}
                             formControlProps={{
                               fullWidth: true,
                             }}
+                            onChange={handleTextField}
                             inputProps={{
                               type: 'text',
                               endAdornment: (
                                 <InputAdornment position="end">
-                                  <Edit className={classes.inputIconsColor} />
+                                  {!isError.town && register.town.length > 0 ? (
+                                    <Done className={classes.inputIconsColor} />
+                                  ) : (
+                                    <Edit className={classes.inputIconsColor} />
+                                  )}
                                 </InputAdornment>
                               ),
                               autoComplete: 'off',
@@ -257,16 +409,26 @@ const LoginPage: React.FC = () => {
                               <CustomInput
                                 labelText="Ulica..."
                                 id="street"
+                                value={register.street}
+                                error={isError.street}
                                 formControlProps={{
                                   fullWidth: true,
                                 }}
+                                onChange={handleTextField}
                                 inputProps={{
                                   type: 'text',
                                   endAdornment: (
                                     <InputAdornment position="end">
-                                      <Edit
-                                        className={classes.inputIconsColor}
-                                      />
+                                      {!isError.street &&
+                                      register.street.length > 0 ? (
+                                        <Done
+                                          className={classes.inputIconsColor}
+                                        />
+                                      ) : (
+                                        <Edit
+                                          className={classes.inputIconsColor}
+                                        />
+                                      )}
                                     </InputAdornment>
                                   ),
                                   autoComplete: 'off',
@@ -277,16 +439,25 @@ const LoginPage: React.FC = () => {
                               <CustomInput
                                 labelText="Numer..."
                                 id="number"
+                                value={register.number}
+                                error={isError.number}
                                 formControlProps={{
                                   fullWidth: true,
                                 }}
+                                onChange={handleTextField}
                                 inputProps={{
                                   type: 'text',
                                   endAdornment: (
                                     <InputAdornment position="end">
-                                      <Edit
-                                        className={classes.inputIconsColor}
-                                      />
+                                      {register.number.length > 0 ? (
+                                        <Done
+                                          className={classes.inputIconsColor}
+                                        />
+                                      ) : (
+                                        <Edit
+                                          className={classes.inputIconsColor}
+                                        />
+                                      )}
                                     </InputAdornment>
                                   ),
                                   autoComplete: 'off',
