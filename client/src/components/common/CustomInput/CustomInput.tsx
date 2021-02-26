@@ -27,6 +27,7 @@ const CustomInput: React.FC<Props> = (props) => {
     mask,
     formatMask,
     iconType,
+    isDisabled,
   } = props;
 
   const labelClasses = classNames({
@@ -84,9 +85,15 @@ const CustomInput: React.FC<Props> = (props) => {
         </InputLabel>
       ) : null}
       {mask ? (
-        <InputMask mask={formatMask!} onChange={onChange} value={value}>
+        <InputMask
+          mask={formatMask!}
+          onChange={onChange}
+          value={value}
+          disabled={isDisabled}
+        >
           {(inputProps: InputProps) => (
             <Input
+              disabled={isDisabled}
               classes={{
                 input: inputClasses,
                 root: marginTop,
@@ -114,6 +121,7 @@ const CustomInput: React.FC<Props> = (props) => {
             disabled: classes.disabled,
             underline: underlineClasses,
           }}
+          disabled={isDisabled}
           error={error}
           id={id}
           {...inputProps}

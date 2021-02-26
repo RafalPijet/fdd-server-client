@@ -16,6 +16,7 @@ export class addUserDto implements IUser {
     @IsEmail()
     public email: string;
     @IsNotEmpty()
+    @MinLength(5)
     @IsString()
     public password: string;
     @IsNumberString()

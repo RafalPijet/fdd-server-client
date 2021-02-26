@@ -1,4 +1,4 @@
-import { container } from '../../../styles/globalStyles';
+import { container, grayColor } from '../../../styles/globalStyles';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import { makeStyles } from '@material-ui/core/styles';
 import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
@@ -90,20 +90,24 @@ const loginPageStyle = (theme: Theme) => ({
     },
     inputIconsColor: {
         color: "#495057"
+    },
+    busy: {
+        color: `${grayColor} !important`
     }
 })
 
 export interface StyleProps {
-    container: BaseCSSProperties
-    cardHidden: BaseCSSProperties
-    form: BaseCSSProperties
-    cardHeader: BaseCSSProperties
-    pageHeader: BaseCSSProperties
-    socialIcons: BaseCSSProperties
-    divider: BaseCSSProperties
-    cardFooter: BaseCSSProperties
-    socialLine: BaseCSSProperties
-    inputIconsColor: BaseCSSProperties
+    container: BaseCSSProperties;
+    cardHidden: BaseCSSProperties;
+    form: BaseCSSProperties;
+    cardHeader: BaseCSSProperties;
+    pageHeader: BaseCSSProperties;
+    socialIcons: BaseCSSProperties;
+    divider: BaseCSSProperties;
+    cardFooter: BaseCSSProperties;
+    socialLine: BaseCSSProperties;
+    inputIconsColor: BaseCSSProperties;
+    busy: BaseCSSProperties;
 }
 
 export enum ServiceOptions {

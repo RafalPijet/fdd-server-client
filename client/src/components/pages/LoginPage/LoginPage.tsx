@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import classNames from 'classnames';
 import {
   PropsClasses,
   useStyles,
@@ -7,6 +9,7 @@ import {
   IUserLogin,
   IUserRegister,
 } from './LoginPageStyle';
+import { loginUser } from '../../../redux/thunks';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import BottomNavigation from '@material-ui/core/BottomNavigation';
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
@@ -33,6 +36,7 @@ import image from '../../../images/loginBackground.jpg';
 
 const LoginPage: React.FC = () => {
   const classes: PropsClasses = useStyles({} as StyleProps);
+  const dispatch = useDispatch();
   const [cardAnimation, setCardAnimation] = useState(true);
   const [register, setRegister] = useState<IUserRegister>({
     firstName: '',
@@ -65,40 +69,83 @@ const LoginPage: React.FC = () => {
   const [serviceType, setServiceType] = useState<ServiceOptions>(
     ServiceOptions.login
   );
+  const [isAccess, setIsAccess] = useState<boolean>(false);
+  const [isDisabled, setIsDisabled] = useState<boolean>(false);
   setTimeout(() => {
     setCardAnimation(false);
   }, 700);
 
-  useEffect(() => {
-    setIsError({
-      ...isError,
-      firstName: register.firstName.length > 0 && register.firstName.length < 3,
-      lastName: register.lastName.length > 0 && register.lastName.length < 3,
-      phone: register.phone.length !== 11,
-      email:
-        (!register.email.includes('@') || !register.email.includes('.')) &&
-        register.email.length !== 0,
-      password:
-        register.password.length > 0 &&
-        register.confirmPassword.length > 0 &&
-        register.password !== register.confirmPassword,
-      confirmPassword:
-        register.password.length > 0 &&
-        register.confirmPassword.length > 0 &&
-        register.password !== register.confirmPassword,
-      zipCode:
-        register.zipCode.length > 0 &&
-        register.zipCode.replaceAll('_', '').replace('-', '').length !== 5,
-      town: register.town.length > 0 && register.town.length < 3,
-      street: register.town.length > 0 && register.town.length < 3,
+  const busyClasses = classNames({
+    [classes.busy]: isDisabled,
+  });
+
+  const checkAccess = (
+    errors: Record<keyof IUserRegister, boolean>,
+    data: IUserRegister | IUserLogin
+  ): boolean => {
+    let counter: number = 0;
+    Object.values(errors).forEach((item: boolean) => {
+      if (item) counter++;
     });
-  }, [register]);
+    Object.values(data).forEach((item: string) => {
+      if (!item.length) counter++;
+    });
+    return counter === 0;
+  };
+
+  useEffect(() => {
+    if (serviceType === ServiceOptions.register) {
+      setIsError({
+        ...isError,
+        firstName:
+          register.firstName.length > 0 && register.firstName.length < 3,
+        lastName: register.lastName.length > 0 && register.lastName.length < 3,
+        phone: register.phone.length !== 11,
+        email:
+          (!register.email.includes('@') || !register.email.includes('.')) &&
+          register.email.length !== 0,
+        password: register.password.length > 0 && register.password.length < 5,
+        confirmPassword:
+          register.confirmPassword.length > 0 &&
+          register.password !== register.confirmPassword,
+        zipCode:
+          register.zipCode.length > 0 &&
+          register.zipCode.replaceAll('_', '').replace('-', '').length !== 5,
+        town: register.town.length > 0 && register.town.length < 3,
+        street: register.town.length > 0 && register.town.length < 3,
+      });
+    }
+    if (serviceType === ServiceOptions.login) {
+      setIsError({
+        ...isError,
+        email:
+          (!login.email.includes('@') || !login.email.includes('.')) &&
+          login.email.length !== 0,
+        password: login.password.length > 0 && login.password.length < 5,
+      });
+    }
+  }, [register, login, serviceType]);
+
+  useEffect(() => {
+    if (serviceType === ServiceOptions.register) {
+      setIsAccess(checkAccess(isError, register));
+    }
+    if (serviceType === ServiceOptions.login) {
+      setIsAccess(checkAccess(isError, login));
+    }
+  }, [isError, register, login, serviceType]);
 
   const handleType = (
     event: React.ChangeEvent<{}>,
     newValue: ServiceOptions
   ) => {
     setServiceType(newValue);
+    if (newValue === ServiceOptions.login && register.email.length > 0) {
+      setLogin({
+        email: register.email,
+        password: register.password,
+      });
+    }
   };
   //   const handleTextField = (
   //     fildName: keyof IUserRegister | keyof IUserLogin
@@ -122,6 +169,17 @@ const LoginPage: React.FC = () => {
           })
         : setRegister({ ...register, [event.target.id!]: event.target.value })
       : setLogin({ ...login, [event.target.id]: event.target.value });
+  };
+
+  const handleSendButton = () => {
+    if (serviceType === ServiceOptions.register) {
+      console.log('Register mode');
+      console.log(register);
+    } else {
+      console.log('Login mode');
+      //   console.log(login);
+      dispatch(loginUser(login));
+    }
   };
   return (
     <div>
@@ -166,12 +224,16 @@ const LoginPage: React.FC = () => {
                       onChange={handleType}
                     >
                       <BottomNavigationAction
+                        disabled={isDisabled}
+                        className={busyClasses}
                         label="Logowanie"
                         value={ServiceOptions.login}
                         style={{ color: '#fff' }}
                         icon={<ExitToApp />}
                       />
                       <BottomNavigationAction
+                        disabled={isDisabled}
+                        className={busyClasses}
                         label="Rejestracja"
                         value={ServiceOptions.register}
                         style={{ color: '#fff' }}
@@ -192,6 +254,7 @@ const LoginPage: React.FC = () => {
                           <CustomInput
                             labelText="Imię..."
                             id="firstName"
+                            isDisabled={isDisabled}
                             value={register.firstName}
                             error={isError.firstName}
                             formControlProps={{
@@ -215,6 +278,7 @@ const LoginPage: React.FC = () => {
                           <CustomInput
                             labelText="Nazwisko..."
                             id="lastName"
+                            isDisabled={isDisabled}
                             value={register.lastName}
                             error={isError.lastName}
                             formControlProps={{
@@ -239,6 +303,7 @@ const LoginPage: React.FC = () => {
                           <CustomInput
                             labelText="Telefon..."
                             id="phone"
+                            isDisabled={isDisabled}
                             mask
                             iconType={
                               !isError.phone && !register.phone.includes('+')
@@ -268,6 +333,7 @@ const LoginPage: React.FC = () => {
                           error={isError.email}
                           labelText="Adres email..."
                           id="email"
+                          isDisabled={isDisabled}
                           value={
                             serviceType === ServiceOptions.register
                               ? register.email
@@ -281,7 +347,10 @@ const LoginPage: React.FC = () => {
                             type: 'email',
                             endAdornment: (
                               <InputAdornment position="end">
-                                {!isError.email && register.email.length > 0 ? (
+                                {!isError.email &&
+                                (serviceType === ServiceOptions.register
+                                  ? register.email.length > 0
+                                  : login.email.length > 0) ? (
                                   <Done className={classes.inputIconsColor} />
                                 ) : (
                                   <Email className={classes.inputIconsColor} />
@@ -293,6 +362,7 @@ const LoginPage: React.FC = () => {
                         <CustomInput
                           labelText="Hasło..."
                           id="password"
+                          isDisabled={isDisabled}
                           value={
                             serviceType === ServiceOptions.register
                               ? register.password
@@ -308,7 +378,9 @@ const LoginPage: React.FC = () => {
                             endAdornment: (
                               <InputAdornment position="end">
                                 {!isError.password &&
-                                register.password.length > 0 ? (
+                                (serviceType === ServiceOptions.register
+                                  ? register.password.length > 4
+                                  : login.password.length > 4) ? (
                                   <LockOpen
                                     className={classes.inputIconsColor}
                                   />
@@ -324,6 +396,7 @@ const LoginPage: React.FC = () => {
                           <CustomInput
                             labelText="Potwierdź hasło..."
                             id="confirmPassword"
+                            isDisabled={isDisabled}
                             value={register.confirmPassword}
                             error={isError.confirmPassword}
                             formControlProps={{
@@ -371,6 +444,7 @@ const LoginPage: React.FC = () => {
                             }
                             formatMask="99-999"
                             id="zipCode"
+                            isDisabled={isDisabled}
                             value={register.zipCode}
                             error={isError.zipCode}
                             formControlProps={{
@@ -384,6 +458,7 @@ const LoginPage: React.FC = () => {
                           <CustomInput
                             labelText="Miejscowość..."
                             id="town"
+                            isDisabled={isDisabled}
                             value={register.town}
                             error={isError.town}
                             formControlProps={{
@@ -409,6 +484,7 @@ const LoginPage: React.FC = () => {
                               <CustomInput
                                 labelText="Ulica..."
                                 id="street"
+                                isDisabled={isDisabled}
                                 value={register.street}
                                 error={isError.street}
                                 formControlProps={{
@@ -439,6 +515,7 @@ const LoginPage: React.FC = () => {
                               <CustomInput
                                 labelText="Numer..."
                                 id="number"
+                                isDisabled={isDisabled}
                                 value={register.number}
                                 error={isError.number}
                                 formControlProps={{
@@ -470,7 +547,13 @@ const LoginPage: React.FC = () => {
                     </GridContainer>
                   </CardBody>
                   <CardFooter className={classes.cardFooter}>
-                    <CustomButton simple setColor="primary" setSize="lg">
+                    <CustomButton
+                      onClick={handleSendButton}
+                      disabled={!isAccess}
+                      simple
+                      setColor="success"
+                      setSize="lg"
+                    >
                       Wyślij
                     </CustomButton>
                   </CardFooter>

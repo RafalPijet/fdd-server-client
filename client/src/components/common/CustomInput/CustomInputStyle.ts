@@ -2,7 +2,7 @@ import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import { makeStyles } from '@material-ui/core/styles';
 import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
 import { InputLabelProps, InputProps, FormControlProps } from '@material-ui/core';
-import { primaryColor, dangerColor, successColor, defaultFont } from '../../../styles/globalStyles';
+import { primaryColor, dangerColor, successColor, defaultFont, grayColor } from '../../../styles/globalStyles';
 
 const customInputStyle = (theme: Theme) => ({
     disabled: {
@@ -99,7 +99,8 @@ export interface Props {
     onChange?: ((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void);
     mask?: boolean;
     formatMask?: string;
-    iconType?: "edit" | "phone" | "done"
+    iconType?: "edit" | "phone" | "done";
+    isDisabled?: boolean;
 }
 
 export interface StyleProps {
@@ -113,7 +114,7 @@ export interface StyleProps {
     labelRootSuccess: BaseCSSProperties
     formControl: BaseCSSProperties
     input: BaseCSSProperties
-    whiteInput: BaseCSSProperties
+    whiteInput: BaseCSSProperties;
 }
 
 export type PropsClasses = Record<keyof StyleProps, string>;
