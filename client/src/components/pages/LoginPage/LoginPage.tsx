@@ -8,8 +8,9 @@ import {
   ServiceOptions,
   IUserLogin,
   IUserRegister,
+  Register,
 } from './LoginPageStyle';
-import { loginUser } from '../../../redux/thunks';
+import { loginUser, getAllParents, addUser } from '../../../redux/thunks';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import BottomNavigation from '@material-ui/core/BottomNavigation';
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
@@ -41,7 +42,7 @@ const LoginPage: React.FC = () => {
   const [register, setRegister] = useState<IUserRegister>({
     firstName: '',
     lastName: '',
-    phone: '(+48)      ',
+    phone: '(+48)',
     email: '',
     password: '',
     confirmPassword: '',
@@ -100,7 +101,9 @@ const LoginPage: React.FC = () => {
         firstName:
           register.firstName.length > 0 && register.firstName.length < 3,
         lastName: register.lastName.length > 0 && register.lastName.length < 3,
-        phone: register.phone.length !== 11,
+        phone:
+          register.phone.length > 5 &&
+          register.phone.replaceAll('_', '').length !== 17,
         email:
           (!register.email.includes('@') || !register.email.includes('.')) &&
           register.email.length !== 0,
@@ -110,7 +113,7 @@ const LoginPage: React.FC = () => {
           register.password !== register.confirmPassword,
         zipCode:
           register.zipCode.length > 0 &&
-          register.zipCode.replaceAll('_', '').replace('-', '').length !== 5,
+          register.zipCode.replace('_', '').length !== 6,
         town: register.town.length > 0 && register.town.length < 3,
         street: register.town.length > 0 && register.town.length < 3,
       });
@@ -124,7 +127,7 @@ const LoginPage: React.FC = () => {
         password: login.password.length > 0 && login.password.length < 5,
       });
     }
-  }, [register, login, serviceType]);
+  }, [register, login]);
 
   useEffect(() => {
     if (serviceType === ServiceOptions.register) {
@@ -156,29 +159,29 @@ const LoginPage: React.FC = () => {
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     serviceType === ServiceOptions.register
-      ? event.target.id === 'phone'
-        ? setRegister({
-            ...register,
-            phone: event.target.value
-              .replaceAll('_', '')
-              .replaceAll('-', '')
-              .replace('(', '')
-              .replace(')', '')
-              .replace('+', '')
-              .replace(' ', ''),
-          })
-        : setRegister({ ...register, [event.target.id!]: event.target.value })
+      ? setRegister({ ...register, [event.target.id!]: event.target.value })
       : setLogin({ ...login, [event.target.id]: event.target.value });
   };
 
   const handleSendButton = () => {
     if (serviceType === ServiceOptions.register) {
-      console.log('Register mode');
-      console.log(register);
+      const user = new Register(
+        register.firstName,
+        register.lastName,
+        register.phone,
+        register.email,
+        register.password,
+        register.zipCode,
+        register.town,
+        register.street,
+        register.number
+      );
+      dispatch(addUser(user));
     } else {
       console.log('Login mode');
       //   console.log(login);
       dispatch(loginUser(login));
+      // dispatch(getAllParents());
     }
   };
   return (
@@ -306,7 +309,7 @@ const LoginPage: React.FC = () => {
                             isDisabled={isDisabled}
                             mask
                             iconType={
-                              !isError.phone && !register.phone.includes('+')
+                              !isError.phone && register.phone.length > 5
                                 ? 'done'
                                 : 'phone'
                             }
@@ -550,9 +553,8 @@ const LoginPage: React.FC = () => {
                     <CustomButton
                       onClick={handleSendButton}
                       disabled={!isAccess}
-                      simple
-                      setColor="success"
-                      setSize="lg"
+                      setColor="primary"
+                      setSize="md"
                     >
                       Wyślij
                     </CustomButton>

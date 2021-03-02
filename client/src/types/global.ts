@@ -22,3 +22,8 @@ export type AvailableHoverColors =
     "warningHover" |
     "dangerHover" |
     "roseHover"
+
+export enum UserStatus {
+    parent = "parent",
+    admin = "admin"
+}

@@ -11,7 +11,7 @@ export interface DataStoredInToken {
 }
 
 export const createToken = (user: IUser): TokenData => {
-    const expiresIn = 3600;
+    const expiresIn = 120;
     const secret = process.env.SECRET_KEY;
     const dataStoredInToken: DataStoredInToken = {
         _id: user._id!,
@@ -20,8 +20,4 @@ export const createToken = (user: IUser): TokenData => {
         expiresIn,
         token: jwt.sign(dataStoredInToken, secret!, { expiresIn }),
     };
-}
-
-export const createCookie = (tokenData: TokenData): string => {
-    return `Authorization=${tokenData.token}; HttpOnly; Max-Age=${tokenData.expiresIn}`;
 }

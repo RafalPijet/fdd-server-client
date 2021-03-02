@@ -260,6 +260,7 @@ const buttonStyle = (theme: Theme) => ({
     disabled: {
         opacity: '0.65',
         pointerEvents: 'none',
+        color: grayColor
     },
     lg: {
         padding: '1.125rem 2.25rem',

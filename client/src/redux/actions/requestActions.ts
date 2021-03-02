@@ -1,4 +1,5 @@
 import { Action } from 'redux';
+import { RootState } from '../store';
 
 //ACTIONS NAMES
 export const START_REQUEST = 'request/start_request';
@@ -25,3 +26,6 @@ export const errorRequest = (): ErrorRequestAction => ({
 export const resetRequest = (): ResetRequestAction => ({
     type: RESET_REQUEST
 })
+
+//SELECTORS
+export const getRequest = (rootState: RootState) => rootState.requestReducer;

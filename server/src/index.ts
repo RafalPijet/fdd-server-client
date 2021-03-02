@@ -3,7 +3,6 @@ import mongoose, { Connection } from 'mongoose';
 import cors from 'cors';
 import sanitize from 'express-mongo-sanitize';
 import helmet from 'helmet';
-import cookieParser from 'cookie-parser';
 import * as dotenv from 'dotenv';
 import { AppRouter } from './routes';
 import "./controllers/AuthController";
@@ -21,10 +20,9 @@ app.use(express.json());
 app.use((req: Request, res: Response, next: NextFunction) => {
     res.setHeader('Access-Control-Allow-Origin', "*");
     res.setHeader('Access-Control-Allow-Methods', "GET, POST, PUT, PATCH, DELETE, OPTIONS");
-    res.setHeader('Access-Control-Allow-Headers', "Content-Type, Authorization");
+    res.setHeader('Access-Control-Allow-Headers', "Authorization, Content-Type");
     next();
 });
-app.use(cookieParser());
 app.use(AppRouter.getInstance());
 app.use(errorMiddleware);
 

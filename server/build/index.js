@@ -27,7 +27,6 @@ var mongoose_1 = __importDefault(require("mongoose"));
 var cors_1 = __importDefault(require("cors"));
 var express_mongo_sanitize_1 = __importDefault(require("express-mongo-sanitize"));
 var helmet_1 = __importDefault(require("helmet"));
-var cookie_parser_1 = __importDefault(require("cookie-parser"));
 var dotenv = __importStar(require("dotenv"));
 var routes_1 = require("./routes");
 require("./controllers/AuthController");
@@ -43,10 +42,9 @@ app.use(express_1.default.json());
 app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', "*");
     res.setHeader('Access-Control-Allow-Methods', "GET, POST, PUT, PATCH, DELETE, OPTIONS");
-    res.setHeader('Access-Control-Allow-Headers', "Content-Type, Authorization");
+    res.setHeader('Access-Control-Allow-Headers', "Authorization, Content-Type");
     next();
 });
-app.use(cookie_parser_1.default());
 app.use(routes_1.AppRouter.getInstance());
 app.use(middleware_1.errorMiddleware);
 mongoose_1.default.connect(process.env.DB, {

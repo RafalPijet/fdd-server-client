@@ -1,14 +1,14 @@
 import * as bcrypt from 'bcrypt';
 import { Request, Response, NextFunction } from 'express';
 import { controller, bodyValidator, ValidatorKeys } from './decorators';
-import { createToken, createCookie } from './token.service';
+import { createToken } from './token.service';
 import { post } from '../routes';
 import { UserModel, IUser, buildUser } from '../models';
 import HttpException from '../exceptions/HttpException';
 import UserWithThatEmailAlreadyExistsException from '../exceptions/UserWithThatEmailAlreadyExistsException';
 import WrongCredentialsException from '../exceptions/WrongCredentialException';
 
-@controller('/auth')
+@controller('/api/auth')
 class AuthController {
     @post('/login')
     @bodyValidator(ValidatorKeys.login)
@@ -22,8 +22,7 @@ class AuthController {
                 if (await bcrypt.compare(password, user.password)) {
                     user.password = undefined;
                     const tokenData = createToken(user);
-                    res.setHeader('Set-Cookie', [createCookie(tokenData)]);
-                    res.status(201).json({ user })
+                    res.status(201).json({ user, authorization: tokenData })
                 } else {
                     next(new WrongCredentialsException('password'));
                 }

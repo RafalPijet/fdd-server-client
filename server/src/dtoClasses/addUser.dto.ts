@@ -1,8 +1,8 @@
-import { IsString, MinLength, IsNumberString, IsNotEmpty, IsEmail, Contains, MaxLength } from 'class-validator';
+import { IsString, MinLength, IsNumberString, IsNotEmpty, IsEmail, MaxLength, IsIn } from 'class-validator';
 import { UserStatus, IUser } from '../models';
 
 export class addUserDto implements IUser {
-    @Contains(UserStatus.admin || UserStatus.parent, { message: 'status must contain a admin or parent string' })
+    @IsIn([UserStatus.admin, UserStatus.parent], { message: 'status must contain a admin or parent string' })
     public status: UserStatus;
     @IsString()
     @MinLength(3)

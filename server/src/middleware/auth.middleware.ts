@@ -11,12 +11,12 @@ export interface RequestWithUser extends Request {
 
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     const request = req as RequestWithUser;
-    const cookies = req.cookies;
+    const headers = req.headers;
 
-    if (cookies && cookies.Authorization) {
+    if (headers.authorization) {
         const secret = process.env.SECRET_KEY;
         try {
-            const verificationResponse = jwt.verify(cookies.Authorization, secret!) as DataStoredInToken;
+            const verificationResponse = jwt.verify(headers.authorization, secret!) as DataStoredInToken;
             const id = verificationResponse._id;
             const user = await UserModel.findById(id);
             if (user) {

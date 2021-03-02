@@ -1,6 +1,7 @@
 import { container, grayColor } from '../../../styles/globalStyles';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import { makeStyles } from '@material-ui/core/styles';
+import { UserStatus } from '../../../types/global';
 import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
 
 const loginPageStyle = (theme: Theme) => ({
@@ -126,6 +127,49 @@ export interface IUserRegister {
     town: string;
     street: string;
     number: string;
+}
+
+export interface IUserToSend extends IUserRegister {
+    status: UserStatus
+}
+
+export class Register implements Omit<IUserRegister, 'confirmPassword'> {
+    constructor(
+        public firstName: string,
+        public lastName: string,
+        public phone: string,
+        public email: string,
+        public password: string,
+        public zipCode: string,
+        public town: string,
+        public street: string,
+        public number: string,
+    ) { }
+
+    prepare(): void {
+        this.phone = this.phone
+            .replaceAll('-', '')
+            .replace('(', '')
+            .replace(')', '')
+            .replace('+', '')
+            .replace(' ', '')
+        this.zipCode = this.zipCode.replace('-', '');
+    }
+
+    getContent(): Omit<IUserToSend, 'confirmPassword'> {
+        return {
+            status: UserStatus.parent,
+            firstName: this.firstName,
+            lastName: this.lastName,
+            phone: this.phone,
+            email: this.email,
+            password: this.password,
+            zipCode: this.zipCode,
+            town: this.town,
+            street: this.street,
+            number: this.number
+        }
+    }
 }
 
 export interface IUserLogin {

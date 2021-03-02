@@ -11,6 +11,11 @@ class UserController {
     @get('/parents')
     async getAllParents(req: Request, res: Response, next: NextFunction): Promise<void> {
         const request = req as RequestWithUser;
-        res.status(200).send(request.user)
+
+        try {
+            res.status(200).send(request.user)
+        } catch (err) {
+            next(new HttpException(404, `Parents not found. - ${err}`))
+        }
     }
 }
