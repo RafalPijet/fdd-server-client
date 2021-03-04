@@ -1,10 +1,10 @@
 import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import { makeStyles } from '@material-ui/core/styles';
-import { defaultFont, tooltipsStyle } from '../../../styles/globalStyles';
+import { defaultFont, tooltipsStyle, grayColor } from '../../../styles/globalStyles';
 
 export interface Props {
-
+    isSpiner?: boolean
 }
 
 export interface StyleProps {
@@ -20,6 +20,7 @@ export interface StyleProps {
     dropdownLink: BaseCSSProperties;
     marginRight5: BaseCSSProperties;
     tooltipsStyle: BaseCSSProperties;
+    disabled: BaseCSSProperties;
 }
 
 const styles = (theme: Theme) => ({
@@ -132,6 +133,9 @@ const styles = (theme: Theme) => ({
     marginRight5: {
         marginRight: '5px',
     },
+    disabled: {
+        color: grayColor
+    }
 });
 
 export type PropsClasses = Record<keyof StyleProps, string>;

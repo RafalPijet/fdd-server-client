@@ -161,7 +161,8 @@ export interface Props {
     rtlActive?: boolean,
     caret?: boolean,
     noLiPadding: boolean,
-    onClick?: React.MouseEventHandler
+    onClick?: React.MouseEventHandler,
+    isDisabled?: boolean
 }
 
 export interface StyleProps {

@@ -47,6 +47,10 @@ app.use(function (req, res, next) {
 });
 app.use(routes_1.AppRouter.getInstance());
 app.use(middleware_1.errorMiddleware);
+app.use(function (req, res, next) {
+    var error = new Error("Internal Server Error");
+    res.status(501).send({ message: error.message });
+});
 mongoose_1.default.connect(process.env.DB, {
     useNewUrlParser: true,
     useUnifiedTopology: true,

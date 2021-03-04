@@ -3,7 +3,7 @@ import requestReducer from './reducers/requestReducer';
 import thunk from 'redux-thunk';
 
 const rootReducer = combineReducers({
-    requestReducer
+    request: requestReducer
 });
 
 export type RootState = ReturnType<typeof rootReducer>

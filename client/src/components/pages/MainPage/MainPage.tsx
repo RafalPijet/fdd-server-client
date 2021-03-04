@@ -4,14 +4,13 @@ import classNames from 'classnames';
 import image from '../../../images/jumbotronMain.jpg';
 
 import { Typography } from '@material-ui/core';
-
 import GridContainer from '../../common/Grid/GridContainer';
 import GridItem from '../../common/Grid/GridItem';
 import Header from '../../common/Header/Header';
 import Jumbotron from '../../common/Jumbotron/Jumbotron';
 import MessageSection from '../../features/MessageSection/MessageSection';
 import Footer from '../../common/Footer/Footer';
-import HeaderLinks from '../../common/HeaderLinks/HeaderLinks';
+import HeaderLinks from '../../features/HeaderLinks/HeaderLinksMainPage';
 
 const MainPage: React.FC = () => {
   const classes: PropsClasses = useStyles({} as StyleProps);
@@ -22,11 +21,12 @@ const MainPage: React.FC = () => {
         color="transparent"
         brand="Fundacja Dorośli Dzieciom"
         fixed
+        isSpiner={false}
         changeColorOnScroll={{
           height: 400,
           color: 'white',
         }}
-        rightLinks={<HeaderLinks />}
+        rightLinks={<HeaderLinks isSpiner={false} />}
       />
       <Jumbotron filter image={image}>
         <div className={classes.container}>

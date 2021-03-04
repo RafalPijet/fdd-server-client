@@ -26,6 +26,7 @@ const CustomDropdown = (props: Props) => {
     hoverColor,
     rtlActive,
     noLiPadding,
+    isDisabled,
   } = props;
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -65,6 +66,7 @@ const CustomDropdown = (props: Props) => {
     <div>
       <div>
         <CustomButton
+          disabled={isDisabled}
           setSize="md"
           setColor="transparent"
           aria-label="Notifications"

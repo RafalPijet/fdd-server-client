@@ -7,6 +7,7 @@ import Button from '@material-ui/core/Button';
 import Hidden from '@material-ui/core/Hidden';
 import Drawer from '@material-ui/core/Drawer';
 import Menu from '@material-ui/icons/Menu';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import { Props, PropsClasses, useStyles, StyleProps } from './HeaderStyle';
 
 const Header: React.FC<Props> = (props) => {
@@ -18,6 +19,7 @@ const Header: React.FC<Props> = (props) => {
     fixed,
     absolute,
     changeColorOnScroll,
+    isSpiner,
   } = props;
   const classes: PropsClasses = useStyles({} as StyleProps);
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);
@@ -65,7 +67,11 @@ const Header: React.FC<Props> = (props) => {
     [classes.fixed]: fixed,
   });
 
-  const brandComponent = <Button className={classes.title}>{brand}</Button>;
+  const brandComponent = (
+    <Button disabled={isSpiner} className={classes.title}>
+      {brand}
+    </Button>
+  );
 
   return (
     <AppBar className={appBarClasses}>
@@ -109,6 +115,12 @@ const Header: React.FC<Props> = (props) => {
           </div>
         </Drawer>
       </Hidden>
+      <div style={{ height: '4px', width: '100%' }}>
+        <LinearProgress
+          className={classes.progressContainer}
+          hidden={!isSpiner}
+        />
+      </div>
     </AppBar>
   );
 };

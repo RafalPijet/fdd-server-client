@@ -33,6 +33,7 @@ const headerStyle = (theme: Theme) => ({
         alignItems: "center",
         flexFlow: "row nowrap",
         justifyContent: "flex-start",
+        flexDirection: "column",
         position: "relative",
         zIndex: "unset"
     },
@@ -53,6 +54,9 @@ const headerStyle = (theme: Theme) => ({
         display: "flex",
         flexWrap: "nowrap"
     },
+    progressContainer: {
+        ...container,
+    },
     flex: {
         flex: 1
     },
@@ -62,7 +66,7 @@ const headerStyle = (theme: Theme) => ({
         fontSize: "18px",
         borderRadius: "3px",
         textTransform: "none",
-        color: "inherit",
+        color: "inherit !important",
         padding: "8px 16px",
         letterSpacing: "unset",
         "&:hover,&:focus": {
@@ -167,6 +171,7 @@ export interface Props {
         height: number;
         color: Colors
     }
+    isSpiner?: boolean
 }
 
 export interface StyleProps {
@@ -174,6 +179,7 @@ export interface StyleProps {
     absolute: BaseCSSProperties;
     fixed: BaseCSSProperties;
     container: BaseCSSProperties;
+    progressContainer: BaseCSSProperties;
     flex: BaseCSSProperties;
     title: BaseCSSProperties;
     appResponsive: BaseCSSProperties;

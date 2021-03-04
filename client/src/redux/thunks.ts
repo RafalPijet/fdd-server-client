@@ -24,13 +24,19 @@ export const loginUser = (payload: IUserLogin): ThunkAction<
     dispatch(startRequest())
 
     try {
-        let res: AxiosResponse = await axios.post(`${API_URL}/auth/login`, payload);
+        await new Promise(resolve => setTimeout(resolve, 5000));
+        let res: AxiosResponse = await axios.post(`${API_URL}/auth/loginn`, payload, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
         console.log(res.data)
         localStorage.setItem('tokenFDD', res.data.authorization.token);
         localStorage.setItem('expiresInFDD', res.data.authorization.expiresIn);
+        dispatch(stopRequest());
 
     } catch (err) {
-        console.log(err.response.data)
+        dispatch(errorRequest({ isError: true, message: err.response.data.message }));
     }
 }
 
@@ -38,15 +44,19 @@ export const addUser = (payload: Register): ThunkAction<
     Promise<void>,
     any,
     RootState,
-    any
+    StartRequestAction | StopRequestAction | ErrorRequestAction | ResetRequestAction
 > => async (dispatch, getState) => {
+    dispatch(startRequest())
     payload.prepare();
 
     try {
+        await new Promise(resolve => setTimeout(resolve, 5000));
         let res: AxiosResponse = await axios.post(`${API_URL}/auth/user`, payload.getContent())
         console.log(res.data);
+        dispatch(stopRequest());
     } catch (err) {
         console.log(err.response.data)
+        dispatch(errorRequest({ isError: true, message: err.response.data }));
     }
 
 }

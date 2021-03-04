@@ -25,6 +25,10 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 app.use(AppRouter.getInstance());
 app.use(errorMiddleware);
+app.use((req: Request, res: Response, next: NextFunction) => {
+    const error = new Error("Internal Server Error");
+    res.status(501).send({ message: error.message })
+});
 
 mongoose.connect(process.env.DB!, {
     useNewUrlParser: true,

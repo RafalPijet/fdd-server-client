@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  getPending,
+  getSuccess,
+  getError,
+  resetRequest,
+} from '../../../redux/actions/requestActions';
 import classNames from 'classnames';
 import {
   PropsClasses,
@@ -15,7 +21,7 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import BottomNavigation from '@material-ui/core/BottomNavigation';
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
 import Header from '../../common/Header/Header';
-import HeaderLinks from '../../common/HeaderLinks/HeaderLinks';
+import HeaderLinks from '../../features/HeaderLinks/HeaderLinksLoginPage';
 import GridContainer from '../../common/Grid/GridContainer';
 import GridItem from '../../common/Grid/GridItem';
 import Card from '../../common/Card/Card';
@@ -33,11 +39,16 @@ import {
   Done,
   LockOpen,
 } from '@material-ui/icons';
+import { VariantType, useSnackbar } from 'notistack';
 import image from '../../../images/loginBackground.jpg';
 
 const LoginPage: React.FC = () => {
   const classes: PropsClasses = useStyles({} as StyleProps);
   const dispatch = useDispatch();
+  const isPendingRequest = useSelector(getPending);
+  const isSuccessRequest = useSelector(getSuccess);
+  const isErrorRequest = useSelector(getError).isError;
+  const errorMessage = useSelector(getError).message;
   const [cardAnimation, setCardAnimation] = useState(true);
   const [register, setRegister] = useState<IUserRegister>({
     firstName: '',
@@ -79,6 +90,8 @@ const LoginPage: React.FC = () => {
   const busyClasses = classNames({
     [classes.busy]: isDisabled,
   });
+
+  const { enqueueSnackbar } = useSnackbar();
 
   const checkAccess = (
     errors: Record<keyof IUserRegister, boolean>,
@@ -138,6 +151,27 @@ const LoginPage: React.FC = () => {
     }
   }, [isError, register, login, serviceType]);
 
+  useEffect(() => {
+    setIsDisabled(isPendingRequest);
+  }, [isPendingRequest]);
+
+  useEffect(() => {
+    if (!isPendingRequest) {
+      if (isSuccessRequest) {
+        handleToast(
+          serviceType === ServiceOptions.register
+            ? `${register.firstName} ${register.lastName} jest zarejestrowanym rodzicem`
+            : 'Jesteś zalogowany',
+          'success'
+        );
+      }
+      if (isErrorRequest) {
+        handleToast(errorMessage, 'error');
+      }
+      dispatch(resetRequest());
+    }
+  }, [isSuccessRequest, isErrorRequest]);
+
   const handleType = (
     event: React.ChangeEvent<{}>,
     newValue: ServiceOptions
@@ -184,13 +218,18 @@ const LoginPage: React.FC = () => {
       // dispatch(getAllParents());
     }
   };
+
+  const handleToast = (message: string, variant: VariantType) => {
+    enqueueSnackbar(message, { variant });
+  };
   return (
     <div>
       <Header
+        isSpiner={isDisabled}
         absolute
         color="transparent"
         brand="Fundacja Dorośli Dzieciom"
-        rightLinks={<HeaderLinks />}
+        rightLinks={<HeaderLinks isSpiner={isDisabled} />}
       />
       <div
         className={classes.pageHeader}
@@ -552,7 +591,7 @@ const LoginPage: React.FC = () => {
                   <CardFooter className={classes.cardFooter}>
                     <CustomButton
                       onClick={handleSendButton}
-                      disabled={!isAccess}
+                      disabled={!isAccess || isDisabled}
                       setColor="primary"
                       setSize="md"
                     >
