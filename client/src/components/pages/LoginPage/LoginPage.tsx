@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Redirect } from 'react-router';
 import {
   getPending,
   getSuccess,
@@ -49,6 +50,7 @@ const LoginPage: React.FC = () => {
   const isSuccessRequest = useSelector(getSuccess);
   const isErrorRequest = useSelector(getError).isError;
   const errorMessage = useSelector(getError).message;
+  const [isRedirect, setIsRedirect] = useState(false);
   const [cardAnimation, setCardAnimation] = useState(true);
   const [register, setRegister] = useState<IUserRegister>({
     firstName: '',
@@ -164,6 +166,16 @@ const LoginPage: React.FC = () => {
             : 'Jesteś zalogowany',
           'success'
         );
+
+        if (serviceType === ServiceOptions.register) {
+          setLogin({
+            email: register.email,
+            password: register.password,
+          });
+          setServiceType(ServiceOptions.login);
+        } else {
+          setIsRedirect(true);
+        }
       }
       if (isErrorRequest) {
         handleToast(errorMessage, 'error');
@@ -222,6 +234,14 @@ const LoginPage: React.FC = () => {
   const handleToast = (message: string, variant: VariantType) => {
     enqueueSnackbar(message, { variant });
   };
+
+  const handleRedirect = () => {
+    setIsRedirect(true);
+  };
+
+  if (isRedirect) {
+    return <Redirect to="/parent" />;
+  }
   return (
     <div>
       <Header

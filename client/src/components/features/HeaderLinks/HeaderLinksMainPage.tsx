@@ -31,11 +31,11 @@ const HeaderList: React.FC<Props> = (props) => {
           }}
           buttonIcon={Apps}
           dropdownList={[
-            <Link to="/" className={classes.dropdownLink}>
-              First Option
+            <Link to="/parent" className={classes.dropdownLink}>
+              Parent
             </Link>,
-            <Link to="/" className={classes.dropdownLink}>
-              Second Option
+            <Link to="/login" className={classes.dropdownLink}>
+              Login
             </Link>,
           ]}
         />
@@ -46,10 +46,11 @@ const HeaderList: React.FC<Props> = (props) => {
           setColor="transparent"
           setSize="md"
           className={classes.navLink}
-          href="http://localhost:3000/login"
         >
-          <GroupIcon className={classes.icons} />
-          Login
+          <Link to="/login" style={{ color: 'inherit' }}>
+            <GroupIcon className={classes.icons} />
+            Login
+          </Link>
         </CustomButton>
       </ListItem>
     </List>

@@ -9,6 +9,7 @@ import Drawer from '@material-ui/core/Drawer';
 import Menu from '@material-ui/icons/Menu';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { Props, PropsClasses, useStyles, StyleProps } from './HeaderStyle';
+import logo from '../../../images/butterflyMini.png';
 
 const Header: React.FC<Props> = (props) => {
   const {
@@ -69,6 +70,7 @@ const Header: React.FC<Props> = (props) => {
 
   const brandComponent = (
     <Button disabled={isSpiner} className={classes.title}>
+      <img style={{ paddingRight: '5px' }} src={logo} alt="logo" />
       {brand}
     </Button>
   );

@@ -25,7 +25,7 @@ export const loginUser = (payload: IUserLogin): ThunkAction<
 
     try {
         await new Promise(resolve => setTimeout(resolve, 5000));
-        let res: AxiosResponse = await axios.post(`${API_URL}/auth/loginn`, payload, {
+        let res: AxiosResponse = await axios.post(`${API_URL}/auth/login`, payload, {
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -36,7 +36,10 @@ export const loginUser = (payload: IUserLogin): ThunkAction<
         dispatch(stopRequest());
 
     } catch (err) {
-        dispatch(errorRequest({ isError: true, message: err.response.data.message }));
+        err.response.data.message ?
+            dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
+            dispatch(errorRequest({ isError: true, message: 'Something went wrong' }));
+
     }
 }
 
@@ -55,8 +58,9 @@ export const addUser = (payload: Register): ThunkAction<
         console.log(res.data);
         dispatch(stopRequest());
     } catch (err) {
-        console.log(err.response.data)
-        dispatch(errorRequest({ isError: true, message: err.response.data }));
+        err.response.data.message ?
+            dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
+            dispatch(errorRequest({ isError: true, message: 'Something went wrong' }));
     }
 
 }

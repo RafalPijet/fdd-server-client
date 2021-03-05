@@ -26,6 +26,10 @@ const userSchema = new Schema({
     town: { type: String, required: true },
     street: { type: String, required: true },
     number: { type: String, required: true },
+    children: [{
+        ref: 'Child',
+        type: mongoose.Schema.Types.ObjectId
+    }],
     resetToken: String,
     resetTokenExpiration: Date
 })
