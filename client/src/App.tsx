@@ -3,6 +3,7 @@ import { Router, Route, Switch, BrowserRouter } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
 import MainPage from './components/pages/MainPage/MainPage';
 import LoginPage from './components/pages/LoginPage/LoginPage';
+import AdminPage from './components/pages/AdminPage/AdminPage';
 
 const ParentPage = React.lazy(
   () => import('./components/pages/ParentPage/ParentPage')
@@ -18,6 +19,7 @@ const App = () => {
           <Switch>
             <Route exact path="/login" component={LoginPage} />
             <Route exact path="/parent" component={ParentPage} />
+            <Route exact path="/admin" component={AdminPage} />
             <Route exact path="/" component={MainPage} />
           </Switch>
         </BrowserRouter>

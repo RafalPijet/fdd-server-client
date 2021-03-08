@@ -1,20 +1,19 @@
 import React, { useState } from 'react';
 import classNames from 'classnames';
-import { PropsClasses, useStyles, StyleProps } from './ParentPageStyle';
+import { PropsClasses, useStyles, StyleProps } from './AdminPageStyle';
 import Header from '../../common/Header/Header';
-import HeaderLinks from '../../features/HeaderLinks/HeaderLinksParentPage';
+import HeaderLinks from '../../features/HeaderLinks/HeaderLinksAdminPage';
 import Jumbotron from '../../common/Jumbotron/Jumbotron';
 import GridContainer from '../../common/Grid/GridContainer';
 import GridItem from '../../common/Grid/GridItem';
 import { Typography } from '@material-ui/core';
 import Footer from '../../common/Footer/Footer';
 import MessageSection from '../../features/MessageSection/MessageSection';
-import image from '../../../images/jumbotronParent.jpg';
+import image from '../../../images/jumbotronAdmin.jpg';
 
-const ParentPage: React.FC = () => {
+const AdminPage: React.FC = () => {
   const classes: PropsClasses = useStyles({} as StyleProps);
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
-
   return (
     <div>
       <Header
@@ -31,7 +30,7 @@ const ParentPage: React.FC = () => {
         <div className={classes.container}>
           <GridContainer>
             <GridItem xs={12} sm={12} md={6}>
-              <Typography variant="h3">Preparing parent zone...</Typography>
+              <Typography variant="h3">Preparing admin zone...</Typography>
             </GridItem>
           </GridContainer>
         </div>
@@ -45,4 +44,4 @@ const ParentPage: React.FC = () => {
   );
 };
 
-export default ParentPage;
+export default AdminPage;

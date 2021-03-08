@@ -21,8 +21,23 @@ class AuthController {
 
                 if (await bcrypt.compare(password, user.password)) {
                     user.password = undefined;
+                    user._id = "";
                     const tokenData = createToken(user);
-                    res.status(201).json({ user, authorization: tokenData })
+                    const dto = {
+                        status: user.status,
+                        firstName: user.firstName,
+                        lastName: user.lastName,
+                        email: user.email,
+                        phone: user.phone,
+                        children: user.children,
+                        adress: {
+                            zipCode: user.zipCode,
+                            town: user.town,
+                            street: user.street,
+                            number: user.number
+                        }
+                    }
+                    res.status(201).json({ dto, authorization: tokenData })
                 } else {
                     next(new WrongCredentialsException('password'));
                 }

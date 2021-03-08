@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
-import { UserStatus } from './';
+import { UserStatus, IChild } from './';
 
 export interface IUser {
     _id?: string;
@@ -13,6 +13,7 @@ export interface IUser {
     town: string;
     street: string;
     number: string;
+    children?: IChild[]
 }
 
 const userSchema = new Schema({

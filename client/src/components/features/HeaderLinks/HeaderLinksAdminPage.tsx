@@ -4,11 +4,10 @@ import ListItem from '@material-ui/core/ListItem';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
 import { Props, StyleProps, PropsClasses, useStyles } from './headerLinksStyle';
-import GroupIcon from '@material-ui/icons/Group';
 import CustomButton from '../../common/CustomButton/CustomButton';
 import CustomDropdown from '../../common/CustomDropdown/CustomDropdown';
 
-import { Apps } from '@material-ui/icons';
+import { Apps, ExitToApp } from '@material-ui/icons';
 
 const HeaderList: React.FC<Props> = (props) => {
   const classes: PropsClasses = useStyles({} as StyleProps);
@@ -47,9 +46,9 @@ const HeaderList: React.FC<Props> = (props) => {
           setSize="md"
           className={classes.navLink}
         >
-          <Link to="/login" style={{ color: 'inherit' }}>
-            <GroupIcon className={classes.icons} />
-            Zaloguj
+          <Link to="/" style={{ color: 'inherit' }}>
+            <ExitToApp className={classes.icons} />
+            Wyloguj
           </Link>
         </CustomButton>
       </ListItem>

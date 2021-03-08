@@ -7,6 +7,7 @@ import {
   getError,
   resetRequest,
 } from '../../../redux/actions/requestActions';
+import { getUserStatus } from '../../../redux/actions/userActions';
 import classNames from 'classnames';
 import {
   PropsClasses,
@@ -17,7 +18,7 @@ import {
   IUserRegister,
   Register,
 } from './LoginPageStyle';
-import { loginUser, getAllParents, addUser } from '../../../redux/thunks';
+import { loginUser, addUser } from '../../../redux/thunks';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import BottomNavigation from '@material-ui/core/BottomNavigation';
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
@@ -42,6 +43,7 @@ import {
 } from '@material-ui/icons';
 import { VariantType, useSnackbar } from 'notistack';
 import image from '../../../images/loginBackground.jpg';
+import { UserStatus } from '../../../types/global';
 
 const LoginPage: React.FC = () => {
   const classes: PropsClasses = useStyles({} as StyleProps);
@@ -50,6 +52,7 @@ const LoginPage: React.FC = () => {
   const isSuccessRequest = useSelector(getSuccess);
   const isErrorRequest = useSelector(getError).isError;
   const errorMessage = useSelector(getError).message;
+  const userStatus = useSelector(getUserStatus);
   const [isRedirect, setIsRedirect] = useState(false);
   const [cardAnimation, setCardAnimation] = useState(true);
   const [register, setRegister] = useState<IUserRegister>({
@@ -173,8 +176,11 @@ const LoginPage: React.FC = () => {
             password: register.password,
           });
           setServiceType(ServiceOptions.login);
-        } else {
-          setIsRedirect(true);
+        } else if (
+          serviceType === ServiceOptions.login &&
+          userStatus !== UserStatus.null
+        ) {
+          setTimeout(() => setIsRedirect(true), 10);
         }
       }
       if (isErrorRequest) {
@@ -182,7 +188,7 @@ const LoginPage: React.FC = () => {
       }
       dispatch(resetRequest());
     }
-  }, [isSuccessRequest, isErrorRequest]);
+  }, [isSuccessRequest, isErrorRequest, userStatus]);
 
   const handleType = (
     event: React.ChangeEvent<{}>,
@@ -224,10 +230,7 @@ const LoginPage: React.FC = () => {
       );
       dispatch(addUser(user));
     } else {
-      console.log('Login mode');
-      //   console.log(login);
       dispatch(loginUser(login));
-      // dispatch(getAllParents());
     }
   };
 
@@ -235,12 +238,13 @@ const LoginPage: React.FC = () => {
     enqueueSnackbar(message, { variant });
   };
 
-  const handleRedirect = () => {
-    setIsRedirect(true);
-  };
-
   if (isRedirect) {
-    return <Redirect to="/parent" />;
+    if (userStatus === UserStatus.parent) {
+      return <Redirect to="/parent" />;
+    }
+    if (userStatus === UserStatus.admin) {
+      return <Redirect to="/admin" />;
+    }
   }
   return (
     <div>

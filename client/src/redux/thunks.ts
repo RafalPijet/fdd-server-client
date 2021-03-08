@@ -12,6 +12,7 @@ import {
     stopRequest,
     errorRequest
 } from './actions/requestActions';
+import { addCurrentUser, AddUserAction } from './actions/userActions';
 
 const API_URL = " http://localhost:3001/api";
 
@@ -19,20 +20,20 @@ export const loginUser = (payload: IUserLogin): ThunkAction<
     Promise<void>,
     any,
     RootState,
-    StartRequestAction | StopRequestAction | ErrorRequestAction | ResetRequestAction
+    StartRequestAction | StopRequestAction | ErrorRequestAction | ResetRequestAction | AddUserAction
 > => async (dispatch, getState) => {
     dispatch(startRequest())
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 5000));
+        await new Promise(resolve => setTimeout(resolve, 2000));
         let res: AxiosResponse = await axios.post(`${API_URL}/auth/login`, payload, {
             headers: {
                 'Content-Type': 'application/json'
             }
         });
-        console.log(res.data)
         localStorage.setItem('tokenFDD', res.data.authorization.token);
         localStorage.setItem('expiresInFDD', res.data.authorization.expiresIn);
+        dispatch(addCurrentUser(res.data.dto));
         dispatch(stopRequest());
 
     } catch (err) {
@@ -53,7 +54,7 @@ export const addUser = (payload: Register): ThunkAction<
     payload.prepare();
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 5000));
+        await new Promise(resolve => setTimeout(resolve, 2000));
         let res: AxiosResponse = await axios.post(`${API_URL}/auth/user`, payload.getContent())
         console.log(res.data);
         dispatch(stopRequest());

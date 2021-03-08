@@ -25,5 +25,29 @@ export type AvailableHoverColors =
 
 export enum UserStatus {
     parent = "parent",
-    admin = "admin"
+    admin = "admin",
+    null = ""
+}
+
+export interface ChildState {
+    firstName: string;
+    lastName: string;
+    birthDate: Date;
+    info: string;
+    images: string[];
+}
+
+export interface UserState {
+    status: UserStatus,
+    firstName: string,
+    lastName: string,
+    email: string,
+    phone: string,
+    children: ChildState[],
+    adress: {
+        zipCode: string,
+        town: string,
+        street: string,
+        number: string
+    }
 }
