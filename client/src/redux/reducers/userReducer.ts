@@ -1,4 +1,4 @@
-import { AddUserAction, ADD_USER } from '../actions/userActions';
+import { AddUserAction, CleanUserAction, ADD_USER, CLEAN_USER } from '../actions/userActions';
 import { UserState, UserStatus } from '../../types/global';
 
 const initialState: UserState = {
@@ -18,12 +18,11 @@ const initialState: UserState = {
 
 const userReducer = (
     state: UserState = initialState,
-    action: AddUserAction
+    action: AddUserAction | CleanUserAction
 ) => {
     switch (action.type) {
         case ADD_USER:
             return {
-                ...state,
                 status: action.payload.status,
                 firstName: action.payload.firstName,
                 lastName: action.payload.lastName,
@@ -32,6 +31,8 @@ const userReducer = (
                 children: action.payload.children,
                 adress: action.payload.adress
             }
+        case CLEAN_USER:
+            return { ...initialState }
         default:
             return { ...state }
     }

@@ -63,11 +63,10 @@ class AuthController {
                 user.password = hashedPassword;
                 const newUser = buildUser(user);
                 await newUser.save();
-                newUser.password = undefined;
-                res.status(201).json({ message: "User has been added.", user: newUser })
+                res.status(201).send();
             }
         } catch (err) {
-            next(new HttpException(404, `User hasn't been added!. - ${err}`))
+            next(new HttpException(404, `Rodzic nie został dodany!. - ${err}`))
         }
     }
 }

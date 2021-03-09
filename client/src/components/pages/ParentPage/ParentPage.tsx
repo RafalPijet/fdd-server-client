@@ -6,8 +6,9 @@ import HeaderLinks from '../../features/HeaderLinks/HeaderLinksParentPage';
 import Jumbotron from '../../common/Jumbotron/Jumbotron';
 import GridContainer from '../../common/Grid/GridContainer';
 import GridItem from '../../common/Grid/GridItem';
-import { Typography } from '@material-ui/core';
 import Footer from '../../common/Footer/Footer';
+import ParentZone from '../../features/ParentZone/ParentZone';
+import ChildrenZone from '../../features/ChildrenZone/ChildrenZone';
 import MessageSection from '../../features/MessageSection/MessageSection';
 import image from '../../../images/jumbotronParent.jpg';
 
@@ -31,13 +32,15 @@ const ParentPage: React.FC = () => {
         <div className={classes.container}>
           <GridContainer>
             <GridItem xs={12} sm={12} md={6}>
-              <Typography variant="h3">Preparing parent zone...</Typography>
+              <ParentZone />
+            </GridItem>
+            <GridItem xs={12} sm={12} md={6}>
+              <ChildrenZone />
             </GridItem>
           </GridContainer>
         </div>
       </Jumbotron>
       <div className={classNames(classes.main, classes.mainRaised)}>
-        <MessageSection />
         <MessageSection />
       </div>
       <Footer />

@@ -13,9 +13,10 @@ import CustomInput from '../../common/CustomInput/CustomInput';
 import CustomButton from '../../common/CustomButton/CustomButton';
 
 const MessageSection: React.FC<Props> = (props) => {
+  const { isDisabled, ...rest } = props;
   const classes: PropsClasses = useStyles({} as StyleProps);
   return (
-    <div className={classes.section}>
+    <div {...rest} className={classes.section}>
       <GridContainer justify="center">
         <GridItem xs={12} sm={12} md={8}>
           <Typography variant="h4" className={classes.title}>

@@ -29,6 +29,13 @@ export enum UserStatus {
     null = ""
 }
 
+export enum MessageOptions {
+    all,
+    incoming,
+    outcoming,
+    new
+}
+
 export interface ChildState {
     firstName: string;
     lastName: string;

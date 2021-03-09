@@ -30,7 +30,7 @@ const messageStyle = (theme: Theme) => ({
 })
 
 export interface Props {
-
+    isDisabled?: boolean
 }
 
 export interface StyleProps {

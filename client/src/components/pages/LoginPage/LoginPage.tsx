@@ -7,7 +7,7 @@ import {
   getError,
   resetRequest,
 } from '../../../redux/actions/requestActions';
-import { getUserStatus } from '../../../redux/actions/userActions';
+import { getUserStatus, getUserName } from '../../../redux/actions/userActions';
 import classNames from 'classnames';
 import {
   PropsClasses,
@@ -53,6 +53,7 @@ const LoginPage: React.FC = () => {
   const isErrorRequest = useSelector(getError).isError;
   const errorMessage = useSelector(getError).message;
   const userStatus = useSelector(getUserStatus);
+  const userName = useSelector(getUserName);
   const [isRedirect, setIsRedirect] = useState(false);
   const [cardAnimation, setCardAnimation] = useState(true);
   const [register, setRegister] = useState<IUserRegister>({
@@ -166,7 +167,11 @@ const LoginPage: React.FC = () => {
         handleToast(
           serviceType === ServiceOptions.register
             ? `${register.firstName} ${register.lastName} jest zarejestrowanym rodzicem`
-            : 'Jesteś zalogowany',
+            : `${userName} jest zalogowanym ${
+                userStatus === UserStatus.parent
+                  ? 'rodzicem'
+                  : 'administratorem'
+              }`,
           'success'
         );
 
