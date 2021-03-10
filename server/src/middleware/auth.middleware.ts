@@ -12,7 +12,6 @@ export interface RequestWithUser extends Request {
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     const request = req as RequestWithUser;
     const headers = req.headers;
-
     if (headers.authorization) {
         const secret = process.env.SECRET_KEY;
         try {

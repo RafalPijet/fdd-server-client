@@ -1,11 +1,13 @@
 import { applyMiddleware, combineReducers, createStore, compose } from 'redux';
 import requestReducer from './reducers/requestReducer';
 import userReducer from './reducers/userReducer';
+import messagesReducer from './reducers/messagesReducer';
 import thunk from 'redux-thunk';
 
 const rootReducer = combineReducers({
     request: requestReducer,
-    user: userReducer
+    user: userReducer,
+    userMessages: messagesReducer
 });
 
 export type RootState = ReturnType<typeof rootReducer>

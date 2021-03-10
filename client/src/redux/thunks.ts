@@ -13,6 +13,8 @@ import {
     errorRequest
 } from './actions/requestActions';
 import { addCurrentUser, AddUserAction } from './actions/userActions';
+import { loadUserMessages, LoadMessagesAction } from './actions/messageActions';
+import { TargetOptions } from '../types/global';
 
 const API_URL = " http://localhost:3001/api";
 
@@ -66,24 +68,49 @@ export const addUser = (payload: Register): ThunkAction<
 
 }
 
-export const getAllParents = (): ThunkAction<
+export const addMessage = (payload: string): ThunkAction<
     Promise<void>,
     any,
     RootState,
-    any
+    StartRequestAction | StopRequestAction | ErrorRequestAction
 > => async (dispatch, getState) => {
-    console.log('getAllParents')
+    dispatch(startRequest())
 
     try {
-        let res: AxiosResponse = await axios.get(`${API_URL}/users/parents`, {
+        let res: AxiosResponse = await axios.post(`${API_URL}/users/message`, { content: payload }, {
             headers: {
-                'Content-Type': "application/json; charset=utf-8",
                 'Authorization': localStorage.getItem('tokenFDD')
             },
         });
-
+        dispatch(stopRequest());
         console.log(res.data);
     } catch (err) {
-        console.log(err.response.data)
+        err.response.data.message ?
+            dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
+            dispatch(errorRequest({ isError: true, message: 'Something went wrong' }));
+    }
+}
+
+export const getUserMessages = (target: TargetOptions): ThunkAction<
+    Promise<void>,
+    any,
+    RootState,
+    StartRequestAction | StopRequestAction | ErrorRequestAction | LoadMessagesAction
+> => async (dispatch, getState) => {
+    dispatch(startRequest());
+
+    try {
+        let res: AxiosResponse = await axios.get(`${API_URL}/users/messages/${target}`, {
+            headers: {
+                'Authorization': localStorage.getItem('tokenFDD')
+            },
+        })
+        console.log(res.data);
+        dispatch(loadUserMessages(res.data))
+        dispatch(stopRequest());
+    } catch (err) {
+        err.response.data.message ?
+            dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
+            dispatch(errorRequest({ isError: true, message: 'Something went wrong' }));
     }
 }

@@ -58,3 +58,22 @@ export interface UserState {
         number: string
     }
 }
+
+export interface IMessage {
+    content: string;
+    _id: string;
+    from: string;
+    to: string;
+    created: string;
+    new: boolean;
+}
+
+export interface MessageState {
+    messages: IMessage[]
+}
+
+export enum TargetOptions {
+    from = 'from',
+    to = 'to',
+    all = 'all'
+}

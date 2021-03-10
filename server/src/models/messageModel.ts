@@ -3,11 +3,11 @@ import { IUser } from './';
 
 export interface IMessage {
     _id?: string;
-    created: Date;
+    created?: Date;
     from: IUser["_id"];
     to: IUser["_id"];
     content: string;
-    new: boolean;
+    new?: boolean;
 }
 
 const messageSchema = new Schema({
@@ -21,7 +21,7 @@ const messageSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId
     },
     content: { type: String, required: true },
-    new: { type: Boolean, required: true }
+    new: { type: Boolean, default: true }
 })
 
 export const MessageModel = mongoose.model<IMessage & mongoose.Document>('Message', messageSchema);

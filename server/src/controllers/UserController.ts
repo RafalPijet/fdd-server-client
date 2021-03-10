@@ -3,18 +3,22 @@ import { controller } from './decorators';
 import { post, get, put } from '../routes';
 import { RequestWithUser } from '../middleware';
 import HttpException from '../exceptions/HttpException';
-import { buildUser, IUser, UserModel, IMessage, buildMessage } from '../models';
+import { buildUser, IUser, UserModel, IMessage, buildMessage, MessageModel } from '../models';
 import { ValidatorKeys, bodyValidator } from './decorators';
 
 @controller('/api/users')
 class UserController {
-    @put('/message')
+    @post('/message')
     async addMessage(req: Request, res: Response, next: NextFunction): Promise<void> {
         const request = req as RequestWithUser;
 
         try {
-            const message: IMessage = request.body;
-
+            const content = request.body.content;
+            const message: IMessage = {
+                content,
+                from: request.user._id,
+                to: process.env.ADMIN_ID
+            };
             const newMessage = buildMessage(message);
             await newMessage.save();
             res.status(201).json({ message: "Wiadomość została wysłana." })
@@ -23,14 +27,17 @@ class UserController {
         }
     }
 
-    @get('/parents')
-    async getAllParents(req: Request, res: Response, next: NextFunction): Promise<void> {
+    @get('/messages/:target')
+    async getUserMessages(req: Request, res: Response, next: NextFunction): Promise<void> {
         const request = req as RequestWithUser;
-
+        const { target } = req.params
+        console.log(req.params.target)
         try {
-            res.status(200).send(request.user)
+            const messages = await MessageModel.find({ [target]: request.user._id })
+            res.status(200).send(messages)
         } catch (err) {
-            next(new HttpException(404, `Parents not found. - ${err}`))
+            next(new HttpException(404,
+                `Nie znaleziono wiadomości od ${request.user.firstName} ${request.user.lastName}. - ${err}`))
         }
     }
 }
