@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import classNames from 'classnames';
 import { getUserName } from '../../../redux/actions/userActions';
@@ -21,12 +21,20 @@ import CustomButton from '../../common/CustomButton/CustomButton';
 import CustomInput from '../../common/CustomInput/CustomInput';
 import MessagesContent from '../../common/MessagesContent/MessagesContent';
 import { TargetOptions } from '../../../types/global';
+import {
+  getPending,
+  getSuccess,
+  resetRequest,
+} from '../../../redux/actions/requestActions';
 
 const ParentZone: React.FC = () => {
   const classes: PropsClasses = useStyles({} as StyleProps);
   const userName = useSelector(getUserName);
-  const [cardAnimation, setCardAnimation] = useState(true);
-  const [bodyAnimation, setBodyAnimation] = useState(true);
+  const isPending = useSelector(getPending);
+  const isSuccess = useSelector(getSuccess);
+  const [isDisabled, setIsDisabled] = useState<boolean>(false);
+  const [cardAnimation, setCardAnimation] = useState<boolean>(true);
+  const [bodyAnimation, setBodyAnimation] = useState<boolean>(true);
   const [messageType, setMessageType] = useState<MessageOptions>(
     MessageOptions.incoming
   );
@@ -36,16 +44,42 @@ const ParentZone: React.FC = () => {
     [classes.cardHidden]: cardAnimation,
   });
   const dispatch = useDispatch();
+  const busyClasses = classNames({
+    [classes.busy]: isDisabled,
+  });
   setTimeout(() => {
     setCardAnimation(false);
   }, 700);
+
+  useEffect(() => {
+    if (messageType === MessageOptions.incoming) {
+      dispatch(getUserMessages(TargetOptions.to));
+    } else if (messageType === MessageOptions.outcoming) {
+      dispatch(getUserMessages(TargetOptions.from));
+    } else if (messageType === MessageOptions.all) {
+      dispatch(getUserMessages(TargetOptions.all));
+    } else if (messageType === MessageOptions.new) {
+      setBodyAnimation(true);
+    }
+  }, [messageType]);
+
+  useEffect(() => {
+    setBodyAnimation(!isPending && isSuccess);
+    setIsDisabled(isPending);
+    if (messageType === MessageOptions.new && isSuccess) {
+      setNewMessage('');
+    }
+  }, [isPending, isSuccess]);
 
   const messageOptionsHandling = (
     event: React.ChangeEvent<{}>,
     newValue: MessageOptions
   ) => {
-    // setBodyAnimation(false);
-    setTimeout(() => setMessageType(newValue), 300);
+    setBodyAnimation(false);
+    setTimeout(() => {
+      setMessageType(newValue);
+      //   dispatch(resetRequest());
+    }, 300);
   };
 
   const newMessageHandling = (
@@ -54,17 +88,22 @@ const ParentZone: React.FC = () => {
     setNewMessage(event.target.value);
   };
 
+  const setMessageHandling = () => {
+    dispatch(addMessage(newMessage));
+  };
+
   const bodyContent = () => {
     if (messageType === MessageOptions.all) {
-      return <div>All</div>;
+      return <MessagesContent dataType={messageType} />;
     } else if (messageType === MessageOptions.incoming) {
-      return <div>Incoming</div>;
+      return <MessagesContent dataType={messageType} />;
     } else if (messageType === MessageOptions.outcoming) {
-      return <MessagesContent />;
+      return <MessagesContent dataType={messageType} />;
     } else if (messageType === MessageOptions.new) {
       return (
         <div>
           <CustomInput
+            isDisabled={isDisabled}
             labelText="wiadomość"
             id="newMessage"
             value={newMessage}
@@ -82,15 +121,6 @@ const ParentZone: React.FC = () => {
         </div>
       );
     }
-  };
-
-  const click = () => {
-    // setBodyAnimation(!bodyAnimation);
-    dispatch(getUserMessages(TargetOptions.from));
-  };
-
-  const setMessageHandling = () => {
-    dispatch(addMessage(newMessage));
   };
 
   return (
@@ -117,30 +147,30 @@ const ParentZone: React.FC = () => {
               style={{ backgroundColor: 'transparent' }}
             >
               <BottomNavigationAction
-                // disabled={isDisabled}
-                // className={busyClasses}
+                disabled={isDisabled}
+                className={busyClasses}
                 classes={{
                   selected: classes.selectTab,
                 }}
                 label="Przychodzące"
                 value={MessageOptions.incoming}
                 style={{ color: '#fff' }}
-                icon={<CommentIcon />}
+                icon={<MessageIcon />}
               />
               <BottomNavigationAction
-                // disabled={isDisabled}
-                // className={busyClasses}
+                disabled={isDisabled}
+                className={busyClasses}
                 classes={{
                   selected: classes.selectTab,
                 }}
                 label="Wychodzące"
                 value={MessageOptions.outcoming}
                 style={{ color: '#fff' }}
-                icon={<MessageIcon />}
+                icon={<CommentIcon />}
               />
               <BottomNavigationAction
-                // disabled={isDisabled}
-                // className={busyClasses}
+                disabled={isDisabled}
+                className={busyClasses}
                 classes={{
                   selected: classes.selectTab,
                 }}
@@ -149,14 +179,14 @@ const ParentZone: React.FC = () => {
                 style={{ color: '#fff' }}
                 icon={
                   <span>
-                    <CommentIcon />
                     <MessageIcon />
+                    <CommentIcon />
                   </span>
                 }
               />
               <BottomNavigationAction
-                // disabled={isDisabled}
-                // className={busyClasses}
+                disabled={isDisabled}
+                className={busyClasses}
                 classes={{
                   selected: classes.selectTab,
                 }}
@@ -172,7 +202,11 @@ const ParentZone: React.FC = () => {
           <CardBody>{bodyContent()}</CardBody>
         </Grow>
         <CardFooter className={classes.cardFooter}>
-          <CustomButton setColor="primary" setSize="md" onClick={click}>
+          <CustomButton
+            setColor="primary"
+            setSize="md"
+            onClick={setMessageHandling}
+          >
             Wyslij
           </CustomButton>
         </CardFooter>

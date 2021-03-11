@@ -2,6 +2,7 @@ import { AddUserAction, CleanUserAction, ADD_USER, CLEAN_USER } from '../actions
 import { UserState, UserStatus } from '../../types/global';
 
 const initialState: UserState = {
+    _id: "",
     status: UserStatus.null,
     firstName: "",
     lastName: "",
@@ -23,6 +24,7 @@ const userReducer = (
     switch (action.type) {
         case ADD_USER:
             return {
+                _id: action.payload._id,
                 status: action.payload.status,
                 firstName: action.payload.firstName,
                 lastName: action.payload.lastName,

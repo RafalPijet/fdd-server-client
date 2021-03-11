@@ -24,6 +24,7 @@ class AuthController {
                     user._id = "";
                     const tokenData = createToken(user);
                     const dto = {
+                        _id: user.id,
                         status: user.status,
                         firstName: user.firstName,
                         lastName: user.lastName,

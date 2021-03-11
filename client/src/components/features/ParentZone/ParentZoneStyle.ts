@@ -1,6 +1,7 @@
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import { makeStyles } from '@material-ui/core/styles';
 import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
+import { grayColor } from '../../../styles/globalStyles';
 
 const parentZoneStyle = (theme: Theme) => ({
     cardHidden: {
@@ -30,6 +31,9 @@ const parentZoneStyle = (theme: Theme) => ({
     card: {
         height: '400px',
         backgroundColor: "rgba(255, 255, 255, 0.2)"
+    },
+    busy: {
+        color: `${grayColor} !important`
     }
 })
 
@@ -39,6 +43,7 @@ export interface StyleProps {
     cardFooter: BaseCSSProperties;
     selectTab: BaseCSSProperties;
     card: BaseCSSProperties;
+    busy: BaseCSSProperties;
 }
 
 export type PropsClasses = Record<keyof StyleProps, string>;

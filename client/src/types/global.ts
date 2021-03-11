@@ -45,6 +45,7 @@ export interface ChildState {
 }
 
 export interface UserState {
+    _id: string,
     status: UserStatus,
     firstName: string,
     lastName: string,

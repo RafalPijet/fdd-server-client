@@ -31,10 +31,14 @@ class UserController {
     async getUserMessages(req: Request, res: Response, next: NextFunction): Promise<void> {
         const request = req as RequestWithUser;
         const { target } = req.params
-        console.log(req.params.target)
+
         try {
-            const messages = await MessageModel.find({ [target]: request.user._id })
-            res.status(200).send(messages)
+            const messages = await MessageModel.find(target !== 'all' ?
+                { [target]: request.user._id } :
+                { $or: [{ to: request.user._id }, { from: request.user._id }] })
+                .sort({ created: 'asc' }).exec();
+            res.status(200).json(messages)
+
         } catch (err) {
             next(new HttpException(404,
                 `Nie znaleziono wiadomości od ${request.user.firstName} ${request.user.lastName}. - ${err}`))

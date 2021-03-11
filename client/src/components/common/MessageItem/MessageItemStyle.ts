@@ -2,12 +2,17 @@ import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import { makeStyles } from '@material-ui/core/styles';
 import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
 import { logoColor } from '../../../styles/globalStyles';
-import { IMessage } from '../../../types/global';
+import { IMessage, MessageOptions } from '../../../types/global';
 
 export interface Props {
     _id: IMessage["_id"];
     message: IMessage["content"];
     date: IMessage["created"];
+    isNew: IMessage["new"];
+    getData: (id: string, content: string, isNew: boolean) => void;
+    selectedId: string;
+    dataType: Exclude<MessageOptions, MessageOptions.new>;
+    from: string;
 }
 
 const messageItemStyle = (theme: Theme) => ({
@@ -16,11 +21,17 @@ const messageItemStyle = (theme: Theme) => ({
         color: "#fff",
         cursor: "pointer"
     },
+    selected: {
+        background: "rgba(255, 255, 255, 0.2)"
+    },
     content: {
         fontFamily: 'Roboto',
         fontWeight: 300,
         padding: "5px",
         position: "relative",
+    },
+    right: {
+        textAlign: 'right'
     },
     unread: {
         fontWeight: 600
@@ -35,17 +46,17 @@ const messageItemStyle = (theme: Theme) => ({
         top: -8,
         left: -12,
         height: "80%"
-        // width: '-50%'
-        // hei: '80%'
     }
 })
 
 export interface StyleProps {
     root: BaseCSSProperties;
     content: BaseCSSProperties;
+    right: BaseCSSProperties;
     unread: BaseCSSProperties;
     date: BaseCSSProperties;
     image: BaseCSSProperties;
+    selected: BaseCSSProperties;
 }
 
 export type PropsClasses = Record<keyof StyleProps, string>;

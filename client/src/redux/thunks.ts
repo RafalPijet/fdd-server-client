@@ -77,6 +77,7 @@ export const addMessage = (payload: string): ThunkAction<
     dispatch(startRequest())
 
     try {
+        await new Promise(resolve => setTimeout(resolve, 2000));
         let res: AxiosResponse = await axios.post(`${API_URL}/users/message`, { content: payload }, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD')
@@ -100,6 +101,7 @@ export const getUserMessages = (target: TargetOptions): ThunkAction<
     dispatch(startRequest());
 
     try {
+        await new Promise(resolve => setTimeout(resolve, 2000));
         let res: AxiosResponse = await axios.get(`${API_URL}/users/messages/${target}`, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD')

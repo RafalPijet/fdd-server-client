@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import classNames from 'classnames';
+import { useSelector } from 'react-redux';
 import { PropsClasses, useStyles, StyleProps } from './ParentPageStyle';
+import { getPending } from '../../../redux/actions/requestActions';
 import Header from '../../common/Header/Header';
 import HeaderLinks from '../../features/HeaderLinks/HeaderLinksParentPage';
 import Jumbotron from '../../common/Jumbotron/Jumbotron';
@@ -14,15 +16,15 @@ import image from '../../../images/jumbotronParent.jpg';
 
 const ParentPage: React.FC = () => {
   const classes: PropsClasses = useStyles({} as StyleProps);
-  const [isDisabled, setIsDisabled] = useState<boolean>(false);
-
+  const isPending = useSelector(getPending);
   return (
     <div>
       <Header
+        isSpiner={isPending}
         color="transparent"
         brand="Fundacja Dorośli Dzieciom"
         fixed
-        rightLinks={<HeaderLinks isSpiner={isDisabled} />}
+        rightLinks={<HeaderLinks isSpiner={isPending} />}
         changeColorOnScroll={{
           height: 400,
           color: 'white',

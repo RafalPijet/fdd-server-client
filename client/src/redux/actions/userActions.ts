@@ -23,5 +23,6 @@ export const cleanCurrentUser = (): CleanUserAction => ({
 
 //SELECTORS
 export const getUser = (rootState: RootState) => rootState.user;
+export const getUserId = (rootState: RootState) => getUser(rootState)._id;
 export const getUserStatus = (rootState: RootState) => getUser(rootState).status;
 export const getUserName = (rootState: RootState) => `${getUser(rootState).firstName} ${getUser(rootState).lastName}`
