@@ -36,7 +36,7 @@ class UserController {
             const messages = await MessageModel.find(target !== 'all' ?
                 { [target]: request.user._id } :
                 { $or: [{ to: request.user._id }, { from: request.user._id }] })
-                .sort({ created: 'asc' }).exec();
+                .sort({ created: 'desc' }).exec();
             res.status(200).json(messages)
 
         } catch (err) {

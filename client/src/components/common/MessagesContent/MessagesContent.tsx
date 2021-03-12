@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import Paper from '@material-ui/core/Paper';
+import { getSuccess, getPending } from '../../../redux/actions/requestActions';
 import { getMessages } from '../../../redux/actions/messageActions';
 import { IMessage } from '../../../types/global';
 import MessageItem from '../MessageItem/MessageItem';
@@ -15,23 +16,21 @@ const MessagesContent: React.FC<Props> = (props) => {
   const messages = useSelector(getMessages);
   const classes: PropsClasses = useStyles({} as StyleProps);
   const { dataType } = props;
-  const [selectedMessage, setSelectedMessage] = useState<string>(
-    'Brak wiadomości'
-  );
-  const [selectedId, setSelectedId] = useState<string>('');
+  const [selectedMessage, setSelectedMessage] = useState<string>('');
+  const [selectedId, setSelectedId] = useState<string>('Brak wiadomości');
+  const isPending = useSelector(getPending);
+  const isSuccess = useSelector(getSuccess);
 
   useEffect(() => {
-    if (messages.length > 0) {
+    if (messages.length > 0 && isSuccess && !isPending) {
       setSelectedMessage(messages[0].content);
       setSelectedId(messages[0]._id);
-    } else {
-      setSelectedMessage('Brak wiadomości');
     }
-  }, [messages.length]);
-
-  useEffect(() => {
-    setSelectedMessage('');
-  }, [dataType]);
+    if (messages.length === 0 && isSuccess && !isPending) {
+      setSelectedMessage('Brak wiadomości');
+      setSelectedId('');
+    }
+  }, [messages.length, isPending, isSuccess]);
 
   const selectedItemHandling = (
     id: string,

@@ -1,3 +1,5 @@
+import { VariantType } from 'notistack';
+
 export type AvailableColors =
     "primary" |
     "info" |
@@ -69,8 +71,15 @@ export interface IMessage {
     new: boolean;
 }
 
+export interface ToastState {
+    isOpen: boolean;
+    content: string;
+    variant: VariantType;
+}
+
 export interface MessageState {
-    messages: IMessage[]
+    messages: IMessage[];
+    toast: ToastState;
 }
 
 export enum TargetOptions {

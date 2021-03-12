@@ -13,7 +13,7 @@ import {
     errorRequest
 } from './actions/requestActions';
 import { addCurrentUser, AddUserAction } from './actions/userActions';
-import { loadUserMessages, LoadMessagesAction } from './actions/messageActions';
+import { loadUserMessages, LoadMessagesAction, setUserToast, SetToastAction } from './actions/messageActions';
 import { TargetOptions } from '../types/global';
 
 const API_URL = " http://localhost:3001/api";
@@ -72,9 +72,9 @@ export const addMessage = (payload: string): ThunkAction<
     Promise<void>,
     any,
     RootState,
-    StartRequestAction | StopRequestAction | ErrorRequestAction
+    StartRequestAction | StopRequestAction | ErrorRequestAction | SetToastAction
 > => async (dispatch, getState) => {
-    dispatch(startRequest())
+    dispatch(startRequest());
 
     try {
         await new Promise(resolve => setTimeout(resolve, 2000));
@@ -83,8 +83,9 @@ export const addMessage = (payload: string): ThunkAction<
                 'Authorization': localStorage.getItem('tokenFDD')
             },
         });
-        dispatch(stopRequest());
         console.log(res.data);
+        dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }))
+        dispatch(stopRequest());
     } catch (err) {
         err.response.data.message ?
             dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
@@ -108,7 +109,7 @@ export const getUserMessages = (target: TargetOptions): ThunkAction<
             },
         })
         console.log(res.data);
-        dispatch(loadUserMessages(res.data))
+        dispatch(loadUserMessages(res.data));
         dispatch(stopRequest());
     } catch (err) {
         err.response.data.message ?

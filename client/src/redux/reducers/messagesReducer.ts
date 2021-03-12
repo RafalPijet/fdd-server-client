@@ -1,17 +1,24 @@
-import { LOAD_MESSAGES, LoadMessagesAction } from '../actions/messageActions';
+import { LOAD_MESSAGES, SET_TOAST, LoadMessagesAction, SetToastAction } from '../actions/messageActions';
 import { MessageState } from '../../types/global';
 
 const initialState: MessageState = {
-    messages: []
+    messages: [],
+    toast: {
+        isOpen: false,
+        content: '',
+        variant: "success"
+    }
 }
 
 const messagesReducer = (
     state: MessageState = initialState,
-    action: LoadMessagesAction
+    action: LoadMessagesAction | SetToastAction
 ) => {
     switch (action.type) {
         case LOAD_MESSAGES:
-            return { ...state, messages: action.payload }
+            return { ...state, messages: action.payload };
+        case SET_TOAST:
+            return { ...state, toast: action.payload }
         default:
             return { ...state };
     }

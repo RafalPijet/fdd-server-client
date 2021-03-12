@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Redirect } from 'react-router';
+import classNames from 'classnames';
+import { VariantType, useSnackbar } from 'notistack';
 import {
   getPending,
   getSuccess,
   getError,
   resetRequest,
 } from '../../../redux/actions/requestActions';
-import { getUserStatus, getUserName } from '../../../redux/actions/userActions';
-import classNames from 'classnames';
+import { getUserStatus } from '../../../redux/actions/userActions';
 import {
   PropsClasses,
   useStyles,
@@ -41,7 +42,6 @@ import {
   Done,
   LockOpen,
 } from '@material-ui/icons';
-import { VariantType, useSnackbar } from 'notistack';
 import image from '../../../images/loginBackground.jpg';
 import { UserStatus } from '../../../types/global';
 
@@ -53,7 +53,6 @@ const LoginPage: React.FC = () => {
   const isErrorRequest = useSelector(getError).isError;
   const errorMessage = useSelector(getError).message;
   const userStatus = useSelector(getUserStatus);
-  const userName = useSelector(getUserName);
   const [isRedirect, setIsRedirect] = useState(false);
   const [cardAnimation, setCardAnimation] = useState(true);
   const [register, setRegister] = useState<IUserRegister>({
@@ -164,18 +163,11 @@ const LoginPage: React.FC = () => {
   useEffect(() => {
     if (!isPendingRequest) {
       if (isSuccessRequest) {
-        handleToast(
-          serviceType === ServiceOptions.register
-            ? `${register.firstName} ${register.lastName} jest zarejestrowanym rodzicem`
-            : `${userName} jest zalogowanym ${
-                userStatus === UserStatus.parent
-                  ? 'rodzicem'
-                  : 'administratorem'
-              }`,
-          'success'
-        );
-
         if (serviceType === ServiceOptions.register) {
+          handleToast(
+            `${register.firstName} ${register.lastName} jest zarejestrowanym rodzicem`,
+            'success'
+          );
           setLogin({
             email: register.email,
             password: register.password,

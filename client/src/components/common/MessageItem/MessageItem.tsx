@@ -21,7 +21,8 @@ const MessageItem: React.FC<Props> = (props) => {
     ...rest
   } = props;
   const [isUnread, setIsUnread] = useState<boolean>(
-    dataType === MessageOptions.incoming && isNew
+    (dataType === MessageOptions.incoming && isNew) ||
+      (dataType === MessageOptions.all && isNew)
   );
   const [isSelected, setIsSelected] = useState<boolean>(false);
   const classes: PropsClasses = useStyles({} as StyleProps);
@@ -38,6 +39,13 @@ const MessageItem: React.FC<Props> = (props) => {
   useEffect(() => {
     setIsSelected(selectedId === _id);
   }, [selectedId]);
+
+  useEffect(() => {
+    return () => {
+      setIsSelected(false);
+      setIsUnread(false);
+    };
+  }, []);
 
   const clickHandling = () => {
     getData(_id, message, isNew);

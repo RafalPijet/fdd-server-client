@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import classNames from 'classnames';
 import { getUserName } from '../../../redux/actions/userActions';
+import { getToast, setUserToast } from '../../../redux/actions/messageActions';
 import { Typography } from '@material-ui/core';
 import { PropsClasses, useStyles, StyleProps } from './ParentZoneStyle';
 import { MessageOptions } from '../../../types/global';
@@ -25,6 +26,7 @@ import {
   getPending,
   getSuccess,
   resetRequest,
+  getError,
 } from '../../../redux/actions/requestActions';
 
 const ParentZone: React.FC = () => {
@@ -32,6 +34,8 @@ const ParentZone: React.FC = () => {
   const userName = useSelector(getUserName);
   const isPending = useSelector(getPending);
   const isSuccess = useSelector(getSuccess);
+  const isError = useSelector(getError).isError;
+  const isToast = useSelector(getToast).isOpen;
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
   const [cardAnimation, setCardAnimation] = useState<boolean>(true);
   const [bodyAnimation, setBodyAnimation] = useState<boolean>(true);
@@ -58,18 +62,29 @@ const ParentZone: React.FC = () => {
       dispatch(getUserMessages(TargetOptions.from));
     } else if (messageType === MessageOptions.all) {
       dispatch(getUserMessages(TargetOptions.all));
-    } else if (messageType === MessageOptions.new) {
-      setBodyAnimation(true);
     }
   }, [messageType]);
 
   useEffect(() => {
     setBodyAnimation(!isPending && isSuccess);
     setIsDisabled(isPending);
-    if (messageType === MessageOptions.new && isSuccess) {
+    if (messageType === MessageOptions.new) {
       setNewMessage('');
+      setBodyAnimation(true);
     }
-  }, [isPending, isSuccess]);
+  }, [isPending, isSuccess, messageType]);
+
+  useEffect(() => {
+    if (isToast)
+      dispatch(
+        setUserToast({
+          isOpen: false,
+          content: '',
+          variant: 'success',
+        })
+      );
+    if (isError) dispatch(resetRequest());
+  }, [isToast, isError]);
 
   const messageOptionsHandling = (
     event: React.ChangeEvent<{}>,
@@ -78,7 +93,7 @@ const ParentZone: React.FC = () => {
     setBodyAnimation(false);
     setTimeout(() => {
       setMessageType(newValue);
-      //   dispatch(resetRequest());
+      dispatch(resetRequest());
     }, 300);
   };
 
