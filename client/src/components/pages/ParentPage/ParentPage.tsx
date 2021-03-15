@@ -45,7 +45,7 @@ const ParentPage: React.FC = () => {
       localStorage.removeItem('expiresInFDD');
       dispatch(cleanCurrentUser());
       dispatch(resetRequest());
-      dispatch(loadUserMessages([]));
+      dispatch(loadUserMessages([], 0));
       dispatch(
         setUserToast({
           isOpen: false,

@@ -16,7 +16,6 @@ const parentZoneStyle = (theme: Theme) => ({
         marginRight: "20px",
         marginTop: "-40px",
         padding: "20px 0",
-        marginBottom: "15px"
     },
     cardFooter: {
         paddingTop: "0rem",
@@ -29,7 +28,7 @@ const parentZoneStyle = (theme: Theme) => ({
         fontSize: ".75rem !important"
     },
     card: {
-        height: '400px',
+        height: '450px',
         backgroundColor: "rgba(255, 255, 255, 0.2)"
     },
     busy: {

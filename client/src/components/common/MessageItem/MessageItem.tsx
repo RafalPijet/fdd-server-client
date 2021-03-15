@@ -29,7 +29,11 @@ const MessageItem: React.FC<Props> = (props) => {
   const userId = useSelector(getUserId);
   const contentClasses = classNames({
     [classes.content]: true,
-    [classes.unread]: isUnread,
+    [classes.unread]:
+      dataType === MessageOptions.outcoming ||
+      (dataType === MessageOptions.all && from === userId)
+        ? false
+        : isUnread,
     [classes.selected]: isSelected,
     [classes.right]:
       dataType === MessageOptions.outcoming ||
@@ -41,6 +45,10 @@ const MessageItem: React.FC<Props> = (props) => {
   }, [selectedId]);
 
   useEffect(() => {
+    setIsUnread(isNew);
+  }, [isNew]);
+
+  useEffect(() => {
     return () => {
       setIsSelected(false);
       setIsUnread(false);
@@ -48,9 +56,7 @@ const MessageItem: React.FC<Props> = (props) => {
   }, []);
 
   const clickHandling = () => {
-    getData(_id, message, isNew);
-    // setIsUnread(!isUnread);
-    // setIsSelected(true);
+    getData(_id, message, from === userId ? false : isNew);
   };
   const itemContent = () => {
     if (

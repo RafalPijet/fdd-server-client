@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import Paper from '@material-ui/core/Paper';
 import { getSuccess, getPending } from '../../../redux/actions/requestActions';
 import { getMessages } from '../../../redux/actions/messageActions';
-import { IMessage } from '../../../types/global';
+import { updateMessageIsReaded } from '../../../redux/thunks';
+import { IMessage, MessageOptions } from '../../../types/global';
 import MessageItem from '../MessageItem/MessageItem';
 import {
   StyleProps,
@@ -20,6 +21,7 @@ const MessagesContent: React.FC<Props> = (props) => {
   const [selectedId, setSelectedId] = useState<string>('Brak wiadomości');
   const isPending = useSelector(getPending);
   const isSuccess = useSelector(getSuccess);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (messages.length > 0 && isSuccess && !isPending) {
@@ -37,9 +39,13 @@ const MessagesContent: React.FC<Props> = (props) => {
     content: string,
     isNew: boolean
   ) => {
-    // console.log(isNew);
     setSelectedMessage(content);
     setSelectedId(id);
+    if (
+      isNew &&
+      (dataType === MessageOptions.incoming || dataType === MessageOptions.all)
+    )
+      dispatch(updateMessageIsReaded(id));
   };
   return (
     <div className={classes.root}>

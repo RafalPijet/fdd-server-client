@@ -13,8 +13,15 @@ import {
     errorRequest
 } from './actions/requestActions';
 import { addCurrentUser, AddUserAction } from './actions/userActions';
-import { loadUserMessages, LoadMessagesAction, setUserToast, SetToastAction } from './actions/messageActions';
-import { TargetOptions } from '../types/global';
+import {
+    loadUserMessages,
+    LoadMessagesAction,
+    setUserToast,
+    SetToastAction,
+    SetMessageIsReaded,
+    setMessageIsReaded
+} from './actions/messageActions';
+import { IMessage, TargetOptions } from '../types/global';
 
 const API_URL = " http://localhost:3001/api";
 
@@ -93,24 +100,46 @@ export const addMessage = (payload: string): ThunkAction<
     }
 }
 
-export const getUserMessages = (target: TargetOptions): ThunkAction<
+export const getUserMessages = (target: TargetOptions, page: number, rowsPerPage: number): ThunkAction<
     Promise<void>,
     any,
     RootState,
     StartRequestAction | StopRequestAction | ErrorRequestAction | LoadMessagesAction
 > => async (dispatch, getState) => {
     dispatch(startRequest());
+    let start = Math.ceil(page * rowsPerPage);
+    let limit = rowsPerPage;
 
     try {
         await new Promise(resolve => setTimeout(resolve, 2000));
-        let res: AxiosResponse = await axios.get(`${API_URL}/users/messages/${target}`, {
+        let res: AxiosResponse = await axios.get(`${API_URL}/users/messages/${target}/${start}/${limit}`, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD')
             },
         })
-        console.log(res.data);
-        dispatch(loadUserMessages(res.data));
+        dispatch(loadUserMessages(res.data.messages, res.data.quantity));
         dispatch(stopRequest());
+    } catch (err) {
+        err.response.data.message ?
+            dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
+            dispatch(errorRequest({ isError: true, message: 'Something went wrong' }));
+    }
+}
+
+export const updateMessageIsReaded = (_id: IMessage["_id"]): ThunkAction<
+    Promise<void>,
+    any,
+    RootState,
+    ErrorRequestAction | SetMessageIsReaded
+> => async (dispatch, getState) => {
+
+    try {
+        let res: AxiosResponse = await axios.put(`${API_URL}/users/messages/readed`, { _id }, {
+            headers: {
+                'Authorization': localStorage.getItem('tokenFDD')
+            },
+        })
+        if (res.status === 202) dispatch(setMessageIsReaded(_id));
     } catch (err) {
         err.response.data.message ?
             dispatch(errorRequest({ isError: true, message: err.response.data.message })) :

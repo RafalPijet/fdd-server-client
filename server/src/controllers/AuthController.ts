@@ -40,10 +40,10 @@ class AuthController {
                     }
                     res.status(201).json({ dto, authorization: tokenData })
                 } else {
-                    next(new WrongCredentialsException('password'));
+                    next(new WrongCredentialsException('hasło'));
                 }
             } else {
-                next(new WrongCredentialsException('email'));
+                next(new WrongCredentialsException('adres email'));
             }
         } catch (err) {
             next(new HttpException(404, `User not found. - ${err}`))

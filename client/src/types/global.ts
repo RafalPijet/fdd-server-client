@@ -79,6 +79,7 @@ export interface ToastState {
 
 export interface MessageState {
     messages: IMessage[];
+    quantity: number;
     toast: ToastState;
 }
 

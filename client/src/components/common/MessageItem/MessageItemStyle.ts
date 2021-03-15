@@ -29,6 +29,7 @@ const messageItemStyle = (theme: Theme) => ({
         fontWeight: 300,
         padding: "5px",
         position: "relative",
+        margin: "7px 0"
     },
     right: {
         textAlign: 'right'

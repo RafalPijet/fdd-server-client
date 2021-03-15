@@ -5,7 +5,7 @@ import { MessageOptions } from '../../../types/global';
 
 const messagesContentStyle = (theme: Theme) => ({
     root: {
-        height: "230px",
+        height: "300px",
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between"

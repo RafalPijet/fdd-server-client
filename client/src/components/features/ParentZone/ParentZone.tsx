@@ -2,7 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import classNames from 'classnames';
 import { getUserName } from '../../../redux/actions/userActions';
-import { getToast, setUserToast } from '../../../redux/actions/messageActions';
+import {
+  getToast,
+  setUserToast,
+  getQuantity,
+} from '../../../redux/actions/messageActions';
 import { Typography } from '@material-ui/core';
 import { PropsClasses, useStyles, StyleProps } from './ParentZoneStyle';
 import { MessageOptions } from '../../../types/global';
@@ -21,6 +25,7 @@ import CardFooter from '../../common/CardFooter/CardFooter';
 import CustomButton from '../../common/CustomButton/CustomButton';
 import CustomInput from '../../common/CustomInput/CustomInput';
 import MessagesContent from '../../common/MessagesContent/MessagesContent';
+import CustomPagination from '../../common/CustomPagination/CustomPagination';
 import { TargetOptions } from '../../../types/global';
 import {
   getPending,
@@ -36,6 +41,7 @@ const ParentZone: React.FC = () => {
   const isSuccess = useSelector(getSuccess);
   const isError = useSelector(getError).isError;
   const isToast = useSelector(getToast).isOpen;
+  const quantity = useSelector(getQuantity);
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
   const [cardAnimation, setCardAnimation] = useState<boolean>(true);
   const [bodyAnimation, setBodyAnimation] = useState<boolean>(true);
@@ -43,6 +49,8 @@ const ParentZone: React.FC = () => {
     MessageOptions.incoming
   );
   const [newMessage, setNewMessage] = useState<string>('');
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(6);
   const cardClasses = classNames({
     [classes.card]: true,
     [classes.cardHidden]: cardAnimation,
@@ -57,13 +65,13 @@ const ParentZone: React.FC = () => {
 
   useEffect(() => {
     if (messageType === MessageOptions.incoming) {
-      dispatch(getUserMessages(TargetOptions.to));
+      dispatch(getUserMessages(TargetOptions.to, page, rowsPerPage));
     } else if (messageType === MessageOptions.outcoming) {
-      dispatch(getUserMessages(TargetOptions.from));
+      dispatch(getUserMessages(TargetOptions.from, page, rowsPerPage));
     } else if (messageType === MessageOptions.all) {
-      dispatch(getUserMessages(TargetOptions.all));
+      dispatch(getUserMessages(TargetOptions.all, page, rowsPerPage));
     }
-  }, [messageType]);
+  }, [messageType, page, rowsPerPage]);
 
   useEffect(() => {
     setBodyAnimation(!isPending && isSuccess);
@@ -86,15 +94,34 @@ const ParentZone: React.FC = () => {
     if (isError) dispatch(resetRequest());
   }, [isToast, isError]);
 
+  const handleChangePage = (
+    event: React.MouseEvent<HTMLButtonElement> | null,
+    newPage: number
+  ) => {
+    setPage(newPage);
+    dispatch(resetRequest());
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+    dispatch(resetRequest());
+  };
+
   const messageOptionsHandling = (
     event: React.ChangeEvent<{}>,
     newValue: MessageOptions
   ) => {
-    setBodyAnimation(false);
-    setTimeout(() => {
-      setMessageType(newValue);
-      dispatch(resetRequest());
-    }, 300);
+    if (newValue !== messageType) {
+      setPage(0);
+      setBodyAnimation(false);
+      setTimeout(() => {
+        setMessageType(newValue);
+        dispatch(resetRequest());
+      }, 300);
+    }
   };
 
   const newMessageHandling = (
@@ -104,7 +131,9 @@ const ParentZone: React.FC = () => {
   };
 
   const setMessageHandling = () => {
-    dispatch(addMessage(newMessage));
+    if (newMessage.length > 0) {
+      dispatch(addMessage(newMessage));
+    }
   };
 
   const bodyContent = () => {
@@ -217,13 +246,26 @@ const ParentZone: React.FC = () => {
           <CardBody>{bodyContent()}</CardBody>
         </Grow>
         <CardFooter className={classes.cardFooter}>
-          <CustomButton
-            setColor="primary"
-            setSize="md"
-            onClick={setMessageHandling}
-          >
-            Wyslij
-          </CustomButton>
+          {messageType !== MessageOptions.new ? (
+            <CustomPagination
+              rowsPerPageOptions={[6, 10, 20]}
+              isHidden={isPending}
+              quantity={quantity}
+              onChangePage={handleChangePage}
+              onChangeRowsPerPage={handleChangeRowsPerPage}
+              page={page}
+              rowsPerPage={rowsPerPage}
+            />
+          ) : (
+            <CustomButton
+              disabled={isDisabled || newMessage.length === 0}
+              setColor="primary"
+              setSize="md"
+              onClick={setMessageHandling}
+            >
+              Wyślij
+            </CustomButton>
+          )}
         </CardFooter>
       </Card>
     </div>
