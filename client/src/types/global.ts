@@ -71,6 +71,16 @@ export interface IMessage {
     new: boolean;
 }
 
+export interface IOutsideMessage {
+    _id: string;
+    created: string;
+    name: string;
+    email: string;
+    content: string;
+    new: boolean;
+    answer?: string;
+}
+
 export interface ToastState {
     isOpen: boolean;
     content: string;

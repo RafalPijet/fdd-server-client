@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import {
   PropsClasses,
   useStyles,
@@ -6,15 +7,35 @@ import {
   Props,
 } from './MessageSectionStyle';
 import { Typography } from '@material-ui/core';
-
+import { IOutsideMessage } from '../../../types/global';
 import GridContainer from '../../common/Grid/GridContainer';
 import GridItem from '../../common/Grid/GridItem';
 import CustomInput from '../../common/CustomInput/CustomInput';
 import CustomButton from '../../common/CustomButton/CustomButton';
+import { addOutsideMessage } from '../../../redux/thunks';
 
 const MessageSection: React.FC<Props> = (props) => {
   const { isDisabled, ...rest } = props;
   const classes: PropsClasses = useStyles({} as StyleProps);
+  const [message, setMessage] = useState<
+    Omit<IOutsideMessage, '_id' | 'created' | 'new' | 'answer'>
+  >({
+    name: '',
+    email: '',
+    content: '',
+  });
+  const dispatch = useDispatch();
+
+  const handleTextField = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setMessage({ ...message, [event.target.id]: event.target.value });
+  };
+
+  const handleSendButton = () => {
+    dispatch(addOutsideMessage(message));
+  };
+
   return (
     <div {...rest} className={classes.section}>
       <GridContainer justify="center">
@@ -32,6 +53,9 @@ const MessageSection: React.FC<Props> = (props) => {
             <GridContainer>
               <GridItem xs={12} sm={12} md={6}>
                 <CustomInput
+                  isDisabled={isDisabled}
+                  onChange={handleTextField}
+                  value={message.name}
                   labelText="imię i nazwisko"
                   id="name"
                   formControlProps={{
@@ -41,6 +65,9 @@ const MessageSection: React.FC<Props> = (props) => {
               </GridItem>
               <GridItem xs={12} sm={12} md={6}>
                 <CustomInput
+                  isDisabled={isDisabled}
+                  onChange={handleTextField}
+                  value={message.email}
                   labelText="email"
                   id="email"
                   formControlProps={{
@@ -50,8 +77,11 @@ const MessageSection: React.FC<Props> = (props) => {
               </GridItem>
               <GridItem xs={12} sm={12} md={12}>
                 <CustomInput
+                  isDisabled={isDisabled}
+                  onChange={handleTextField}
+                  value={message.content}
                   labelText="wiadomość"
-                  id="message"
+                  id="content"
                   formControlProps={{
                     fullWidth: true,
                   }}
@@ -62,7 +92,12 @@ const MessageSection: React.FC<Props> = (props) => {
                 />
               </GridItem>
               <GridItem container justify="center">
-                <CustomButton setColor="primary" setSize="md">
+                <CustomButton
+                  onClick={handleSendButton}
+                  setColor="primary"
+                  setSize="md"
+                  disabled={isDisabled}
+                >
                   Wyślij
                 </CustomButton>
               </GridItem>

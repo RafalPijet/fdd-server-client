@@ -5,7 +5,7 @@ import { title } from '../../../styles/globalStyles';
 
 const messageStyle = (theme: Theme) => ({
     section: {
-        padding: "70px 0"
+        padding: "70px 100px"
     },
     title: {
         ...title,

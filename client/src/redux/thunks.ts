@@ -21,7 +21,7 @@ import {
     SetMessageIsReaded,
     setMessageIsReaded
 } from './actions/messageActions';
-import { IMessage, TargetOptions } from '../types/global';
+import { IMessage, TargetOptions, IOutsideMessage } from '../types/global';
 
 const API_URL = " http://localhost:3001/api";
 
@@ -90,7 +90,26 @@ export const addMessage = (payload: string): ThunkAction<
                 'Authorization': localStorage.getItem('tokenFDD')
             },
         });
-        console.log(res.data);
+        dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }))
+        dispatch(stopRequest());
+    } catch (err) {
+        err.response.data.message ?
+            dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
+            dispatch(errorRequest({ isError: true, message: 'Something went wrong' }));
+    }
+}
+
+export const addOutsideMessage = (payload: Omit<IOutsideMessage, '_id' | 'created' | 'new' | 'answer'>): ThunkAction<
+    Promise<void>,
+    any,
+    RootState,
+    StartRequestAction | StopRequestAction | ErrorRequestAction | SetToastAction
+> => async (dispatch, getState) => {
+    dispatch(startRequest());
+
+    try {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        let res: AxiosResponse = await axios.post(`${API_URL}/auth/message`, payload);
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }))
         dispatch(stopRequest());
     } catch (err) {

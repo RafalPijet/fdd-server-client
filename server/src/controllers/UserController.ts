@@ -3,8 +3,7 @@ import { controller } from './decorators';
 import { post, get, put } from '../routes';
 import { RequestWithUser } from '../middleware';
 import HttpException from '../exceptions/HttpException';
-import { buildUser, IUser, UserModel, IMessage, buildMessage, MessageModel } from '../models';
-import { ValidatorKeys, bodyValidator } from './decorators';
+import { IMessage, buildMessage, MessageModel } from '../models';
 
 @controller('/api/users')
 class UserController {

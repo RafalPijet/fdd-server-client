@@ -6,6 +6,7 @@ import helmet from 'helmet';
 import * as dotenv from 'dotenv';
 import { AppRouter } from './routes';
 import "./controllers/AuthController";
+import "./controllers/AdminController";
 import "./controllers/UserController";
 import { errorMiddleware } from './middleware'
 dotenv.config();
@@ -33,7 +34,8 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 mongoose.connect(process.env.DB!, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    useCreateIndex: true
+    useCreateIndex: true,
+    useFindAndModify: false
 })
 let db: Connection = mongoose.connection;
 db.once('open', (): void => {

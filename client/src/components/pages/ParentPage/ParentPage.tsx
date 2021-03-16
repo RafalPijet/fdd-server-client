@@ -10,7 +10,7 @@ import Jumbotron from '../../common/Jumbotron/Jumbotron';
 import GridContainer from '../../common/Grid/GridContainer';
 import GridItem from '../../common/Grid/GridItem';
 import Footer from '../../common/Footer/Footer';
-import ParentZone from '../../features/ParentZone/ParentZone';
+import ParentZone from '../../features/ParentMessages/ParentMessages';
 import ChildrenZone from '../../features/ChildrenZone/ChildrenZone';
 import MessageSection from '../../features/MessageSection/MessageSection';
 import { cleanCurrentUser } from '../../../redux/actions/userActions';

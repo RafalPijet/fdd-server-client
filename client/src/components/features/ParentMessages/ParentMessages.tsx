@@ -8,7 +8,7 @@ import {
   getQuantity,
 } from '../../../redux/actions/messageActions';
 import { Typography } from '@material-ui/core';
-import { PropsClasses, useStyles, StyleProps } from './ParentZoneStyle';
+import { PropsClasses, useStyles, StyleProps } from './ParentMessagesStyle';
 import { MessageOptions } from '../../../types/global';
 import { addMessage, getUserMessages } from '../../../redux/thunks';
 import BottomNavigation from '@material-ui/core/BottomNavigation';
@@ -99,7 +99,6 @@ const ParentZone: React.FC = () => {
     newPage: number
   ) => {
     setPage(newPage);
-    dispatch(resetRequest());
   };
 
   const handleChangeRowsPerPage = (
@@ -107,7 +106,6 @@ const ParentZone: React.FC = () => {
   ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
-    dispatch(resetRequest());
   };
 
   const messageOptionsHandling = (

@@ -3,7 +3,7 @@ import { Request, Response, NextFunction } from 'express';
 import { controller, bodyValidator, ValidatorKeys } from './decorators';
 import { createToken } from './token.service';
 import { post } from '../routes';
-import { UserModel, IUser, buildUser } from '../models';
+import { UserModel, IUser, buildUser, IOutsideMessage, buildOutSideMessage } from '../models';
 import HttpException from '../exceptions/HttpException';
 import UserWithThatEmailAlreadyExistsException from '../exceptions/UserWithThatEmailAlreadyExistsException';
 import WrongCredentialsException from '../exceptions/WrongCredentialException';
@@ -68,6 +68,25 @@ class AuthController {
             }
         } catch (err) {
             next(new HttpException(404, `Rodzic nie został dodany!. - ${err}`))
+        }
+    }
+
+    @post('/message')
+    @bodyValidator(ValidatorKeys.addMessage)
+    async addMessage(req: Request, res: Response, next: NextFunction): Promise<void> {
+
+        try {
+            const payload = req.body;
+            const message: IOutsideMessage = {
+                name: payload.name,
+                email: payload.email,
+                content: payload.content
+            }
+            const newMessage = buildOutSideMessage(message);
+            await newMessage.save();
+            res.status(201).json({ message: "Wiadomość została wysłana." });
+        } catch (err) {
+            next(new HttpException(404, `Wiadomość nie została wysłana!. - ${err}`))
         }
     }
 }
