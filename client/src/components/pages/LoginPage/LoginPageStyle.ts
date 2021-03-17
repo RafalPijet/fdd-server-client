@@ -177,5 +177,4 @@ export interface IUserLogin {
     password: string;
 }
 
-export type PropsClasses = Record<keyof StyleProps, string>;
 export const useStyles = makeStyles(loginPageStyle as any);

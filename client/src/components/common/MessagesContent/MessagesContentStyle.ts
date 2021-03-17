@@ -41,5 +41,4 @@ export interface StyleProps {
     list: BaseCSSProperties;
 }
 
-export type PropsClasses = Record<keyof StyleProps, string>;
 export const useStyles = makeStyles(messagesContentStyle as any);

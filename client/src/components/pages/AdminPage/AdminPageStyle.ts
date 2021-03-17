@@ -44,5 +44,4 @@ export interface StyleProps {
     mainRaised: BaseCSSProperties
 }
 
-export type PropsClasses = Record<keyof StyleProps, string>;
 export const useStyles = makeStyles(adminPageStyle as any);

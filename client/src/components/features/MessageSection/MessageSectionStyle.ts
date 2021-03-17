@@ -41,5 +41,4 @@ export interface StyleProps {
     textArea: BaseCSSProperties
 }
 
-export type PropsClasses = Record<keyof StyleProps, string>;
 export const useStyles = makeStyles(messageStyle as any);

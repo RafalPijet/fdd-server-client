@@ -1,22 +1,22 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import {
-  PropsClasses,
-  useStyles,
-  StyleProps,
-  Props,
-} from './MessageSectionStyle';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useStyles, StyleProps, Props } from './MessageSectionStyle';
 import { Typography } from '@material-ui/core';
 import { IOutsideMessage } from '../../../types/global';
 import GridContainer from '../../common/Grid/GridContainer';
 import GridItem from '../../common/Grid/GridItem';
 import CustomInput from '../../common/CustomInput/CustomInput';
 import CustomButton from '../../common/CustomButton/CustomButton';
+import {
+  resetRequest,
+  getError,
+  getSuccess,
+} from '../../../redux/actions/requestActions';
+import { setUserToast, getToast } from '../../../redux/actions/messageActions';
 import { addOutsideMessage } from '../../../redux/thunks';
 
 const MessageSection: React.FC<Props> = (props) => {
   const { isDisabled, ...rest } = props;
-  const classes: PropsClasses = useStyles({} as StyleProps);
   const [message, setMessage] = useState<
     Omit<IOutsideMessage, '_id' | 'created' | 'new' | 'answer'>
   >({
@@ -24,7 +24,67 @@ const MessageSection: React.FC<Props> = (props) => {
     email: '',
     content: '',
   });
+  const [isErrorValidation, setIsErrorValidation] = useState<
+    Record<
+      keyof Omit<IOutsideMessage, '_id' | 'created' | 'new' | 'answer'>,
+      boolean
+    >
+  >({
+    name: false,
+    email: false,
+    content: false,
+  });
+  const [isSendAccess, setIsSendAccess] = useState<boolean>(false);
   const dispatch = useDispatch();
+  const isError = useSelector(getError).isError;
+  const isToast = useSelector(getToast).isOpen;
+  const isSuccess = useSelector(getSuccess);
+  const classes = useStyles({} as StyleProps);
+
+  useEffect(() => {
+    setIsErrorValidation({
+      ...isErrorValidation,
+      name: message.name.length > 0 && message.name.length < 5,
+      email:
+        (!message.email.includes('@') || !message.email.includes('.')) &&
+        message.email.length !== 0,
+      content: message.content.length > 0 && message.content.length < 5,
+    });
+  }, [message]);
+
+  useEffect(() => {
+    setIsSendAccess(
+      message.name.length > 0 &&
+        message.email.length > 0 &&
+        message.content.length > 0 &&
+        !isErrorValidation.name &&
+        !isErrorValidation.email &&
+        !isErrorValidation.content
+    );
+  }, [message, isErrorValidation]);
+
+  useEffect(() => {
+    if (isSendAccess) {
+      if (isError) dispatch(resetRequest());
+      if (isToast)
+        dispatch(
+          setUserToast({
+            isOpen: false,
+            content: '',
+            variant: 'success',
+          })
+        );
+    }
+    if (isSuccess) {
+      setMessage({
+        name: '',
+        email: '',
+        content: '',
+      });
+      setIsSendAccess(false);
+      dispatch(resetRequest());
+    }
+  }, [isSendAccess, isSuccess]);
 
   const handleTextField = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -56,6 +116,7 @@ const MessageSection: React.FC<Props> = (props) => {
                   isDisabled={isDisabled}
                   onChange={handleTextField}
                   value={message.name}
+                  error={isErrorValidation.name}
                   labelText="imię i nazwisko"
                   id="name"
                   formControlProps={{
@@ -68,6 +129,7 @@ const MessageSection: React.FC<Props> = (props) => {
                   isDisabled={isDisabled}
                   onChange={handleTextField}
                   value={message.email}
+                  error={isErrorValidation.email}
                   labelText="email"
                   id="email"
                   formControlProps={{
@@ -80,6 +142,7 @@ const MessageSection: React.FC<Props> = (props) => {
                   isDisabled={isDisabled}
                   onChange={handleTextField}
                   value={message.content}
+                  error={isErrorValidation.content}
                   labelText="wiadomość"
                   id="content"
                   formControlProps={{
@@ -96,7 +159,7 @@ const MessageSection: React.FC<Props> = (props) => {
                   onClick={handleSendButton}
                   setColor="primary"
                   setSize="md"
-                  disabled={isDisabled}
+                  disabled={!isSendAccess || isDisabled}
                 >
                   Wyślij
                 </CustomButton>

@@ -11,7 +11,6 @@ import {
 } from '../../../redux/actions/requestActions';
 import { getUserStatus } from '../../../redux/actions/userActions';
 import {
-  PropsClasses,
   useStyles,
   StyleProps,
   ServiceOptions,
@@ -46,7 +45,7 @@ import image from '../../../images/loginBackground.jpg';
 import { UserStatus } from '../../../types/global';
 
 const LoginPage: React.FC = () => {
-  const classes: PropsClasses = useStyles({} as StyleProps);
+  const classes = useStyles({} as StyleProps);
   const dispatch = useDispatch();
   const isPendingRequest = useSelector(getPending);
   const isSuccessRequest = useSelector(getSuccess);
@@ -54,7 +53,7 @@ const LoginPage: React.FC = () => {
   const errorMessage = useSelector(getError).message;
   const userStatus = useSelector(getUserStatus);
   const [isRedirect, setIsRedirect] = useState(false);
-  const [cardAnimation, setCardAnimation] = useState(true);
+  const [isCardAnimation, setIsCardAnimation] = useState(true);
   const [register, setRegister] = useState<IUserRegister>({
     firstName: '',
     lastName: '',
@@ -89,7 +88,7 @@ const LoginPage: React.FC = () => {
   const [isAccess, setIsAccess] = useState<boolean>(false);
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
   setTimeout(() => {
-    setCardAnimation(false);
+    setIsCardAnimation(false);
   }, 700);
 
   const busyClasses = classNames({
@@ -270,7 +269,7 @@ const LoginPage: React.FC = () => {
                 transition: '.2s',
               }}
             >
-              <Card className={cardAnimation ? classes.cardHidden : ''}>
+              <Card className={isCardAnimation ? classes.cardHidden : ''}>
                 <div
                   style={{
                     minWidth: '330px',

@@ -6,16 +6,11 @@ import { getMessages } from '../../../redux/actions/messageActions';
 import { updateMessageIsReaded } from '../../../redux/thunks';
 import { IMessage, MessageOptions } from '../../../types/global';
 import MessageItem from '../MessageItem/MessageItem';
-import {
-  StyleProps,
-  PropsClasses,
-  useStyles,
-  Props,
-} from './MessagesContentStyle';
+import { StyleProps, useStyles, Props } from './MessagesContentStyle';
 
 const MessagesContent: React.FC<Props> = (props) => {
   const messages = useSelector(getMessages);
-  const classes: PropsClasses = useStyles({} as StyleProps);
+  const classes = useStyles({} as StyleProps);
   const { dataType } = props;
   const [selectedMessage, setSelectedMessage] = useState<string>('');
   const [selectedId, setSelectedId] = useState<string>('Brak wiadomości');

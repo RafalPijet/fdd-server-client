@@ -8,7 +8,7 @@ import {
   getQuantity,
 } from '../../../redux/actions/messageActions';
 import { Typography } from '@material-ui/core';
-import { PropsClasses, useStyles, StyleProps } from './ParentMessagesStyle';
+import { useStyles, StyleProps, PropsClasses } from './ParentMessagesStyle';
 import { MessageOptions } from '../../../types/global';
 import { addMessage, getUserMessages } from '../../../redux/thunks';
 import BottomNavigation from '@material-ui/core/BottomNavigation';
@@ -34,7 +34,7 @@ import {
   getError,
 } from '../../../redux/actions/requestActions';
 
-const ParentZone: React.FC = () => {
+const ParentMessages: React.FC = () => {
   const classes: PropsClasses = useStyles({} as StyleProps);
   const userName = useSelector(getUserName);
   const isPending = useSelector(getPending);
@@ -43,7 +43,7 @@ const ParentZone: React.FC = () => {
   const isToast = useSelector(getToast).isOpen;
   const quantity = useSelector(getQuantity);
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
-  const [cardAnimation, setCardAnimation] = useState<boolean>(true);
+  const [isCardAnimation, setIsCardAnimation] = useState<boolean>(true);
   const [bodyAnimation, setBodyAnimation] = useState<boolean>(true);
   const [messageType, setMessageType] = useState<MessageOptions>(
     MessageOptions.incoming
@@ -53,14 +53,14 @@ const ParentZone: React.FC = () => {
   const [rowsPerPage, setRowsPerPage] = useState(6);
   const cardClasses = classNames({
     [classes.card]: true,
-    [classes.cardHidden]: cardAnimation,
+    [classes.cardHidden]: isCardAnimation,
   });
   const dispatch = useDispatch();
   const busyClasses = classNames({
     [classes.busy]: isDisabled,
   });
   setTimeout(() => {
-    setCardAnimation(false);
+    setIsCardAnimation(false);
   }, 700);
 
   useEffect(() => {
@@ -167,7 +167,7 @@ const ParentZone: React.FC = () => {
 
   return (
     <div>
-      <Zoom in={!cardAnimation} timeout={1000}>
+      <Zoom in={!isCardAnimation} timeout={1000}>
         <Typography
           variant="h5"
           align="center"
@@ -270,4 +270,4 @@ const ParentZone: React.FC = () => {
   );
 };
 
-export default ParentZone;
+export default ParentMessages;
