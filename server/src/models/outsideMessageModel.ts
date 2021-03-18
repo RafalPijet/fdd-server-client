@@ -19,7 +19,7 @@ const outsideMessageSchema = new Schema({
     answer: { type: String, default: '' }
 })
 
-export const OutSideMessage = mongoose.model<IOutsideMessage & mongoose.Document>('OutsideMessage', outsideMessageSchema);
+export const OutSideMessageModel = mongoose.model<IOutsideMessage & mongoose.Document>('OutsideMessage', outsideMessageSchema);
 export const buildOutSideMessage = (data: IOutsideMessage) => {
-    return new OutSideMessage(data);
+    return new OutSideMessageModel(data);
 }

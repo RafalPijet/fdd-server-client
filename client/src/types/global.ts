@@ -31,6 +31,11 @@ export enum UserStatus {
     null = ""
 }
 
+export enum ServiceOptions {
+    login,
+    register
+}
+
 export enum MessageOptions {
     all,
     incoming,
@@ -66,6 +71,8 @@ export interface IMessage {
     content: string;
     _id: string;
     from: string;
+    fromName?: string | undefined;
+    fromEmail?: string | undefined;
     to: string;
     created: string;
     new: boolean;

@@ -11,20 +11,13 @@ import { Typography } from '@material-ui/core';
 import { useStyles, StyleProps, PropsClasses } from './ParentMessagesStyle';
 import { MessageOptions } from '../../../types/global';
 import { addMessage, getUserMessages } from '../../../redux/thunks';
-import BottomNavigation from '@material-ui/core/BottomNavigation';
-import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
 import Zoom from '@material-ui/core/Zoom';
 import Grow from '@material-ui/core/Grow';
 import Card from '../../common/Card/Card';
 import CardHeader from '../../common/CardHeader/CardHeader';
-import MessageIcon from '@material-ui/icons/Message';
-import CommentIcon from '@material-ui/icons/Comment';
-import RateReviewSharpIcon from '@material-ui/icons/RateReviewSharp';
 import CardBody from '../../common/CardBody/CardBody';
 import CardFooter from '../../common/CardFooter/CardFooter';
 import CustomButton from '../../common/CustomButton/CustomButton';
-import CustomInput from '../../common/CustomInput/CustomInput';
-import MessagesContent from '../../common/MessagesContent/MessagesContent';
 import CustomPagination from '../../common/CustomPagination/CustomPagination';
 import { TargetOptions } from '../../../types/global';
 import {
@@ -33,6 +26,9 @@ import {
   resetRequest,
   getError,
 } from '../../../redux/actions/requestActions';
+import CustomBottomNavigation from '../../common/CustomBottomNavigation/CustomBottomNavigation';
+import MessagesBody from '../../common/MessagesBody/MessagesBody';
+import { naviMessagesData } from '../../../data/entry';
 
 const ParentMessages: React.FC = () => {
   const classes: PropsClasses = useStyles({} as StyleProps);
@@ -44,7 +40,7 @@ const ParentMessages: React.FC = () => {
   const quantity = useSelector(getQuantity);
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
   const [isCardAnimation, setIsCardAnimation] = useState<boolean>(true);
-  const [bodyAnimation, setBodyAnimation] = useState<boolean>(true);
+  const [isBodyAnimation, setIsBodyAnimation] = useState<boolean>(true);
   const [messageType, setMessageType] = useState<MessageOptions>(
     MessageOptions.incoming
   );
@@ -56,9 +52,7 @@ const ParentMessages: React.FC = () => {
     [classes.cardHidden]: isCardAnimation,
   });
   const dispatch = useDispatch();
-  const busyClasses = classNames({
-    [classes.busy]: isDisabled,
-  });
+
   setTimeout(() => {
     setIsCardAnimation(false);
   }, 700);
@@ -74,11 +68,11 @@ const ParentMessages: React.FC = () => {
   }, [messageType, page, rowsPerPage]);
 
   useEffect(() => {
-    setBodyAnimation(!isPending && isSuccess);
+    setIsBodyAnimation(!isPending && isSuccess);
     setIsDisabled(isPending);
     if (messageType === MessageOptions.new) {
       setNewMessage('');
-      setBodyAnimation(true);
+      setIsBodyAnimation(true);
     }
   }, [isPending, isSuccess, messageType]);
 
@@ -114,7 +108,7 @@ const ParentMessages: React.FC = () => {
   ) => {
     if (newValue !== messageType) {
       setPage(0);
-      setBodyAnimation(false);
+      setIsBodyAnimation(false);
       setTimeout(() => {
         setMessageType(newValue);
         dispatch(resetRequest());
@@ -131,37 +125,6 @@ const ParentMessages: React.FC = () => {
   const setMessageHandling = () => {
     if (newMessage.length > 0) {
       dispatch(addMessage(newMessage));
-    }
-  };
-
-  const bodyContent = () => {
-    if (messageType === MessageOptions.all) {
-      return <MessagesContent dataType={messageType} />;
-    } else if (messageType === MessageOptions.incoming) {
-      return <MessagesContent dataType={messageType} />;
-    } else if (messageType === MessageOptions.outcoming) {
-      return <MessagesContent dataType={messageType} />;
-    } else if (messageType === MessageOptions.new) {
-      return (
-        <div>
-          <CustomInput
-            isDisabled={isDisabled}
-            labelText="wiadomość"
-            id="newMessage"
-            value={newMessage}
-            onChange={newMessageHandling}
-            formControlProps={{
-              fullWidth: true,
-            }}
-            white
-            inputProps={{
-              multiline: true,
-              rows: 7,
-              autoFocus: true,
-            }}
-          />
-        </div>
-      );
     }
   };
 
@@ -183,65 +146,25 @@ const ParentMessages: React.FC = () => {
           }}
         >
           <CardHeader className={classes.cardHeader} color="primaryCardHeader">
-            <BottomNavigation
-              onChange={messageOptionsHandling}
+            <CustomBottomNavigation
+              disabled={isDisabled}
               value={messageType}
-              style={{ backgroundColor: 'transparent' }}
-            >
-              <BottomNavigationAction
-                disabled={isDisabled}
-                className={busyClasses}
-                classes={{
-                  selected: classes.selectTab,
-                }}
-                label="Przychodzące"
-                value={MessageOptions.incoming}
-                style={{ color: '#fff' }}
-                icon={<MessageIcon />}
-              />
-              <BottomNavigationAction
-                disabled={isDisabled}
-                className={busyClasses}
-                classes={{
-                  selected: classes.selectTab,
-                }}
-                label="Wychodzące"
-                value={MessageOptions.outcoming}
-                style={{ color: '#fff' }}
-                icon={<CommentIcon />}
-              />
-              <BottomNavigationAction
-                disabled={isDisabled}
-                className={busyClasses}
-                classes={{
-                  selected: classes.selectTab,
-                }}
-                label="Wszystkie"
-                value={MessageOptions.all}
-                style={{ color: '#fff' }}
-                icon={
-                  <span>
-                    <MessageIcon />
-                    <CommentIcon />
-                  </span>
-                }
-              />
-              <BottomNavigationAction
-                disabled={isDisabled}
-                className={busyClasses}
-                classes={{
-                  selected: classes.selectTab,
-                }}
-                label="Nowa"
-                value={MessageOptions.new}
-                style={{ color: '#fff' }}
-                icon={<RateReviewSharpIcon />}
-              />
-            </BottomNavigation>
+              onChange={messageOptionsHandling}
+              items={naviMessagesData}
+            />
           </CardHeader>
         </div>
-        <Grow in={bodyAnimation}>
-          <CardBody>{bodyContent()}</CardBody>
+        <Grow in={isBodyAnimation}>
+          <CardBody>
+            <MessagesBody
+              messageType={messageType}
+              disabled={isDisabled}
+              label="wiadomość"
+              value={newMessage}
+              onChange={newMessageHandling}
+              isAdmin={false}
+            />
+          </CardBody>
         </Grow>
         <CardFooter className={classes.cardFooter}>
           {messageType !== MessageOptions.new ? (

@@ -31,7 +31,8 @@ const messagesContentStyle = (theme: Theme) => ({
 })
 
 export interface Props {
-    dataType: Exclude<MessageOptions, MessageOptions.new>
+    dataType: Exclude<MessageOptions, MessageOptions.new>;
+    isAdmin: boolean;
 }
 
 export interface StyleProps {

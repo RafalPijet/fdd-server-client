@@ -11,8 +11,14 @@ import { StyleProps, useStyles, Props } from './MessagesContentStyle';
 const MessagesContent: React.FC<Props> = (props) => {
   const messages = useSelector(getMessages);
   const classes = useStyles({} as StyleProps);
-  const { dataType } = props;
+  const { dataType, isAdmin } = props;
   const [selectedMessage, setSelectedMessage] = useState<string>('');
+  const [selectedFromName, setSelectedFromName] = useState<string | undefined>(
+    undefined
+  );
+  const [selectedFromEmail, setSelectedFromEmail] = useState<
+    string | undefined
+  >(undefined);
   const [selectedId, setSelectedId] = useState<string>('Brak wiadomości');
   const isPending = useSelector(getPending);
   const isSuccess = useSelector(getSuccess);
@@ -32,9 +38,13 @@ const MessagesContent: React.FC<Props> = (props) => {
   const selectedItemHandling = (
     id: string,
     content: string,
-    isNew: boolean
+    isNew: boolean,
+    fromName: string | undefined,
+    fromEmail: string | undefined
   ) => {
     setSelectedMessage(content);
+    setSelectedFromName(fromName);
+    setSelectedFromEmail(fromEmail);
     setSelectedId(id);
     if (
       isNew &&
@@ -53,6 +63,8 @@ const MessagesContent: React.FC<Props> = (props) => {
               return (
                 <MessageItem
                   from={item.from}
+                  fromEmail={item.fromEmail}
+                  fromName={item.fromName}
                   dataType={dataType}
                   selectedId={selectedId}
                   getData={selectedItemHandling}

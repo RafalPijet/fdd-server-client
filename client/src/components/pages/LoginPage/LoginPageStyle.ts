@@ -1,4 +1,4 @@
-import { container, grayColor } from '../../../styles/globalStyles';
+import { container } from '../../../styles/globalStyles';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import { makeStyles } from '@material-ui/core/styles';
 import { UserStatus } from '../../../types/global';
@@ -50,7 +50,6 @@ const loginPageStyle = (theme: Theme) => ({
     },
     form: {
         margin: "0 auto",
-        // maxWidth: "360px"
     },
     cardHeader: {
         maxWidth: "320px",
@@ -91,9 +90,6 @@ const loginPageStyle = (theme: Theme) => ({
     },
     inputIconsColor: {
         color: "#495057"
-    },
-    busy: {
-        color: `${grayColor} !important`
     }
 })
 
@@ -108,12 +104,6 @@ export interface StyleProps {
     cardFooter: BaseCSSProperties;
     socialLine: BaseCSSProperties;
     inputIconsColor: BaseCSSProperties;
-    busy: BaseCSSProperties;
-}
-
-export enum ServiceOptions {
-    login,
-    register
 }
 
 export interface IUserRegister {
@@ -177,4 +167,5 @@ export interface IUserLogin {
     password: string;
 }
 
+export type PropsClasses = Record<keyof StyleProps, string>;
 export const useStyles = makeStyles(loginPageStyle as any);

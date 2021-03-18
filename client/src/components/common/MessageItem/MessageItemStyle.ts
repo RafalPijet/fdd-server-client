@@ -9,10 +9,18 @@ export interface Props {
     message: IMessage["content"];
     date: IMessage["created"];
     isNew: IMessage["new"];
-    getData: (id: string, content: string, isNew: boolean) => void;
+    getData: (
+        id: string,
+        content: string,
+        isNew: boolean,
+        fromName: string | undefined,
+        fromEmail: string | undefined
+    ) => void;
     selectedId: string;
     dataType: Exclude<MessageOptions, MessageOptions.new>;
     from: string;
+    fromName: string | undefined;
+    fromEmail: string | undefined;
 }
 
 const messageItemStyle = (theme: Theme) => ({

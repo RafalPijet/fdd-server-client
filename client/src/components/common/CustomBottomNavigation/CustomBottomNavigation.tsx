@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 import BottomNavigation from '@material-ui/core/BottomNavigation';
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
@@ -20,21 +21,17 @@ export interface NaviProps {
 }
 
 const navigationStyle = (theme: Theme) => ({
-  selectTab: {
-    paddingTop: '5px',
-    fontSize: '.75rem !important',
-    color: '#fff',
-  },
   busy: {
     color: `${grayColor} !important`,
   },
   normal: {
+    paddingTop: '5px',
+    fontSize: '.75rem !important',
     color: '#fff',
   },
 });
 
 interface StyleProps {
-  selectTab: BaseCSSProperties;
   busy: BaseCSSProperties;
   normal: BaseCSSProperties;
 }
@@ -45,6 +42,10 @@ type PropsClasses = Record<keyof StyleProps, string>;
 const CustomBottomNavigation: React.FC<NaviProps> = (props) => {
   const { disabled, onChange, value, items } = props;
   const classes: PropsClasses = useStyles({} as StyleProps);
+  const buttonClasses = classNames({
+    [classes.busy]: disabled,
+    [classes.normal]: true,
+  });
 
   return (
     <BottomNavigation
@@ -60,11 +61,10 @@ const CustomBottomNavigation: React.FC<NaviProps> = (props) => {
             label={item.label}
             icon={item.icon}
             disabled={disabled}
-            style={{ color: classes.normal }}
             classes={{
-              selected: classes.selectTab,
+              selected: buttonClasses,
+              wrapper: buttonClasses,
             }}
-            className={disabled ? classes.busy : ''}
           />
         );
       })}

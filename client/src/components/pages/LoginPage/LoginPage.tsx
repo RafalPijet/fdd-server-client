@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Redirect } from 'react-router';
-import classNames from 'classnames';
 import { VariantType, useSnackbar } from 'notistack';
 import {
   getPending,
@@ -13,15 +12,14 @@ import { getUserStatus } from '../../../redux/actions/userActions';
 import {
   useStyles,
   StyleProps,
-  ServiceOptions,
   IUserLogin,
   IUserRegister,
   Register,
+  PropsClasses,
 } from './LoginPageStyle';
+import { ServiceOptions } from '../../../types/global';
 import { loginUser, addUser } from '../../../redux/thunks';
 import InputAdornment from '@material-ui/core/InputAdornment';
-import BottomNavigation from '@material-ui/core/BottomNavigation';
-import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
 import Header from '../../common/Header/Header';
 import HeaderLinks from '../../features/HeaderLinks/HeaderLinksLoginPage';
 import GridContainer from '../../common/Grid/GridContainer';
@@ -32,20 +30,14 @@ import CardBody from '../../common/CardBody/CardBody';
 import CardFooter from '../../common/CardFooter/CardFooter';
 import CustomInput from '../../common/CustomInput/CustomInput';
 import CustomButton from '../../common/CustomButton/CustomButton';
-import {
-  Email,
-  Lock,
-  ExitToApp,
-  HowToReg,
-  Edit,
-  Done,
-  LockOpen,
-} from '@material-ui/icons';
+import CustomBottomNavigation from '../../common/CustomBottomNavigation/CustomBottomNavigation';
+import { Email, Lock, Edit, Done, LockOpen } from '@material-ui/icons';
 import image from '../../../images/loginBackground.jpg';
 import { UserStatus } from '../../../types/global';
+import { naviLoginData } from '../../../data/entry';
 
 const LoginPage: React.FC = () => {
-  const classes = useStyles({} as StyleProps);
+  const classes: PropsClasses = useStyles({} as StyleProps);
   const dispatch = useDispatch();
   const isPendingRequest = useSelector(getPending);
   const isSuccessRequest = useSelector(getSuccess);
@@ -90,10 +82,6 @@ const LoginPage: React.FC = () => {
   setTimeout(() => {
     setIsCardAnimation(false);
   }, 700);
-
-  const busyClasses = classNames({
-    [classes.busy]: isDisabled,
-  });
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -280,28 +268,12 @@ const LoginPage: React.FC = () => {
                     color="primaryCardHeader"
                     className={classes.cardHeader}
                   >
-                    <BottomNavigation
+                    <CustomBottomNavigation
                       value={serviceType}
-                      style={{ backgroundColor: 'transparent' }}
                       onChange={handleType}
-                    >
-                      <BottomNavigationAction
-                        disabled={isDisabled}
-                        className={busyClasses}
-                        label="Logowanie"
-                        value={ServiceOptions.login}
-                        style={{ color: '#fff' }}
-                        icon={<ExitToApp />}
-                      />
-                      <BottomNavigationAction
-                        disabled={isDisabled}
-                        className={busyClasses}
-                        label="Rejestracja"
-                        value={ServiceOptions.register}
-                        style={{ color: '#fff' }}
-                        icon={<HowToReg />}
-                      />
-                    </BottomNavigation>
+                      disabled={isDisabled}
+                      items={naviLoginData}
+                    />
                   </CardHeader>
                 </div>
                 <form className={classes.form}>

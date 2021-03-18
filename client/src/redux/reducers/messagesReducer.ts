@@ -4,7 +4,6 @@ import {
     SET_MESSAGE_IS_READED,
     LoadMessagesAction,
     SetToastAction,
-    setMessageIsReaded,
     SetMessageIsReaded
 } from '../actions/messageActions';
 import { MessageState, IMessage } from '../../types/global';
