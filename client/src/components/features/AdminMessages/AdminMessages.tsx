@@ -6,7 +6,6 @@ import CardHeader from '../../common/CardHeader/CardHeader';
 import CardBody from '../../common/CardBody/CardBody';
 import CardFooter from '../../common/CardFooter/CardFooter';
 import { Typography } from '@material-ui/core';
-import MessageContent from '../../common/MessagesContent/MessagesContent';
 import Zoom from '@material-ui/core/Zoom';
 import Grow from '@material-ui/core/Grow';
 import CustomButton from '../../common/CustomButton/CustomButton';
@@ -25,7 +24,8 @@ import {
   resetRequest,
   getError,
 } from '../../../redux/actions/requestActions';
-import { MessageOptions } from '../../../types/global';
+import { getAdminMessages } from '../../../redux/thunks';
+import { MessageOptions, TargetOptions } from '../../../types/global';
 import { useStyles, StyleProps, PropsClasses } from './AdminMessagesStyle';
 import { naviMessagesData } from '../../../data/entry';
 
@@ -57,6 +57,16 @@ const AdminMessages: React.FC = () => {
   }, 700);
 
   useEffect(() => {
+    if (messageType === MessageOptions.incoming) {
+      dispatch(getAdminMessages(TargetOptions.to, page, rowsPerPage));
+    } else if (messageType === MessageOptions.outcoming) {
+      dispatch(getAdminMessages(TargetOptions.from, page, rowsPerPage));
+    } else if (messageType === MessageOptions.all) {
+      dispatch(getAdminMessages(TargetOptions.all, page, rowsPerPage));
+    }
+  }, [messageType, page, rowsPerPage]);
+
+  useEffect(() => {
     setIsBodyAnimation(!isPending && isSuccess);
     setIsDisabled(isPending);
     if (messageType === MessageOptions.new) {
@@ -81,7 +91,14 @@ const AdminMessages: React.FC = () => {
     event: React.ChangeEvent<{}>,
     newValue: MessageOptions
   ) => {
-    setMessageType(newValue);
+    if (newValue !== messageType) {
+      setPage(0);
+      setIsBodyAnimation(false);
+      setTimeout(() => {
+        setMessageType(newValue);
+        dispatch(resetRequest());
+      }, 300);
+    }
   };
 
   const newMessageHandling = (

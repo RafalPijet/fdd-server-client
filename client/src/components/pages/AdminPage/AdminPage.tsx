@@ -14,7 +14,11 @@ import AdminMessages from '../../features/AdminMessages/AdminMessages';
 import RaportsZone from '../../features/RaportsZone/RaportsZone';
 import { cleanCurrentUser } from '../../../redux/actions/userActions';
 import { resetRequest } from '../../../redux/actions/requestActions';
-import { setUserToast, getToast } from '../../../redux/actions/messageActions';
+import {
+  setUserToast,
+  getToast,
+  loadUserMessages,
+} from '../../../redux/actions/messageActions';
 import image from '../../../images/jumbotronAdmin.jpg';
 
 const AdminPage: React.FC = () => {
@@ -40,6 +44,7 @@ const AdminPage: React.FC = () => {
       localStorage.removeItem('expiresInFDD');
       dispatch(cleanCurrentUser());
       dispatch(resetRequest());
+      dispatch(loadUserMessages([], 0));
       dispatch(
         setUserToast({
           isOpen: false,

@@ -13,14 +13,17 @@ export interface Props {
         id: string,
         content: string,
         isNew: boolean,
-        fromName: string | undefined,
-        fromEmail: string | undefined
+        userName: string | undefined,
+        userEmail: string | undefined,
+        isAdminMessage: boolean,
+        isUser: boolean | undefined
     ) => void;
     selectedId: string;
     dataType: Exclude<MessageOptions, MessageOptions.new>;
     from: string;
-    fromName: string | undefined;
-    fromEmail: string | undefined;
+    userName: string | undefined;
+    userEmail: string | undefined;
+    isUser?: boolean
 }
 
 const messageItemStyle = (theme: Theme) => ({

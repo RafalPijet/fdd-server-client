@@ -18,8 +18,9 @@ const MessageItem: React.FC<Props> = (props) => {
     selectedId,
     dataType,
     from,
-    fromEmail,
-    fromName,
+    userEmail,
+    userName,
+    isUser,
     ...rest
   } = props;
   const [isUnread, setIsUnread] = useState<boolean>(
@@ -58,7 +59,15 @@ const MessageItem: React.FC<Props> = (props) => {
   }, []);
 
   const clickHandling = () => {
-    getData(_id, message, from === userId ? false : isNew, fromName, fromEmail);
+    getData(
+      _id,
+      message,
+      from === userId ? false : isNew,
+      userName,
+      userEmail,
+      from === userId,
+      isUser
+    );
   };
   const itemContent = () => {
     if (

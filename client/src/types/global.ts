@@ -71,8 +71,9 @@ export interface IMessage {
     content: string;
     _id: string;
     from: string;
-    fromName?: string | undefined;
-    fromEmail?: string | undefined;
+    userName?: string | undefined;
+    userEmail?: string | undefined;
+    isUser?: boolean;
     to: string;
     created: string;
     new: boolean;

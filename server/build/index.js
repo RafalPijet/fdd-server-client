@@ -30,8 +30,8 @@ var helmet_1 = __importDefault(require("helmet"));
 var dotenv = __importStar(require("dotenv"));
 var routes_1 = require("./routes");
 require("./controllers/AuthController");
-require("./controllers/AdminController");
 require("./controllers/UserController");
+require("./controllers/AdminController");
 var middleware_1 = require("./middleware");
 dotenv.config();
 var app = express_1.default();
@@ -63,7 +63,7 @@ db.once('open', function () {
     console.log('Connected to database');
 });
 db.on('error', function (err) { return console.log("Error connection: " + err); });
-app.listen(3001, function () {
-    console.log('Server started at port 3001');
+app.listen(3005, function () {
+    console.log('Server started at port 3005');
 });
 //# sourceMappingURL=index.js.map

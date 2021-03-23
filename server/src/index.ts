@@ -6,8 +6,8 @@ import helmet from 'helmet';
 import * as dotenv from 'dotenv';
 import { AppRouter } from './routes';
 import "./controllers/AuthController";
-import "./controllers/AdminController";
 import "./controllers/UserController";
+import "./controllers/AdminController";
 import { errorMiddleware } from './middleware'
 dotenv.config();
 
@@ -42,6 +42,6 @@ db.once('open', (): void => {
     console.log('Connected to database')
 })
 db.on('error', (err: Error): void => console.log(`Error connection: ${err}`));
-app.listen(3001, (): void => {
-    console.log('Server started at port 3001');
+app.listen(3005, (): void => {
+    console.log('Server started at port 3005');
 })

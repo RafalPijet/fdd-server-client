@@ -23,7 +23,7 @@ import {
 } from './actions/messageActions';
 import { IMessage, TargetOptions, IOutsideMessage } from '../types/global';
 
-const API_URL = " http://localhost:3001/api";
+const API_URL = " http://localhost:3005/api";
 
 export const loginUser = (payload: IUserLogin): ThunkAction<
     Promise<void>,
@@ -145,7 +145,35 @@ export const getUserMessages = (target: TargetOptions, page: number, rowsPerPage
     }
 }
 
-export const updateMessageIsReaded = (_id: IMessage["_id"]): ThunkAction<
+export const getAdminMessages = (target: TargetOptions, page: number, rowsPerPage: number): ThunkAction<
+    Promise<void>,
+    any,
+    RootState,
+    StartRequestAction | StopRequestAction | ErrorRequestAction | LoadMessagesAction
+> => async (dispatch, getState) => {
+    dispatch(startRequest());
+    let start = Math.ceil(page * rowsPerPage);
+    let limit = rowsPerPage;
+
+    try {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        let res: AxiosResponse = await axios.get(`${API_URL}/admin/messages/${target}/${start}/${limit}`, {
+            headers: {
+                'Authorization': localStorage.getItem('tokenFDD')
+            },
+        })
+        console.log(res.data);
+        dispatch(loadUserMessages(res.data.messages, res.data.quantity));
+        dispatch(stopRequest());
+
+    } catch (err) {
+        err.response.data.message ?
+            dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
+            dispatch(errorRequest({ isError: true, message: 'Something went wrong' }));
+    }
+}
+
+export const updateMessageIsReaded = (_id: IMessage["_id"], isAdmin: boolean, isUser: boolean | undefined): ThunkAction<
     Promise<void>,
     any,
     RootState,
@@ -153,7 +181,7 @@ export const updateMessageIsReaded = (_id: IMessage["_id"]): ThunkAction<
 > => async (dispatch, getState) => {
 
     try {
-        let res: AxiosResponse = await axios.put(`${API_URL}/users/messages/readed`, { _id }, {
+        let res: AxiosResponse = await axios.put(`${API_URL}/users/messages/readed`, { _id, isAdmin, isUser }, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD')
             },

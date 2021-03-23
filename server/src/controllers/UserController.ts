@@ -3,7 +3,7 @@ import { controller } from './decorators';
 import { post, get, put } from '../routes';
 import { RequestWithUser } from '../middleware';
 import HttpException from '../exceptions/HttpException';
-import { IMessage, buildMessage, MessageModel } from '../models';
+import { IMessage, buildMessage, MessageModel, OutSideMessageModel } from '../models';
 
 @controller('/api/users')
 class UserController {
@@ -50,10 +50,18 @@ class UserController {
     @put('/messages/readed')
     async updateUserMessageIsReaded(req: Request, res: Response, next: NextFunction): Promise<void> {
         const request = req as RequestWithUser;
-        const { _id } = req.body;
+        const { _id, isAdmin, isUser } = req.body;
 
         try {
-            await MessageModel.findByIdAndUpdate(_id, { "new": false });
+            if (isAdmin) {
+                if (isUser) {
+                    await MessageModel.findByIdAndUpdate(_id, { "new": false });
+                } else {
+                    await OutSideMessageModel.findByIdAndUpdate(_id, { "new": false });
+                }
+            } else {
+                await MessageModel.findByIdAndUpdate(_id, { "new": false });
+            }
             res.status(202).send();
         } catch (err) {
             next(new HttpException(404,
