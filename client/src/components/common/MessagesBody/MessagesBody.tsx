@@ -1,7 +1,9 @@
 import React from 'react';
 import MessagesContent from '../MessagesContent/MessagesContent';
 import CustomInput from '../CustomInput/CustomInput';
+import UsersSearcher from '../UsersSearcher/UsersSearcher';
 import { MessageOptions } from '../../../types/global';
+import { API_URL } from '../../../config';
 
 interface MessagesBodyProps {
   messageType: MessageOptions;
@@ -26,6 +28,9 @@ const MessagesBody: React.FC<MessagesBodyProps> = (props) => {
   } else if (messageType === MessageOptions.new) {
     return (
       <div>
+        {isAdmin && (
+          <UsersSearcher api={`${API_URL}/admin/names/`} label="Wyszukaj..." />
+        )}
         <CustomInput
           isDisabled={disabled}
           labelText={label}

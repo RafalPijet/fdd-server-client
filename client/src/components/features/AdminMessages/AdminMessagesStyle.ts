@@ -1,7 +1,6 @@
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import { makeStyles } from '@material-ui/core/styles';
 import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
-import { grayColor } from '../../../styles/globalStyles';
 
 const adminMessagesStyle = (theme: Theme) => ({
     cardHidden: {

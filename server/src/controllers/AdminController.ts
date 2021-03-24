@@ -4,8 +4,17 @@ import { controller } from './decorators';
 import { post, get, put } from '../routes';
 import { RequestWithUser } from '../middleware';
 import HttpException from '../exceptions/HttpException';
-import { MessageModel, OutSideMessageModel, IUser, IMessage, IOutsideMessage } from '../models';
+import {
+    MessageModel,
+    OutSideMessageModel,
+    IUser,
+    IMessage,
+    IOutsideMessage,
+    UserModel,
+    UserStatus
+} from '../models';
 import { TargetOptions, IAdminMessage } from '../types';
+import { removeDuplicates } from '../utils/functions';
 
 @controller('/api/admin')
 class AdminController {
@@ -93,6 +102,37 @@ class AdminController {
         } catch (err) {
             next(new HttpException(404,
                 `Nie znaleziono wiadomości od ${request.user.firstName} ${request.user.lastName}. - ${err}`))
+        }
+    }
+    @get('/names/:isparent')
+    async getUsersNames(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const { isparent } = req.params;
+        const isParent = JSON.parse(isparent);
+        let names = [];
+        try {
+            if (isParent) {
+                const items = await UserModel.find({ status: UserStatus.parent });
+                names = items.map((item: IUser) => {
+                    return {
+                        _id: item._id,
+                        name: `${item.firstName} ${item.lastName}`
+                    }
+                })
+            } else {
+                const items = await OutSideMessageModel.find();
+                const temp = items.map((item: IOutsideMessage) => {
+                    return {
+                        _id: item._id,
+                        name: item.name,
+                        email: item.email
+                    }
+                })
+                names = removeDuplicates(temp, (item: any) => item.email);
+            }
+            res.status(200).json({ names });
+        } catch (err) {
+            next(new HttpException(404,
+                `Brak dostępnych danych. - ${err}`))
         }
     }
 }

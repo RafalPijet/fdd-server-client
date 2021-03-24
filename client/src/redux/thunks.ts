@@ -22,8 +22,7 @@ import {
     setMessageIsReaded
 } from './actions/messageActions';
 import { IMessage, TargetOptions, IOutsideMessage } from '../types/global';
-
-const API_URL = " http://localhost:3005/api";
+import { API_URL } from '../config';
 
 export const loginUser = (payload: IUserLogin): ThunkAction<
     Promise<void>,
