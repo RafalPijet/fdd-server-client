@@ -74,7 +74,7 @@ export const addUser = (payload: Register): ThunkAction<
 
 }
 
-export const addMessage = (payload: string): ThunkAction<
+export const addMessage = (payload: string, _id?: string): ThunkAction<
     Promise<void>,
     any,
     RootState,
@@ -84,7 +84,7 @@ export const addMessage = (payload: string): ThunkAction<
 
     try {
         await new Promise(resolve => setTimeout(resolve, 2000));
-        let res: AxiosResponse = await axios.post(`${API_URL}/users/message`, { content: payload }, {
+        let res: AxiosResponse = await axios.post(`${API_URL}/users/message`, { content: payload, userId: _id }, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD')
             },

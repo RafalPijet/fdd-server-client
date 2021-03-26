@@ -5,10 +5,16 @@ import { MessageOptions } from '../../../types/global';
 
 const messagesContentStyle = (theme: Theme) => ({
     root: {
-        height: "400px",
+        height: "300px",
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between"
+    },
+    parentHeight: {
+        height: "300px",
+    },
+    adminHeight: {
+        height: "320px",
     },
     window: {
         background: "inherit",
@@ -37,6 +43,8 @@ export interface Props {
 
 export interface StyleProps {
     root: BaseCSSProperties;
+    parentHeight: BaseCSSProperties;
+    adminHeight: BaseCSSProperties;
     window: BaseCSSProperties;
     content: BaseCSSProperties;
     list: BaseCSSProperties;

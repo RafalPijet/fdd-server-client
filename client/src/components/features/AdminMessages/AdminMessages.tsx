@@ -24,10 +24,11 @@ import {
   resetRequest,
   getError,
 } from '../../../redux/actions/requestActions';
-import { getAdminMessages } from '../../../redux/thunks';
+import { getAdminMessages, addMessage } from '../../../redux/thunks';
 import { MessageOptions, TargetOptions } from '../../../types/global';
 import { useStyles, StyleProps, PropsClasses } from './AdminMessagesStyle';
 import { naviMessagesData } from '../../../data/entry';
+import { UserName } from '../../common/UsersSearcher/UsersSearcherStyle';
 
 const AdminMessages: React.FC = () => {
   const classes: PropsClasses = useStyles({} as StyleProps);
@@ -45,6 +46,7 @@ const AdminMessages: React.FC = () => {
     MessageOptions.incoming
   );
   const [newMessage, setNewMessage] = useState<string>('');
+  const [selectedUser, setSelectedUser] = useState<UserName | null>(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(6);
   const cardClasses = classNames({
@@ -96,9 +98,12 @@ const AdminMessages: React.FC = () => {
       setIsBodyAnimation(false);
       setTimeout(() => {
         setMessageType(newValue);
-        dispatch(resetRequest());
       }, 300);
     }
+  };
+
+  const selectedUserHandling = (user: UserName | null) => {
+    setSelectedUser(user);
   };
 
   const newMessageHandling = (
@@ -121,9 +126,14 @@ const AdminMessages: React.FC = () => {
     setPage(0);
   };
 
-  const setMessageHandling = () => {
-    if (newMessage.length > 0) {
-      console.log(newMessage);
+  const sendMessageHandling = () => {
+    if (newMessage.length > 0 && selectedUser !== null) {
+      if (!Object.keys(selectedUser).includes('email')) {
+        dispatch(addMessage(newMessage, selectedUser._id));
+      } else {
+        console.log(selectedUser);
+        console.log(newMessage);
+      }
     }
   };
 
@@ -161,6 +171,7 @@ const AdminMessages: React.FC = () => {
               label="wiadomość"
               value={newMessage}
               onChange={newMessageHandling}
+              getSelectedUser={selectedUserHandling}
               isAdmin={true}
             />
           </CardBody>
@@ -178,10 +189,12 @@ const AdminMessages: React.FC = () => {
             />
           ) : (
             <CustomButton
-              disabled={isDisabled || newMessage.length === 0}
+              disabled={
+                isDisabled || newMessage.length === 0 || selectedUser === null
+              }
               setColor="primary"
               setSize="md"
-              onClick={setMessageHandling}
+              onClick={sendMessageHandling}
             >
               Wyślij
             </CustomButton>

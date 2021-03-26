@@ -2,6 +2,7 @@ import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
 import Switch from '@material-ui/core/Switch';
+import TextField from '@material-ui/core/TextField';
 import { logoColor, grayColor } from '../../../styles/globalStyles';
 
 const userSearcherStyle = (theme: Theme) => ({
@@ -37,6 +38,33 @@ export const FddSwitch = withStyles({
     track: {},
 })(Switch);
 
+export const CssTextField = withStyles({
+    root: {
+        '& .MuiAutocomplete-inputRoot': {
+            color: '#fff',
+        },
+        '& label': {
+            color: '#fff',
+            fontSize: "0.8rem",
+        },
+        '& .MuiSvgIcon-root': {
+            color: '#fff',
+        },
+        '& label.Mui-focused': {
+            color: '#fff',
+        },
+        '& .MuiInput-underline:after': {
+            borderBottomColor: '#fff',
+        },
+        '& .MuiInput-underline:before': {
+            borderBottomColor: '#fff',
+        },
+        '& .MuiInput-underline:hover:before': {
+            borderBottomColor: '#fff',
+        },
+    },
+})(TextField);
+
 export interface StyleProps {
     root: BaseCSSProperties;
     input: BaseCSSProperties;
@@ -53,6 +81,8 @@ export interface UserName {
 export interface Props {
     label: string;
     api: string;
+    getSelectedItem: (item: UserName | null) => void;
+    isDisabled: boolean;
 }
 
 export type PropsClasses = Record<keyof StyleProps, string>;

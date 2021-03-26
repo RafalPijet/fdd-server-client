@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import classNames from 'classnames';
 import axios, { AxiosResponse } from 'axios';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import TextField from '@material-ui/core/TextField';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import { setUserToast } from '../../../redux/actions/messageActions';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import {
   StyleProps,
@@ -13,15 +14,18 @@ import {
   UserName,
   Props,
   FddSwitch,
+  CssTextField,
 } from './UsersSearcherStyle';
 
 const UsersSearcher: React.FC<Props> = (props) => {
-  const { label, api } = props;
+  const { label, api, getSelectedItem, isDisabled } = props;
   const [open, setOpen] = useState<boolean>(false);
   const [isParent, setIsParent] = useState<boolean>(true);
+  const [selectedUser, setSelectedUser] = useState<UserName | null>(null);
   const [options, setOptions] = useState<UserName[]>([]);
   const loading = open && options.length === 0;
   const classes: PropsClasses = useStyles({} as StyleProps);
+  const dispatch = useDispatch();
 
   const switchLabel = classNames({
     [classes.label]: true,
@@ -36,17 +40,26 @@ const UsersSearcher: React.FC<Props> = (props) => {
     }
 
     (async () => {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      const res: AxiosResponse = await axios.get(`${api}${isParent}`, {
-        headers: {
-          Authorization: localStorage.getItem('tokenFDD'),
-        },
-      });
-      const names = res.data.names;
-      console.log(names);
+      try {
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        const res: AxiosResponse = await axios.get(`${api}${isParent}`, {
+          headers: {
+            Authorization: localStorage.getItem('tokenFDD'),
+          },
+        });
+        const names = res.data.names;
 
-      if (active) {
-        setOptions(names);
+        if (active && names) {
+          setOptions(names);
+        }
+      } catch (err) {
+        dispatch(
+          setUserToast({
+            isOpen: true,
+            content: err.response.data.message,
+            variant: 'error',
+          })
+        );
       }
     })();
 
@@ -63,11 +76,23 @@ const UsersSearcher: React.FC<Props> = (props) => {
 
   const usersHandling = () => {
     setIsParent(!isParent);
+    setSelectedUser(null);
+    getSelectedItem(null);
+    setOptions([]);
+  };
+
+  const selectedItemHandling = (
+    e: React.ChangeEvent<{}>,
+    value: UserName | null
+  ) => {
+    setSelectedUser(value);
+    getSelectedItem(value);
   };
 
   return (
     <FormGroup row className={classes.root}>
       <Autocomplete
+        disabled={isDisabled}
         id="user-searcher"
         className={classes.input}
         open={open}
@@ -78,24 +103,29 @@ const UsersSearcher: React.FC<Props> = (props) => {
         onClose={() => {
           setOpen(false);
         }}
+        value={selectedUser}
+        clearText="Usuń wybór"
+        noOptionsText="Nie znaleziono"
+        loadingText="Czekaj..."
+        onChange={selectedItemHandling}
         getOptionSelected={(option, value) => option.name === value.name}
         getOptionLabel={(option) => option.name}
         options={options}
         loading={loading}
         renderInput={(params) => (
-          <TextField
+          <CssTextField
             {...params}
             label={label}
-            classes={{}}
-            InputLabelProps={{
-              className: classes.label,
-            }}
             InputProps={{
               ...params.InputProps,
               endAdornment: (
                 <>
                   {loading ? (
-                    <CircularProgress color="inherit" size={20} />
+                    <CircularProgress
+                      style={{ color: '#fff' }}
+                      color="inherit"
+                      size={20}
+                    />
                   ) : null}
                   {params.InputProps.endAdornment}
                 </>
@@ -105,10 +135,13 @@ const UsersSearcher: React.FC<Props> = (props) => {
         )}
       />
       <FormControlLabel
+        disabled={isDisabled}
         control={
           <FddSwitch size="small" checked={isParent} onChange={usersHandling} />
         }
-        className={switchLabel}
+        classes={{
+          label: switchLabel,
+        }}
         label={'Rodzice'}
       />
     </FormGroup>

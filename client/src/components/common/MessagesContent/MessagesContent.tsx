@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import classnames from 'classnames';
 import Paper from '@material-ui/core/Paper';
 import { getSuccess, getPending } from '../../../redux/actions/requestActions';
 import { getMessages } from '../../../redux/actions/messageActions';
@@ -32,6 +33,12 @@ const MessagesContent: React.FC<Props> = (props) => {
   const isSuccess = useSelector(getSuccess);
   const userId = useSelector(getUserId);
   const dispatch = useDispatch();
+
+  const rootClasses = classnames({
+    [classes.root]: true,
+    [classes.adminHeight]: isAdmin,
+    [classes.parentHeight]: !isAdmin,
+  });
 
   useEffect(() => {
     if (messages.length > 0 && isSuccess && !isPending) {
@@ -68,7 +75,7 @@ const MessagesContent: React.FC<Props> = (props) => {
       dispatch(updateMessageIsReaded(id, isAdmin, isUser));
   };
   return (
-    <div className={classes.root}>
+    <div className={rootClasses}>
       <Paper variant="outlined" className={classes.window}>
         <p className={classes.content}>{selectedMessage}</p>
       </Paper>

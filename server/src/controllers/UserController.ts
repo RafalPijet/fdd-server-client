@@ -13,10 +13,11 @@ class UserController {
 
         try {
             const content = request.body.content;
+            const userId = request.body.userId;
             const message: IMessage = {
                 content,
                 from: request.user._id,
-                to: process.env.ADMIN_ID
+                to: userId !== undefined ? userId : process.env.ADMIN_ID
             };
             const newMessage = buildMessage(message);
             await newMessage.save();
