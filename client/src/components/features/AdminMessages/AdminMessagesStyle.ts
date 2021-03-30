@@ -23,7 +23,7 @@ const adminMessagesStyle = (theme: Theme) => ({
         justifyContent: "center !important"
     },
     card: {
-        height: '470px',
+        height: '500px',
         backgroundColor: "rgba(255, 255, 255, 0.2)"
     },
 })

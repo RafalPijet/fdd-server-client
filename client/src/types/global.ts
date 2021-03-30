@@ -40,7 +40,8 @@ export enum MessageOptions {
     all,
     incoming,
     outcoming,
-    new
+    new,
+    search
 }
 
 export interface ChildState {

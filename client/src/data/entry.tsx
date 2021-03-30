@@ -1,4 +1,10 @@
-import { ExitToApp, HowToReg, Comment, Message } from '@material-ui/icons';
+import {
+  ExitToApp,
+  HowToReg,
+  Comment,
+  Message,
+  Search,
+} from '@material-ui/icons';
 import RateReviewSharpIcon from '@material-ui/icons/RateReviewSharp';
 import { MessageOptions, ServiceOptions } from '../types/global';
 import { ItemNaviProps } from '../components/common/CustomBottomNavigation/CustomBottomNavigation';
@@ -42,4 +48,13 @@ export const naviMessagesData: ItemNaviProps[] = [
     value: MessageOptions.new,
     icon: <RateReviewSharpIcon />,
   },
+];
+
+export const naviAdminMessagesData: ItemNaviProps[] = [
+  {
+    label: 'Szukaj',
+    value: MessageOptions.search,
+    icon: <Search />,
+  },
+  ...naviMessagesData,
 ];

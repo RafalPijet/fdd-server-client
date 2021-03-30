@@ -2,6 +2,7 @@ import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import { makeStyles } from '@material-ui/core/styles';
 import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
 import { MessageOptions } from '../../../types/global';
+import { UserName } from '../UsersSearcher/UsersSearcherStyle';
 
 const messagesContentStyle = (theme: Theme) => ({
     root: {
@@ -14,7 +15,7 @@ const messagesContentStyle = (theme: Theme) => ({
         height: "300px",
     },
     adminHeight: {
-        height: "320px",
+        height: "350px",
     },
     window: {
         background: "inherit",
@@ -39,6 +40,8 @@ const messagesContentStyle = (theme: Theme) => ({
 export interface Props {
     dataType: Exclude<MessageOptions, MessageOptions.new>;
     isAdmin: boolean;
+    isSearchMode?: boolean;
+    getSelectedUser?: (item: UserName | null) => void;
 }
 
 export interface StyleProps {

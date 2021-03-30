@@ -8,7 +8,9 @@ import { getUserId } from '../../../redux/actions/userActions';
 import { updateMessageIsReaded } from '../../../redux/thunks';
 import { IMessage, MessageOptions } from '../../../types/global';
 import MessageOperations from '../MessageOperations/MessageOperations';
+import UsersSearcher from '../UsersSearcher/UsersSearcher';
 import MessageItem from '../MessageItem/MessageItem';
+import { API_URL } from '../../../config';
 import {
   StyleProps,
   useStyles,
@@ -19,7 +21,7 @@ import {
 const MessagesContent: React.FC<Props> = (props) => {
   const messages = useSelector(getMessages);
   const classes: PropsClasses = useStyles({} as StyleProps);
-  const { dataType, isAdmin } = props;
+  const { dataType, isAdmin, isSearchMode, getSelectedUser } = props;
   const [selectedMessage, setSelectedMessage] = useState<string>('');
   const [selectedUserName, setSelectedUserName] = useState<string | undefined>(
     undefined
@@ -79,15 +81,23 @@ const MessagesContent: React.FC<Props> = (props) => {
       <Paper variant="outlined" className={classes.window}>
         <p className={classes.content}>{selectedMessage}</p>
       </Paper>
-      {isAdmin && (
-        <MessageOperations
-          userName={selectedUserName!}
-          userEmail={selectedUserName!}
-          messageId={selectedId!}
-          dataType={dataType}
-          isAdminMessage={isAdminMessage}
-        />
-      )}
+      {isAdmin &&
+        (isSearchMode ? (
+          <UsersSearcher
+            api={`${API_URL}/admin/names/`}
+            label="Wyszukaj..."
+            getSelectedItem={getSelectedUser!}
+            isDisabled={isPending}
+          />
+        ) : (
+          <MessageOperations
+            userName={selectedUserName!}
+            userEmail={selectedUserName!}
+            messageId={selectedId!}
+            dataType={dataType}
+            isAdminMessage={isAdminMessage}
+          />
+        ))}
       <div className={classes.list}>
         {messages.length > 0
           ? messages.map((item: IMessage) => {

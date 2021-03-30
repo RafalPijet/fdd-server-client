@@ -104,6 +104,37 @@ class AdminController {
                 `Nie znaleziono wiadomości od ${request.user.firstName} ${request.user.lastName}. - ${err}`))
         }
     }
+    @get('/messages/user/:isparent/:user/:start/:limit')
+    async getAdminMessagesByUser(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const request = req as RequestWithUser;
+        const { isparent, user, start, limit } = req.params;
+        const isParent = JSON.parse(isparent);
+        const startValue = parseInt(start);
+        const limitValue = parseInt(limit);
+
+        try {
+            if (isParent) {
+                const messages = await MessageModel.find({ $or: [{ to: user }, { from: user }] })
+                    .sort({ created: 'desc' }).exec();
+                let messagesToSend = messages.slice(startValue, startValue + limitValue);
+                res.status(200).json({ messages: messagesToSend, quantity: messages.length });
+            } else {
+                const messages = await OutSideMessageModel.find({ email: user })
+                    .sort({ created: 'desc' }).exec();
+                let messagesToSend = messages.map((item: IOutsideMessage) => {
+                    if (item.answer && item.answer.length > 0) {
+                        item.content = `${item.content} [ODPOWIEDŹ]: ${item.answer}`
+                    }
+                    return item;
+                })
+                res.status(200).json({ messages: messagesToSend, quantity: messages.length });
+            }
+        } catch (err) {
+            next(new HttpException(404,
+                `Nie znaleziono wiadomości od ${request.user.firstName} ${request.user.lastName}. - ${err}`))
+        }
+    }
+
     @get('/names/:isparent')
     async getUsersNames(req: Request, res: Response, next: NextFunction): Promise<void> {
         const { isparent } = req.params;
@@ -122,7 +153,6 @@ class AdminController {
                 const items = await OutSideMessageModel.find();
                 const temp = items.map((item: IOutsideMessage) => {
                     return {
-                        _id: item._id,
                         name: item.name,
                         email: item.email
                     }

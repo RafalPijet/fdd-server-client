@@ -172,6 +172,33 @@ export const getAdminMessages = (target: TargetOptions, page: number, rowsPerPag
     }
 }
 
+export const getAdminMessagesByUser = (isParent: boolean, user: string, page: number, rowsPerPage: number): ThunkAction<
+    Promise<void>,
+    any,
+    RootState,
+    StartRequestAction | StopRequestAction | ErrorRequestAction | LoadMessagesAction
+> => async (dispatch, getState) => {
+    dispatch(startRequest());
+    let start = Math.ceil(page * rowsPerPage);
+    let limit = rowsPerPage;
+
+    try {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        let res: AxiosResponse = await axios.get(`${API_URL}/admin/messages/user/${isParent}/${user}/${start}/${limit}`, {
+            headers: {
+                'Authorization': localStorage.getItem('tokenFDD')
+            },
+        })
+        console.log(res.data);
+        dispatch(loadUserMessages(res.data.messages, res.data.quantity));
+        dispatch(stopRequest());
+    } catch (err) {
+        err.response.data.message ?
+            dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
+            dispatch(errorRequest({ isError: true, message: 'Something went wrong' }));
+    }
+}
+
 export const updateMessageIsReaded = (_id: IMessage["_id"], isAdmin: boolean, isUser: boolean | undefined): ThunkAction<
     Promise<void>,
     any,

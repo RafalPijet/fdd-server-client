@@ -17,6 +17,7 @@ import {
   getToast,
   setUserToast,
   getQuantity,
+  loadUserMessages,
 } from '../../../redux/actions/messageActions';
 import {
   getPending,
@@ -24,10 +25,14 @@ import {
   resetRequest,
   getError,
 } from '../../../redux/actions/requestActions';
-import { getAdminMessages, addMessage } from '../../../redux/thunks';
+import {
+  getAdminMessages,
+  addMessage,
+  getAdminMessagesByUser,
+} from '../../../redux/thunks';
 import { MessageOptions, TargetOptions } from '../../../types/global';
 import { useStyles, StyleProps, PropsClasses } from './AdminMessagesStyle';
-import { naviMessagesData } from '../../../data/entry';
+import { naviAdminMessagesData } from '../../../data/entry';
 import { UserName } from '../../common/UsersSearcher/UsersSearcherStyle';
 
 const AdminMessages: React.FC = () => {
@@ -60,13 +65,40 @@ const AdminMessages: React.FC = () => {
 
   useEffect(() => {
     if (messageType === MessageOptions.incoming) {
+      setSelectedUser(null);
       dispatch(getAdminMessages(TargetOptions.to, page, rowsPerPage));
     } else if (messageType === MessageOptions.outcoming) {
+      setSelectedUser(null);
       dispatch(getAdminMessages(TargetOptions.from, page, rowsPerPage));
     } else if (messageType === MessageOptions.all) {
+      setSelectedUser(null);
       dispatch(getAdminMessages(TargetOptions.all, page, rowsPerPage));
     }
   }, [messageType, page, rowsPerPage]);
+
+  useEffect(() => {
+    if (
+      messageType === MessageOptions.search ||
+      messageType === MessageOptions.new
+    ) {
+      dispatch(loadUserMessages([], 0));
+      if (messageType === MessageOptions.search && selectedUser !== null) {
+        console.log(selectedUser);
+        if (Object.keys(selectedUser).includes('email') && selectedUser.email) {
+          dispatch(
+            getAdminMessagesByUser(false, selectedUser.email, page, rowsPerPage)
+          );
+        } else {
+          dispatch(
+            getAdminMessagesByUser(true, selectedUser._id, page, rowsPerPage)
+          );
+        }
+      }
+      if (messageType === MessageOptions.search && selectedUser === null) {
+        dispatch(loadUserMessages([], 0));
+      }
+    }
+  }, [messageType, page, rowsPerPage, selectedUser]);
 
   useEffect(() => {
     setIsBodyAnimation(!isPending && isSuccess);
@@ -103,7 +135,12 @@ const AdminMessages: React.FC = () => {
   };
 
   const selectedUserHandling = (user: UserName | null) => {
-    setSelectedUser(user);
+    if (
+      messageType === MessageOptions.new ||
+      messageType === MessageOptions.search
+    ) {
+      setSelectedUser(user);
+    }
   };
 
   const newMessageHandling = (
@@ -159,7 +196,7 @@ const AdminMessages: React.FC = () => {
               disabled={isDisabled}
               onChange={messageOptionsHandling}
               value={messageType}
-              items={naviMessagesData}
+              items={naviAdminMessagesData}
             />
           </CardHeader>
         </div>

@@ -40,7 +40,8 @@ const MessageItem: React.FC<Props> = (props) => {
     [classes.selected]: isSelected,
     [classes.right]:
       dataType === MessageOptions.outcoming ||
-      (dataType === MessageOptions.all && from === userId),
+      (dataType === MessageOptions.all && from === userId) ||
+      (dataType === MessageOptions.search && from === userId),
   });
 
   useEffect(() => {
@@ -72,7 +73,8 @@ const MessageItem: React.FC<Props> = (props) => {
   const itemContent = () => {
     if (
       dataType === MessageOptions.incoming ||
-      (dataType === MessageOptions.all && from !== userId)
+      (dataType === MessageOptions.all && from !== userId) ||
+      (dataType === MessageOptions.search && from !== userId)
     ) {
       return (
         <>
@@ -92,7 +94,8 @@ const MessageItem: React.FC<Props> = (props) => {
       );
     } else if (
       dataType === MessageOptions.outcoming ||
-      (dataType === MessageOptions.all && from === userId)
+      (dataType === MessageOptions.all && from === userId) ||
+      (dataType === MessageOptions.search && from === userId)
     ) {
       return (
         <>

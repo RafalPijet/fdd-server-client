@@ -81,6 +81,15 @@ const MessagesBody: React.FC<MessagesBodyProps> = (props) => {
         />
       </div>
     );
+  } else if (messageType === MessageOptions.search) {
+    return (
+      <MessagesContent
+        isAdmin={isAdmin}
+        dataType={messageType}
+        isSearchMode={true}
+        getSelectedUser={userHandling}
+      />
+    );
   } else {
     return <></>;
   }
