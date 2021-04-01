@@ -16,7 +16,7 @@ import {
   getError,
   resetRequest,
 } from '../../../redux/actions/requestActions';
-import { setUserToast, getToast } from '../../../redux/actions/messageActions';
+import { setUserToast, getToast } from '../../../redux/actions/generalActions';
 import image from '../../../images/jumbotronMain.jpg';
 
 const MainPage: React.FC = () => {

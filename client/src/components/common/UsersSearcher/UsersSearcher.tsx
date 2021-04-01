@@ -5,7 +5,7 @@ import axios, { AxiosResponse } from 'axios';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import { setUserToast } from '../../../redux/actions/messageActions';
+import { setUserToast } from '../../../redux/actions/generalActions';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import {
   StyleProps,

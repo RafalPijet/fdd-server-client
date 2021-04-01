@@ -2,10 +2,12 @@ import { applyMiddleware, combineReducers, createStore, compose } from 'redux';
 import requestReducer from './reducers/requestReducer';
 import userReducer from './reducers/userReducer';
 import messagesReducer from './reducers/messagesReducer';
+import generalReducer from './reducers/generalReducer';
 import thunk from 'redux-thunk';
 
 const rootReducer = combineReducers({
     request: requestReducer,
+    general: generalReducer,
     user: userReducer,
     userMessages: messagesReducer
 });

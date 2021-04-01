@@ -2,11 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import classNames from 'classnames';
 import { getUserName } from '../../../redux/actions/userActions';
-import {
-  getToast,
-  setUserToast,
-  getQuantity,
-} from '../../../redux/actions/messageActions';
+import { getToast, setUserToast } from '../../../redux/actions/generalActions';
+import { getQuantity } from '../../../redux/actions/messageActions';
 import { Typography } from '@material-ui/core';
 import { useStyles, StyleProps, PropsClasses } from './ParentMessagesStyle';
 import { MessageOptions } from '../../../types/global';

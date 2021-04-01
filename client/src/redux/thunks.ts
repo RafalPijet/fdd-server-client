@@ -7,7 +7,6 @@ import {
     StopRequestAction,
     ErrorRequestAction,
     ResetRequestAction,
-    resetRequest,
     startRequest,
     stopRequest,
     errorRequest
@@ -16,11 +15,10 @@ import { addCurrentUser, AddUserAction } from './actions/userActions';
 import {
     loadUserMessages,
     LoadMessagesAction,
-    setUserToast,
-    SetToastAction,
     SetMessageIsReaded,
     setMessageIsReaded
 } from './actions/messageActions';
+import { setUserToast, SetToastAction } from './actions/generalActions';
 import { IMessage, TargetOptions, IOutsideMessage } from '../types/global';
 import { API_URL } from '../config';
 
@@ -153,7 +151,6 @@ export const getAdminMessages = (target: TargetOptions, page: number, rowsPerPag
     dispatch(startRequest());
     let start = Math.ceil(page * rowsPerPage);
     let limit = rowsPerPage;
-
     try {
         await new Promise(resolve => setTimeout(resolve, 2000));
         let res: AxiosResponse = await axios.get(`${API_URL}/admin/messages/${target}/${start}/${limit}`, {
@@ -161,7 +158,7 @@ export const getAdminMessages = (target: TargetOptions, page: number, rowsPerPag
                 'Authorization': localStorage.getItem('tokenFDD')
             },
         })
-        console.log(res.data);
+        // console.log(res.data);
         dispatch(loadUserMessages(res.data.messages, res.data.quantity));
         dispatch(stopRequest());
 
@@ -189,7 +186,7 @@ export const getAdminMessagesByUser = (isParent: boolean, user: string, page: nu
                 'Authorization': localStorage.getItem('tokenFDD')
             },
         })
-        console.log(res.data);
+        // console.log(res.data);
         dispatch(loadUserMessages(res.data.messages, res.data.quantity));
         dispatch(stopRequest());
     } catch (err) {

@@ -42,6 +42,7 @@ export interface StyleProps {
 }
 
 export interface Props {
+    isUser: boolean | undefined;
     userName: string;
     userEmail: string;
     messageId: string;

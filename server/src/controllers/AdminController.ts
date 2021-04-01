@@ -116,17 +116,39 @@ class AdminController {
             if (isParent) {
                 const messages = await MessageModel.find({ $or: [{ to: user }, { from: user }] })
                     .sort({ created: 'desc' }).exec();
-                let messagesToSend = messages.slice(startValue, startValue + limitValue);
+                const messagesWithUserInfo = messages.map((item: IMessage) => {
+                    return {
+                        isUser: true,
+                        _id: item._id,
+                        new: item.new,
+                        content: item.content,
+                        from: item.from,
+                        to: item.to,
+                        created: item.created
+                    }
+                })
+                let messagesToSend = messagesWithUserInfo.slice(startValue, startValue + limitValue);
                 res.status(200).json({ messages: messagesToSend, quantity: messages.length });
             } else {
                 const messages = await OutSideMessageModel.find({ email: user })
                     .sort({ created: 'desc' }).exec();
-                let messagesToSend = messages.map((item: IOutsideMessage) => {
+                let messagesWithUserInfo = messages.map((item: IOutsideMessage) => {
                     if (item.answer && item.answer.length > 0) {
                         item.content = `${item.content} [ODPOWIEDŹ]: ${item.answer}`
                     }
-                    return item;
+
+                    return {
+                        isUser: false,
+                        _id: item._id,
+                        new: item.new,
+                        answer: item.answer,
+                        name: item.name,
+                        email: item.email,
+                        content: item.content,
+                        created: item.created
+                    };
                 })
+                let messagesToSend = messagesWithUserInfo.slice(startValue, startValue + limitValue);
                 res.status(200).json({ messages: messagesToSend, quantity: messages.length });
             }
         } catch (err) {

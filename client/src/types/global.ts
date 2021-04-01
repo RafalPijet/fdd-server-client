@@ -96,10 +96,26 @@ export interface ToastState {
     variant: VariantType;
 }
 
+export interface ModalAvailableKeys {
+    messageId?: string;
+    isUser?: boolean;
+}
+
+export interface ModalAreYouSure {
+    isOpen: boolean;
+    title: string;
+    description: string;
+    data: ModalAvailableKeys;
+}
+
 export interface MessageState {
     messages: IMessage[];
     quantity: number;
+}
+
+export interface GeneralState {
     toast: ToastState;
+    modalAreYouSure: ModalAreYouSure;
 }
 
 export enum TargetOptions {

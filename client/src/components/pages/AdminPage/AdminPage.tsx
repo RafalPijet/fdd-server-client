@@ -12,19 +12,23 @@ import GridItem from '../../common/Grid/GridItem';
 import Footer from '../../common/Footer/Footer';
 import AdminMessages from '../../features/AdminMessages/AdminMessages';
 import RaportsZone from '../../features/RaportsZone/RaportsZone';
+import ModalAreYouSure from '../../common/ModalAreYouSure/ModalAreYouSure';
 import { cleanCurrentUser } from '../../../redux/actions/userActions';
 import { resetRequest } from '../../../redux/actions/requestActions';
 import {
-  setUserToast,
   getToast,
-  loadUserMessages,
-} from '../../../redux/actions/messageActions';
+  setUserToast,
+  getModalAreYouSure,
+  setModalAreYouSure,
+} from '../../../redux/actions/generalActions';
+import { loadUserMessages } from '../../../redux/actions/messageActions';
 import image from '../../../images/jumbotronAdmin.jpg';
 
 const AdminPage: React.FC = () => {
   const classes = useStyles({} as StyleProps);
   const isPending = useSelector(getPending);
   const toast = useSelector(getToast);
+  const modalAYS = useSelector(getModalAreYouSure);
   const error = useSelector(getError);
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
@@ -52,11 +56,35 @@ const AdminPage: React.FC = () => {
           variant: 'success',
         })
       );
+      dispatch(
+        setModalAreYouSure({
+          isOpen: false,
+          title: '',
+          description: '',
+          data: {},
+        })
+      );
     };
   }, []);
 
   const handleToast = (message: string, variant: VariantType) => {
     enqueueSnackbar(message, { variant });
+  };
+
+  const handleModalAYS = (isConfirm: boolean) => {
+    const { messageId, isUser } = modalAYS.data;
+    console.log(isConfirm);
+    console.log(messageId);
+    console.log(isUser);
+
+    dispatch(
+      setModalAreYouSure({
+        isOpen: false,
+        title: '',
+        description: '',
+        data: {},
+      })
+    );
   };
 
   return (
@@ -88,6 +116,12 @@ const AdminPage: React.FC = () => {
         <div style={{ height: '800px' }}>Preparing...</div>
       </div>
       <Footer />
+      <ModalAreYouSure
+        isOpen={modalAYS.isOpen}
+        title={modalAYS.title}
+        descriprion={modalAYS.description}
+        isConfirm={handleModalAYS}
+      />
     </div>
   );
 };

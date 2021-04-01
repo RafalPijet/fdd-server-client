@@ -12,7 +12,7 @@ import {
   getError,
   getSuccess,
 } from '../../../redux/actions/requestActions';
-import { setUserToast, getToast } from '../../../redux/actions/messageActions';
+import { setUserToast, getToast } from '../../../redux/actions/generalActions';
 import { addOutsideMessage } from '../../../redux/thunks';
 
 const MessageSection: React.FC<Props> = (props) => {

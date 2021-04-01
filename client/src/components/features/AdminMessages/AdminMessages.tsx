@@ -14,8 +14,6 @@ import CustomNavigation from '../../common/CustomBottomNavigation/CustomBottomNa
 import MessagesBody from '../../common/MessagesBody/MessagesBody';
 import { getUserName } from '../../../redux/actions/userActions';
 import {
-  getToast,
-  setUserToast,
   getQuantity,
   loadUserMessages,
 } from '../../../redux/actions/messageActions';
@@ -25,6 +23,7 @@ import {
   resetRequest,
   getError,
 } from '../../../redux/actions/requestActions';
+import { getToast, setUserToast } from '../../../redux/actions/generalActions';
 import {
   getAdminMessages,
   addMessage,
@@ -65,13 +64,10 @@ const AdminMessages: React.FC = () => {
 
   useEffect(() => {
     if (messageType === MessageOptions.incoming) {
-      setSelectedUser(null);
       dispatch(getAdminMessages(TargetOptions.to, page, rowsPerPage));
     } else if (messageType === MessageOptions.outcoming) {
-      setSelectedUser(null);
       dispatch(getAdminMessages(TargetOptions.from, page, rowsPerPage));
     } else if (messageType === MessageOptions.all) {
-      setSelectedUser(null);
       dispatch(getAdminMessages(TargetOptions.all, page, rowsPerPage));
     }
   }, [messageType, page, rowsPerPage]);
@@ -81,9 +77,7 @@ const AdminMessages: React.FC = () => {
       messageType === MessageOptions.search ||
       messageType === MessageOptions.new
     ) {
-      dispatch(loadUserMessages([], 0));
       if (messageType === MessageOptions.search && selectedUser !== null) {
-        console.log(selectedUser);
         if (Object.keys(selectedUser).includes('email') && selectedUser.email) {
           dispatch(
             getAdminMessagesByUser(false, selectedUser.email, page, rowsPerPage)
@@ -95,10 +89,11 @@ const AdminMessages: React.FC = () => {
         }
       }
       if (messageType === MessageOptions.search && selectedUser === null) {
+        setPage(0);
         dispatch(loadUserMessages([], 0));
       }
     }
-  }, [messageType, page, rowsPerPage, selectedUser]);
+  }, [messageType, selectedUser, page, rowsPerPage]);
 
   useEffect(() => {
     setIsBodyAnimation(!isPending && isSuccess);
@@ -126,10 +121,11 @@ const AdminMessages: React.FC = () => {
     newValue: MessageOptions
   ) => {
     if (newValue !== messageType) {
-      setPage(0);
       setIsBodyAnimation(false);
+      setSelectedUser(null);
       setTimeout(() => {
         setMessageType(newValue);
+        setPage(0);
       }, 300);
     }
   };

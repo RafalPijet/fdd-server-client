@@ -14,11 +14,8 @@ import ParentMessages from '../../features/ParentMessages/ParentMessages';
 import ChildrenZone from '../../features/ChildrenZone/ChildrenZone';
 import { cleanCurrentUser } from '../../../redux/actions/userActions';
 import { resetRequest } from '../../../redux/actions/requestActions';
-import {
-  loadUserMessages,
-  setUserToast,
-  getToast,
-} from '../../../redux/actions/messageActions';
+import { loadUserMessages } from '../../../redux/actions/messageActions';
+import { getToast, setUserToast } from '../../../redux/actions/generalActions';
 import image from '../../../images/jumbotronParent.jpg';
 
 const ParentPage: React.FC = () => {

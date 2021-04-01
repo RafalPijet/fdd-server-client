@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import ClearIcon from '@material-ui/icons/Clear';
 import ReplyIcon from '@material-ui/icons/Reply';
 import IconButton from '@material-ui/core/IconButton';
 import { MessageOptions } from '../../../types/global';
+import {
+  setModalAreYouSure,
+  getModalAreYouSure,
+} from '../../../redux/actions/generalActions';
 import {
   Props,
   PropsClasses,
@@ -11,9 +16,17 @@ import {
 } from './MessageOperationsStyle';
 
 const MessageOperations: React.FC<Props> = (props) => {
-  const { userName, userEmail, messageId, dataType, isAdminMessage } = props;
+  const {
+    userName,
+    userEmail,
+    messageId,
+    dataType,
+    isAdminMessage,
+    isUser,
+  } = props;
   const classes: PropsClasses = useStyles({} as StyleProps);
   const [isIncoming, setIsIncoming] = useState<boolean>(false);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     setIsIncoming(
@@ -21,6 +34,24 @@ const MessageOperations: React.FC<Props> = (props) => {
         (dataType === MessageOptions.all && !isAdminMessage)
     );
   }, [dataType, isAdminMessage]);
+
+  const deleteMessageHandling = () => {
+    console.log(isUser);
+    console.log(userName);
+    console.log(userEmail);
+    console.log(messageId);
+    dispatch(
+      setModalAreYouSure({
+        isOpen: true,
+        title: 'Chcesz usunąć wiadomość?',
+        description: `Wiadomość od ${userName} zostanie usunięta na stałe!`,
+        data: {
+          messageId,
+          isUser,
+        },
+      })
+    );
+  };
 
   const directionHandling = () => {
     if (
@@ -37,7 +68,10 @@ const MessageOperations: React.FC<Props> = (props) => {
   };
   return (
     <div className={classes.root}>
-      <IconButton className={classes.buttonDelete}>
+      <IconButton
+        onClick={deleteMessageHandling}
+        className={classes.buttonDelete}
+      >
         <ClearIcon fontSize="small" />
       </IconButton>
       <span className={classes.userInfo}>
