@@ -30,6 +30,10 @@ import {
   getAdminMessagesByUser,
 } from '../../../redux/thunks';
 import { MessageOptions, TargetOptions } from '../../../types/global';
+import {
+  setIsRemoved,
+  getIsRemoved,
+} from '../../../redux/actions/generalActions';
 import { useStyles, StyleProps, PropsClasses } from './AdminMessagesStyle';
 import { naviAdminMessagesData } from '../../../data/entry';
 import { UserName } from '../../common/UsersSearcher/UsersSearcherStyle';
@@ -42,6 +46,7 @@ const AdminMessages: React.FC = () => {
   const isSuccess = useSelector(getSuccess);
   const isError = useSelector(getError).isError;
   const isToast = useSelector(getToast).isOpen;
+  const isRemoved = useSelector(getIsRemoved);
   const quantity = useSelector(getQuantity);
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
   const [isCardAnimation, setIsCardAnimation] = useState<boolean>(true);
@@ -63,13 +68,7 @@ const AdminMessages: React.FC = () => {
   }, 700);
 
   useEffect(() => {
-    if (messageType === MessageOptions.incoming) {
-      dispatch(getAdminMessages(TargetOptions.to, page, rowsPerPage));
-    } else if (messageType === MessageOptions.outcoming) {
-      dispatch(getAdminMessages(TargetOptions.from, page, rowsPerPage));
-    } else if (messageType === MessageOptions.all) {
-      dispatch(getAdminMessages(TargetOptions.all, page, rowsPerPage));
-    }
+    getAdminMessagesRun();
   }, [messageType, page, rowsPerPage]);
 
   useEffect(() => {
@@ -115,6 +114,23 @@ const AdminMessages: React.FC = () => {
       );
     if (isError) dispatch(resetRequest());
   }, [isToast, isError]);
+
+  useEffect(() => {
+    if (isRemoved) {
+      getAdminMessagesRun();
+      dispatch(setIsRemoved(false));
+    }
+  }, [isRemoved]);
+
+  const getAdminMessagesRun = () => {
+    if (messageType === MessageOptions.incoming) {
+      dispatch(getAdminMessages(TargetOptions.to, page, rowsPerPage));
+    } else if (messageType === MessageOptions.outcoming) {
+      dispatch(getAdminMessages(TargetOptions.from, page, rowsPerPage));
+    } else if (messageType === MessageOptions.all) {
+      dispatch(getAdminMessages(TargetOptions.all, page, rowsPerPage));
+    }
+  };
 
   const messageOptionsHandling = (
     event: React.ChangeEvent<{}>,

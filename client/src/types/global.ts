@@ -44,6 +44,11 @@ export enum MessageOptions {
     search
 }
 
+export enum ModalAYSModes {
+    null,
+    removeMessage
+}
+
 export interface ChildState {
     firstName: string;
     lastName: string;
@@ -102,6 +107,7 @@ export interface ModalAvailableKeys {
 }
 
 export interface ModalAreYouSure {
+    mode: ModalAYSModes;
     isOpen: boolean;
     title: string;
     description: string;
@@ -116,6 +122,7 @@ export interface MessageState {
 export interface GeneralState {
     toast: ToastState;
     modalAreYouSure: ModalAreYouSure;
+    isRemoved: boolean;
 }
 
 export enum TargetOptions {

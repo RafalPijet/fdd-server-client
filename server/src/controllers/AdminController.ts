@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import mongoose from 'mongoose';
 import { controller } from './decorators';
-import { post, get, put } from '../routes';
+import { post, get, put, del } from '../routes';
 import { RequestWithUser } from '../middleware';
 import HttpException from '../exceptions/HttpException';
 import {
@@ -185,6 +185,22 @@ class AdminController {
         } catch (err) {
             next(new HttpException(404,
                 `Brak dostępnych danych. - ${err}`))
+        }
+    }
+    @del('/messages')
+    async removeMessage(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const { messageId, isUser } = req.body;
+
+        try {
+            if (isUser) {
+                await MessageModel.findByIdAndDelete(messageId);
+            } else {
+                await OutSideMessageModel.findByIdAndDelete(messageId);
+            }
+            res.status(201).send({ message: 'Wiadomość została usunięta.' })
+        } catch (err) {
+            next(new HttpException(404,
+                `Usunięcie wiadomości nie powiodło się. - ${err}`))
         }
     }
 }

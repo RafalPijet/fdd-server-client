@@ -21,6 +21,8 @@ import {
   getModalAreYouSure,
   setModalAreYouSure,
 } from '../../../redux/actions/generalActions';
+import { removeMessage } from '../../../redux/thunks';
+import { ModalAYSModes } from '../../../types/global';
 import { loadUserMessages } from '../../../redux/actions/messageActions';
 import image from '../../../images/jumbotronAdmin.jpg';
 
@@ -58,6 +60,7 @@ const AdminPage: React.FC = () => {
       );
       dispatch(
         setModalAreYouSure({
+          mode: ModalAYSModes.null,
           isOpen: false,
           title: '',
           description: '',
@@ -73,12 +76,17 @@ const AdminPage: React.FC = () => {
 
   const handleModalAYS = (isConfirm: boolean) => {
     const { messageId, isUser } = modalAYS.data;
-    console.log(isConfirm);
-    console.log(messageId);
-    console.log(isUser);
+    if (isConfirm) {
+      if (modalAYS.mode === ModalAYSModes.removeMessage) {
+        if (messageId !== undefined && isUser !== undefined) {
+          dispatch(removeMessage(messageId, isUser));
+        }
+      }
+    }
 
     dispatch(
       setModalAreYouSure({
+        mode: ModalAYSModes.null,
         isOpen: false,
         title: '',
         description: '',

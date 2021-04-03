@@ -4,10 +4,8 @@ import ClearIcon from '@material-ui/icons/Clear';
 import ReplyIcon from '@material-ui/icons/Reply';
 import IconButton from '@material-ui/core/IconButton';
 import { MessageOptions } from '../../../types/global';
-import {
-  setModalAreYouSure,
-  getModalAreYouSure,
-} from '../../../redux/actions/generalActions';
+import { setModalAreYouSure } from '../../../redux/actions/generalActions';
+import { ModalAYSModes } from '../../../types/global';
 import {
   Props,
   PropsClasses,
@@ -36,15 +34,14 @@ const MessageOperations: React.FC<Props> = (props) => {
   }, [dataType, isAdminMessage]);
 
   const deleteMessageHandling = () => {
-    console.log(isUser);
-    console.log(userName);
-    console.log(userEmail);
-    console.log(messageId);
     dispatch(
       setModalAreYouSure({
+        mode: ModalAYSModes.removeMessage,
         isOpen: true,
         title: 'Chcesz usunąć wiadomość?',
-        description: `Wiadomość od ${userName} zostanie usunięta na stałe!`,
+        description: `Wiadomość ${directionHandling(
+          true
+        )} ${userName} zostanie usunięta na stałe!`,
         data: {
           messageId,
           isUser,
@@ -53,17 +50,17 @@ const MessageOperations: React.FC<Props> = (props) => {
     );
   };
 
-  const directionHandling = () => {
+  const directionHandling = (isMessage: boolean) => {
     if (
       dataType === MessageOptions.incoming ||
       (dataType === MessageOptions.all && !isAdminMessage)
     ) {
-      return <span className={classes.direction}>od:</span>;
+      return isMessage ? 'od' : <span className={classes.direction}>od:</span>;
     } else if (
       dataType === MessageOptions.outcoming ||
       (dataType === MessageOptions.all && isAdminMessage)
     ) {
-      return <span className={classes.direction}>do:</span>;
+      return isMessage ? 'do' : <span className={classes.direction}>do:</span>;
     }
   };
   return (
@@ -75,7 +72,7 @@ const MessageOperations: React.FC<Props> = (props) => {
         <ClearIcon fontSize="small" />
       </IconButton>
       <span className={classes.userInfo}>
-        {directionHandling()}
+        {directionHandling(false)}
         {userName}
         {isIncoming && (
           <IconButton className={classes.buttonReply}>

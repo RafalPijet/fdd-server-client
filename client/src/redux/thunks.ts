@@ -18,7 +18,7 @@ import {
     SetMessageIsReaded,
     setMessageIsReaded
 } from './actions/messageActions';
-import { setUserToast, SetToastAction } from './actions/generalActions';
+import { setUserToast, SetToastAction, setIsRemoved, SetIsRemoved } from './actions/generalActions';
 import { IMessage, TargetOptions, IOutsideMessage } from '../types/global';
 import { API_URL } from '../config';
 
@@ -89,6 +89,32 @@ export const addMessage = (payload: string, _id?: string): ThunkAction<
         });
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }))
         dispatch(stopRequest());
+    } catch (err) {
+        err.response.data.message ?
+            dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
+            dispatch(errorRequest({ isError: true, message: 'Something went wrong' }));
+    }
+}
+
+export const removeMessage = (messageId: string, isUser: boolean): ThunkAction<
+    Promise<void>,
+    any,
+    RootState,
+    StartRequestAction | StopRequestAction | ErrorRequestAction | SetToastAction | SetIsRemoved
+> => async (dispatch, getState) => {
+    dispatch(startRequest());
+
+    try {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        let res: AxiosResponse = await axios.delete(`${API_URL}/admin/messages`,
+            {
+                data: { messageId, isUser }, headers: {
+                    'Authorization': localStorage.getItem('tokenFDD')
+                }
+            })
+        dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
+        dispatch(stopRequest());
+        dispatch(setIsRemoved(true));
     } catch (err) {
         err.response.data.message ?
             dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
