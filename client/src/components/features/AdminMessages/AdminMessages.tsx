@@ -29,10 +29,16 @@ import {
   addMessage,
   getAdminMessagesByUser,
 } from '../../../redux/thunks';
-import { MessageOptions, TargetOptions } from '../../../types/global';
+import {
+  MessageOptions,
+  TargetOptions,
+  EventChangeReplyData,
+} from '../../../types/global';
 import {
   setIsRemoved,
   getIsRemoved,
+  getEventChange,
+  setEventChange,
 } from '../../../redux/actions/generalActions';
 import { useStyles, StyleProps, PropsClasses } from './AdminMessagesStyle';
 import { naviAdminMessagesData } from '../../../data/entry';
@@ -41,6 +47,7 @@ import { UserName } from '../../common/UsersSearcher/UsersSearcherStyle';
 const AdminMessages: React.FC = () => {
   const classes: PropsClasses = useStyles({} as StyleProps);
   const dispatch = useDispatch();
+  const eventChange = useSelector(getEventChange);
   const userName = useSelector(getUserName);
   const isPending = useSelector(getPending);
   const isSuccess = useSelector(getSuccess);
@@ -48,7 +55,7 @@ const AdminMessages: React.FC = () => {
   const isToast = useSelector(getToast).isOpen;
   const isRemoved = useSelector(getIsRemoved);
   const quantity = useSelector(getQuantity);
-  const [isDisabled, setIsDisabled] = useState<boolean>(false);
+  const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const [isCardAnimation, setIsCardAnimation] = useState<boolean>(true);
   const [isBodyAnimation, setIsBodyAnimation] = useState<boolean>(true);
   const [messageType, setMessageType] = useState<MessageOptions>(
@@ -56,6 +63,9 @@ const AdminMessages: React.FC = () => {
   );
   const [newMessage, setNewMessage] = useState<string>('');
   const [selectedUser, setSelectedUser] = useState<UserName | null>(null);
+  const [selectedUserToReply, setSelectedUserToReply] = useState<
+    EventChangeReplyData | undefined
+  >(undefined);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(6);
   const cardClasses = classNames({
@@ -95,8 +105,17 @@ const AdminMessages: React.FC = () => {
   }, [messageType, selectedUser, page, rowsPerPage]);
 
   useEffect(() => {
+    if (messageType === MessageOptions.new) {
+      if (eventChange.isAction) {
+        setIsDisabled(newMessage.length === 0);
+      } else {
+        setIsDisabled(newMessage.length === 0 || selectedUser === null);
+      }
+    }
+  }, [selectedUser, eventChange.isAction, newMessage.length, messageType]);
+
+  useEffect(() => {
     setIsBodyAnimation(!isPending && isSuccess);
-    setIsDisabled(isPending);
     if (messageType === MessageOptions.new) {
       setNewMessage('');
       setIsBodyAnimation(true);
@@ -122,6 +141,17 @@ const AdminMessages: React.FC = () => {
     }
   }, [isRemoved]);
 
+  useEffect(() => {
+    if (eventChange.isAction) {
+      setIsBodyAnimation(false);
+      setTimeout(() => {
+        if (eventChange.data) setSelectedUserToReply(eventChange.data);
+        setMessageType(MessageOptions.new);
+        setPage(0);
+      }, 300);
+    }
+  }, [eventChange.isAction]);
+
   const getAdminMessagesRun = () => {
     if (messageType === MessageOptions.incoming) {
       dispatch(getAdminMessages(TargetOptions.to, page, rowsPerPage));
@@ -139,8 +169,12 @@ const AdminMessages: React.FC = () => {
     if (newValue !== messageType) {
       setIsBodyAnimation(false);
       setSelectedUser(null);
+      setSelectedUserToReply(undefined);
       setTimeout(() => {
         setMessageType(newValue);
+        if (eventChange.isAction) {
+          dispatch(setEventChange({ isAction: false, data: undefined }));
+        }
         setPage(0);
       }, 300);
     }
@@ -176,12 +210,23 @@ const AdminMessages: React.FC = () => {
   };
 
   const sendMessageHandling = () => {
-    if (newMessage.length > 0 && selectedUser !== null) {
-      if (!Object.keys(selectedUser).includes('email')) {
-        dispatch(addMessage(newMessage, selectedUser._id));
-      } else {
-        console.log(selectedUser);
-        console.log(newMessage);
+    if (eventChange.isAction && selectedUserToReply !== undefined) {
+      if (Object.keys(selectedUserToReply).length === 2 && selectedUserToReply.userId) {
+        dispatch(addMessage(newMessage, selectedUserToReply.userId));
+      }
+      if (Object.keys(selectedUserToReply).length === 3 && selectedUserToReply.messageId) {
+        //email handling
+        //update outsideMessage
+      }
+    } else {
+      if (newMessage.length > 0 && selectedUser !== null) {
+        if (!Object.keys(selectedUser).includes('email')) {
+          dispatch(addMessage(newMessage, selectedUser._id));
+        } else {
+          //email handling
+          console.log(selectedUser);
+          console.log(newMessage);
+        }
       }
     }
   };
@@ -205,7 +250,7 @@ const AdminMessages: React.FC = () => {
         >
           <CardHeader className={classes.cardHeader} color="primaryCardHeader">
             <CustomNavigation
-              disabled={isDisabled}
+              disabled={isPending}
               onChange={messageOptionsHandling}
               value={messageType}
               items={naviAdminMessagesData}
@@ -216,7 +261,7 @@ const AdminMessages: React.FC = () => {
           <CardBody>
             <MessagesBody
               messageType={messageType}
-              disabled={isDisabled}
+              disabled={isPending}
               label="wiadomość"
               value={newMessage}
               onChange={newMessageHandling}
@@ -238,9 +283,7 @@ const AdminMessages: React.FC = () => {
             />
           ) : (
             <CustomButton
-              disabled={
-                isDisabled || newMessage.length === 0 || selectedUser === null
-              }
+              disabled={isPending || isDisabled}
               setColor="primary"
               setSize="md"
               onClick={sendMessageHandling}

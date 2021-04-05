@@ -119,10 +119,23 @@ export interface MessageState {
     quantity: number;
 }
 
+export interface EventChangeReplyData {
+    userId?: string;
+    messageId?: string;
+    name: string;
+    email?: string;
+}
+
+export interface EventChange {
+    isAction: boolean;
+    data?: EventChangeReplyData;
+}
+
 export interface GeneralState {
     toast: ToastState;
     modalAreYouSure: ModalAreYouSure;
     isRemoved: boolean;
+    eventChange: EventChange;
 }
 
 export enum TargetOptions {

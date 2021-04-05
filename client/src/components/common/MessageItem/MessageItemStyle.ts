@@ -16,7 +16,8 @@ export interface Props {
         userName: string | undefined,
         userEmail: string | undefined,
         isAdminMessage: boolean,
-        isUser: boolean | undefined
+        isUser: boolean | undefined,
+        fromId: string | undefined
     ) => void;
     selectedId: string;
     dataType: Exclude<MessageOptions, MessageOptions.new>;

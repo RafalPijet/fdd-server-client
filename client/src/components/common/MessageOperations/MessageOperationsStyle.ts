@@ -48,6 +48,7 @@ export interface Props {
     messageId: string;
     dataType: Exclude<MessageOptions, MessageOptions.new>;
     isAdminMessage: boolean;
+    fromId: string | undefined;
 }
 
 export type PropsClasses = Record<keyof StyleProps, string>;

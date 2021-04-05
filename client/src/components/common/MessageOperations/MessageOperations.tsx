@@ -4,8 +4,11 @@ import ClearIcon from '@material-ui/icons/Clear';
 import ReplyIcon from '@material-ui/icons/Reply';
 import IconButton from '@material-ui/core/IconButton';
 import { MessageOptions } from '../../../types/global';
-import { setModalAreYouSure } from '../../../redux/actions/generalActions';
-import { ModalAYSModes } from '../../../types/global';
+import {
+  setModalAreYouSure,
+  setEventChange,
+} from '../../../redux/actions/generalActions';
+import { ModalAYSModes, EventChangeReplyData } from '../../../types/global';
 import {
   Props,
   PropsClasses,
@@ -21,6 +24,7 @@ const MessageOperations: React.FC<Props> = (props) => {
     dataType,
     isAdminMessage,
     isUser,
+    fromId,
   } = props;
   const classes: PropsClasses = useStyles({} as StyleProps);
   const [isIncoming, setIsIncoming] = useState<boolean>(false);
@@ -50,6 +54,23 @@ const MessageOperations: React.FC<Props> = (props) => {
     );
   };
 
+  const replyMessageHandling = () => {
+    let payload: EventChangeReplyData;
+    if (isUser) {
+      payload = {
+        userId: fromId,
+        name: userName,
+      };
+    } else {
+      payload = {
+        messageId,
+        name: userName,
+        email: userEmail,
+      };
+    }
+    dispatch(setEventChange({ isAction: true, data: payload }));
+  };
+
   const directionHandling = (isMessage: boolean) => {
     if (
       dataType === MessageOptions.incoming ||
@@ -75,7 +96,10 @@ const MessageOperations: React.FC<Props> = (props) => {
         {directionHandling(false)}
         {userName}
         {isIncoming && (
-          <IconButton className={classes.buttonReply}>
+          <IconButton
+            onClick={replyMessageHandling}
+            className={classes.buttonReply}
+          >
             <ReplyIcon fontSize="small" />
           </IconButton>
         )}

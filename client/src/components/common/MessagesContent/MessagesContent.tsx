@@ -31,6 +31,7 @@ const MessagesContent: React.FC<Props> = (props) => {
   >(undefined);
   const [selectedId, setSelectedId] = useState<string>('Brak wiadomości');
   const [isUser, setIsUser] = useState<boolean | undefined>(undefined);
+  const [fromId, setFromId] = useState<string | undefined>(undefined);
   const [isAdminMessage, setIsAdminMessage] = useState<boolean>(false);
   const isPending = useSelector(getPending);
   const isSuccess = useSelector(getSuccess);
@@ -51,6 +52,7 @@ const MessagesContent: React.FC<Props> = (props) => {
       setSelectedUserName(messages[0].userName);
       setSelectedUserEmail(messages[0].userEmail);
       setIsUser(messages[0].isUser);
+      setFromId(messages[0].from);
     }
     if (messages.length === 0 && isSuccess && !isPending) {
       setSelectedMessage('Brak wiadomości');
@@ -65,7 +67,8 @@ const MessagesContent: React.FC<Props> = (props) => {
     userName: string | undefined,
     userEmail: string | undefined,
     isAdminMessage: boolean,
-    isUser: boolean | undefined
+    isUser: boolean | undefined,
+    fromId: string | undefined
   ) => {
     setSelectedMessage(content);
     setSelectedUserName(userName);
@@ -73,6 +76,7 @@ const MessagesContent: React.FC<Props> = (props) => {
     setSelectedId(id);
     setIsAdminMessage(isAdminMessage);
     setIsUser(isUser);
+    setFromId(fromId);
     if (
       isNew &&
       (dataType === MessageOptions.incoming ||
@@ -102,6 +106,7 @@ const MessagesContent: React.FC<Props> = (props) => {
             messageId={selectedId!}
             dataType={dataType}
             isAdminMessage={isAdminMessage}
+            fromId={fromId}
           />
         ))}
       <div className={classes.list}>

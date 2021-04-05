@@ -1,4 +1,13 @@
-import { SET_TOAST, SetToastAction, SET_MODAL_ARE_YOU_SURE, SetModalAreYouSure, SET_IS_REMOVED, SetIsRemoved } from '../actions/generalActions';
+import {
+    SET_TOAST,
+    SetToastAction,
+    SET_MODAL_ARE_YOU_SURE,
+    SetModalAreYouSure,
+    SET_IS_REMOVED,
+    SetIsRemoved,
+    SET_EVENT_CHANGE,
+    SetEventChange
+} from '../actions/generalActions';
 import { GeneralState, ModalAYSModes } from '../../types/global';
 
 const initialState: GeneralState = {
@@ -14,12 +23,16 @@ const initialState: GeneralState = {
         description: "",
         data: {}
     },
-    isRemoved: false
+    isRemoved: false,
+    eventChange: {
+        isAction: false,
+        data: undefined
+    }
 }
 
 const generalReducer = (
     state: GeneralState = initialState,
-    action: SetToastAction | SetModalAreYouSure | SetIsRemoved
+    action: SetToastAction | SetModalAreYouSure | SetIsRemoved | SetEventChange
 ) => {
     switch (action.type) {
         case SET_TOAST:
@@ -28,6 +41,8 @@ const generalReducer = (
             return { ...state, modalAreYouSure: action.payload };
         case SET_IS_REMOVED:
             return { ...state, isRemoved: action.payload };
+        case SET_EVENT_CHANGE:
+            return { ...state, eventChange: action.payload }
         default:
             return { ...state }
     }

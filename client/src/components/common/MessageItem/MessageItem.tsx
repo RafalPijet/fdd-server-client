@@ -67,7 +67,8 @@ const MessageItem: React.FC<Props> = (props) => {
       userName,
       userEmail,
       from === userId,
-      isUser
+      isUser,
+      from
     );
   };
   const itemContent = () => {
