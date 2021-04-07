@@ -28,6 +28,8 @@ import {
   getAdminMessages,
   addMessage,
   getAdminMessagesByUser,
+  addAnswerToOutsideMessage,
+  sendMessageByEmail,
 } from '../../../redux/thunks';
 import {
   MessageOptions,
@@ -171,11 +173,11 @@ const AdminMessages: React.FC = () => {
       setSelectedUser(null);
       setSelectedUserToReply(undefined);
       setTimeout(() => {
+        setPage(0);
         setMessageType(newValue);
         if (eventChange.isAction) {
           dispatch(setEventChange({ isAction: false, data: undefined }));
         }
-        setPage(0);
       }, 300);
     }
   };
@@ -211,24 +213,43 @@ const AdminMessages: React.FC = () => {
 
   const sendMessageHandling = () => {
     if (eventChange.isAction && selectedUserToReply !== undefined) {
-      if (Object.keys(selectedUserToReply).length === 2 && selectedUserToReply.userId) {
+      if (
+        Object.keys(selectedUserToReply).length === 2 &&
+        selectedUserToReply.userId
+      ) {
         dispatch(addMessage(newMessage, selectedUserToReply.userId));
       }
-      if (Object.keys(selectedUserToReply).length === 3 && selectedUserToReply.messageId) {
-        //email handling
-        //update outsideMessage
+      if (
+        Object.keys(selectedUserToReply).length === 3 &&
+        selectedUserToReply.messageId
+      ) {
+        dispatch(
+          addAnswerToOutsideMessage(
+            newMessage,
+            selectedUserToReply.email!,
+            selectedUserToReply.name,
+            selectedUserToReply.messageId
+          )
+        );
       }
+      dispatch(setEventChange({ isAction: false, data: undefined }));
+      setSelectedUserToReply(undefined);
     } else {
       if (newMessage.length > 0 && selectedUser !== null) {
         if (!Object.keys(selectedUser).includes('email')) {
           dispatch(addMessage(newMessage, selectedUser._id));
         } else {
-          //email handling
-          console.log(selectedUser);
-          console.log(newMessage);
+          dispatch(
+            sendMessageByEmail(
+              newMessage,
+              selectedUser.email!,
+              selectedUser.name
+            )
+          );
         }
       }
     }
+    setNewMessage('');
   };
 
   return (

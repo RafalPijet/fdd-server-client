@@ -142,6 +142,53 @@ export const addOutsideMessage = (payload: Omit<IOutsideMessage, '_id' | 'create
     }
 }
 
+export const addAnswerToOutsideMessage = (content: string, email: string, name: string, messageId: string | undefined): ThunkAction<
+    Promise<void>,
+    any,
+    RootState,
+    StartRequestAction | StopRequestAction | ErrorRequestAction | SetToastAction
+> => async (dispatch, getState) => {
+    dispatch(startRequest());
+
+    try {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        let res: AxiosResponse = await axios.put(`${API_URL}/admin/messages/update/answer`, { messageId, content, email, name }, {
+            headers: {
+                'Authorization': localStorage.getItem('tokenFDD')
+            },
+        });
+        if (res.status === 201) dispatch(setUserToast({ isOpen: true, content: `Odpowiedź do ${name} na email ${email} została wysłana.`, variant: "success" }));
+        dispatch(stopRequest());
+    } catch (err) {
+        err.response.data.message ?
+            dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
+            dispatch(errorRequest({ isError: true, message: 'Something went wrong' }));
+    }
+}
+
+export const sendMessageByEmail = (content: string, email: string, name: string): ThunkAction<
+    Promise<void>,
+    any,
+    RootState,
+    StartRequestAction | StopRequestAction | ErrorRequestAction | SetToastAction
+> => async (dispatch, getState) => {
+    dispatch(startRequest());
+    try {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        let res: AxiosResponse = await axios.post(`${API_URL}/admin/messages/email`, { content, email, name }, {
+            headers: {
+                'Authorization': localStorage.getItem('tokenFDD')
+            },
+        });
+        dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
+        dispatch(stopRequest());
+    } catch (err) {
+        err.response.data.message ?
+            dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
+            dispatch(errorRequest({ isError: true, message: 'Something went wrong' }));
+    }
+}
+
 export const getUserMessages = (target: TargetOptions, page: number, rowsPerPage: number): ThunkAction<
     Promise<void>,
     any,

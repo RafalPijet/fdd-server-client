@@ -4,6 +4,7 @@ import { controller } from './decorators';
 import { post, get, put, del } from '../routes';
 import { RequestWithUser } from '../middleware';
 import HttpException from '../exceptions/HttpException';
+import * as dotenv from 'dotenv';
 import {
     MessageModel,
     OutSideMessageModel,
@@ -15,6 +16,14 @@ import {
 } from '../models';
 import { TargetOptions, IAdminMessage } from '../types';
 import { removeDuplicates } from '../utils/functions';
+import nodemailerSendgrid from 'nodemailer-sendgrid';
+import nodemailer from 'nodemailer';
+dotenv.config();
+const transporter = nodemailer.createTransport(
+    nodemailerSendgrid({
+        apiKey: process.env.SENDGRID_KEY!
+    })
+);
 
 @controller('/api/admin')
 class AdminController {
@@ -31,7 +40,7 @@ class AdminController {
 
         try {
             if (target !== TargetOptions.all) {
-                outSideMessages = await OutSideMessageModel.find(target === TargetOptions.to ? { "answer": "" } : { "answer": { "$gte": " " } });
+                (target === TargetOptions.to) ? outSideMessages = await OutSideMessageModel.find() : outSideMessages = await OutSideMessageModel.find({ "answer": { "$gte": " " } });
                 parentMessages = await MessageModel.find({ [target]: request.user._id }).populate(target === TargetOptions.from ? TargetOptions.to : TargetOptions.from);
                 mapParentMessages = parentMessages.map((item: (IMessage & mongoose.Document<any>)) => {
                     return {
@@ -83,7 +92,7 @@ class AdminController {
                 return {
                     _id: item._id,
                     isUser: false,
-                    content: item.content,
+                    content: (item.answer && item.answer.length > 0) ? `${item.content} [ODPOWIEDŹ]: ${item.answer}` : item.content,
                     userName: item.name,
                     userEmail: item.email,
                     new: item.new!,
@@ -201,6 +210,62 @@ class AdminController {
         } catch (err) {
             next(new HttpException(404,
                 `Usunięcie wiadomości nie powiodło się. - ${err}`))
+        }
+    }
+    @put('/messages/update/answer')
+    async updateAnswerOutsideMessage(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const { messageId, content, email, name } = req.body;
+        const request = req as RequestWithUser;
+
+        try {
+            let message: (IOutsideMessage & mongoose.Document<any>) | null = await OutSideMessageModel.findById(messageId);
+            if (message !== null) {
+                const existAnswer = message.answer;
+                if (existAnswer !== undefined) {
+                    message.answer = `${existAnswer} [${new Date().toLocaleDateString()}]: ${content}`;
+                } else {
+                    message.answer = `[${new Date().toLocaleDateString()}]: ${content}`
+                }
+                await message.save();
+                transporter.sendMail({
+                    to: email,
+                    from: process.env.FDD_Email,
+                    subject: 'Odpowiedź z Fundacji Dorośli Dzieciom',
+                    html: `
+                    <h2>Fundacja DOROŚLI DZIECIOM</h2>
+                    <h3>Dzień dobry ${name}</h3>
+                    <p>${content}</p>
+                    <p>Pozdrawiam ${request.user.firstName} ${request.user.lastName}</p>
+                `
+                });
+                res.status(201).send();
+            }
+        } catch (err) {
+            next(new HttpException(404,
+                `Aktualizacja wiadomości nie powiodło się. - ${err}`))
+        }
+    }
+    @post('/messages/email')
+    async sendEmailToSelectedOutsideUser(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const { content, email, name } = req.body;
+        const request = req as RequestWithUser;
+
+        try {
+            transporter.sendMail({
+                to: email,
+                from: process.env.FDD_Email,
+                subject: 'Fundacja Dorośli Dzieciom',
+                html: `
+                <h2>Fundacja DOROŚLI DZIECIOM</h2>
+                <h3>Dzień dobry ${name}</h3>
+                <p>${content}</p>
+                <p>Pozdrawiam ${request.user.firstName} ${request.user.lastName}</p>
+            `
+            });
+            res.status(201).json({ message: `Wiadomość do ${name} na adres ${email} została wysłana.` });
+        } catch (err) {
+            next(new HttpException(404,
+                `Wysłanie wiadomości email ${email} do ${name} nie powiodło się. - ${err}`))
         }
     }
 }
