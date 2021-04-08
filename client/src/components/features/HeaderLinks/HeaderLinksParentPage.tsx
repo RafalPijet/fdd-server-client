@@ -7,7 +7,7 @@ import { Props, StyleProps, PropsClasses, useStyles } from './headerLinksStyle';
 import CustomButton from '../../common/CustomButton/CustomButton';
 import CustomDropdown from '../../common/CustomDropdown/CustomDropdown';
 
-import { Apps, ExitToApp } from '@material-ui/icons';
+import { Face, ExitToApp } from '@material-ui/icons';
 
 const HeaderList: React.FC<Props> = (props) => {
   const classes: PropsClasses = useStyles({} as StyleProps);
@@ -25,11 +25,11 @@ const HeaderList: React.FC<Props> = (props) => {
           caret
           hoverColor="warningHover"
           noLiPadding
-          buttonText="Menu"
+          buttonText="Podopieczny"
           buttonProps={{
             className: classes.navLink,
           }}
-          buttonIcon={Apps}
+          buttonIcon={Face}
           dropdownList={[
             <Link to="/parent" className={classes.dropdownLink}>
               Parent

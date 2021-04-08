@@ -7,7 +7,7 @@ import Button from '@material-ui/core/Button';
 import Hidden from '@material-ui/core/Hidden';
 import Drawer from '@material-ui/core/Drawer';
 import Menu from '@material-ui/icons/Menu';
-import LinearProgress from '@material-ui/core/LinearProgress';
+import RequestProgress from '../RequestProgress/RequestProgress';
 import { Props, PropsClasses, useStyles, StyleProps } from './HeaderStyle';
 import logo from '../../../images/butterflyMini.png';
 
@@ -118,7 +118,7 @@ const Header: React.FC<Props> = (props) => {
         </Drawer>
       </Hidden>
       <div style={{ height: '4px', width: '100%' }}>
-        <LinearProgress
+        <RequestProgress
           className={classes.progressContainer}
           hidden={!isSpiner}
         />
