@@ -3,7 +3,7 @@ import { controller } from './decorators';
 import { post, get, put } from '../routes';
 import { RequestWithUser } from '../middleware';
 import HttpException from '../exceptions/HttpException';
-import { IMessage, buildMessage, MessageModel, OutSideMessageModel } from '../models';
+import { IMessage, buildMessage, MessageModel, OutSideMessageModel, ChildModel, IChild, buildChild, IUser, UserModel } from '../models';
 
 @controller('/api/users')
 class UserController {
@@ -67,6 +67,56 @@ class UserController {
         } catch (err) {
             next(new HttpException(404,
                 `Niepowodzenie aktualizacji wiadomości dla ${request.user.firstName} ${request.user.lastName}. - ${err}`))
+        }
+    }
+    @post('/child')
+    async addChild(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const request = req as RequestWithUser;
+        const { payload, userId } = req.body;
+        let user: any;
+
+        try {
+            if (userId !== undefined) {
+                user = await UserModel.findById(userId);
+            } else {
+                user = await UserModel.findById(request.user._id);
+            }
+            const child: IChild = {
+                parent: userId !== undefined ? userId : request.user._id,
+                firstName: payload.firstName,
+                lastName: payload.lastName,
+                birthDate: new Date(payload.birthDate),
+                info: payload.info
+            }
+            const newChild = buildChild(child);
+            if (user !== null) {
+                user.children?.push(newChild)
+                await user.save();
+            }
+            await newChild.save();
+            res.status(201).json({
+                child: newChild,
+                message: `Do rodzica ${user.firstName} ${user.lastName} został przyporządkowany podopieczny ${newChild.firstName} ${newChild.lastName}`
+            });
+        } catch (err) {
+            next(new HttpException(404, 'Nieudane utworzenie podopiecznego!'));
+        }
+    }
+    @post('/child/image/:childId')
+    async addChildImage(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const { childId } = req.params;
+        if (!req.file) {
+            next(new HttpException(404, 'Brak obrazu'));
+        }
+        const imageUrl = req.file.path;
+        try {
+            const foundChild = await ChildModel.findById(childId);
+            if (foundChild) {
+                foundChild.images = [...foundChild.images!, imageUrl];
+                res.status(201).json(await foundChild.save());
+            }
+        } catch (err) {
+            next(new HttpException(404, 'Nieudane dodanie zdjęcia'));
         }
     }
 }

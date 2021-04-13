@@ -27,6 +27,9 @@ var mongoose_1 = __importDefault(require("mongoose"));
 var cors_1 = __importDefault(require("cors"));
 var express_mongo_sanitize_1 = __importDefault(require("express-mongo-sanitize"));
 var helmet_1 = __importDefault(require("helmet"));
+var multer_1 = __importDefault(require("multer"));
+var path_1 = __importDefault(require("path"));
+var uuid_1 = __importDefault(require("uuid"));
 var dotenv = __importStar(require("dotenv"));
 var routes_1 = require("./routes");
 require("./controllers/AuthController");
@@ -35,11 +38,29 @@ require("./controllers/AdminController");
 var middleware_1 = require("./middleware");
 dotenv.config();
 var app = express_1.default();
+var storage = multer_1.default.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'images');
+    },
+    filename: function (req, file, cb) {
+        cb(null, uuid_1.default.v4() + '-' + file.originalname);
+    }
+});
+var fileFilter = function (req, file, cb) {
+    if (file.mimetype === 'image/png' || file.mimetype === 'image/jpg' || file.mimetype === 'image/jpeg') {
+        cb(null, true);
+    }
+    else {
+        cb(null, false);
+    }
+};
 app.use(cors_1.default());
 app.use(express_mongo_sanitize_1.default());
 app.use(helmet_1.default());
 app.use(express_1.default.urlencoded({ extended: false }));
 app.use(express_1.default.json());
+app.use(multer_1.default({ storage: storage, fileFilter: fileFilter }).single('image'));
+app.use('./images', express_1.default.static(path_1.default.join(__dirname, 'images')));
 app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', "*");
     res.setHeader('Access-Control-Allow-Methods', "GET, POST, PUT, PATCH, DELETE, OPTIONS");

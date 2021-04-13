@@ -2,15 +2,17 @@ import mongoose, { Schema } from 'mongoose';
 
 export interface IChild {
     _id?: string;
-    _idParent?: string;
+    parent: string | undefined;
+    active?: boolean;
     firstName: string;
     lastName: string;
     birthDate: Date;
     info: string;
-    images: string[];
+    images?: string[];
 }
 
 const childSchema = new Schema({
+    active: { type: Boolean, default: false },
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
     birthDate: { type: Date, required: true },

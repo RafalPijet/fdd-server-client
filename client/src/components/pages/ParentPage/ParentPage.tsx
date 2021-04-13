@@ -12,6 +12,7 @@ import GridItem from '../../common/Grid/GridItem';
 import Footer from '../../common/Footer/Footer';
 import ParentMessages from '../../features/ParentMessages/ParentMessages';
 import ChildrenZone from '../../features/ChildrenZone/ChildrenZone';
+import ChildHandling from '../../common/ChildHandling/ChildHandling';
 import { cleanCurrentUser } from '../../../redux/actions/userActions';
 import { resetRequest } from '../../../redux/actions/requestActions';
 import { loadUserMessages } from '../../../redux/actions/messageActions';
@@ -82,7 +83,9 @@ const ParentPage: React.FC = () => {
         </div>
       </Jumbotron>
       <div className={classNames(classes.main, classes.mainRaised)}>
-        <div style={{ height: '800px' }}>Preparing...</div>
+        <div style={{ height: '800px' }}>
+          <ChildHandling />
+        </div>
       </div>
       <Footer />
     </div>

@@ -1,4 +1,11 @@
-import { AddUserAction, CleanUserAction, ADD_USER, CLEAN_USER } from '../actions/userActions';
+import {
+    AddUserAction,
+    CleanUserAction,
+    AddChildToUserAction,
+    ADD_USER,
+    CLEAN_USER,
+    ADD_CHILD_TO_USER
+} from '../actions/userActions';
 import { UserState, UserStatus } from '../../types/global';
 
 const initialState: UserState = {
@@ -19,7 +26,7 @@ const initialState: UserState = {
 
 const userReducer = (
     state: UserState = initialState,
-    action: AddUserAction | CleanUserAction
+    action: AddUserAction | CleanUserAction | AddChildToUserAction
 ) => {
     switch (action.type) {
         case ADD_USER:
@@ -33,10 +40,12 @@ const userReducer = (
                 children: action.payload.children,
                 adress: action.payload.adress
             }
+        case ADD_CHILD_TO_USER:
+            return { ...state, children: [...state.children, action.payload] };
         case CLEAN_USER:
-            return { ...initialState }
+            return { ...initialState };
         default:
-            return { ...state }
+            return { ...state };
     }
 }
 

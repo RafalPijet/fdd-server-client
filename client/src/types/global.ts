@@ -73,6 +73,17 @@ export interface UserState {
     }
 }
 
+export interface ChildState {
+    _id: string;
+    parent: string;
+    active: boolean;
+    firstName: string;
+    lastName: string;
+    birthDate: Date;
+    info: string;
+    images: string[];
+}
+
 export interface IMessage {
     content: string;
     _id: string;

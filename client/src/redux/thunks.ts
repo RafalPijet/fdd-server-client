@@ -11,7 +11,7 @@ import {
     stopRequest,
     errorRequest
 } from './actions/requestActions';
-import { addCurrentUser, AddUserAction } from './actions/userActions';
+import { addCurrentUser, AddUserAction, addChildToUser, AddChildToUserAction } from './actions/userActions';
 import {
     loadUserMessages,
     LoadMessagesAction,
@@ -19,7 +19,8 @@ import {
     setMessageIsReaded
 } from './actions/messageActions';
 import { setUserToast, SetToastAction, setIsRemoved, SetIsRemoved } from './actions/generalActions';
-import { IMessage, TargetOptions, IOutsideMessage } from '../types/global';
+import { IChildData } from '../components/common/ChildHandling/ChildHandlingStyle';
+import { IMessage, TargetOptions, IOutsideMessage, UserStatus } from '../types/global';
 import { API_URL } from '../config';
 
 export const loginUser = (payload: IUserLogin): ThunkAction<
@@ -283,6 +284,34 @@ export const updateMessageIsReaded = (_id: IMessage["_id"], isAdmin: boolean, is
             },
         })
         if (res.status === 202) dispatch(setMessageIsReaded(_id));
+    } catch (err) {
+        err.response.data.message ?
+            dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
+            dispatch(errorRequest({ isError: true, message: 'Something went wrong' }));
+    }
+}
+
+export const addChildToParent = (payload: IChildData, userId?: string): ThunkAction<
+    Promise<void>,
+    any,
+    RootState,
+    StartRequestAction | StopRequestAction | ErrorRequestAction | SetToastAction | AddChildToUserAction
+> => async (dispatch, getState) => {
+    dispatch(startRequest());
+
+    try {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        let res: AxiosResponse = await axios.post(`${API_URL}/users/child`, { payload, userId }, {
+            headers: {
+                'Authorization': localStorage.getItem('tokenFDD')
+            },
+        })
+
+        if (getState().user.status === UserStatus.parent) {
+            dispatch(addChildToUser(res.data.child));
+        }
+        dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
+        dispatch(stopRequest());
     } catch (err) {
         err.response.data.message ?
             dispatch(errorRequest({ isError: true, message: err.response.data.message })) :

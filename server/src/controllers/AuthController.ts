@@ -16,7 +16,7 @@ class AuthController {
         const { email, password } = req.body;
 
         try {
-            const user = await UserModel.findOne({ email });
+            const user = await UserModel.findOne({ email }).populate('children');
             if (user && user.password) {
 
                 if (await bcrypt.compare(password, user.password)) {
