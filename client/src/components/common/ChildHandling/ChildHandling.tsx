@@ -5,9 +5,8 @@ import GridItem from '../../common/Grid/GridItem';
 import CustomInput from '../../common/CustomInput/CustomInput';
 import CustomButton from '../../common/CustomButton/CustomButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
-import Input from '@material-ui/core/Input';
 import { Edit, Done } from '@material-ui/icons';
-import { addChildToParent } from '../../../redux/thunks';
+import { addChildToParent, addImageToChild } from '../../../redux/thunks';
 import {
   IChildData,
   StyleProps,
@@ -29,6 +28,7 @@ const ChildHandling: React.FC = () => {
     birthDate: false,
     info: false,
   });
+  const [image, setImage] = useState<File | null>(null);
   const dispatch = useDispatch();
 
   const handleTextField = (
@@ -36,8 +36,17 @@ const ChildHandling: React.FC = () => {
   ) => {
     setChildData({ ...childData, [event.target.id!]: event.target.value });
   };
+  const handleFilesField = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      setImage(event.target.files[0]);
+    }
+  };
+  const sendImage = () => {
+    if (image !== null) {
+      dispatch(addImageToChild(image, '6076e0de6eb6969d8083890c'));
+    }
+  };
   const confirmButtonHandling = () => {
-    console.log(childData);
     dispatch(addChildToParent(childData));
   };
 
@@ -90,7 +99,7 @@ const ChildHandling: React.FC = () => {
           <CustomInput
             labelText="Data urodzenia..."
             id="birthDate"
-            value={childData.birthDate}
+            value={childData.birthDate.toString()}
             formControlProps={{
               fullWidth: true,
             }}
@@ -99,7 +108,8 @@ const ChildHandling: React.FC = () => {
               type: 'date',
               endAdornment: (
                 <InputAdornment position="end">
-                  {!isError.birthDate && childData.birthDate.length > 0 ? (
+                  {!isError.birthDate &&
+                  childData.birthDate.toString().length > 0 ? (
                     <Done className={classes.inputIconsColor} />
                   ) : (
                     <Edit className={classes.inputIconsColor} />
@@ -135,7 +145,12 @@ const ChildHandling: React.FC = () => {
           />
         </GridItem>
         <GridItem xs={12} sm={12} lg={4}>
-          <Input type="file" />
+          <input type="file" onChange={handleFilesField} />
+          <button onClick={sendImage}>Send Image</button>
+          <img
+            src="http://localhost:3005/images/afc4f194-ac51-4fed-9ee7-7e821c4588c4-lopez-face.jpg"
+            alt="test"
+          />
         </GridItem>
       </GridContainer>
       <GridContainer justify="center" alignItems="center">

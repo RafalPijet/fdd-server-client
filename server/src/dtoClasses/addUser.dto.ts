@@ -2,37 +2,37 @@ import { IsString, MinLength, IsNumberString, IsNotEmpty, IsEmail, MaxLength, Is
 import { UserStatus, IUser } from '../models';
 
 export class addUserDto implements IUser {
-    @IsIn([UserStatus.admin, UserStatus.parent], { message: 'status must contain a admin or parent string' })
+    @IsIn([UserStatus.admin, UserStatus.parent], { message: 'Status musi być administartorem lub rodzicem' })
     public status: UserStatus;
-    @IsString()
-    @MinLength(3)
+    @IsString({ message: 'Imię musi być tekstem.' })
+    @MinLength(3, { message: 'Imię musi zawierać minimum 3 znaki.' })
     public firstName: string;
-    @IsString()
-    @MinLength(3)
+    @IsString({ message: 'Nazwisko musi być tekstem.' })
+    @MinLength(3, { message: 'Nazwisko musi zawierać minimum 3 znaki.' })
     public lastName: string;
     @IsNumberString()
-    @IsNotEmpty()
+    @IsNotEmpty({ message: 'Numer telefonu musi mieć poprawny format' })
     public phone: string;
-    @IsEmail()
+    @IsEmail(undefined, { message: 'Niepoprawny adres email' })
     public email: string;
-    @IsNotEmpty()
-    @MinLength(5)
+    @IsNotEmpty({ message: 'Hasło musi być podane' })
+    @MinLength(5, { message: 'Hasło musi zawierać minimum 5 znaków.' })
     @IsString()
     public password: string;
-    @IsNumberString()
-    @MinLength(5)
+    @IsNumberString(undefined, { message: 'Kod pocztowy musi zawierać cyfry' })
+    @MinLength(5, { message: 'Kod pocztowy musi zawierać 5 cyfr' })
     @MaxLength(5)
     public zipCode: string;
     @IsString()
-    @IsNotEmpty()
-    @MinLength(3)
+    @IsNotEmpty({ message: 'Nie podano nazwy miasta' })
+    @MinLength(3, { message: 'Minimalna nazwa miasta musi zawierać 3 litery' })
     public town: string;
     @IsString()
-    @IsNotEmpty()
-    @MinLength(3)
+    @IsNotEmpty({ message: 'Nie podano nazwy ulicy' })
+    @MinLength(3, { message: 'Nazwa ulicy musi zawierać minimum 3 litery' })
     public street: string;
     @IsString()
-    @IsNotEmpty()
+    @IsNotEmpty({ message: 'Nie podano numeru' })
     @MinLength(1)
     public number: string;
     constructor(status: UserStatus,

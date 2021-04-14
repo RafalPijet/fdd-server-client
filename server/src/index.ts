@@ -17,7 +17,7 @@ dotenv.config();
 const app = express();
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'images');
+        cb(null, 'build/images');
     },
     filename: (req, file, cb) => {
         cb(null, uuid.v4() + '-' + file.originalname);
@@ -37,7 +37,7 @@ app.use(helmet());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(multer({ storage, fileFilter }).single('image'));
-app.use('./images', express.static(path.join(__dirname, 'images')));
+app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use((req: Request, res: Response, next: NextFunction) => {
     res.setHeader('Access-Control-Allow-Origin', "*");
     res.setHeader('Access-Control-Allow-Methods', "GET, POST, PUT, PATCH, DELETE, OPTIONS");

@@ -301,7 +301,7 @@ export const addChildToParent = (payload: IChildData, userId?: string): ThunkAct
 
     try {
         await new Promise(resolve => setTimeout(resolve, 2000));
-        let res: AxiosResponse = await axios.post(`${API_URL}/users/child`, { payload, userId }, {
+        let res: AxiosResponse = await axios.post(`${API_URL}/users/child/${userId}`, payload, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD')
             },
@@ -311,6 +311,33 @@ export const addChildToParent = (payload: IChildData, userId?: string): ThunkAct
             dispatch(addChildToUser(res.data.child));
         }
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
+        dispatch(stopRequest());
+    } catch (err) {
+        err.response.data.message ?
+            dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
+            dispatch(errorRequest({ isError: true, message: 'Something went wrong' }));
+    }
+}
+
+export const addImageToChild = (image: File, childId: string): ThunkAction<
+    Promise<void>,
+    any,
+    RootState,
+    StartRequestAction | StopRequestAction | ErrorRequestAction | SetToastAction
+> => async (dispatch, getState) => {
+    dispatch(startRequest());
+
+    try {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        const formData = new FormData();
+        formData.append('image', image)
+        let res: AxiosResponse = await axios.post(`${API_URL}/users/child/image/${childId}`, formData, {
+            headers: {
+                'Authorization': localStorage.getItem('tokenFDD')
+            },
+        })
+
+        console.log(res.data)
         dispatch(stopRequest());
     } catch (err) {
         err.response.data.message ?

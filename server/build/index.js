@@ -40,7 +40,7 @@ dotenv.config();
 var app = express_1.default();
 var storage = multer_1.default.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'images');
+        cb(null, 'build/images');
     },
     filename: function (req, file, cb) {
         cb(null, uuid_1.default.v4() + '-' + file.originalname);
@@ -60,7 +60,7 @@ app.use(helmet_1.default());
 app.use(express_1.default.urlencoded({ extended: false }));
 app.use(express_1.default.json());
 app.use(multer_1.default({ storage: storage, fileFilter: fileFilter }).single('image'));
-app.use('./images', express_1.default.static(path_1.default.join(__dirname, 'images')));
+app.use('/images', express_1.default.static(path_1.default.join(__dirname, 'images')));
 app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', "*");
     res.setHeader('Access-Control-Allow-Methods', "GET, POST, PUT, PATCH, DELETE, OPTIONS");

@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { controller } from './decorators';
+import { controller, bodyValidator, ValidatorKeys } from './decorators';
 import { post, get, put } from '../routes';
 import { RequestWithUser } from '../middleware';
 import HttpException from '../exceptions/HttpException';
@@ -69,20 +69,22 @@ class UserController {
                 `Niepowodzenie aktualizacji wiadomości dla ${request.user.firstName} ${request.user.lastName}. - ${err}`))
         }
     }
-    @post('/child')
+    @post('/child/:userId')
+    @bodyValidator(ValidatorKeys.addChild)
     async addChild(req: Request, res: Response, next: NextFunction): Promise<void> {
         const request = req as RequestWithUser;
-        const { payload, userId } = req.body;
+        const { userId } = req.params;
+        const payload = req.body;
         let user: any;
 
         try {
-            if (userId !== undefined) {
+            if (userId !== 'undefined') {
                 user = await UserModel.findById(userId);
             } else {
                 user = await UserModel.findById(request.user._id);
             }
             const child: IChild = {
-                parent: userId !== undefined ? userId : request.user._id,
+                parent: userId !== 'undefined' ? userId : request.user._id,
                 firstName: payload.firstName,
                 lastName: payload.lastName,
                 birthDate: new Date(payload.birthDate),
@@ -109,12 +111,15 @@ class UserController {
             next(new HttpException(404, 'Brak obrazu'));
         }
         const imageUrl = req.file.path;
+        console.log(childId)
+        console.log(imageUrl)
         try {
-            const foundChild = await ChildModel.findById(childId);
-            if (foundChild) {
-                foundChild.images = [...foundChild.images!, imageUrl];
-                res.status(201).json(await foundChild.save());
-            }
+            //     const foundChild = await ChildModel.findById(childId);
+            //     if (foundChild) {
+            //         foundChild.images = [...foundChild.images!, imageUrl];
+            //         res.status(201).json(await foundChild.save());
+            //     }
+            res.status(200).send()
         } catch (err) {
             next(new HttpException(404, 'Nieudane dodanie zdjęcia'));
         }
