@@ -50,6 +50,8 @@ export enum ModalAYSModes {
 }
 
 export interface ChildState {
+    _id: string;
+    parent: string;
     firstName: string;
     lastName: string;
     birthDate: Date;
@@ -146,6 +148,7 @@ export interface GeneralState {
     toast: ToastState;
     modalAreYouSure: ModalAreYouSure;
     isRemoved: boolean;
+    isOpen: boolean;
     eventChange: EventChange;
 }
 

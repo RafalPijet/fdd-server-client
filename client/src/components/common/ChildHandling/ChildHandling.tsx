@@ -147,10 +147,10 @@ const ChildHandling: React.FC = () => {
         <GridItem xs={12} sm={12} lg={4}>
           <input type="file" onChange={handleFilesField} />
           <button onClick={sendImage}>Send Image</button>
-          <img
-            src="http://localhost:3005/images/afc4f194-ac51-4fed-9ee7-7e821c4588c4-lopez-face.jpg"
+          {/* <img
+            src="http://localhost:3005/images/newLopez.png-1d730d94-f1b6-4107-85dd-fc30a01495ba"
             alt="test"
-          />
+          /> */}
         </GridItem>
       </GridContainer>
       <GridContainer justify="center" alignItems="center">

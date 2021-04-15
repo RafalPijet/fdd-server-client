@@ -21,10 +21,9 @@ class AuthController {
 
                 if (await bcrypt.compare(password, user.password)) {
                     user.password = undefined;
-                    user._id = "";
                     const tokenData = createToken(user);
                     const dto = {
-                        _id: user.id,
+                        _id: user._id,
                         status: user.status,
                         firstName: user.firstName,
                         lastName: user.lastName,

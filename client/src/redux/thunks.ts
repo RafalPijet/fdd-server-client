@@ -336,8 +336,7 @@ export const addImageToChild = (image: File, childId: string): ThunkAction<
                 'Authorization': localStorage.getItem('tokenFDD')
             },
         })
-
-        console.log(res.data)
+        dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
         dispatch(stopRequest());
     } catch (err) {
         err.response.data.message ?

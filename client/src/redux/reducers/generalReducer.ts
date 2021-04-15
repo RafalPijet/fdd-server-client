@@ -5,6 +5,8 @@ import {
     SetModalAreYouSure,
     SET_IS_REMOVED,
     SetIsRemoved,
+    SET_IS_OPEN,
+    SetIsOpen,
     SET_EVENT_CHANGE,
     SetEventChange
 } from '../actions/generalActions';
@@ -24,6 +26,7 @@ const initialState: GeneralState = {
         data: {}
     },
     isRemoved: false,
+    isOpen: false,
     eventChange: {
         isAction: false,
         data: undefined
@@ -32,7 +35,7 @@ const initialState: GeneralState = {
 
 const generalReducer = (
     state: GeneralState = initialState,
-    action: SetToastAction | SetModalAreYouSure | SetIsRemoved | SetEventChange
+    action: SetToastAction | SetModalAreYouSure | SetIsRemoved | SetIsOpen | SetEventChange
 ) => {
     switch (action.type) {
         case SET_TOAST:
@@ -41,6 +44,8 @@ const generalReducer = (
             return { ...state, modalAreYouSure: action.payload };
         case SET_IS_REMOVED:
             return { ...state, isRemoved: action.payload };
+        case SET_IS_OPEN:
+            return { ...state, isOpen: action.payload };
         case SET_EVENT_CHANGE:
             return { ...state, eventChange: action.payload }
         default:

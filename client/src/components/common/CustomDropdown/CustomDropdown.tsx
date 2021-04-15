@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
@@ -8,6 +9,7 @@ import Grow from '@material-ui/core/Grow';
 import Icon from '@material-ui/core/Icon';
 import Popper from '@material-ui/core/Popper';
 import CustomButton from '../CustomButton/CustomButton';
+import { setIsOpen, getIsOpen } from '../../../redux/actions/generalActions';
 import {
   PropsClasses,
   useStyles,
@@ -28,10 +30,19 @@ const CustomDropdown = (props: Props) => {
     noLiPadding,
     isDisabled,
   } = props;
-
+  const dispatch = useDispatch();
+  const isOpen = useSelector(getIsOpen);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  useEffect(() => {
+    if (anchorEl !== null && !isOpen) {
+      handleClickAway();
+    }
+  }, [isOpen]);
+
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(anchorEl ? null : event.currentTarget);
+    dispatch(setIsOpen(true));
   };
 
   const handleClickAway = () => {

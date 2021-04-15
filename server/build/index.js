@@ -40,7 +40,7 @@ dotenv.config();
 var app = express_1.default();
 var storage = multer_1.default.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'build/images');
+        cb(null, 'images');
     },
     filename: function (req, file, cb) {
         cb(null, uuid_1.default.v4() + '-' + file.originalname);

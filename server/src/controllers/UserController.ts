@@ -114,14 +114,15 @@ class UserController {
         console.log(childId)
         console.log(imageUrl)
         try {
-            //     const foundChild = await ChildModel.findById(childId);
-            //     if (foundChild) {
-            //         foundChild.images = [...foundChild.images!, imageUrl];
-            //         res.status(201).json(await foundChild.save());
-            //     }
-            res.status(200).send()
+            const foundChild = await ChildModel.findById(childId);
+            if (foundChild) {
+                foundChild.images = [...foundChild.images!, imageUrl];
+                await foundChild.save()
+                res.status(201).json({ message: `Dodano zdjęcia dla ${foundChild.firstName} ${foundChild.lastName}` });
+            }
         } catch (err) {
             next(new HttpException(404, 'Nieudane dodanie zdjęcia'));
         }
     }
 }
+
