@@ -8,7 +8,9 @@ import {
     SET_IS_OPEN,
     SetIsOpen,
     SET_EVENT_CHANGE,
-    SetEventChange
+    SetEventChange,
+    SET_SELECTED_CHILD,
+    SetSelectedChild
 } from '../actions/generalActions';
 import { GeneralState, ModalAYSModes } from '../../types/global';
 
@@ -30,12 +32,13 @@ const initialState: GeneralState = {
     eventChange: {
         isAction: false,
         data: undefined
-    }
+    },
+    selectedChild: null
 }
 
 const generalReducer = (
     state: GeneralState = initialState,
-    action: SetToastAction | SetModalAreYouSure | SetIsRemoved | SetIsOpen | SetEventChange
+    action: SetToastAction | SetModalAreYouSure | SetIsRemoved | SetIsOpen | SetEventChange | SetSelectedChild
 ) => {
     switch (action.type) {
         case SET_TOAST:
@@ -47,7 +50,9 @@ const generalReducer = (
         case SET_IS_OPEN:
             return { ...state, isOpen: action.payload };
         case SET_EVENT_CHANGE:
-            return { ...state, eventChange: action.payload }
+            return { ...state, eventChange: action.payload };
+        case SET_SELECTED_CHILD:
+            return { ...state, selectedChild: action.payload };
         default:
             return { ...state }
     }

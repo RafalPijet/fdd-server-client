@@ -16,7 +16,11 @@ import ChildHandling from '../../common/ChildHandling/ChildHandling';
 import { cleanCurrentUser } from '../../../redux/actions/userActions';
 import { resetRequest } from '../../../redux/actions/requestActions';
 import { loadUserMessages } from '../../../redux/actions/messageActions';
-import { getToast, setUserToast } from '../../../redux/actions/generalActions';
+import {
+  getToast,
+  setUserToast,
+  setSelectedChild,
+} from '../../../redux/actions/generalActions';
 import image from '../../../images/jumbotronParent.jpg';
 
 const ParentPage: React.FC = () => {
@@ -43,6 +47,7 @@ const ParentPage: React.FC = () => {
       dispatch(cleanCurrentUser());
       dispatch(resetRequest());
       dispatch(loadUserMessages([], 0));
+      dispatch(setSelectedChild(null));
       dispatch(
         setUserToast({
           isOpen: false,

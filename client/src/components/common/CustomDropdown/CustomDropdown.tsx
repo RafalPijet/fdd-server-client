@@ -47,6 +47,7 @@ const CustomDropdown = (props: Props) => {
 
   const handleClickAway = () => {
     setAnchorEl(null);
+    dispatch(setIsOpen(false));
   };
 
   const caretClasses = classNames({

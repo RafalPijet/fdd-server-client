@@ -8,6 +8,7 @@ export const SET_MODAL_ARE_YOU_SURE = 'general/set_modal_are_you_sure';
 export const SET_IS_REMOVED = 'general/set_is_removed';
 export const SET_IS_OPEN = 'general/set_is_open';
 export const SET_EVENT_CHANGE = 'general/set_event_change';
+export const SET_SELECTED_CHILD = 'general/set_selected_child';
 
 //ACTIONS TYPES
 export interface SetToastAction extends Action<typeof SET_TOAST> {
@@ -24,6 +25,9 @@ export interface SetIsOpen extends Action<typeof SET_IS_OPEN> {
 }
 export interface SetEventChange extends Action<typeof SET_EVENT_CHANGE> {
     payload: GeneralState["eventChange"];
+}
+export interface SetSelectedChild extends Action<typeof SET_SELECTED_CHILD> {
+    payload: GeneralState["selectedChild"]
 }
 
 //CREATORS OF ACTIONS
@@ -47,6 +51,10 @@ export const setEventChange = (payload: GeneralState["eventChange"]): SetEventCh
     type: SET_EVENT_CHANGE,
     payload
 })
+export const setSelectedChild = (childId: GeneralState["selectedChild"]): SetSelectedChild => ({
+    type: SET_SELECTED_CHILD,
+    payload: childId
+})
 
 //SELECTORS
 export const getGeneral = (rootState: RootState) => rootState.general;
@@ -55,3 +63,4 @@ export const getModalAreYouSure = (rootState: RootState) => getGeneral(rootState
 export const getIsRemoved = (rootState: RootState) => getGeneral(rootState).isRemoved;
 export const getIsOpen = (rootState: RootState) => getGeneral(rootState).isOpen;
 export const getEventChange = (rootState: RootState) => getGeneral(rootState).eventChange;
+export const getSelectedChild = (rootState: RootState) => getGeneral(rootState).selectedChild;

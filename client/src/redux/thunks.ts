@@ -1,7 +1,7 @@
 import { ThunkAction } from "redux-thunk";
 import axios, { AxiosResponse } from 'axios';
 import { RootState } from './store';
-import { IUserLogin, IUserRegister, Register } from "../components/pages/LoginPage/LoginPageStyle";
+import { IUserLogin, Register } from "../components/pages/LoginPage/LoginPageStyle";
 import {
     StartRequestAction,
     StopRequestAction,
@@ -18,16 +18,16 @@ import {
     SetMessageIsReaded,
     setMessageIsReaded
 } from './actions/messageActions';
-import { setUserToast, SetToastAction, setIsRemoved, SetIsRemoved } from './actions/generalActions';
+import { setUserToast, SetToastAction, setIsRemoved, SetIsRemoved, setSelectedChild, SetSelectedChild } from './actions/generalActions';
 import { IChildData } from '../components/common/ChildHandling/ChildHandlingStyle';
-import { IMessage, TargetOptions, IOutsideMessage, UserStatus } from '../types/global';
-import { API_URL } from '../config';
+import { IMessage, TargetOptions, IOutsideMessage, UserStatus, UserState, ChildState } from '../types/global';
+import { API_URL, URL } from '../config';
 
 export const loginUser = (payload: IUserLogin): ThunkAction<
     Promise<void>,
     any,
     RootState,
-    StartRequestAction | StopRequestAction | ErrorRequestAction | ResetRequestAction | AddUserAction
+    StartRequestAction | StopRequestAction | ErrorRequestAction | ResetRequestAction | AddUserAction | SetSelectedChild
 > => async (dispatch, getState) => {
     dispatch(startRequest())
 
@@ -40,14 +40,28 @@ export const loginUser = (payload: IUserLogin): ThunkAction<
         });
         localStorage.setItem('tokenFDD', res.data.authorization.token);
         localStorage.setItem('expiresInFDD', res.data.authorization.expiresIn);
-        dispatch(addCurrentUser(res.data.dto));
+        const user: UserState = res.data.dto;
+        if (user.children.length) {
+            user.children.forEach((child: ChildState) => {
+                child.images = child.images.map((image: string) => {
+                    return `${URL}${image}`
+                })
+            })
+            dispatch(addCurrentUser(user));
+            dispatch(setSelectedChild(user.children[0]._id));
+        } else {
+            dispatch(addCurrentUser(user));
+        }
         dispatch(stopRequest());
 
     } catch (err) {
-        err.response.data.message ?
-            dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
-            dispatch(errorRequest({ isError: true, message: 'Something went wrong' }));
-
+        if (err.response !== undefined) {
+            err.response.data.message ?
+                dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        } else {
+            dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        }
     }
 }
 
@@ -66,9 +80,13 @@ export const addUser = (payload: Register): ThunkAction<
         console.log(res.data);
         dispatch(stopRequest());
     } catch (err) {
-        err.response.data.message ?
-            dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
-            dispatch(errorRequest({ isError: true, message: 'Something went wrong' }));
+        if (err.response !== undefined) {
+            err.response.data.message ?
+                dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        } else {
+            dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        }
     }
 
 }
@@ -91,9 +109,13 @@ export const addMessage = (payload: string, _id?: string): ThunkAction<
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }))
         dispatch(stopRequest());
     } catch (err) {
-        err.response.data.message ?
-            dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
-            dispatch(errorRequest({ isError: true, message: 'Something went wrong' }));
+        if (err.response !== undefined) {
+            err.response.data.message ?
+                dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        } else {
+            dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        }
     }
 }
 
@@ -117,9 +139,13 @@ export const removeMessage = (messageId: string, isUser: boolean): ThunkAction<
         dispatch(stopRequest());
         dispatch(setIsRemoved(true));
     } catch (err) {
-        err.response.data.message ?
-            dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
-            dispatch(errorRequest({ isError: true, message: 'Something went wrong' }));
+        if (err.response !== undefined) {
+            err.response.data.message ?
+                dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        } else {
+            dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        }
     }
 }
 
@@ -137,9 +163,13 @@ export const addOutsideMessage = (payload: Omit<IOutsideMessage, '_id' | 'create
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }))
         dispatch(stopRequest());
     } catch (err) {
-        err.response.data.message ?
-            dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
-            dispatch(errorRequest({ isError: true, message: 'Something went wrong' }));
+        if (err.response !== undefined) {
+            err.response.data.message ?
+                dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        } else {
+            dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        }
     }
 }
 
@@ -161,9 +191,13 @@ export const addAnswerToOutsideMessage = (content: string, email: string, name: 
         if (res.status === 201) dispatch(setUserToast({ isOpen: true, content: `Odpowiedź do ${name} na email ${email} została wysłana.`, variant: "success" }));
         dispatch(stopRequest());
     } catch (err) {
-        err.response.data.message ?
-            dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
-            dispatch(errorRequest({ isError: true, message: 'Something went wrong' }));
+        if (err.response !== undefined) {
+            err.response.data.message ?
+                dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        } else {
+            dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        }
     }
 }
 
@@ -184,9 +218,13 @@ export const sendMessageByEmail = (content: string, email: string, name: string)
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
         dispatch(stopRequest());
     } catch (err) {
-        err.response.data.message ?
-            dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
-            dispatch(errorRequest({ isError: true, message: 'Something went wrong' }));
+        if (err.response !== undefined) {
+            err.response.data.message ?
+                dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        } else {
+            dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        }
     }
 }
 
@@ -210,9 +248,13 @@ export const getUserMessages = (target: TargetOptions, page: number, rowsPerPage
         dispatch(loadUserMessages(res.data.messages, res.data.quantity));
         dispatch(stopRequest());
     } catch (err) {
-        err.response.data.message ?
-            dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
-            dispatch(errorRequest({ isError: true, message: 'Something went wrong' }));
+        if (err.response !== undefined) {
+            err.response.data.message ?
+                dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        } else {
+            dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        }
     }
 }
 
@@ -232,14 +274,17 @@ export const getAdminMessages = (target: TargetOptions, page: number, rowsPerPag
                 'Authorization': localStorage.getItem('tokenFDD')
             },
         })
-        // console.log(res.data);
         dispatch(loadUserMessages(res.data.messages, res.data.quantity));
         dispatch(stopRequest());
 
     } catch (err) {
-        err.response.data.message ?
-            dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
-            dispatch(errorRequest({ isError: true, message: 'Something went wrong' }));
+        if (err.response !== undefined) {
+            err.response.data.message ?
+                dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        } else {
+            dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        }
     }
 }
 
@@ -260,13 +305,16 @@ export const getAdminMessagesByUser = (isParent: boolean, user: string, page: nu
                 'Authorization': localStorage.getItem('tokenFDD')
             },
         })
-        // console.log(res.data);
         dispatch(loadUserMessages(res.data.messages, res.data.quantity));
         dispatch(stopRequest());
     } catch (err) {
-        err.response.data.message ?
-            dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
-            dispatch(errorRequest({ isError: true, message: 'Something went wrong' }));
+        if (err.response !== undefined) {
+            err.response.data.message ?
+                dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        } else {
+            dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        }
     }
 }
 
@@ -285,9 +333,13 @@ export const updateMessageIsReaded = (_id: IMessage["_id"], isAdmin: boolean, is
         })
         if (res.status === 202) dispatch(setMessageIsReaded(_id));
     } catch (err) {
-        err.response.data.message ?
-            dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
-            dispatch(errorRequest({ isError: true, message: 'Something went wrong' }));
+        if (err.response !== undefined) {
+            err.response.data.message ?
+                dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        } else {
+            dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        }
     }
 }
 
@@ -313,9 +365,13 @@ export const addChildToParent = (payload: IChildData, userId?: string): ThunkAct
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
         dispatch(stopRequest());
     } catch (err) {
-        err.response.data.message ?
-            dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
-            dispatch(errorRequest({ isError: true, message: 'Something went wrong' }));
+        if (err.response !== undefined) {
+            err.response.data.message ?
+                dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        } else {
+            dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        }
     }
 }
 
@@ -339,8 +395,12 @@ export const addImageToChild = (image: File, childId: string): ThunkAction<
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
         dispatch(stopRequest());
     } catch (err) {
-        err.response.data.message ?
-            dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
-            dispatch(errorRequest({ isError: true, message: 'Something went wrong' }));
+        if (err.response !== undefined) {
+            err.response.data.message ?
+                dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        } else {
+            dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        }
     }
 }

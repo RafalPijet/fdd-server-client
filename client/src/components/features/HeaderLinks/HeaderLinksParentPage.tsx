@@ -7,7 +7,10 @@ import classNames from 'classnames';
 import { Props, StyleProps, PropsClasses, useStyles } from './headerLinksStyle';
 import CustomButton from '../../common/CustomButton/CustomButton';
 import CustomDropdown from '../../common/CustomDropdown/CustomDropdown';
-import { setIsOpen } from '../../../redux/actions/generalActions';
+import {
+  setIsOpen,
+  setSelectedChild,
+} from '../../../redux/actions/generalActions';
 import { getUserChildren } from '../../../redux/actions/userActions';
 import { ChildState } from '../../../types/global';
 import { Face, ExitToApp } from '@material-ui/icons';
@@ -25,7 +28,7 @@ const HeaderList: React.FC<Props> = (props) => {
   const choiceChildHandling = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
-    console.log(e.currentTarget.id);
+    dispatch(setSelectedChild(e.currentTarget.id));
     dispatch(setIsOpen(false));
   };
 
@@ -38,7 +41,7 @@ const HeaderList: React.FC<Props> = (props) => {
             setSize="sm"
             style={{ width: '100%' }}
             setColor="primary"
-            id={`child-${item._id}`}
+            id={item._id}
             onClick={choiceChildHandling}
           >
             {item.firstName} {item.lastName}

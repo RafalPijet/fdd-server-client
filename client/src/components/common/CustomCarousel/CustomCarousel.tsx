@@ -2,37 +2,27 @@ import React from 'react';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 
-import image7 from '../../../images/image (3).jpeg';
-import image8 from '../../../images/image (4).jpeg';
-import image9 from '../../../images/image (5).jpeg';
-import image10 from '../../../images/image (6).jpeg';
+interface Props {
+  images: string[];
+}
 
-const CustomCarousel: React.FC = () => {
+const CustomCarousel: React.FC<Props> = (props) => {
+  const { images } = props;
   return (
     <Carousel
-      showArrows={true}
+      showArrows={false}
+      showThumbs={true}
       infiniteLoop
       autoPlay
       useKeyboardArrows
       interval={5000}
       transitionTime={1000}
     >
-      <div>
-        <img src={image7} />
-        <p className="legend">Legend 7</p>
-      </div>
-      <div>
-        <img src={image8} />
-        <p className="legend">Legend 8</p>
-      </div>
-      <div>
-        <img src={image9} />
-        <p className="legend">Legend 9</p>
-      </div>
-      <div>
-        <img src={image10} />
-        <p className="legend">Legend 10</p>
-      </div>
+      {images.map((image: string) => (
+        <div key={image}>
+          <img src={image} alt={image} />
+        </div>
+      ))}
     </Carousel>
   );
 };

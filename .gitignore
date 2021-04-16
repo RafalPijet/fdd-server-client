@@ -4,3 +4,4 @@ node_modules
 .vscode
 /server/.env
 /server/build
+/server/images

@@ -150,6 +150,7 @@ export interface GeneralState {
     isRemoved: boolean;
     isOpen: boolean;
     eventChange: EventChange;
+    selectedChild: string | null;
 }
 
 export enum TargetOptions {

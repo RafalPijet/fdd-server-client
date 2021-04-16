@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 export const cutText = (content: string, maxLength: number) => {
 
     if (maxLength > 0) {
@@ -18,3 +20,31 @@ export const cutText = (content: string, maxLength: number) => {
         return "Error";
     }
 };
+
+export const calculateAge = (date: string, resultIsString: boolean) => {
+    enum availableUnits {
+        rok = 'rok',
+        lata = 'lata',
+        lat = 'lat',
+        miasiac = 'miesiąc',
+        miesiace = 'miesiące',
+        miesiecy = 'miesięcy'
+    }
+    const today = moment();
+    const birthDate = moment(date);
+    const age = moment.duration(today.diff(birthDate))
+    let result: number | string = age.years()
+
+    if (result > 0 && resultIsString) {
+        if (result === 1) result = `${result} ${availableUnits.rok}`;
+        if (result > 1 && result < 5) result = `${result} ${availableUnits.lata}`;
+        if (result > 4) result = `${result} ${availableUnits.lat}`;
+    }
+    if (result === 0 && resultIsString) {
+        result = age.months();
+        if (result === 1) result = `${result} ${availableUnits.miasiac}`;
+        if (result > 1 && result < 5) result = `${result} ${availableUnits.miesiace}`;
+        if (result > 4) result = `${result} ${availableUnits.miesiecy}`
+    }
+    return result
+}
