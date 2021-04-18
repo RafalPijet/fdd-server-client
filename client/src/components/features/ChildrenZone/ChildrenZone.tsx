@@ -70,7 +70,7 @@ const ChildrenZone: React.FC = () => {
           {selectedChild !== null && selectedChild?.images.length > 0 ? (
             <CustomCarousel images={selectedChild.images} />
           ) : (
-            <div>Nic</div>
+            <div></div>
           )}
         </CardBody>
       </Card>

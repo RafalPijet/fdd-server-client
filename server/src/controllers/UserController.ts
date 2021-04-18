@@ -1,4 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
+import sharp from 'sharp';
+import fs from 'fs';
+import path from 'path';
 import { controller, bodyValidator, ValidatorKeys } from './decorators';
 import { post, get, put } from '../routes';
 import { RequestWithUser } from '../middleware';
@@ -107,12 +110,16 @@ class UserController {
     @post('/child/image/:childId')
     async addChildImage(req: Request, res: Response, next: NextFunction): Promise<void> {
         const { childId } = req.params;
+        const images = 'images';
         if (!req.file) {
             next(new HttpException(404, 'Brak obrazu'));
         }
-        const imageUrl = req.file.path;
-        console.log(childId)
-        console.log(imageUrl)
+        const imageUrl = req.file.path.replace(req.file.destination, images)
+        await sharp(req.file.path)
+            .resize(500, 332)
+            .jpeg({ quality: 90 })
+            .toFile(path.resolve(images, req.file.filename))
+        fs.unlinkSync(req.file.path)
         try {
             const foundChild = await ChildModel.findById(childId);
             if (foundChild) {
@@ -120,6 +127,7 @@ class UserController {
                 await foundChild.save()
                 res.status(201).json({ message: `Dodano zdjęcia dla ${foundChild.firstName} ${foundChild.lastName}` });
             }
+            res.status(200).send();
         } catch (err) {
             next(new HttpException(404, 'Nieudane dodanie zdjęcia'));
         }

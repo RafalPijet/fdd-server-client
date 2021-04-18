@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import GridContainer from '../../common/Grid/GridContainer';
 import GridItem from '../../common/Grid/GridItem';
 import CustomInput from '../../common/CustomInput/CustomInput';
 import CustomButton from '../../common/CustomButton/CustomButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import { Edit, Done } from '@material-ui/icons';
-import { addChildToParent, addImageToChild } from '../../../redux/thunks';
+import AddingImage from '../AddingImage/AddingImage';
+import { addChildToParent } from '../../../redux/thunks';
+import { getSelectedChild } from '../../../redux/actions/generalActions';
 import {
   IChildData,
   StyleProps,
@@ -28,32 +30,23 @@ const ChildHandling: React.FC = () => {
     birthDate: false,
     info: false,
   });
-  const [image, setImage] = useState<File | null>(null);
   const dispatch = useDispatch();
+  const childId = useSelector(getSelectedChild);
 
   const handleTextField = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setChildData({ ...childData, [event.target.id!]: event.target.value });
   };
-  const handleFilesField = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-      setImage(event.target.files[0]);
-    }
-  };
-  const sendImage = () => {
-    if (image !== null) {
-      dispatch(addImageToChild(image, '6076e0de6eb6969d8083890c'));
-    }
-  };
+
   const confirmButtonHandling = () => {
     dispatch(addChildToParent(childData));
   };
 
   return (
-    <div>
+    <div style={{ marginLeft: '15px', marginRight: '15px' }}>
       <GridContainer justify="center" alignItems="center">
-        <GridItem xs={12} sm={12} lg={2}>
+        <GridItem xs={12} sm={12} lg={3}>
           <CustomInput
             labelText="Imię dziecka..."
             id="firstName"
@@ -119,7 +112,7 @@ const ChildHandling: React.FC = () => {
             }}
           />
         </GridItem>
-        <GridItem xs={12} sm={12} lg={4}>
+        <GridItem xs={12} sm={12} lg={6}>
           <CustomInput
             labelText="Opis..."
             id="info"
@@ -144,23 +137,38 @@ const ChildHandling: React.FC = () => {
             }}
           />
         </GridItem>
-        <GridItem xs={12} sm={12} lg={4}>
-          <input type="file" onChange={handleFilesField} />
-          <button onClick={sendImage}>Send Image</button>
-          {/* <img
-            src="http://localhost:3005/images/newLopez.png-1d730d94-f1b6-4107-85dd-fc30a01495ba"
-            alt="test"
-          /> */}
+        <GridItem
+          xs={12}
+          sm={12}
+          lg={3}
+          style={{ display: 'flex', justifyContent: 'center' }}
+        >
+          <CustomButton
+            setSize="md"
+            setColor="primary"
+            onClick={confirmButtonHandling}
+          >
+            Dodaj
+          </CustomButton>
         </GridItem>
       </GridContainer>
       <GridContainer justify="center" alignItems="center">
-        <CustomButton
-          setSize="md"
-          setColor="primary"
-          onClick={confirmButtonHandling}
+        <GridItem
+          xs={12}
+          sm={12}
+          lg={6}
+          style={{ display: 'flex', justifyContent: 'center' }}
         >
-          Dodaj
-        </CustomButton>
+          <AddingImage childId={childId} />
+        </GridItem>
+        <GridItem
+          xs={12}
+          sm={12}
+          lg={6}
+          style={{ display: 'flex', justifyContent: 'center' }}
+        >
+          Remove Images Section
+        </GridItem>
       </GridContainer>
     </div>
   );

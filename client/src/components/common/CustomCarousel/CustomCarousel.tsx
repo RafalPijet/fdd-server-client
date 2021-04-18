@@ -10,8 +10,8 @@ const CustomCarousel: React.FC<Props> = (props) => {
   const { images } = props;
   return (
     <Carousel
-      showArrows={false}
-      showThumbs={true}
+      showArrows
+      showThumbs
       infiniteLoop
       autoPlay
       useKeyboardArrows
