@@ -11,7 +11,6 @@ import { getUserChildren } from '../../../redux/actions/userActions';
 import { useStyles, StyleProps, PropsClasses } from './ChildrenZoneStyle';
 import { ChildState } from '../../../types/global';
 import { calculateAge } from '../../../types/functions';
-import ImageSlideshow from 'material-ui/svg-icons/image/slideshow';
 
 const ChildrenZone: React.FC = () => {
   const classes: PropsClasses = useStyles({} as StyleProps);

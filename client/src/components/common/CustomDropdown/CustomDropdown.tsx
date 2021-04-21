@@ -65,10 +65,10 @@ const CustomDropdown = (props: Props) => {
   let icon = null;
   switch (typeof buttonIcon) {
     case 'object':
-      icon = <props.buttonIcon className={classes.buttonIcon} />;
+      // icon = <props.buttonIcon className={classes.buttonIcon} />;
       break;
     case 'string':
-      icon = <Icon className={classes.buttonIcon}>{props.buttonIcon}</Icon>;
+      // icon = <Icon className={classes.buttonIcon}>{props.buttonIcon}</Icon>;
       break;
     default:
       icon = null;

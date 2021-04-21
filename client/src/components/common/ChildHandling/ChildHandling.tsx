@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import GridContainer from '../../common/Grid/GridContainer';
 import GridItem from '../../common/Grid/GridItem';
@@ -9,6 +9,9 @@ import { Edit, Done } from '@material-ui/icons';
 import AddingImage from '../AddingImage/AddingImage';
 import { addChildToParent } from '../../../redux/thunks';
 import { getSelectedChild } from '../../../redux/actions/generalActions';
+import { getUserChildren } from '../../../redux/actions/userActions';
+import { ChildState } from '../../../types/global';
+import RemovingImage from '../RemovingImage/RemovingImage';
 import {
   IChildData,
   StyleProps,
@@ -30,8 +33,17 @@ const ChildHandling: React.FC = () => {
     birthDate: false,
     info: false,
   });
+  const [selectedChild, setSelectedChild] = useState<ChildState>();
   const dispatch = useDispatch();
   const childId = useSelector(getSelectedChild);
+  const children = useSelector(getUserChildren);
+
+  useEffect(() => {
+    if (childId !== null) {
+      const child = children.find((item: ChildState) => item._id === childId);
+      if (child !== undefined) setSelectedChild(child);
+    }
+  }, [childId]);
 
   const handleTextField = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -44,8 +56,39 @@ const ChildHandling: React.FC = () => {
   };
 
   return (
-    <div style={{ marginLeft: '15px', marginRight: '15px' }}>
-      <GridContainer justify="center" alignItems="center">
+    <div className={classes.root}>
+      <GridContainer
+        justify="center"
+        alignItems="center"
+        style={{ width: '100%' }}
+      >
+        <GridItem
+          xs={12}
+          sm={12}
+          lg={6}
+          style={{ display: 'flex', justifyContent: 'center' }}
+        >
+          <AddingImage childId={childId} />
+        </GridItem>
+        <GridItem
+          xs={12}
+          sm={12}
+          lg={6}
+          style={{ display: 'flex', justifyContent: 'center' }}
+        >
+          {selectedChild !== undefined && (
+            <RemovingImage
+              childId={childId !== null ? childId : undefined}
+              imagesUrl={selectedChild.images}
+            />
+          )}
+        </GridItem>
+      </GridContainer>
+      <GridContainer
+        justify="center"
+        alignItems="center"
+        style={{ width: '100%' }}
+      >
         <GridItem xs={12} sm={12} lg={3}>
           <CustomInput
             labelText="Imię dziecka..."
@@ -150,24 +193,6 @@ const ChildHandling: React.FC = () => {
           >
             Dodaj
           </CustomButton>
-        </GridItem>
-      </GridContainer>
-      <GridContainer justify="center" alignItems="center">
-        <GridItem
-          xs={12}
-          sm={12}
-          lg={6}
-          style={{ display: 'flex', justifyContent: 'center' }}
-        >
-          <AddingImage childId={childId} />
-        </GridItem>
-        <GridItem
-          xs={12}
-          sm={12}
-          lg={6}
-          style={{ display: 'flex', justifyContent: 'center' }}
-        >
-          Remove Images Section
         </GridItem>
       </GridContainer>
     </div>
