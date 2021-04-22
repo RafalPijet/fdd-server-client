@@ -91,7 +91,8 @@ class UserController {
                 firstName: payload.firstName,
                 lastName: payload.lastName,
                 birthDate: new Date(payload.birthDate),
-                info: payload.info
+                info: payload.info,
+                images: []
             }
             const newChild = buildChild(child);
             if (user !== null) {
@@ -115,21 +116,59 @@ class UserController {
             next(new HttpException(404, 'Brak obrazu'));
         }
         const imageUrl = req.file.path.replace(req.file.destination, images)
+        const source = req.file.path.replace('uploads', 'images')   //It's will be remove
+        const target = source.replace('images', 'build/images')     //It's will be remove
         await sharp(req.file.path)
             .resize(500, 332)
             .jpeg({ quality: 90 })
             .toFile(path.resolve(images, req.file.filename))
-        fs.unlinkSync(req.file.path)
+        fs.unlinkSync(req.file.path);
+        fs.copyFile(source, target, (err) => {              //It's will be remove
+            console.log(err)                                //It's will be remove
+        })                                                  //It's will be remove
         try {
             const foundChild = await ChildModel.findById(childId);
             if (foundChild) {
                 foundChild.images = [...foundChild.images!, imageUrl];
                 await foundChild.save()
-                res.status(201).json({ message: `Dodano zdjęcia dla ${foundChild.firstName} ${foundChild.lastName}` });
+                res.status(201).json({ message: `Dodano zdjęcia dla ${foundChild.firstName} ${foundChild.lastName}`, images: foundChild.images });
             }
             res.status(200).send();
         } catch (err) {
             next(new HttpException(404, 'Nieudane dodanie zdjęcia'));
+        }
+    }
+    @put('/child/images')
+    async updateImagesList(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const { contentList, removeList, id } = req.body;
+        const clearImage = (filePath: string) => {
+            filePath = path.join(__dirname, '../', filePath)
+            if (filePath.includes('build')) {                             //It's will be remove
+                fs.unlink(filePath, err => {                              //It's will be remove
+                    console.log(err)                                      //It's will be remove
+                })                                                        //It's will be remove
+                filePath = filePath.replace('build/', '')                 //It's will be remove
+            }                                                             //It's will be remove
+            fs.unlink(filePath, err => {
+                console.log(err)
+            })
+        }
+        try {
+            const child = await ChildModel.findById(id);
+            if (!child) {
+                next(new HttpException(404, "Nie znaleziono dziecka"))
+            } else {
+                child.images = contentList;
+                if (removeList.length) {
+                    removeList.forEach((item: string) => {
+                        clearImage(item)
+                    })
+                }
+                await child.save();
+                res.status(200).json({ message: 'Dokonano zmian na liście zdjęć dziecka' });
+            }
+        } catch (err) {
+            next(new HttpException(404, 'Nieudana zmiana listy zdjęć'));
         }
     }
 }

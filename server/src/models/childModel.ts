@@ -8,7 +8,7 @@ export interface IChild {
     lastName: string;
     birthDate: Date;
     info: string;
-    images?: string[];
+    images: string[];
 }
 
 const childSchema = new Schema({
@@ -17,7 +17,7 @@ const childSchema = new Schema({
     lastName: { type: String, required: true },
     birthDate: { type: Date, required: true },
     info: { type: String, required: true },
-    images: [{ type: String }],
+    images: [{ type: String, default: [] }],
     parent: {
         ref: 'User',
         type: mongoose.Schema.Types.ObjectId

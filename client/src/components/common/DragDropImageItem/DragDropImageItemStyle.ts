@@ -11,16 +11,26 @@ const dragDropImageItemStyle = (theme: Theme) => ({
     },
     active: {
         backgroundColor: `${primaryColor} !important`
+    },
+    image: {
+        width: '100px',
+        height: '66px'
+    },
+    disabled: {
+        filter: 'grayscale(100%)'
     }
 })
 
 export interface StyleProps {
     root: BaseCSSProperties;
     active: BaseCSSProperties;
+    image: BaseCSSProperties;
+    disabled: BaseCSSProperties;
 }
 
 export interface Props {
     imageUrl: string;
+    isDisabled: boolean
 }
 
 export type PropsClasses = Record<keyof StyleProps, string>;

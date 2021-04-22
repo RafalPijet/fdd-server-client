@@ -3,7 +3,14 @@ import classNames from 'classnames';
 import { useSelector, useDispatch } from 'react-redux';
 import { VariantType, useSnackbar } from 'notistack';
 import { useStyles, StyleProps } from './ParentPageStyle';
-import { getPending, getError } from '../../../redux/actions/requestActions';
+import {
+  getPending,
+  getError,
+  resetRequest,
+  getUpdating,
+  getUpdatingError,
+  resetUpdatingRequest,
+} from '../../../redux/actions/requestActions';
 import Header from '../../common/Header/Header';
 import HeaderLinks from '../../features/HeaderLinks/HeaderLinksParentPage';
 import Jumbotron from '../../common/Jumbotron/Jumbotron';
@@ -14,7 +21,6 @@ import ParentMessages from '../../features/ParentMessages/ParentMessages';
 import ChildrenZone from '../../features/ChildrenZone/ChildrenZone';
 import ChildHandling from '../../common/ChildHandling/ChildHandling';
 import { cleanCurrentUser } from '../../../redux/actions/userActions';
-import { resetRequest } from '../../../redux/actions/requestActions';
 import { loadUserMessages } from '../../../redux/actions/messageActions';
 import {
   getToast,
@@ -26,8 +32,10 @@ import image from '../../../images/jumbotronParent.jpg';
 const ParentPage: React.FC = () => {
   const classes = useStyles({} as StyleProps);
   const isPending = useSelector(getPending);
+  const isUpdating = useSelector(getUpdating);
   const toast = useSelector(getToast);
   const error = useSelector(getError);
+  const updatingError = useSelector(getUpdatingError);
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -38,7 +46,10 @@ const ParentPage: React.FC = () => {
     if (error.isError) {
       handleToast(error.message, 'error');
     }
-  }, [toast.isOpen, error.isError]);
+    if (updatingError.isError) {
+      handleToast(updatingError.message, 'error');
+    }
+  }, [toast.isOpen, error.isError, updatingError.isError]);
 
   useEffect(() => {
     return () => {
@@ -46,6 +57,7 @@ const ParentPage: React.FC = () => {
       localStorage.removeItem('expiresInFDD');
       dispatch(cleanCurrentUser());
       dispatch(resetRequest());
+      dispatch(resetUpdatingRequest());
       dispatch(loadUserMessages([], 0));
       dispatch(setSelectedChild(null));
       dispatch(
@@ -65,11 +77,11 @@ const ParentPage: React.FC = () => {
   return (
     <div>
       <Header
-        isSpiner={isPending}
+        isSpiner={isPending || isUpdating}
         color="transparent"
         brand="Fundacja Dorośli Dzieciom"
         fixed
-        rightLinks={<HeaderLinks isSpiner={isPending} />}
+        rightLinks={<HeaderLinks isSpiner={isPending || isUpdating} />}
         changeColorOnScroll={{
           height: 400,
           color: 'white',

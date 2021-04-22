@@ -2,9 +2,11 @@ import {
     AddUserAction,
     CleanUserAction,
     AddChildToUserAction,
+    SetChildImagesListAction,
     ADD_USER,
     CLEAN_USER,
-    ADD_CHILD_TO_USER
+    ADD_CHILD_TO_USER,
+    SET_CHILD_IMAGES_LIST
 } from '../actions/userActions';
 import { UserState, UserStatus } from '../../types/global';
 
@@ -26,7 +28,7 @@ const initialState: UserState = {
 
 const userReducer = (
     state: UserState = initialState,
-    action: AddUserAction | CleanUserAction | AddChildToUserAction
+    action: AddUserAction | CleanUserAction | AddChildToUserAction | SetChildImagesListAction
 ) => {
     switch (action.type) {
         case ADD_USER:
@@ -44,6 +46,16 @@ const userReducer = (
             return { ...state, children: [...state.children, action.payload] };
         case CLEAN_USER:
             return { ...initialState };
+        case SET_CHILD_IMAGES_LIST:
+            return {
+                ...state,
+                children: state.children.map((child) => {
+                    if (child._id === action.childId) {
+                        child.images = action.images;
+                    }
+                    return child;
+                })
+            }
         default:
             return { ...state };
     }

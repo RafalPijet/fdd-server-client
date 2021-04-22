@@ -9,20 +9,24 @@ import {
 } from './DragDropImageItemStyle';
 
 const DragDropImageItem: React.FC<Props> = (props) => {
-  const { imageUrl } = props;
+  const { imageUrl, isDisabled } = props;
   const classes: PropsClasses = useStyles({} as StyleProps);
   const [isActive, setIsActive] = useState<boolean>(false);
   const rootClasses = ClassNames({
     [classes.root]: true,
     [classes.active]: isActive,
   });
+  const imageClasses = ClassNames({
+    [classes.image]: true,
+    [classes.disabled]: isDisabled,
+  });
 
   return (
     <Paper variant="outlined" className={rootClasses}>
       <img
-        onMouseEnter={() => setIsActive(true)}
-        onMouseLeave={() => setIsActive(false)}
-        style={{ width: '100px', height: '66px' }}
+        onMouseEnter={() => !isDisabled && setIsActive(true)}
+        onMouseLeave={() => !isDisabled && setIsActive(false)}
+        className={imageClasses}
         src={imageUrl}
         alt={`child-${imageUrl}`}
       />

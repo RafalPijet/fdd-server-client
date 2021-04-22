@@ -6,6 +6,7 @@ import { UserState, ChildState } from '../../types/global';
 export const ADD_USER = 'user/add_user';
 export const CLEAN_USER = 'user/clean_user';
 export const ADD_CHILD_TO_USER = 'user/add_child_to_user';
+export const SET_CHILD_IMAGES_LIST = 'user/set_child_images_list';
 
 //ACTIONS TYPES
 export interface AddUserAction extends Action<typeof ADD_USER> {
@@ -14,6 +15,10 @@ export interface AddUserAction extends Action<typeof ADD_USER> {
 export interface CleanUserAction extends Action<typeof CLEAN_USER> { }
 export interface AddChildToUserAction extends Action<typeof ADD_CHILD_TO_USER> {
     payload: ChildState
+}
+export interface SetChildImagesListAction extends Action<typeof SET_CHILD_IMAGES_LIST> {
+    childId: string,
+    images: string[]
 }
 
 //CREATORS OF ACTIONS
@@ -27,6 +32,11 @@ export const cleanCurrentUser = (): CleanUserAction => ({
 export const addChildToUser = (child: ChildState): AddChildToUserAction => ({
     type: ADD_CHILD_TO_USER,
     payload: child
+})
+export const setChildImagesList = (childId: string, images: string[]): SetChildImagesListAction => ({
+    type: SET_CHILD_IMAGES_LIST,
+    childId,
+    images
 })
 
 //SELECTORS

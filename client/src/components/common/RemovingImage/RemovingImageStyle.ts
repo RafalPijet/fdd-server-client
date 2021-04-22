@@ -17,14 +17,28 @@ const removingImageStyle = (theme: Theme) => ({
     body: {
         display: "flex",
         flexDirection: "column",
-        alignItems: "center"
+        alignItems: "center",
+        height: "100%",
+        justifyContent: "space-around"
     },
     row: {
+        position: "relative",
         width: "100%",
         minHeight: "100px",
         display: "flex",
         justifyContent: "flex-start",
         alignItems: "center"
+    },
+    icon: {
+        width: "40px",
+        height: "40px",
+        display: "flex",
+        backgroundColor: "rgba(255, 255, 255, 0.7)",
+        justifyContent: "center",
+        alignItems: "center",
+        position: "absolute",
+        top: "35px",
+        right: "-18px"
     },
     footer: {
         justifyContent: "center"
@@ -37,12 +51,14 @@ export interface StyleProps {
     disabled: BaseCSSProperties;
     body: BaseCSSProperties;
     row: BaseCSSProperties;
+    icon: BaseCSSProperties;
     footer: BaseCSSProperties;
 }
 
 export interface State {
     contentList: string[];
     removeList: string[];
+    id?: string;
 }
 
 export interface Props {

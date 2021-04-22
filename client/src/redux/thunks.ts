@@ -6,12 +6,24 @@ import {
     StartRequestAction,
     StopRequestAction,
     ErrorRequestAction,
-    ResetRequestAction,
     startRequest,
     stopRequest,
-    errorRequest
+    errorRequest,
+    StartUpdatingRequestAction,
+    StopUpdatingRequestAction,
+    ErrorUpdatingRequestAction,
+    startUpdatingRequest,
+    stopUpdatingRequest,
+    errorUpdatingRequest
 } from './actions/requestActions';
-import { addCurrentUser, AddUserAction, addChildToUser, AddChildToUserAction } from './actions/userActions';
+import {
+    addCurrentUser,
+    AddUserAction,
+    addChildToUser,
+    AddChildToUserAction,
+    SetChildImagesListAction,
+    setChildImagesList
+} from './actions/userActions';
 import {
     loadUserMessages,
     LoadMessagesAction,
@@ -20,6 +32,7 @@ import {
 } from './actions/messageActions';
 import { setUserToast, SetToastAction, setIsRemoved, SetIsRemoved, setSelectedChild, SetSelectedChild } from './actions/generalActions';
 import { IChildData } from '../components/common/ChildHandling/ChildHandlingStyle';
+import { State as ImagesLists } from '../components/common/RemovingImage/RemovingImageStyle';
 import { IMessage, TargetOptions, IOutsideMessage, UserStatus, UserState, ChildState } from '../types/global';
 import { API_URL, URL } from '../config';
 
@@ -27,7 +40,7 @@ export const loginUser = (payload: IUserLogin): ThunkAction<
     Promise<void>,
     any,
     RootState,
-    StartRequestAction | StopRequestAction | ErrorRequestAction | ResetRequestAction | AddUserAction | SetSelectedChild
+    StartRequestAction | StopRequestAction | ErrorRequestAction | AddUserAction | SetSelectedChild
 > => async (dispatch, getState) => {
     dispatch(startRequest())
 
@@ -69,7 +82,7 @@ export const addUser = (payload: Register): ThunkAction<
     Promise<void>,
     any,
     RootState,
-    StartRequestAction | StopRequestAction | ErrorRequestAction | ResetRequestAction
+    StartRequestAction | StopRequestAction | ErrorRequestAction
 > => async (dispatch, getState) => {
     dispatch(startRequest())
     payload.prepare();
@@ -379,7 +392,7 @@ export const addImageToChild = (image: File, childId: string): ThunkAction<
     Promise<void>,
     any,
     RootState,
-    StartRequestAction | StopRequestAction | ErrorRequestAction | SetToastAction
+    StartRequestAction | StopRequestAction | ErrorRequestAction | SetToastAction | SetChildImagesListAction
 > => async (dispatch, getState) => {
     dispatch(startRequest());
 
@@ -392,6 +405,10 @@ export const addImageToChild = (image: File, childId: string): ThunkAction<
                 'Authorization': localStorage.getItem('tokenFDD')
             },
         })
+        const images = res.data.images.map((image: string) => {
+            return `${URL}${image}`
+        })
+        dispatch(setChildImagesList(childId, images));
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
         dispatch(stopRequest());
     } catch (err) {
@@ -401,6 +418,42 @@ export const addImageToChild = (image: File, childId: string): ThunkAction<
                 dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         } else {
             dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        }
+    }
+}
+
+export const updateImagesList = (payload: ImagesLists): ThunkAction<
+    Promise<void>,
+    any,
+    RootState,
+    StartUpdatingRequestAction | StopUpdatingRequestAction | ErrorUpdatingRequestAction |
+    SetToastAction | SetChildImagesListAction
+> => async (dispatch, getState) => {
+    try {
+        dispatch(startUpdatingRequest());
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        const contentList = payload.contentList.map((item: string) => item.replace(URL, ''));
+        const removeList = payload.removeList.map((item: string) => item.replace(URL, ''));
+        const data: ImagesLists = {
+            contentList,
+            removeList,
+            id: payload.id
+        }
+        let res: AxiosResponse = await axios.put(`${API_URL}/users/child/images`, data, {
+            headers: {
+                'Authorization': localStorage.getItem('tokenFDD')
+            },
+        })
+        dispatch(setChildImagesList(payload.id!, payload.contentList));
+        dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
+        dispatch(stopUpdatingRequest());
+    } catch (err) {
+        if (err.response !== undefined) {
+            err.response.data.message ?
+                dispatch(errorUpdatingRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorUpdatingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        } else {
+            dispatch(errorUpdatingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }
     }
 }

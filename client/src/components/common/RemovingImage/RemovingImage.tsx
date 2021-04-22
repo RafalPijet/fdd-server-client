@@ -1,13 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import ClassNames from 'classnames';
+import { useDispatch, useSelector } from 'react-redux';
 import Paper from '@material-ui/core/Paper';
-import Switch from '@material-ui/core/Switch';
+import PhotoLibraryIcon from '@material-ui/icons/PhotoLibrary';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import Card from '../../common/Card/Card';
 import CardBody from '../../common/CardBody/CardBody';
 import CardFooter from '../../common/CardFooter/CardFooter';
 import DragDropImageItem from '../DragDropImageItem/DragDropImageItem';
 import CustomBotton from '../CustomButton/CustomButton';
+import { updateImagesList } from '../../../redux/thunks';
+import SectionHeader from '../SectionHeader/SectionHeader';
+import {
+  getUpdatingError,
+  resetUpdatingRequest,
+} from '../../../redux/actions/requestActions';
 import {
   Props,
   State,
@@ -26,12 +34,23 @@ const RemovingImage: React.FC<Props> = (props) => {
   const [state, setState] = useState<State>({
     contentList: imagesUrl,
     removeList: [],
+    id: childId,
   });
   const [switchIsOn, setSwitchIsOn] = useState<boolean>(false);
   const rootClasses = ClassNames({
     [classes.root]: true,
     [classes.active]: switchIsOn,
   });
+  const dispatch = useDispatch();
+  const isUpdatingError = useSelector(getUpdatingError).isError;
+
+  useEffect(() => {
+    setState({ contentList: imagesUrl, removeList: [], id: childId });
+  }, [imagesUrl, childId]);
+
+  useEffect(() => {
+    if (isUpdatingError) dispatch(resetUpdatingRequest());
+  }, [isUpdatingError]);
 
   const droppableIds = {
     droppable1: 'contentList',
@@ -69,6 +88,7 @@ const RemovingImage: React.FC<Props> = (props) => {
         destination
       );
       setState({
+        ...state,
         contentList: result.droppable1 ? result.droppable1 : state.contentList,
         removeList: result.droppable2 ? result.droppable2 : state.removeList,
       });
@@ -76,17 +96,24 @@ const RemovingImage: React.FC<Props> = (props) => {
   };
 
   const confirmButtonHandling = () => {
-    console.log(state);
+    dispatch(updateImagesList(state));
   };
 
   const switchChangeHandling = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.checked);
     setSwitchIsOn(e.target.checked);
   };
 
   return (
     <Card className={rootClasses}>
-      <Switch checked={switchIsOn} onChange={switchChangeHandling} />
+      <SectionHeader
+        onChange={switchChangeHandling}
+        checked={switchIsOn}
+        helpText="Aby zmienić kolejność zdjęć, na górnej liście złap wybrane zdjęcie i
+         przenieś w wybrane przez siebie miejsce w obrembie górnej listy. 
+         Aby usunąć zdjęcie złap je z górnej listy i przenieś na dolną listę. Naciśnięcie przycisku
+         ZATWIERDŹ ZMIANY dokona aktualizacji zmian."
+        text="Włącz/Wyłącz sekcję ustawiania kolejności i usuwania zdjęć"
+      />
       <CardBody>
         <div className={classes.body}>
           <DragDropContext onDragEnd={onDragEnd}>
@@ -103,7 +130,7 @@ const RemovingImage: React.FC<Props> = (props) => {
                       key={item}
                       draggableId={item}
                       index={index}
-                      //   isDragDisabled={true}
+                      isDragDisabled={!switchIsOn}
                     >
                       {(provided: any, snapshot: any) => (
                         <Paper
@@ -116,12 +143,21 @@ const RemovingImage: React.FC<Props> = (props) => {
                             provided.draggableProps.style
                           )}
                         >
-                          <DragDropImageItem imageUrl={item} />
+                          <DragDropImageItem
+                            isDisabled={!switchIsOn}
+                            imageUrl={item}
+                          />
                         </Paper>
                       )}
                     </Draggable>
                   ))}
                   {provided.placeholder}
+                  <div className={classes.icon}>
+                    <PhotoLibraryIcon
+                      fontSize="large"
+                      color={switchIsOn ? 'primary' : 'disabled'}
+                    />
+                  </div>
                 </Paper>
               )}
             </Droppable>
@@ -134,7 +170,12 @@ const RemovingImage: React.FC<Props> = (props) => {
                   style={getListStyle(snapshot.isDraggingOver, true)}
                 >
                   {state.removeList.map((item, index) => (
-                    <Draggable key={item} draggableId={item} index={index}>
+                    <Draggable
+                      key={item}
+                      draggableId={item}
+                      index={index}
+                      isDragDisabled={!switchIsOn}
+                    >
                       {(provided: any, snapshot: any) => (
                         <Paper
                           elevation={6}
@@ -146,12 +187,21 @@ const RemovingImage: React.FC<Props> = (props) => {
                             provided.draggableProps.style
                           )}
                         >
-                          <DragDropImageItem imageUrl={item} />
+                          <DragDropImageItem
+                            isDisabled={!switchIsOn}
+                            imageUrl={item}
+                          />
                         </Paper>
                       )}
                     </Draggable>
                   ))}
                   {provided.placeholder}
+                  <div className={classes.icon}>
+                    <DeleteForeverIcon
+                      fontSize="large"
+                      color={switchIsOn ? 'error' : 'disabled'}
+                    />
+                  </div>
                 </Paper>
               )}
             </Droppable>
@@ -160,6 +210,7 @@ const RemovingImage: React.FC<Props> = (props) => {
       </CardBody>
       <CardFooter className={classes.footer}>
         <CustomBotton
+          disabled={!switchIsOn}
           setSize="md"
           setColor="primary"
           onClick={confirmButtonHandling}

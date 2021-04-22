@@ -6,9 +6,7 @@
   "scripts": {
     "start:build": "tsc -w",
     "start:run": "nodemon build/index.js",
-    "start": "concurrently npm:start:*",
-    "copyImages": "onchange images/*.* -- copyfiles -s images/*.* build",
-    "removeImages": "rm -rf build/images/*"
+    "start": "concurrently npm:start:*"
   },
   "author": "Rafal Pijet",
   "license": "ISC",
@@ -37,7 +35,6 @@
     "nodemailer": "^6.5.0",
     "nodemailer-sendgrid": "^1.0.3",
     "nodemon": "^2.0.7",
-    "onchange": "^7.1.0",
     "reflect-metadata": "^0.1.13",
     "sharp": "^0.28.1",
     "uuid": "^3.4.0"
