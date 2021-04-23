@@ -5,13 +5,20 @@ import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
 const addingImageStyle = (theme: Theme) => ({
     root: {
         height: '450px',
-        // backgroundColor: "rgba(255, 255, 255, 0.6)"
+        backgroundColor: "rgba(255, 255, 255, 0.6)"
+    },
+    active: {
         backgroundColor: "rgba(166, 206, 57, 0.8)"
     }
 })
 
 export interface StyleProps {
     root: BaseCSSProperties;
+    active: BaseCSSProperties;
+}
+
+export interface Props {
+    childId: string | null;
 }
 
 export type PropsClasses = Record<keyof StyleProps, string>;

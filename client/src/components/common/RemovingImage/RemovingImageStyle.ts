@@ -6,7 +6,6 @@ const removingImageStyle = (theme: Theme) => ({
     root: {
         height: '450px',
         backgroundColor: "rgba(255, 255, 255, 0.6)"
-        // backgroundColor: "rgba(166, 206, 57, 0.8)"
     },
     active: {
         backgroundColor: "rgba(166, 206, 57, 0.8)"
@@ -90,7 +89,7 @@ export const move = (
     return result;
 };
 
-const grid = 3;
+const grid = 2;
 
 export const getItemStyle = (isDragging: boolean, draggableStyle: any): object => ({
     userSelect: 'none',

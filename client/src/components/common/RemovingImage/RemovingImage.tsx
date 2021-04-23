@@ -15,6 +15,7 @@ import SectionHeader from '../SectionHeader/SectionHeader';
 import {
   getUpdatingError,
   resetUpdatingRequest,
+  getUpdating,
 } from '../../../redux/actions/requestActions';
 import {
   Props,
@@ -31,26 +32,39 @@ import {
 const RemovingImage: React.FC<Props> = (props) => {
   const { imagesUrl, childId } = props;
   const classes: PropsClasses = useStyles({} as StyleProps);
+  const dispatch = useDispatch();
+  const isUpdatingError = useSelector(getUpdatingError).isError;
+  const isUpdating = useSelector(getUpdating);
   const [state, setState] = useState<State>({
     contentList: imagesUrl,
     removeList: [],
     id: childId,
   });
+  const [copyState, setCopyState] = useState<Omit<State, 'id'>>({
+    contentList: imagesUrl,
+    removeList: [],
+  });
   const [switchIsOn, setSwitchIsOn] = useState<boolean>(false);
+  const [isNotChanged, setIsNotChanged] = useState<boolean>(true);
   const rootClasses = ClassNames({
     [classes.root]: true,
-    [classes.active]: switchIsOn,
+    [classes.active]: switchIsOn && !isUpdating,
   });
-  const dispatch = useDispatch();
-  const isUpdatingError = useSelector(getUpdatingError).isError;
 
   useEffect(() => {
     setState({ contentList: imagesUrl, removeList: [], id: childId });
+    setCopyState({ contentList: imagesUrl, removeList: [] });
   }, [imagesUrl, childId]);
 
   useEffect(() => {
     if (isUpdatingError) dispatch(resetUpdatingRequest());
   }, [isUpdatingError]);
+
+  useEffect(() => {
+    setIsNotChanged(
+      copyState.contentList.toString() === state.contentList.toString()
+    );
+  }, [copyState.contentList, state.contentList]);
 
   const droppableIds = {
     droppable1: 'contentList',
@@ -111,7 +125,7 @@ const RemovingImage: React.FC<Props> = (props) => {
         helpText="Aby zmienić kolejność zdjęć, na górnej liście złap wybrane zdjęcie i
          przenieś w wybrane przez siebie miejsce w obrembie górnej listy. 
          Aby usunąć zdjęcie złap je z górnej listy i przenieś na dolną listę. Naciśnięcie przycisku
-         ZATWIERDŹ ZMIANY dokona aktualizacji zmian."
+         ZATWIERDŹ ZMIANY dokona aktualizacji listy zdjęć."
         text="Włącz/Wyłącz sekcję ustawiania kolejności i usuwania zdjęć"
       />
       <CardBody>
@@ -130,7 +144,7 @@ const RemovingImage: React.FC<Props> = (props) => {
                       key={item}
                       draggableId={item}
                       index={index}
-                      isDragDisabled={!switchIsOn}
+                      isDragDisabled={!switchIsOn || isUpdating}
                     >
                       {(provided: any, snapshot: any) => (
                         <Paper
@@ -144,7 +158,7 @@ const RemovingImage: React.FC<Props> = (props) => {
                           )}
                         >
                           <DragDropImageItem
-                            isDisabled={!switchIsOn}
+                            isDisabled={!switchIsOn || isUpdating}
                             imageUrl={item}
                           />
                         </Paper>
@@ -155,7 +169,7 @@ const RemovingImage: React.FC<Props> = (props) => {
                   <div className={classes.icon}>
                     <PhotoLibraryIcon
                       fontSize="large"
-                      color={switchIsOn ? 'primary' : 'disabled'}
+                      color={switchIsOn && !isUpdating ? 'primary' : 'disabled'}
                     />
                   </div>
                 </Paper>
@@ -174,7 +188,7 @@ const RemovingImage: React.FC<Props> = (props) => {
                       key={item}
                       draggableId={item}
                       index={index}
-                      isDragDisabled={!switchIsOn}
+                      isDragDisabled={!switchIsOn || isUpdating}
                     >
                       {(provided: any, snapshot: any) => (
                         <Paper
@@ -188,7 +202,7 @@ const RemovingImage: React.FC<Props> = (props) => {
                           )}
                         >
                           <DragDropImageItem
-                            isDisabled={!switchIsOn}
+                            isDisabled={!switchIsOn || isUpdating}
                             imageUrl={item}
                           />
                         </Paper>
@@ -199,7 +213,7 @@ const RemovingImage: React.FC<Props> = (props) => {
                   <div className={classes.icon}>
                     <DeleteForeverIcon
                       fontSize="large"
-                      color={switchIsOn ? 'error' : 'disabled'}
+                      color={switchIsOn && !isUpdating ? 'error' : 'disabled'}
                     />
                   </div>
                 </Paper>
@@ -210,7 +224,7 @@ const RemovingImage: React.FC<Props> = (props) => {
       </CardBody>
       <CardFooter className={classes.footer}>
         <CustomBotton
-          disabled={!switchIsOn}
+          disabled={!switchIsOn || isNotChanged || isUpdating}
           setSize="md"
           setColor="primary"
           onClick={confirmButtonHandling}
