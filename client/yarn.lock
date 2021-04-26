@@ -3967,6 +3967,11 @@
     "safe-buffer" "^5.0.1"
     "sha.js" "^2.4.8"
 
+"cropperjs@^1.5.11":
+  "integrity" "sha512-SJUeBBhtNBnnn+UrLKluhFRIXLJn7XFPv8QN1j49X5t+BIMwkgvDev541f96bmu8Xe0TgCx3gON22KmY/VddaA=="
+  "resolved" "https://registry.npmjs.org/cropperjs/-/cropperjs-1.5.11.tgz"
+  "version" "1.5.11"
+
 "cross-spawn@^6.0.0":
   "integrity" "sha512-eTVLrBSt7fjbDygz805pMnstIs2VTBNkRm0qxZd+M7A5XDdxVRWO5MxGBXZhjY4cqLYLdtrGqRf8mBPmzwSpWQ=="
   "resolved" "https://registry.npmjs.org/cross-spawn/-/cross-spawn-6.0.5.tgz"
@@ -9921,6 +9926,13 @@
     "redux" "^4.0.4"
     "use-memo-one" "^1.1.1"
 
+"react-cropper@^2.1.7":
+  "integrity" "sha512-dGp2l2wSh4KubWx3PQZIP27fV4shPYjIvm972IqJZdzi/fpDsB6s3GKEH54mk0gy18+80d3WnlgAP2xJ/o8+yw=="
+  "resolved" "https://registry.npmjs.org/react-cropper/-/react-cropper-2.1.7.tgz"
+  "version" "2.1.7"
+  dependencies:
+    "cropperjs" "^1.5.11"
+
 "react-dev-utils@^11.0.2":
   "integrity" "sha512-4lEA5gF4OHrcJLMUV1t+4XbNDiJbsAWCH5Z2uqlTqW6dD7Cf5nEASkeXrCI/Mz83sI2o527oBIFKVMXtRf1Vtg=="
   "resolved" "https://registry.npmjs.org/react-dev-utils/-/react-dev-utils-11.0.3.tgz"
@@ -10142,7 +10154,7 @@
     "loose-envify" "^1.4.0"
     "prop-types" "^15.6.2"
 
-"react@^16.8.0 || ^17.0.0", "react@^16.8.5 || ^17.0.0", "react@^17.0.1", "react@>=0.14.0", "react@>=16.2.0":
+"react@^16.8.0 || ^17.0.0", "react@^16.8.5 || ^17.0.0", "react@^17.0.1", "react@>=0.14.0", "react@>=16.0.0", "react@>=16.2.0":
   "integrity" "sha512-lG9c9UuMHdcAexXtigOZLX8exLWkW0Ku29qPRU8uhF2R9BN96dLCt0psvzPLlHc5OWkgymP3qwTRgbnw5BKx3w=="
   "resolved" "https://registry.npmjs.org/react/-/react-17.0.1.tgz"
   "version" "17.0.1"

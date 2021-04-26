@@ -8,8 +8,8 @@ const customDropZoneStyle = (theme: Theme) => ({
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
+        minHeight: '230px',
         width: '100%',
-        height: '100%',
         backgroundColor: "rgba(255, 255, 255, 0.4)"
     },
 })

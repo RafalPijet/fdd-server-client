@@ -35,12 +35,15 @@ const CustomDropZone: React.FC<Props> = (props) => {
           dropzoneReject: { borderColor: 'red', backgroundColor: '#DAA' },
           inputLabel: (files, extra) =>
             extra.reject ? { color: 'red' } : { color: primaryColor },
+          submitButtonContainer: {
+            margin: '10px 0',
+          },
           submitButton: {
             backgroundColor: primaryColor,
             padding: '14px',
             fontFamily: 'Roboto',
           },
-          preview: { padding: '30px 3%' },
+          preview: { padding: '10px 3%' },
           previewImage: { maxWidth: '200px', maxHeight: '120px' },
           dropzone: {
             backgroundColor: 'rgba(255, 255, 255, 0.5)',

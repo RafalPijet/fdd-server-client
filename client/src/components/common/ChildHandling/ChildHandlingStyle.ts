@@ -5,13 +5,11 @@ import image from '../../../images/sign.jpg';
 
 const childHandlingStyle = (theme: Theme) => ({
     root: {
-        height: "1060px",
+        height: "1770px",
         flexDirection: "column",
-        paddingRight: '15px',
-        paddingLeft: '15px',
-        padding: "70px 0",
-        backgroundPosition: "top center",
-        backgroundSize: "cover",
+        padding: "15px",
+        backgroundPosition: "bottom",
+        backgroundRepeat: "no-repeat",
         margin: "0",
         border: "0",
         display: "flex",
