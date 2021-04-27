@@ -15,26 +15,41 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import ImageEditor from '../ImageEditor/ImageEditor';
 import ZoomInIcon from '@material-ui/icons/ZoomIn';
 import ZoomOutIcon from '@material-ui/icons/ZoomOut';
+import RotateLeftIcon from '@material-ui/icons/RotateLeft';
+import RotateRightIcon from '@material-ui/icons/RotateRight';
+import PhotoCameraIcon from '@material-ui/icons/PhotoCamera';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
+import ArrowLeftIcon from '@material-ui/icons/ArrowLeft';
+import ArrowRightIcon from '@material-ui/icons/ArrowRight';
+import CancelPresentationIcon from '@material-ui/icons/CancelPresentation';
 import { addImageToChild } from '../../../redux/thunks';
 import {
   StyleProps,
   PropsClasses,
   useStyles,
   Props,
-  ZoomButton,
+  OperationButton,
   FddSwitch,
+  ArrowButton,
 } from './AddingImageStyle';
 import 'react-dropzone-uploader/dist/styles.css';
 import logo from '../../../images/butterfly.png';
+import { ArrowsDirection } from '../../../types/global';
 
 const AddingImage: React.FC<Props> = (props) => {
   const { childId } = props;
   const dispatch = useDispatch();
   const classes: PropsClasses = useStyles({} as StyleProps);
   const [switchIsOn, setSwitchIsOn] = useState<boolean>(false);
+  const [isGetImage, setIsGetImage] = useState<boolean>(false);
+  const [isZoom, setIsZoom] = useState<boolean | null>(null);
+  const [isRotate, setIsRotate] = useState<boolean | null>(null);
+  const [isReset, setIsReset] = useState<boolean>(false);
   const [enteredImage, setEnteredImage] = useState<any>(null);
   const [isAvatar, setIsAvatar] = useState<boolean>(false);
   const [preview, setPreview] = useState<any>(logo);
+  const [arrow, setArrow] = useState<ArrowsDirection>(ArrowsDirection.null);
 
   const rootClasses = ClassNames({
     [classes.root]: true,
@@ -62,9 +77,10 @@ const AddingImage: React.FC<Props> = (props) => {
     allFiles.forEach((f) => f.remove());
   };
 
-  const getPreviewFromEditor = (image: string) => {
+  const getPreviewFromEditor = (image: string, isDone: boolean): any => {
     // console.log(image);
-    setPreview(image);
+    if (isDone) setPreview(image);
+    setIsGetImage(false);
   };
 
   const switchChangeHandling = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -81,6 +97,26 @@ const AddingImage: React.FC<Props> = (props) => {
     // console.log('newImage');
     // setEnteredImage(null);
     // setIsPreview(!isPreview);
+  };
+
+  const zoomHandling = async (isZoom: boolean) => {
+    await setIsZoom(isZoom);
+    await setIsZoom(null);
+  };
+
+  const rotateHandling = async (isRotate: boolean) => {
+    await setIsRotate(isRotate);
+    await setIsRotate(null);
+  };
+
+  const resetHandling = async () => {
+    await setIsReset(true);
+    await setIsReset(false);
+  };
+
+  const arrowHandling = async (arrow: ArrowsDirection) => {
+    await setArrow(arrow);
+    await setArrow(ArrowsDirection.null);
   };
 
   return (
@@ -124,39 +160,11 @@ const AddingImage: React.FC<Props> = (props) => {
               dropFieldLabelReject="Tylko plik ze zdjęciem (jpg, jpeg, png)"
             />
             <Paper elevation={3} className={previewClasses}>
-              <div
-                className="box"
-                style={{
-                  width: '50%',
-                  float: 'right',
-                  display: 'inline-block',
-                  padding: '10px',
-                  boxSizing: 'border-box',
-                }}
-              >
-                <h1>Preview</h1>
-                <div
-                  className="img-preview"
-                  style={{
-                    width: '100%',
-                    float: 'left',
-                    height: '300px',
-                    overflow: 'hodden',
-                  }}
-                />
-              </div>
-              <Paper elevation={6}>
-                {/* <img
-                  src={logo}
-                  alt="logo"
-                  style={{ maxWidth: '250px', height: '188px' }}
-                /> */}
-              </Paper>
               <Paper elevation={6}>
                 <img
                   src={preview}
                   alt="logo"
-                  style={{ maxWidth: '250px', height: '188px' }}
+                  style={{ maxWidth: '250px', maxHeight: '188px' }}
                 />
               </Paper>
             </Paper>
@@ -169,7 +177,13 @@ const AddingImage: React.FC<Props> = (props) => {
           >
             <ImageEditor
               enteredImage={enteredImage}
+              isGetImage={isGetImage}
               getPreview={getPreviewFromEditor}
+              isZoom={isZoom}
+              isRotate={isRotate}
+              isReset={isReset}
+              isAvatar={isAvatar}
+              arrow={arrow}
             />
           </GridItem>
         </GridContainer>
@@ -215,16 +229,43 @@ const AddingImage: React.FC<Props> = (props) => {
             lg={6}
             style={{ display: 'flex', justifyContent: 'space-around' }}
           >
-            <CustomButton setColor="primary" setSize="md">
-              Wybierz kadr
-            </CustomButton>
+            <OperationButton onClick={() => setIsGetImage(true)}>
+              <PhotoCameraIcon fontSize="large" />
+            </OperationButton>
+            <OperationButton onClick={resetHandling}>
+              <CancelPresentationIcon fontSize="large" />
+            </OperationButton>
+            <div className={classes.arrowsBox}>
+              <ArrowButton onClick={() => arrowHandling(ArrowsDirection.left)}>
+                <ArrowLeftIcon fontSize="large" />
+              </ArrowButton>
+              <div className={classes.upDown}>
+                <ArrowButton onClick={() => arrowHandling(ArrowsDirection.up)}>
+                  <ArrowDropUpIcon fontSize="large" />
+                </ArrowButton>
+                <ArrowButton
+                  onClick={() => arrowHandling(ArrowsDirection.down)}
+                >
+                  <ArrowDropDownIcon fontSize="large" />
+                </ArrowButton>
+              </div>
+              <ArrowButton onClick={() => arrowHandling(ArrowsDirection.right)}>
+                <ArrowRightIcon fontSize="large" />
+              </ArrowButton>
+            </div>
             <div style={{ display: 'inherit' }}>
-              <ZoomButton>
+              <OperationButton onClick={() => zoomHandling(true)}>
                 <ZoomInIcon fontSize="large" />
-              </ZoomButton>
-              <ZoomButton>
+              </OperationButton>
+              <OperationButton onClick={() => zoomHandling(false)}>
                 <ZoomOutIcon fontSize="large" />
-              </ZoomButton>
+              </OperationButton>
+              <OperationButton onClick={() => rotateHandling(false)}>
+                <RotateLeftIcon fontSize="large" />
+              </OperationButton>
+              <OperationButton onClick={() => rotateHandling(true)}>
+                <RotateRightIcon fontSize="large" />
+              </OperationButton>
             </div>
           </GridItem>
         </GridContainer>

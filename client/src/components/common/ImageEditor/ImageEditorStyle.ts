@@ -1,6 +1,7 @@
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import { makeStyles } from '@material-ui/core/styles';
 import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
+import { ArrowsDirection } from '../../../types/global';
 
 const imageEditorStyle = (theme: Theme) => ({
     root: {
@@ -25,7 +26,13 @@ export interface StyleProps {
 
 export interface Props {
     enteredImage: any;
-    getPreview: (image: string) => void;
+    isGetImage: boolean;
+    getPreview: (image: string, isDone: boolean) => void;
+    isZoom: boolean | null;
+    isRotate: boolean | null;
+    isReset: boolean;
+    isAvatar: boolean;
+    arrow: ArrowsDirection;
 }
 
 export type PropsClasses = Record<keyof StyleProps, string>;

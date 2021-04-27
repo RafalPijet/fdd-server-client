@@ -49,6 +49,14 @@ export enum ModalAYSModes {
     removeMessage
 }
 
+export enum ArrowsDirection {
+    null,
+    up,
+    down,
+    left,
+    right
+}
+
 export interface ChildState {
     _id: string;
     parent: string;

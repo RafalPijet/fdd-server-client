@@ -14,7 +14,7 @@ const addingImageStyle = (theme: Theme) => ({
     },
     preview: {
         display: 'flex',
-        justifyContent: 'space-around',
+        justifyContent: 'center',
         alignItems: 'center',
         height: '210px',
         width: '100%',
@@ -29,6 +29,16 @@ const addingImageStyle = (theme: Theme) => ({
     avatar: {
         color: primaryColor,
         fontWeight: 600
+    },
+    arrowsBox: {
+        display: 'flex',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+    },
+    upDown: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
     }
 })
 
@@ -39,14 +49,34 @@ export interface StyleProps {
     active: BaseCSSProperties;
     activePreview: BaseCSSProperties;
     avatar: BaseCSSProperties;
+    arrowsBox: BaseCSSProperties;
+    upDown: BaseCSSProperties;
 }
 
-export const ZoomButton = withStyles({
+export const OperationButton = withStyles({
     root: {
         color: "#fff",
         backgroundColor: primaryColor,
         margin: "0 10px",
-        padding: "0 8px",
+        padding: "8px",
+        maxHeight: "50px",
+        maxWidth: "50px",
+        '&:hover': {
+            backgroundColor: "#9F63DC",
+            borderColor: "#9F63DC",
+            boxShadow: primaryBoxShadow,
+        },
+    }
+})(IconButton)
+
+export const ArrowButton = withStyles({
+    root: {
+        color: "#fff",
+        backgroundColor: primaryColor,
+        margin: "1px",
+        padding: "5px",
+        maxHeight: "23px",
+        maxWidth: "23px",
         '&:hover': {
             backgroundColor: "#9F63DC",
             borderColor: "#9F63DC",
