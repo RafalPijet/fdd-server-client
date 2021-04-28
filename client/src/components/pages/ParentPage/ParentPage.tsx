@@ -10,6 +10,9 @@ import {
   getUpdating,
   getUpdatingError,
   resetUpdatingRequest,
+  getAdding,
+  getAddingError,
+  resetAddingRequest,
 } from '../../../redux/actions/requestActions';
 import Header from '../../common/Header/Header';
 import HeaderLinks from '../../features/HeaderLinks/HeaderLinksParentPage';
@@ -33,9 +36,11 @@ const ParentPage: React.FC = () => {
   const classes = useStyles({} as StyleProps);
   const isPending = useSelector(getPending);
   const isUpdating = useSelector(getUpdating);
+  const isAdding = useSelector(getAdding);
   const toast = useSelector(getToast);
   const error = useSelector(getError);
   const updatingError = useSelector(getUpdatingError);
+  const addingError = useSelector(getAddingError);
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -49,7 +54,10 @@ const ParentPage: React.FC = () => {
     if (updatingError.isError) {
       handleToast(updatingError.message, 'error');
     }
-  }, [toast.isOpen, error.isError, updatingError.isError]);
+    if (addingError.isError) {
+      handleToast(addingError.message, 'error');
+    }
+  }, [toast.isOpen, error.isError, updatingError.isError, addingError.isError]);
 
   useEffect(() => {
     return () => {
@@ -58,6 +66,7 @@ const ParentPage: React.FC = () => {
       dispatch(cleanCurrentUser());
       dispatch(resetRequest());
       dispatch(resetUpdatingRequest());
+      dispatch(resetAddingRequest());
       dispatch(loadUserMessages([], 0));
       dispatch(setSelectedChild(null));
       dispatch(
@@ -77,11 +86,13 @@ const ParentPage: React.FC = () => {
   return (
     <div>
       <Header
-        isSpiner={isPending || isUpdating}
+        isSpiner={isPending || isUpdating || isAdding}
         color="transparent"
         brand="Fundacja Dorośli Dzieciom"
         fixed
-        rightLinks={<HeaderLinks isSpiner={isPending || isUpdating} />}
+        rightLinks={
+          <HeaderLinks isSpiner={isPending || isUpdating || isAdding} />
+        }
         changeColorOnScroll={{
           height: 400,
           color: 'white',

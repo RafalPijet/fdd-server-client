@@ -7,6 +7,10 @@ import {
     StopUpdatingRequestAction,
     ErrorUpdatingRequestAction,
     ResetUpdatingRequestAction,
+    StartAddingRequestAction,
+    StopAddingRequestAction,
+    ErrorAddingRequestAction,
+    ResetAddingRequestAction,
     START_REQUEST,
     STOP_REQUEST,
     ERROR_REQUEST,
@@ -14,7 +18,11 @@ import {
     START_UPDATING_REQUEST,
     STOP_UPDATING_REQUEST,
     ERROR_UPDATING_REQUEST,
-    RESET_UPDATING_REQUEST
+    RESET_UPDATING_REQUEST,
+    START_ADDING_REQUEST,
+    STOP_ADDING_REQUEST,
+    ERROR_ADDING_REQUEST,
+    RESET_ADDING_REQUEST
 } from '../actions/requestActions';
 
 export type errorContent = {
@@ -29,6 +37,9 @@ export interface RequestState {
     updating: boolean;
     updatingError: errorContent;
     updatingSuccess: boolean;
+    adding: boolean;
+    addingError: errorContent;
+    addingSuccess: boolean;
 }
 
 const initialState: RequestState = {
@@ -43,13 +54,20 @@ const initialState: RequestState = {
         isError: false,
         message: ""
     },
-    updatingSuccess: false
+    updatingSuccess: false,
+    adding: false,
+    addingError: {
+        isError: false,
+        message: ""
+    },
+    addingSuccess: false
 }
 
 const requestReducer = (
     state: RequestState = initialState,
     action: StartRequestAction | StopRequestAction | ErrorRequestAction | ResetRequestAction
-        | StartUpdatingRequestAction | StopUpdatingRequestAction | ErrorUpdatingRequestAction | ResetUpdatingRequestAction
+        | StartUpdatingRequestAction | StopUpdatingRequestAction | ErrorUpdatingRequestAction | ResetUpdatingRequestAction |
+        StartAddingRequestAction | StopAddingRequestAction | ErrorAddingRequestAction | ResetAddingRequestAction
 ) => {
     switch (action.type) {
         case START_REQUEST:
@@ -76,6 +94,20 @@ const requestReducer = (
             return {
                 ...state,
                 updating: false, updatingSuccess: false, updatingError: {
+                    isError: false,
+                    message: ""
+                }
+            }
+        case START_ADDING_REQUEST:
+            return { ...state, adding: true }
+        case STOP_ADDING_REQUEST:
+            return { ...state, adding: false, addingSuccess: true }
+        case ERROR_ADDING_REQUEST:
+            return { ...state, adding: false, addingError: action.payload }
+        case RESET_ADDING_REQUEST:
+            return {
+                ...state,
+                adding: false, addingSuccess: false, addingError: {
                     isError: false,
                     message: ""
                 }

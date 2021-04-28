@@ -3,6 +3,7 @@ import { makeStyles, withStyles } from '@material-ui/core/styles';
 import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
 import IconButton from '@material-ui/core/IconButton';
 import Switch from '@material-ui/core/Switch';
+import { ChildState } from '../../../types/global';
 import { grayColor, primaryBoxShadow, primaryColor } from '../../../styles/globalStyles';
 
 const addingImageStyle = (theme: Theme) => ({
@@ -19,6 +20,12 @@ const addingImageStyle = (theme: Theme) => ({
         height: '210px',
         width: '100%',
         marginTop: '10px',
+    },
+    previewContent: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: '5px'
     },
     active: {
         backgroundColor: "rgba(166, 206, 57, 0.8)"
@@ -47,6 +54,7 @@ export interface StyleProps {
     back: BaseCSSProperties;
     preview: BaseCSSProperties;
     active: BaseCSSProperties;
+    previewContent: BaseCSSProperties;
     activePreview: BaseCSSProperties;
     avatar: BaseCSSProperties;
     arrowsBox: BaseCSSProperties;
@@ -101,6 +109,7 @@ export const FddSwitch = withStyles({
 
 export interface Props {
     childId: string | null;
+    selectedChild: ChildState | undefined
 }
 
 export type PropsClasses = Record<keyof StyleProps, string>;

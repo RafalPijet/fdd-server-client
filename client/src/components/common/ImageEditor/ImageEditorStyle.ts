@@ -33,6 +33,7 @@ export interface Props {
     isReset: boolean;
     isAvatar: boolean;
     arrow: ArrowsDirection;
+    isDisabled: boolean;
 }
 
 export type PropsClasses = Record<keyof StyleProps, string>;

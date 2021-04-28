@@ -16,10 +16,17 @@ const ImageEditor: React.FC<Props> = (props) => {
     isReset,
     isAvatar,
     arrow,
+    isDisabled,
   } = props;
   const classes: PropsClasses = useStyles({} as StyleProps);
   const [cropper, setCropper] = useState<any>();
   const [cropData, setCropData] = useState<any>(null);
+
+  useEffect(() => {
+    if (cropper) {
+      isDisabled ? cropper.disable() : cropper.enable();
+    }
+  }, [isDisabled]);
 
   useEffect(() => {
     if (cropper && isZoom !== null) {
@@ -100,7 +107,11 @@ const ImageEditor: React.FC<Props> = (props) => {
         <img
           src={logo}
           alt="logo"
-          style={{ width: '400px', height: '361px' }}
+          style={{
+            width: '400px',
+            height: '361px',
+            filter: `${isDisabled ? 'grayscale(100)' : 'grayscale(0)'}`,
+          }}
         />
       )}
     </Paper>

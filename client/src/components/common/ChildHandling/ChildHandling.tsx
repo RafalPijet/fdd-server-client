@@ -68,7 +68,7 @@ const ChildHandling: React.FC = () => {
           lg={12}
           style={{ display: 'flex', justifyContent: 'center' }}
         >
-          <AddingImage childId={childId} />
+          <AddingImage childId={childId} selectedChild={selectedChild} />
         </GridItem>
         <GridItem
           xs={12}

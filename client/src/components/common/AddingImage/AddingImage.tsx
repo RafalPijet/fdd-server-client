@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { IDropzoneProps } from 'react-dropzone-uploader';
 import ClassNames from 'classnames';
 import GridContainer from '../../common/Grid/GridContainer';
@@ -25,6 +25,11 @@ import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import CancelPresentationIcon from '@material-ui/icons/CancelPresentation';
 import { addImageToChild } from '../../../redux/thunks';
 import {
+  getAdding,
+  getAddingSuccess,
+  resetAddingRequest,
+} from '../../../redux/actions/requestActions';
+import {
   StyleProps,
   PropsClasses,
   useStyles,
@@ -36,10 +41,13 @@ import {
 import 'react-dropzone-uploader/dist/styles.css';
 import logo from '../../../images/butterfly.png';
 import { ArrowsDirection } from '../../../types/global';
+import { urltoFile } from '../../../types/functions';
 
 const AddingImage: React.FC<Props> = (props) => {
-  const { childId } = props;
+  const { childId, selectedChild } = props;
   const dispatch = useDispatch();
+  const isAdding = useSelector(getAdding);
+  const isSuccess = useSelector(getAddingSuccess);
   const classes: PropsClasses = useStyles({} as StyleProps);
   const [switchIsOn, setSwitchIsOn] = useState<boolean>(false);
   const [isGetImage, setIsGetImage] = useState<boolean>(false);
@@ -50,18 +58,33 @@ const AddingImage: React.FC<Props> = (props) => {
   const [isAvatar, setIsAvatar] = useState<boolean>(false);
   const [preview, setPreview] = useState<any>(logo);
   const [arrow, setArrow] = useState<ArrowsDirection>(ArrowsDirection.null);
+  const [file, setFile] = useState<File | undefined>();
 
   const rootClasses = ClassNames({
     [classes.root]: true,
     [classes.back]: true,
-    [classes.active]: switchIsOn,
+    [classes.active]: switchIsOn || isAdding,
   });
 
   const previewClasses = ClassNames({
     [classes.back]: true,
     [classes.preview]: true,
-    [classes.activePreview]: switchIsOn,
+    [classes.activePreview]: switchIsOn || isAdding,
   });
+
+  const previewContentClasses = ClassNames({
+    [classes.back]: true,
+    [classes.previewContent]: true,
+    [classes.activePreview]: switchIsOn || isAdding,
+  });
+
+  useEffect(() => {
+    if (isSuccess) {
+      setEnteredImage(null);
+      setPreview(logo);
+      setFile(undefined);
+    }
+  }, [isSuccess]);
 
   const handleSubmit: IDropzoneProps['onSubmit'] = async (files, allFiles) => {
     if (files[0].file && childId !== null) {
@@ -72,14 +95,36 @@ const AddingImage: React.FC<Props> = (props) => {
         setEnteredImage(reader.result as any);
       };
       reader.readAsDataURL(files[0].file);
-      // dispatch(addImageToChild(files[0].file, childId));
     }
     allFiles.forEach((f) => f.remove());
   };
 
+  const addImageFileToChild = () => {
+    if (file && childId !== null) {
+      if (isAvatar) {
+      } else {
+        dispatch(addImageToChild(file, childId));
+      }
+    }
+  };
+
+  const cancelSelectedImage = () => {
+    setEnteredImage(null);
+    setPreview(logo);
+    setFile(undefined);
+  };
+
   const getPreviewFromEditor = (image: string, isDone: boolean): any => {
-    // console.log(image);
-    if (isDone) setPreview(image);
+    if (isDone) {
+      setPreview(image);
+      dispatch(resetAddingRequest());
+      urltoFile(
+        image,
+        `${selectedChild?.firstName}_${selectedChild?.lastName}.png`
+      ).then((file) => {
+        setFile(file);
+      });
+    }
     setIsGetImage(false);
   };
 
@@ -91,12 +136,6 @@ const AddingImage: React.FC<Props> = (props) => {
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     setIsAvatar(e.target.checked);
-  };
-
-  const newImageHandling = () => {
-    // console.log('newImage');
-    // setEnteredImage(null);
-    // setIsPreview(!isPreview);
   };
 
   const zoomHandling = async (isZoom: boolean) => {
@@ -124,11 +163,19 @@ const AddingImage: React.FC<Props> = (props) => {
       <SectionHeader
         onChange={switchChangeHandling}
         checked={switchIsOn}
-        helpText="Aby zmienić kolejność zdjęć, na górnej liście złap wybrane zdjęcie i
-         przenieś w wybrane przez siebie miejsce w obrembie górnej listy.
-         Aby usunąć zdjęcie złap je z górnej listy i przenieś na dolną listę. Naciśnięcie przycisku
-         ZATWIERDŹ ZMIANY dokona aktualizacji listy zdjęć."
-        text="Włącz/Wyłącz sekcję dodawania i edycji zdjęć"
+        helpText="Aby dodać zdjęcie, upuść je lub kliknij w celu wyboru zdjęcia z Twojego dysku.
+         Następnie klikając przycisk DODAJ ZDJĘCIE, przenosisz je do pola edytora, natomiast klikając X,
+          wracasz do mozliwości dodania innego zdjęcia. Suwakiem PORTRET ustalasz, czy będziesz dodawać 
+          portret - miniaturkę dziecka czy jedno z 5-ciu zdjęć kolekcji. Standardowo ustawiona jest
+           opcja dodawania zdjęć kolekcji. W edytorze powinieneś wykadrować docelowe zdjęcię.
+            Ramka kadrowania jest inna dla zdjęcia niz dla portretu. Uzywając przycisków edytora mozesz
+            zblizać, oddalać, obracać oraz przesuwać obrabiane zdjęcie. Jeśli chcesz cofnąć zmiany podczas
+            kadrowania, naciśnij przycisk z ikoną prostokąta z krzyzykiem. Jeśli wykadrowałeś w sposób zadowalający
+             Cię naciśnij przycisk z ikoną aparatu fotograficznego. Zobaczysz wówczas gotowe zdjęcie. Mozesz oczywiście ponownie wrócić do kadrowania zdjęcia, czy portetu.
+              Po naciśnięciu przycisku ZAPISZ ZDJĘCIE nastąpi dodanie zdjęcia do kolekcji lub portretu.
+              Pamiętaj, ze w kolekcji mozesz mieć tylko 5 zdjęć! Naciśnięcia przycisku ANULUJ
+              likwiduje cały proces dodawania nowego zdjęcia."
+        text="Włącz/Wyłącz sekcję dodawania i edycji zdjęć."
       />
       <div
         style={{
@@ -153,18 +200,31 @@ const AddingImage: React.FC<Props> = (props) => {
           >
             <CustomDropZone
               handleSubmit={handleSubmit}
-              isDisabled={!switchIsOn}
+              isDisabled={
+                selectedChild === undefined ||
+                !switchIsOn ||
+                isAdding ||
+                (!isAvatar && selectedChild!.images.length > 4)
+              }
               buttonLabel="DODAJ ZDJĘCIE"
               acceptFiles="image/jpg, image/jpeg, image/png"
               dropFieldLabel="Upuść zdjęcie lub kliknij"
               dropFieldLabelReject="Tylko plik ze zdjęciem (jpg, jpeg, png)"
             />
             <Paper elevation={3} className={previewClasses}>
-              <Paper elevation={6}>
+              <Paper variant="outlined" className={previewContentClasses}>
                 <img
                   src={preview}
                   alt="logo"
-                  style={{ maxWidth: '250px', maxHeight: '188px' }}
+                  style={{
+                    maxWidth: '250px',
+                    maxHeight: '188px',
+                    filter: `${
+                      !switchIsOn || isAdding
+                        ? 'grayscale(100)'
+                        : 'grayscale(0)'
+                    }`,
+                  }}
                 />
               </Paper>
             </Paper>
@@ -184,6 +244,7 @@ const AddingImage: React.FC<Props> = (props) => {
               isReset={isReset}
               isAvatar={isAvatar}
               arrow={arrow}
+              isDisabled={!switchIsOn || isAdding}
             />
           </GridItem>
         </GridContainer>
@@ -200,17 +261,30 @@ const AddingImage: React.FC<Props> = (props) => {
             lg={6}
             style={{ display: 'flex', justifyContent: 'space-around' }}
           >
-            <CustomButton setColor="primary" setSize="md">
+            <CustomButton
+              setColor="primary"
+              setSize="md"
+              disabled={!switchIsOn || isAdding || file === undefined}
+              onClick={addImageFileToChild}
+            >
               Zapisz zdjęcie
             </CustomButton>
             <CustomButton
               setColor="primary"
               setSize="md"
-              onClick={newImageHandling}
+              disabled={!switchIsOn || isAdding || file === undefined}
+              onClick={cancelSelectedImage}
             >
-              Zmień zdjęcie
+              Anuluj
             </CustomButton>
             <FormControlLabel
+              disabled={
+                !switchIsOn ||
+                isAdding ||
+                (isAvatar &&
+                  selectedChild !== undefined &&
+                  selectedChild.images.length > 4)
+              }
               classes={{
                 label: classes.avatar,
               }}
@@ -220,7 +294,7 @@ const AddingImage: React.FC<Props> = (props) => {
                   onChange={switchIsAvatarSelectedHandling}
                 />
               }
-              label="Avatar"
+              label="PORTRET"
             />
           </GridItem>
           <GridItem
@@ -229,41 +303,69 @@ const AddingImage: React.FC<Props> = (props) => {
             lg={6}
             style={{ display: 'flex', justifyContent: 'space-around' }}
           >
-            <OperationButton onClick={() => setIsGetImage(true)}>
+            <OperationButton
+              onClick={() => setIsGetImage(true)}
+              disabled={!switchIsOn || isAdding || enteredImage === null}
+            >
               <PhotoCameraIcon fontSize="large" />
             </OperationButton>
-            <OperationButton onClick={resetHandling}>
+            <OperationButton
+              onClick={resetHandling}
+              disabled={!switchIsOn || isAdding || enteredImage === null}
+            >
               <CancelPresentationIcon fontSize="large" />
             </OperationButton>
             <div className={classes.arrowsBox}>
-              <ArrowButton onClick={() => arrowHandling(ArrowsDirection.left)}>
+              <ArrowButton
+                onClick={() => arrowHandling(ArrowsDirection.left)}
+                disabled={!switchIsOn || isAdding || enteredImage === null}
+              >
                 <ArrowLeftIcon fontSize="large" />
               </ArrowButton>
               <div className={classes.upDown}>
-                <ArrowButton onClick={() => arrowHandling(ArrowsDirection.up)}>
+                <ArrowButton
+                  onClick={() => arrowHandling(ArrowsDirection.up)}
+                  disabled={!switchIsOn || isAdding || enteredImage === null}
+                >
                   <ArrowDropUpIcon fontSize="large" />
                 </ArrowButton>
                 <ArrowButton
                   onClick={() => arrowHandling(ArrowsDirection.down)}
+                  disabled={!switchIsOn || isAdding || enteredImage === null}
                 >
                   <ArrowDropDownIcon fontSize="large" />
                 </ArrowButton>
               </div>
-              <ArrowButton onClick={() => arrowHandling(ArrowsDirection.right)}>
+              <ArrowButton
+                onClick={() => arrowHandling(ArrowsDirection.right)}
+                disabled={!switchIsOn || isAdding || enteredImage === null}
+              >
                 <ArrowRightIcon fontSize="large" />
               </ArrowButton>
             </div>
             <div style={{ display: 'inherit' }}>
-              <OperationButton onClick={() => zoomHandling(true)}>
+              <OperationButton
+                onClick={() => zoomHandling(true)}
+                disabled={!switchIsOn || isAdding || enteredImage === null}
+              >
                 <ZoomInIcon fontSize="large" />
               </OperationButton>
-              <OperationButton onClick={() => zoomHandling(false)}>
+              <OperationButton
+                onClick={() => zoomHandling(false)}
+                disabled={!switchIsOn || isAdding || enteredImage === null}
+              >
                 <ZoomOutIcon fontSize="large" />
               </OperationButton>
-              <OperationButton onClick={() => rotateHandling(false)}>
+              <OperationButton
+                onClick={() => rotateHandling(false)}
+                disabled={!switchIsOn || isAdding || enteredImage === null}
+              >
                 <RotateLeftIcon fontSize="large" />
               </OperationButton>
-              <OperationButton onClick={() => rotateHandling(true)}>
+              <OperationButton
+                onClick={() => rotateHandling(true)}
+                disabled={!switchIsOn || isAdding || enteredImage === null}
+              >
                 <RotateRightIcon fontSize="large" />
               </OperationButton>
             </div>

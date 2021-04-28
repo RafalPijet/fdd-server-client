@@ -14,7 +14,13 @@ import {
     ErrorUpdatingRequestAction,
     startUpdatingRequest,
     stopUpdatingRequest,
-    errorUpdatingRequest
+    errorUpdatingRequest,
+    StartAddingRequestAction,
+    StopAddingRequestAction,
+    ErrorAddingRequestAction,
+    startAddingRequest,
+    stopAddingRequest,
+    errorAddingRequest
 } from './actions/requestActions';
 import {
     addCurrentUser,
@@ -392,9 +398,10 @@ export const addImageToChild = (image: File, childId: string): ThunkAction<
     Promise<void>,
     any,
     RootState,
-    StartRequestAction | StopRequestAction | ErrorRequestAction | SetToastAction | SetChildImagesListAction
+    StartAddingRequestAction | StopAddingRequestAction | ErrorAddingRequestAction |
+    SetToastAction | SetChildImagesListAction
 > => async (dispatch, getState) => {
-    dispatch(startRequest());
+    dispatch(startAddingRequest());
 
     try {
         await new Promise(resolve => setTimeout(resolve, 2000));
@@ -410,14 +417,14 @@ export const addImageToChild = (image: File, childId: string): ThunkAction<
         })
         dispatch(setChildImagesList(childId, images));
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
-        dispatch(stopRequest());
+        dispatch(stopAddingRequest());
     } catch (err) {
         if (err.response !== undefined) {
             err.response.data.message ?
-                dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
-                dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+                dispatch(errorAddingRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorAddingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         } else {
-            dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+            dispatch(errorAddingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }
     }
 }
