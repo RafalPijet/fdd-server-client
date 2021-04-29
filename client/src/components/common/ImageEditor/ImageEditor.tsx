@@ -91,6 +91,9 @@ const ImageEditor: React.FC<Props> = (props) => {
     <Paper elevation={3} className={classes.root}>
       {enteredImage !== null && typeof enteredImage === 'string' ? (
         <Cropper
+          style={{
+            filter: `${isDisabled ? 'grayscale(100)' : 'grayscale(0)'}`,
+          }}
           src={enteredImage}
           viewMode={1}
           zoomOnTouch={false}
@@ -98,6 +101,7 @@ const ImageEditor: React.FC<Props> = (props) => {
           cropBoxResizable={false}
           className={classes.crooper}
           initialAspectRatio={16 / 9}
+          minCanvasWidth={550}
           guides={false}
           onInitialized={(instance) => {
             setCropper(instance);

@@ -57,6 +57,13 @@ export enum ArrowsDirection {
     right
 }
 
+export interface InvoiceState {
+    _id: string;
+    addDate: Date;
+    description: string;
+    content: string[];
+}
+
 export interface ChildState {
     _id: string;
     parent: string;
@@ -65,6 +72,8 @@ export interface ChildState {
     birthDate: Date;
     info: string;
     images: string[];
+    avatar: string;
+    invoices: InvoiceState[];
 }
 
 export interface UserState {

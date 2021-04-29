@@ -7,6 +7,7 @@ export const ADD_USER = 'user/add_user';
 export const CLEAN_USER = 'user/clean_user';
 export const ADD_CHILD_TO_USER = 'user/add_child_to_user';
 export const SET_CHILD_IMAGES_LIST = 'user/set_child_images_list';
+export const SET_CHILD_AVATAR = 'user/set_child_avatar';
 
 //ACTIONS TYPES
 export interface AddUserAction extends Action<typeof ADD_USER> {
@@ -19,6 +20,10 @@ export interface AddChildToUserAction extends Action<typeof ADD_CHILD_TO_USER> {
 export interface SetChildImagesListAction extends Action<typeof SET_CHILD_IMAGES_LIST> {
     childId: string,
     images: string[]
+}
+export interface SetChildAvatarAction extends Action<typeof SET_CHILD_AVATAR> {
+    childId: string,
+    avatar: string
 }
 
 //CREATORS OF ACTIONS
@@ -37,6 +42,11 @@ export const setChildImagesList = (childId: string, images: string[]): SetChildI
     type: SET_CHILD_IMAGES_LIST,
     childId,
     images
+})
+export const setChildAvatar = (childId: string, avatar: string): SetChildAvatarAction => ({
+    type: SET_CHILD_AVATAR,
+    childId,
+    avatar
 })
 
 //SELECTORS

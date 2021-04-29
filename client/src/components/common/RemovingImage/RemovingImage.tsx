@@ -120,6 +120,7 @@ const RemovingImage: React.FC<Props> = (props) => {
   return (
     <Card className={rootClasses}>
       <SectionHeader
+        isExistChild={true}
         onChange={switchChangeHandling}
         checked={switchIsOn}
         helpText="Aby zmienić kolejność zdjęć, na górnej liście złap wybrane zdjęcie i

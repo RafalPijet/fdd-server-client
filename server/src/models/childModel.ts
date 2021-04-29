@@ -1,4 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
+import { IInvoice } from './index';
 
 export interface IChild {
     _id?: string;
@@ -8,7 +9,9 @@ export interface IChild {
     lastName: string;
     birthDate: Date;
     info: string;
-    images: string[];
+    images?: string[];
+    avatar?: string;
+    invoices?: IInvoice[];
 }
 
 const childSchema = new Schema({
@@ -18,6 +21,11 @@ const childSchema = new Schema({
     birthDate: { type: Date, required: true },
     info: { type: String, required: true },
     images: [{ type: String, default: [] }],
+    avatar: { type: String, default: '' },
+    invoices: [{
+        ref: 'Invoice',
+        type: mongoose.Schema.Types.ObjectId
+    }],
     parent: {
         ref: 'User',
         type: mongoose.Schema.Types.ObjectId

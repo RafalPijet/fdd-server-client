@@ -38,6 +38,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(multer({ storage, fileFilter }).single('image'));
 app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use('/avatars', express.static(path.join(__dirname, 'avatars')));
 app.use((req: Request, res: Response, next: NextFunction) => {
     res.setHeader('Access-Control-Allow-Origin', "*");
     res.setHeader('Access-Control-Allow-Methods', "GET, POST, PUT, PATCH, DELETE, OPTIONS");

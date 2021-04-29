@@ -72,6 +72,7 @@ class UserController {
                 `Niepowodzenie aktualizacji wiadomości dla ${request.user.firstName} ${request.user.lastName}. - ${err}`))
         }
     }
+
     @post('/child/:userId')
     @bodyValidator(ValidatorKeys.addChild)
     async addChild(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -92,7 +93,6 @@ class UserController {
                 lastName: payload.lastName,
                 birthDate: new Date(payload.birthDate),
                 info: payload.info,
-                images: []
             }
             const newChild = buildChild(child);
             if (user !== null) {
@@ -108,36 +108,86 @@ class UserController {
             next(new HttpException(404, 'Nieudane utworzenie podopiecznego!'));
         }
     }
+
+    @put('/child/avatar/:childId')
+    async addChildAvatar(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const { childId } = req.params;
+        const avatars = 'avatars';
+        if (!req.file) {
+            next(new HttpException(404, 'Brak portretu'));
+        } else {
+            try {
+                const foundChild = await ChildModel.findById(childId);
+                if (foundChild) {
+                    const imageUrl = req.file.path.replace(req.file.destination, avatars)
+                    const source = req.file.path.replace('uploads', avatars)   //It's will be remove
+                    const target = source.replace(avatars, 'build/avatars')     //It's will be remove
+                    await sharp(req.file.path)
+                        .resize(120, 120)
+                        .jpeg({ quality: 90 })
+                        .toFile(path.resolve(avatars, req.file.filename))
+                    fs.unlinkSync(req.file.path);
+                    fs.copyFile(source, target, (err) => {              //It's will be remove
+                        console.log(err)                                //It's will be remove
+                    })                                                  //It's will be remove
+                    foundChild.avatar = imageUrl;
+                    await foundChild.save();
+                    res.status(201).json(
+                        {
+                            message: `Ustawiono portet dla ${foundChild.firstName} ${foundChild.lastName}`,
+                            avatar: foundChild.avatar
+                        });
+                } else {
+                    next(new HttpException(404, 'Nieudane dodanie zdjęcia. Nie znaleziono dziecka.'));
+                }
+            } catch (err) {
+                next(new HttpException(404, 'Nieudane dodanie portretu'));
+            }
+        }
+    }
+
     @post('/child/image/:childId')
     async addChildImage(req: Request, res: Response, next: NextFunction): Promise<void> {
         const { childId } = req.params;
         const images = 'images';
         if (!req.file) {
             next(new HttpException(404, 'Brak obrazu'));
-        }
-        const imageUrl = req.file.path.replace(req.file.destination, images)
-        const source = req.file.path.replace('uploads', 'images')   //It's will be remove
-        const target = source.replace('images', 'build/images')     //It's will be remove
-        await sharp(req.file.path)
-            .resize(500, 332)
-            .jpeg({ quality: 90 })
-            .toFile(path.resolve(images, req.file.filename))
-        fs.unlinkSync(req.file.path);
-        fs.copyFile(source, target, (err) => {              //It's will be remove
-            console.log(err)                                //It's will be remove
-        })                                                  //It's will be remove
-        try {
-            const foundChild = await ChildModel.findById(childId);
-            if (foundChild) {
-                foundChild.images = [...foundChild.images!, imageUrl];
-                await foundChild.save()
-                res.status(201).json({ message: `Dodano zdjęcia dla ${foundChild.firstName} ${foundChild.lastName}`, images: foundChild.images });
+        } else {
+            try {
+                const foundChild = await ChildModel.findById(childId);
+                if (foundChild) {
+                    if (foundChild.images && foundChild.images.length >= 5) {
+                        next(new HttpException(404, 'Przekroczony limit ilości zdjęć'));
+                    } else {
+                        const imageUrl = req.file.path.replace(req.file.destination, images)
+                        const source = req.file.path.replace('uploads', images)   //It's will be remove
+                        const target = source.replace(images, 'build/images')     //It's will be remove
+                        await sharp(req.file.path)
+                            .resize(500, 332)
+                            .jpeg({ quality: 90 })
+                            .toFile(path.resolve(images, req.file.filename))
+                        fs.unlinkSync(req.file.path);
+                        fs.copyFile(source, target, (err) => {              //It's will be remove
+                            console.log(err)                                //It's will be remove
+                        })                                                  //It's will be remove
+                        foundChild.images = [...foundChild.images!, imageUrl];
+                        await foundChild.save()
+                        res.status(201).json(
+                            {
+                                message: `Dodano zdjęcia dla ${foundChild.firstName} ${foundChild.lastName}`,
+                                images: foundChild.images
+                            });
+                    }
+
+                } else {
+                    next(new HttpException(404, 'Nieudane dodanie zdjęcia. Nie znaleziono dziecka.'));
+                }
+            } catch (err) {
+                next(new HttpException(404, 'Nieudane dodanie zdjęcia'));
             }
-            res.status(200).send();
-        } catch (err) {
-            next(new HttpException(404, 'Nieudane dodanie zdjęcia'));
         }
     }
+
     @put('/child/images')
     async updateImagesList(req: Request, res: Response, next: NextFunction): Promise<void> {
         const { contentList, removeList, id } = req.body;

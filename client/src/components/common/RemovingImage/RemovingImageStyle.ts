@@ -57,12 +57,12 @@ export interface StyleProps {
 export interface State {
     contentList: string[];
     removeList: string[];
-    id?: string;
+    id: string | null;
 }
 
 export interface Props {
     imagesUrl: string[];
-    childId?: string;
+    childId: string | null;
 }
 
 export const reorder = (list: [], startIndex: number, endIndex: number): object => {

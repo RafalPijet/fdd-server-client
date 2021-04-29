@@ -1,7 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import HelpIcon from '@material-ui/icons/Help';
 import Zoom from '@material-ui/core/Zoom';
 import ClassNames from 'classnames';
+import {
+  getSelectedChild,
+  setUserToast,
+} from '../../../redux/actions/generalActions';
 import {
   FddSwitch,
   PropsClasses,
@@ -12,12 +17,29 @@ import {
 } from './SectionHeaderStyle';
 
 const SectionHeader: React.FC<Props> = (props) => {
-  const { onChange, checked, helpText, text } = props;
+  const { onChange, checked, helpText, text, isExistChild } = props;
+  const dispatch = useDispatch();
+  const selectedChild = useSelector(getSelectedChild);
   const classes: PropsClasses = useStyles({} as StyleProps);
   const iconClasses = ClassNames({
     [classes.icon]: true,
     [classes.disabled]: !checked,
   });
+
+  useEffect(() => {
+    if (checked && isExistChild) {
+      if (selectedChild === null)
+        dispatch(
+          setUserToast({
+            isOpen: true,
+            content:
+              'Ta sekcja nie moze być obsługiwana bez przydzielonego podopiecznego',
+            variant: 'info',
+          })
+        );
+    }
+  }, [checked, isExistChild, selectedChild]);
+
   return (
     <div className={classes.root}>
       <FddTooltip

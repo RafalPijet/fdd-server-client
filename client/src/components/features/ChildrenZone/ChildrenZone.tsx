@@ -11,6 +11,7 @@ import { getUserChildren } from '../../../redux/actions/userActions';
 import { useStyles, StyleProps, PropsClasses } from './ChildrenZoneStyle';
 import { ChildState } from '../../../types/global';
 import { calculateAge } from '../../../types/functions';
+import logo from '../../../images/butterfly.png';
 
 const ChildrenZone: React.FC = () => {
   const classes: PropsClasses = useStyles({} as StyleProps);
@@ -47,7 +48,7 @@ const ChildrenZone: React.FC = () => {
             </span>
             <Avatar
               variant="rounded"
-              src={selectedChild?.images[0]}
+              src={selectedChild?.avatar}
               alt={`${selectedChild?.firstName} ${selectedChild?.lastName}`}
               className={classes.large}
             />
@@ -69,7 +70,19 @@ const ChildrenZone: React.FC = () => {
           {selectedChild !== null && selectedChild?.images.length > 0 ? (
             <CustomCarousel images={selectedChild.images} />
           ) : (
-            <div></div>
+            <div
+              style={{
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'center',
+              }}
+            >
+              <img
+                src={logo}
+                alt="logo"
+                style={{ width: '340px', height: '310px' }}
+              />
+            </div>
           )}
         </CardBody>
       </Card>

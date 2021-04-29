@@ -33,7 +33,7 @@ const ChildHandling: React.FC = () => {
     birthDate: false,
     info: false,
   });
-  const [selectedChild, setSelectedChild] = useState<ChildState>();
+  const [selectedChild, setSelectedChild] = useState<ChildState | undefined>();
   const dispatch = useDispatch();
   const childId = useSelector(getSelectedChild);
   const children = useSelector(getUserChildren);
@@ -41,7 +41,7 @@ const ChildHandling: React.FC = () => {
   useEffect(() => {
     if (childId !== null) {
       const child = children.find((item: ChildState) => item._id === childId);
-      if (child !== undefined) setSelectedChild(child);
+      setSelectedChild(child);
     }
   }, [childId]);
 
@@ -76,12 +76,10 @@ const ChildHandling: React.FC = () => {
           lg={6}
           style={{ display: 'flex', justifyContent: 'center' }}
         >
-          {selectedChild !== undefined && (
-            <RemovingImage
-              childId={childId !== null ? childId : undefined}
-              imagesUrl={selectedChild.images}
-            />
-          )}
+          <RemovingImage
+            childId={childId}
+            imagesUrl={selectedChild !== undefined ? selectedChild.images : []}
+          />
         </GridItem>
       </GridContainer>
       <GridContainer

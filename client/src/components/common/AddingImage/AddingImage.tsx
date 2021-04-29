@@ -23,11 +23,12 @@ import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import ArrowLeftIcon from '@material-ui/icons/ArrowLeft';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import CancelPresentationIcon from '@material-ui/icons/CancelPresentation';
-import { addImageToChild } from '../../../redux/thunks';
+import { addImageToChild, addAvatarToChild } from '../../../redux/thunks';
 import {
   getAdding,
   getAddingSuccess,
   resetAddingRequest,
+  getAddingError,
 } from '../../../redux/actions/requestActions';
 import {
   StyleProps,
@@ -48,6 +49,7 @@ const AddingImage: React.FC<Props> = (props) => {
   const dispatch = useDispatch();
   const isAdding = useSelector(getAdding);
   const isSuccess = useSelector(getAddingSuccess);
+  const isError = useSelector(getAddingError).isError;
   const classes: PropsClasses = useStyles({} as StyleProps);
   const [switchIsOn, setSwitchIsOn] = useState<boolean>(false);
   const [isGetImage, setIsGetImage] = useState<boolean>(false);
@@ -79,6 +81,10 @@ const AddingImage: React.FC<Props> = (props) => {
   });
 
   useEffect(() => {
+    if (isError) dispatch(resetAddingRequest());
+  }, [isError]);
+
+  useEffect(() => {
     if (isSuccess) {
       setEnteredImage(null);
       setPreview(logo);
@@ -102,6 +108,7 @@ const AddingImage: React.FC<Props> = (props) => {
   const addImageFileToChild = () => {
     if (file && childId !== null) {
       if (isAvatar) {
+        dispatch(addAvatarToChild(file, childId));
       } else {
         dispatch(addImageToChild(file, childId));
       }
@@ -161,6 +168,7 @@ const AddingImage: React.FC<Props> = (props) => {
   return (
     <Card className={rootClasses}>
       <SectionHeader
+        isExistChild={true}
         onChange={switchChangeHandling}
         checked={switchIsOn}
         helpText="Aby dodać zdjęcie, upuść je lub kliknij w celu wyboru zdjęcia z Twojego dysku.

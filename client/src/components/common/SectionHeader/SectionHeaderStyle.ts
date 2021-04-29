@@ -55,7 +55,8 @@ export interface Props {
     onChange: ((event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void);
     checked: boolean;
     helpText: string;
-    text: string
+    text: string;
+    isExistChild: boolean;
 }
 
 export type PropsClasses = Record<keyof StyleProps, string>;

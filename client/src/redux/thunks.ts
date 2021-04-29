@@ -24,11 +24,13 @@ import {
 } from './actions/requestActions';
 import {
     addCurrentUser,
-    AddUserAction,
     addChildToUser,
+    setChildImagesList,
+    setChildAvatar,
+    AddUserAction,
     AddChildToUserAction,
     SetChildImagesListAction,
-    setChildImagesList
+    SetChildAvatarAction
 } from './actions/userActions';
 import {
     loadUserMessages,
@@ -62,6 +64,9 @@ export const loginUser = (payload: IUserLogin): ThunkAction<
         const user: UserState = res.data.dto;
         if (user.children.length) {
             user.children.forEach((child: ChildState) => {
+                if (child.avatar.length !== 0) {
+                    child.avatar = `${URL}${child.avatar}`;
+                }
                 child.images = child.images.map((image: string) => {
                     return `${URL}${image}`
                 })
@@ -366,7 +371,7 @@ export const addChildToParent = (payload: IChildData, userId?: string): ThunkAct
     Promise<void>,
     any,
     RootState,
-    StartRequestAction | StopRequestAction | ErrorRequestAction | SetToastAction | AddChildToUserAction
+    StartRequestAction | StopRequestAction | ErrorRequestAction | SetToastAction | AddChildToUserAction | SetSelectedChild
 > => async (dispatch, getState) => {
     dispatch(startRequest());
 
@@ -380,6 +385,7 @@ export const addChildToParent = (payload: IChildData, userId?: string): ThunkAct
 
         if (getState().user.status === UserStatus.parent) {
             dispatch(addChildToUser(res.data.child));
+            dispatch(setSelectedChild(res.data.child._id));
         }
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
         dispatch(stopRequest());
@@ -391,6 +397,40 @@ export const addChildToParent = (payload: IChildData, userId?: string): ThunkAct
         } else {
             dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }
+    }
+}
+
+export const addAvatarToChild = (avatar: File, childId: string): ThunkAction<
+    Promise<void>,
+    any,
+    RootState,
+    StartAddingRequestAction | StopAddingRequestAction | ErrorAddingRequestAction |
+    SetToastAction | SetChildAvatarAction
+> => async (dispatch, getState) => {
+    dispatch(startAddingRequest());
+
+    try {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        const formData = new FormData();
+        formData.append('image', avatar);
+        let res: AxiosResponse = await axios.put(`${API_URL}/users/child/avatar/${childId}`, formData, {
+            headers: {
+                'Authorization': localStorage.getItem('tokenFDD')
+            },
+        })
+        const result = `${URL}${res.data.avatar}`;
+        dispatch(setChildAvatar(childId, result));
+        dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
+        dispatch(stopAddingRequest());
+    } catch (err) {
+        if (err.response !== undefined) {
+            err.response.data.message ?
+                dispatch(errorAddingRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorAddingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        } else {
+            dispatch(errorAddingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        }
+
     }
 }
 
