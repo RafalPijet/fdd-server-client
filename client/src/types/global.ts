@@ -1,4 +1,7 @@
 import { VariantType } from 'notistack';
+import { withStyles } from '@material-ui/core/styles';
+import Switch from '@material-ui/core/Switch';
+import { primaryColor, grayColor } from '../styles/globalStyles';
 
 export type AvailableColors =
     "primary" |
@@ -74,6 +77,13 @@ export interface ChildState {
     images: string[];
     avatar: string;
     invoices: InvoiceState[];
+}
+
+export interface IChildData {
+    firstName: string;
+    lastName: string;
+    birthDate: string;
+    info: string;
 }
 
 export interface UserState {
@@ -175,3 +185,17 @@ export enum TargetOptions {
     to = 'to',
     all = 'all'
 }
+
+export const FddSwitch = withStyles({
+    switchBase: {
+        color: grayColor,
+        '&$checked': {
+            color: primaryColor,
+        },
+        '&$checked + $track': {
+            backgroundColor: primaryColor,
+        },
+    },
+    checked: {},
+    track: {},
+})(Switch);

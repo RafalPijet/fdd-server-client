@@ -7,6 +7,7 @@ import { post, get, put } from '../routes';
 import { RequestWithUser } from '../middleware';
 import HttpException from '../exceptions/HttpException';
 import { IMessage, buildMessage, MessageModel, OutSideMessageModel, ChildModel, IChild, buildChild, IUser, UserModel } from '../models';
+import { clearImage } from '../utils/functions';
 
 @controller('/api/users')
 class UserController {
@@ -130,6 +131,10 @@ class UserController {
                     fs.copyFile(source, target, (err) => {              //It's will be remove
                         console.log(err)                                //It's will be remove
                     })                                                  //It's will be remove
+                    if (foundChild.avatar && foundChild.avatar.length > 0) {
+                        const oldAvatar = foundChild.avatar;
+                        clearImage(oldAvatar)
+                    }
                     foundChild.avatar = imageUrl;
                     await foundChild.save();
                     res.status(201).json(
@@ -191,18 +196,7 @@ class UserController {
     @put('/child/images')
     async updateImagesList(req: Request, res: Response, next: NextFunction): Promise<void> {
         const { contentList, removeList, id } = req.body;
-        const clearImage = (filePath: string) => {
-            filePath = path.join(__dirname, '../', filePath)
-            if (filePath.includes('build')) {                             //It's will be remove
-                fs.unlink(filePath, err => {                              //It's will be remove
-                    console.log(err)                                      //It's will be remove
-                })                                                        //It's will be remove
-                filePath = filePath.replace('build/', '')                 //It's will be remove
-            }                                                             //It's will be remove
-            fs.unlink(filePath, err => {
-                console.log(err)
-            })
-        }
+
         try {
             const child = await ChildModel.findById(id);
             if (!child) {

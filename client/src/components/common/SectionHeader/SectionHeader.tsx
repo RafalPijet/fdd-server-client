@@ -7,8 +7,8 @@ import {
   getSelectedChild,
   setUserToast,
 } from '../../../redux/actions/generalActions';
+import { FddSwitch } from '../../../types/global';
 import {
-  FddSwitch,
   PropsClasses,
   Props,
   useStyles,

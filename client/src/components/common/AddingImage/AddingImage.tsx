@@ -6,13 +6,16 @@ import GridContainer from '../../common/Grid/GridContainer';
 import GridItem from '../../common/Grid/GridItem';
 import Card from '../../common/Card/Card';
 import Paper from '@material-ui/core/Paper';
+import Zoom from '@material-ui/core/Zoom';
 import CardBody from '../../common/CardBody/CardBody';
 import CardFooter from '../../common/CardFooter/CardFooter';
 import SectionHeader from '../SectionHeader/SectionHeader';
 import CustomDropZone from '../CustomDropZone/CustomDropZone';
 import CustomButton from '../CustomButton/CustomButton';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import ImageEditor from '../ImageEditor/ImageEditor';
+import DoneOutlineIcon from '@material-ui/icons/DoneOutline';
 import ZoomInIcon from '@material-ui/icons/ZoomIn';
 import ZoomOutIcon from '@material-ui/icons/ZoomOut';
 import RotateLeftIcon from '@material-ui/icons/RotateLeft';
@@ -36,12 +39,12 @@ import {
   useStyles,
   Props,
   OperationButton,
-  FddSwitch,
   ArrowButton,
 } from './AddingImageStyle';
 import 'react-dropzone-uploader/dist/styles.css';
 import logo from '../../../images/butterfly.png';
-import { ArrowsDirection } from '../../../types/global';
+import smile from '../../../images/smile.svg';
+import { ArrowsDirection, FddSwitch } from '../../../types/global';
 import { urltoFile } from '../../../types/functions';
 
 const AddingImage: React.FC<Props> = (props) => {
@@ -93,6 +96,7 @@ const AddingImage: React.FC<Props> = (props) => {
   }, [isSuccess]);
 
   const handleSubmit: IDropzoneProps['onSubmit'] = async (files, allFiles) => {
+    if (preview !== logo) setPreview(logo);
     if (files[0].file && childId !== null) {
       setEnteredImage(files[0].file);
 
@@ -121,18 +125,20 @@ const AddingImage: React.FC<Props> = (props) => {
     setFile(undefined);
   };
 
-  const getPreviewFromEditor = (image: string, isDone: boolean): any => {
+  const getPreviewFromEditor = async (image: string, isDone: boolean) => {
     if (isDone) {
-      setPreview(image);
+      await setPreview(image);
       dispatch(resetAddingRequest());
-      urltoFile(
+      await urltoFile(
         image,
         `${selectedChild?.firstName}_${selectedChild?.lastName}.png`
       ).then((file) => {
         setFile(file);
       });
+      setIsGetImage(false);
+    } else {
+      setIsGetImage(false);
     }
-    setIsGetImage(false);
   };
 
   const switchChangeHandling = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -143,6 +149,7 @@ const AddingImage: React.FC<Props> = (props) => {
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     setIsAvatar(e.target.checked);
+    if (preview !== logo) setPreview(logo);
   };
 
   const zoomHandling = async (isZoom: boolean) => {
@@ -185,16 +192,11 @@ const AddingImage: React.FC<Props> = (props) => {
               likwiduje cały proces dodawania nowego zdjęcia."
         text="Włącz/Wyłącz sekcję dodawania i edycji zdjęć."
       />
-      <div
-        style={{
-          margin: '0 auto',
-        }}
-      ></div>
       <CardBody>
         <GridContainer
           justify="center"
           alignItems="center"
-          style={{ width: '100%' }}
+          style={{ width: '100%', margin: '0 auto' }}
         >
           <GridItem
             xs={12}
@@ -220,21 +222,45 @@ const AddingImage: React.FC<Props> = (props) => {
               dropFieldLabelReject="Tylko plik ze zdjęciem (jpg, jpeg, png)"
             />
             <Paper elevation={3} className={previewClasses}>
-              <Paper variant="outlined" className={previewContentClasses}>
+              <Zoom
+                in={preview !== logo && isGetImage === false}
+                timeout={1000}
+              >
                 <img
-                  src={preview}
-                  alt="logo"
-                  style={{
-                    maxWidth: '250px',
-                    maxHeight: '188px',
-                    filter: `${
-                      !switchIsOn || isAdding
-                        ? 'grayscale(100)'
-                        : 'grayscale(0)'
-                    }`,
-                  }}
+                  src={smile}
+                  alt="smile"
+                  style={{ width: '60px', marginLeft: '30px' }}
                 />
+              </Zoom>
+              <Paper variant="outlined" className={previewContentClasses}>
+                {isGetImage ? (
+                  <CircularProgress />
+                ) : (
+                  <img
+                    src={preview}
+                    alt="logo"
+                    style={{
+                      maxWidth: '250px',
+                      maxHeight: '188px',
+                      filter: `${
+                        !switchIsOn || isAdding
+                          ? 'grayscale(100)'
+                          : 'grayscale(0)'
+                      }`,
+                    }}
+                  />
+                )}
               </Paper>
+              <Zoom
+                in={preview !== logo && isGetImage === false}
+                timeout={1000}
+              >
+                <DoneOutlineIcon
+                  className={classes.avatar}
+                  style={{ marginRight: '30px' }}
+                  fontSize="large"
+                />
+              </Zoom>
             </Paper>
           </GridItem>
           <GridItem
@@ -261,7 +287,7 @@ const AddingImage: React.FC<Props> = (props) => {
         <GridContainer
           justify="center"
           alignItems="center"
-          style={{ width: '100%' }}
+          style={{ width: '100%', margin: '0 auto' }}
         >
           <GridItem
             xs={12}
@@ -272,10 +298,15 @@ const AddingImage: React.FC<Props> = (props) => {
             <CustomButton
               setColor="primary"
               setSize="md"
-              disabled={!switchIsOn || isAdding || file === undefined}
+              disabled={
+                !switchIsOn ||
+                isAdding ||
+                file === undefined ||
+                preview === logo
+              }
               onClick={addImageFileToChild}
             >
-              Zapisz zdjęcie
+              {isAvatar ? 'Zapisz portret' : 'Zapisz zdjęcie'}
             </CustomButton>
             <CustomButton
               setColor="primary"
@@ -313,7 +344,9 @@ const AddingImage: React.FC<Props> = (props) => {
           >
             <OperationButton
               onClick={() => setIsGetImage(true)}
-              disabled={!switchIsOn || isAdding || enteredImage === null}
+              disabled={
+                !switchIsOn || isAdding || enteredImage === null || isGetImage
+              }
             >
               <PhotoCameraIcon fontSize="large" />
             </OperationButton>

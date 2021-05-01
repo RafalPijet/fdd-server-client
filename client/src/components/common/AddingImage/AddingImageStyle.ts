@@ -2,9 +2,8 @@ import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
 import IconButton from '@material-ui/core/IconButton';
-import Switch from '@material-ui/core/Switch';
 import { ChildState } from '../../../types/global';
-import { grayColor, primaryBoxShadow, primaryColor } from '../../../styles/globalStyles';
+import { primaryBoxShadow, primaryColor } from '../../../styles/globalStyles';
 
 const addingImageStyle = (theme: Theme) => ({
     root: {
@@ -15,13 +14,15 @@ const addingImageStyle = (theme: Theme) => ({
     },
     preview: {
         display: 'flex',
-        justifyContent: 'center',
+        justifyContent: 'space-around',
         alignItems: 'center',
         height: '210px',
         width: '100%',
         marginTop: '10px',
     },
     previewContent: {
+        minWidth: "261px",
+        minHeight: "176px",
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
@@ -92,20 +93,6 @@ export const ArrowButton = withStyles({
         },
     }
 })(IconButton)
-
-export const FddSwitch = withStyles({
-    switchBase: {
-        color: grayColor,
-        '&$checked': {
-            color: primaryColor,
-        },
-        '&$checked + $track': {
-            backgroundColor: primaryColor,
-        },
-    },
-    checked: {},
-    track: {},
-})(Switch);
 
 export interface Props {
     childId: string | null;

@@ -26,12 +26,5 @@ export interface StyleProps {
     inputIconsColor: BaseCSSProperties;
 }
 
-export interface IChildData {
-    firstName: string;
-    lastName: string;
-    birthDate: string;
-    info: string;
-}
-
 export type PropsClasses = Record<keyof StyleProps, string>;
 export const useStyles = makeStyles(childHandlingStyle as any);

@@ -43,7 +43,7 @@ const ImageEditor: React.FC<Props> = (props) => {
 
     if (cropper) {
       isAvatar
-        ? cropper.setCropBoxData({ width: 120, height: 120 })
+        ? cropper.setCropBoxData({ width: 350, height: 350 })
         : cropper.setCropBoxData({ width: 500, height: 332 });
     }
 
@@ -72,8 +72,8 @@ const ImageEditor: React.FC<Props> = (props) => {
       if (!isAvatar && result.width !== 500 && result.height !== 332) {
         cropper.setCropBoxData({ width: 500, height: 332 });
         getPreview(cropData, false);
-      } else if (isAvatar && result.width !== 120 && result.height !== 120) {
-        cropper.setCropBoxData({ width: 120, height: 120 });
+      } else if (isAvatar && result.width !== 350 && result.height !== 350) {
+        cropper.setCropBoxData({ width: 350, height: 350 });
         getPreview(cropData, false);
       } else {
         getPreview(cropData, true);
@@ -96,8 +96,6 @@ const ImageEditor: React.FC<Props> = (props) => {
           }}
           src={enteredImage}
           viewMode={1}
-          zoomOnTouch={false}
-          zoomOnWheel={false}
           cropBoxResizable={false}
           className={classes.crooper}
           initialAspectRatio={16 / 9}

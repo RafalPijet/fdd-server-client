@@ -39,7 +39,7 @@ const customInputStyle = (theme: Theme) => ({
     },
     labelRoot: {
         ...defaultFont,
-        color: "#AAAAAA !important",
+        color: "#AAAAAA",
         fontWeight: "400",
         fontSize: "14px",
         lineHeight: "1.42857",

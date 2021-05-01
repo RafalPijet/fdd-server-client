@@ -22,20 +22,6 @@ const sectionHeaderStyle = (theme: Theme) => ({
     }
 })
 
-export const FddSwitch = withStyles({
-    switchBase: {
-        color: grayColor,
-        '&$checked': {
-            color: primaryColor,
-        },
-        '&$checked + $track': {
-            backgroundColor: primaryColor,
-        },
-    },
-    checked: {},
-    track: {},
-})(Switch);
-
 export const FddTooltip = withStyles((theme: Theme) => ({
     tooltip: {
         backgroundColor: primaryColor,

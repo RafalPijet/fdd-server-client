@@ -38,10 +38,24 @@ import {
     SetMessageIsReaded,
     setMessageIsReaded
 } from './actions/messageActions';
-import { setUserToast, SetToastAction, setIsRemoved, SetIsRemoved, setSelectedChild, SetSelectedChild } from './actions/generalActions';
-import { IChildData } from '../components/common/ChildHandling/ChildHandlingStyle';
+import {
+    setUserToast,
+    SetToastAction,
+    setIsRemoved,
+    SetIsRemoved,
+    setSelectedChild,
+    SetSelectedChild
+} from './actions/generalActions';
 import { State as ImagesLists } from '../components/common/RemovingImage/RemovingImageStyle';
-import { IMessage, TargetOptions, IOutsideMessage, UserStatus, UserState, ChildState } from '../types/global';
+import {
+    IMessage,
+    TargetOptions,
+    IOutsideMessage,
+    UserStatus,
+    UserState,
+    ChildState,
+    IChildData
+} from '../types/global';
 import { API_URL, URL } from '../config';
 
 export const loginUser = (payload: IUserLogin): ThunkAction<
