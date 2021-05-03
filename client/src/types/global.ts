@@ -3,6 +3,8 @@ import { withStyles } from '@material-ui/core/styles';
 import Switch from '@material-ui/core/Switch';
 import { primaryColor, grayColor } from '../styles/globalStyles';
 
+export const different = 567993596000;
+
 export type AvailableColors =
     "primary" |
     "info" |
@@ -72,7 +74,7 @@ export interface ChildState {
     parent: string;
     firstName: string;
     lastName: string;
-    birthDate: Date;
+    birthDate: string;
     info: string;
     images: string[];
     avatar: string;
@@ -100,17 +102,6 @@ export interface UserState {
         street: string,
         number: string
     }
-}
-
-export interface ChildState {
-    _id: string;
-    parent: string;
-    active: boolean;
-    firstName: string;
-    lastName: string;
-    birthDate: Date;
-    info: string;
-    images: string[];
 }
 
 export interface IMessage {

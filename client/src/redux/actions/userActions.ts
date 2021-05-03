@@ -1,6 +1,6 @@
 import { Action } from 'redux';
 import { RootState } from '../store';
-import { UserState, ChildState } from '../../types/global';
+import { UserState, ChildState, IChildData } from '../../types/global';
 
 //ACTIONS NAMES
 export const ADD_USER = 'user/add_user';
@@ -8,6 +8,7 @@ export const CLEAN_USER = 'user/clean_user';
 export const ADD_CHILD_TO_USER = 'user/add_child_to_user';
 export const SET_CHILD_IMAGES_LIST = 'user/set_child_images_list';
 export const SET_CHILD_AVATAR = 'user/set_child_avatar';
+export const UPDATE_CHILD_DATA = 'user/update_child_data';
 
 //ACTIONS TYPES
 export interface AddUserAction extends Action<typeof ADD_USER> {
@@ -24,6 +25,10 @@ export interface SetChildImagesListAction extends Action<typeof SET_CHILD_IMAGES
 export interface SetChildAvatarAction extends Action<typeof SET_CHILD_AVATAR> {
     childId: string,
     avatar: string
+}
+export interface UpdateChildDataAction extends Action<typeof UPDATE_CHILD_DATA> {
+    childId: string,
+    payload: IChildData
 }
 
 //CREATORS OF ACTIONS
@@ -47,6 +52,11 @@ export const setChildAvatar = (childId: string, avatar: string): SetChildAvatarA
     type: SET_CHILD_AVATAR,
     childId,
     avatar
+})
+export const updateChildData = (childId: string, payload: IChildData): UpdateChildDataAction => ({
+    type: UPDATE_CHILD_DATA,
+    childId,
+    payload
 })
 
 //SELECTORS

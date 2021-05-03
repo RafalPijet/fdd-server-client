@@ -110,6 +110,32 @@ class UserController {
         }
     }
 
+    @put('/child/:childId')
+    @bodyValidator(ValidatorKeys.addChild)
+    async updateChild(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const { childId } = req.params;
+        const payload: Omit<IChild, 'parent'> = req.body;
+
+        try {
+            const child = await ChildModel.findById(childId);
+            if (child) {
+                child.firstName = payload.firstName;
+                child.lastName = payload.lastName;
+                child.birthDate = payload.birthDate;
+                child.info = payload.info;
+                await child.save();
+                res.status(201).json({
+                    child,
+                    message: `Aktualizacja danych podopiecznego ${child.firstName} ${child.lastName} przebiegła poprawnie.`
+                })
+            } else {
+                next(new HttpException(404, 'Nieznaleziono podopecznego!'));
+            }
+        } catch (err) {
+            next(new HttpException(404, 'Nieudana akualizacja danych podopiecznego!'));
+        }
+    }
+
     @put('/child/avatar/:childId')
     async addChildAvatar(req: Request, res: Response, next: NextFunction): Promise<void> {
         const { childId } = req.params;

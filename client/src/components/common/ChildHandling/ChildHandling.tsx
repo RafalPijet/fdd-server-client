@@ -55,7 +55,7 @@ const ChildHandling: React.FC = () => {
         alignItems="center"
         style={{ width: '75%' }}
       >
-        <ChildPersonalData />
+        <ChildPersonalData childId={childId} selectedChild={selectedChild} />
       </GridContainer>
     </div>
   );

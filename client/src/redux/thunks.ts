@@ -27,10 +27,12 @@ import {
     addChildToUser,
     setChildImagesList,
     setChildAvatar,
+    updateChildData,
     AddUserAction,
     AddChildToUserAction,
     SetChildImagesListAction,
-    SetChildAvatarAction
+    SetChildAvatarAction,
+    UpdateChildDataAction
 } from './actions/userActions';
 import {
     loadUserMessages,
@@ -370,6 +372,35 @@ export const updateMessageIsReaded = (_id: IMessage["_id"], isAdmin: boolean, is
             },
         })
         if (res.status === 202) dispatch(setMessageIsReaded(_id));
+    } catch (err) {
+        if (err.response !== undefined) {
+            err.response.data.message ?
+                dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        } else {
+            dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        }
+    }
+}
+
+export const updateChildDataRequest = (payload: IChildData, childId: string): ThunkAction<
+    Promise<void>,
+    any,
+    RootState,
+    StartRequestAction | StopRequestAction | ErrorRequestAction | SetToastAction | UpdateChildDataAction
+> => async (dispatch, getState) => {
+    dispatch(startRequest());
+
+    try {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        let res: AxiosResponse = await axios.put(`${API_URL}/users/child/${childId}`, payload, {
+            headers: {
+                'Authorization': localStorage.getItem('tokenFDD')
+            },
+        })
+        dispatch(updateChildData(childId, res.data.child));
+        dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
+        dispatch(stopRequest());
     } catch (err) {
         if (err.response !== undefined) {
             err.response.data.message ?

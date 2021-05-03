@@ -43,7 +43,9 @@ const ChildrenZone: React.FC = () => {
       <Card className={cardClasses}>
         <div className={classes.rowHeader}>
           <CardHeader className={classes.cardHeader} color="infoCardHeader">
-            <span>
+            <span
+              style={{ maxHeight: '18px', overflow: 'auto', padding: '0 2px' }}
+            >
               {selectedChild?.firstName} {selectedChild?.lastName}
             </span>
             <Avatar
@@ -54,7 +56,7 @@ const ChildrenZone: React.FC = () => {
             />
             <span>
               {selectedChild !== null
-                ? calculateAge(selectedChild.birthDate.toString(), true)
+                ? calculateAge(selectedChild.birthDate, true)
                 : ''}
             </span>
           </CardHeader>

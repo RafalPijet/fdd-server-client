@@ -2,6 +2,7 @@ import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import { makeStyles } from '@material-ui/core/styles';
 import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
 import { primaryColor } from '../../../styles/globalStyles';
+import { ChildState } from '../../../types/global';
 
 const childPersonalDataStyle = (theme: Theme) => ({
     root: {
@@ -24,6 +25,11 @@ const childPersonalDataStyle = (theme: Theme) => ({
         margin: '0 auto'
     }
 })
+
+export interface Props {
+    childId: string | null;
+    selectedChild: ChildState | undefined;
+}
 
 export interface StyleProps {
     root: BaseCSSProperties;

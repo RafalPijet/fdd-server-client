@@ -96,7 +96,7 @@ export const ArrowButton = withStyles({
 
 export interface Props {
     childId: string | null;
-    selectedChild: ChildState | undefined
+    selectedChild: ChildState | undefined;
 }
 
 export type PropsClasses = Record<keyof StyleProps, string>;

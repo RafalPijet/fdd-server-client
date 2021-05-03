@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ClassNames from 'classnames';
 import InputAdornment from '@material-ui/core/InputAdornment';
@@ -12,19 +12,41 @@ import GridContainer from '../../common/Grid/GridContainer';
 import GridItem from '../../common/Grid/GridItem';
 import CustomInput from '../../common/CustomInput/CustomInput';
 import CustomButton from '../../common/CustomButton/CustomButton';
-import { IChildData, FddSwitch } from '../../../types/global';
-import { addChildToParent } from '../../../redux/thunks';
-import { StyleProps, PropsClasses, useStyles } from './ChildPersonalDataStyle';
+import { IChildData, FddSwitch, different } from '../../../types/global';
+import {
+  addChildToParent,
+  updateChildDataRequest as updateChildData,
+} from '../../../redux/thunks';
+import { getPending } from '../../../redux/actions/requestActions';
+import { calculateAge } from '../../../types/functions';
+import {
+  StyleProps,
+  PropsClasses,
+  useStyles,
+  Props,
+} from './ChildPersonalDataStyle';
 
-const ChildPersonalData: React.FC = () => {
+const ChildPersonalData: React.FC<Props> = (props) => {
+  const { childId, selectedChild } = props;
   const classes: PropsClasses = useStyles({} as StyleProps);
   const dispatch = useDispatch();
+  const isPending = useSelector(getPending);
+  const currentlyDifferent = Date.now() - different;
+  let availableStartDate = new Date(currentlyDifferent).toLocaleDateString();
+  availableStartDate = `${availableStartDate.substring(
+    6,
+    10
+  )}-${availableStartDate.substring(3, 5)}-${availableStartDate.substring(
+    0,
+    2
+  )}`;
   const [switchIsOn, setSwitchIsOn] = useState<boolean>(false);
   const [isEdit, setIsEdit] = useState<boolean>(false);
+  const [isReady, setIsReady] = useState<boolean>(false);
   const [childData, setChildData] = useState<IChildData>({
     firstName: '',
     lastName: '',
-    birthDate: '2000-01-01',
+    birthDate: availableStartDate,
     info: '',
   });
   const [isError, setIsError] = useState<Record<keyof IChildData, boolean>>({
@@ -36,8 +58,72 @@ const ChildPersonalData: React.FC = () => {
   const rootClasses = ClassNames({
     [classes.root]: true,
     [classes.back]: true,
-    [classes.active]: switchIsOn,
+    [classes.active]: switchIsOn || isPending,
   });
+
+  useEffect(() => {
+    if (selectedChild !== undefined && isEdit) {
+      setChildData({
+        firstName: selectedChild.firstName,
+        lastName: selectedChild.lastName,
+        birthDate: selectedChild.birthDate.toString().substring(0, 10),
+        info: selectedChild.info,
+      });
+    }
+    if (!isEdit) {
+      setChildData({
+        firstName: '',
+        lastName: '',
+        birthDate: availableStartDate,
+        info: '',
+      });
+    }
+  }, [selectedChild, isEdit]);
+
+  useEffect(() => {
+    setIsError({
+      ...isError,
+      firstName:
+        childData.firstName.length > 0 && childData.firstName.length < 3,
+      lastName: childData.lastName.length > 0 && childData.lastName.length < 3,
+      birthDate: calculateAge(childData.birthDate, false) >= 18,
+      info: childData.info.length > 0 && childData.info.length < 20,
+    });
+  }, [childData]);
+
+  useEffect(() => {
+    if (switchIsOn) {
+      if (isEdit && selectedChild !== undefined) {
+        setIsReady(
+          (childData.firstName !== selectedChild.firstName ||
+            childData.lastName !== selectedChild.lastName ||
+            childData.birthDate !==
+              selectedChild.birthDate.toString().substring(0, 10) ||
+            childData.info !== selectedChild.info) &&
+            !isError.firstName &&
+            !isError.lastName &&
+            !isError.birthDate &&
+            !isError.info &&
+            !isPending
+        );
+      }
+      if (!isEdit) {
+        setIsReady(
+          !isError.firstName &&
+            childData.firstName.length > 0 &&
+            !isError.lastName &&
+            childData.lastName.length > 0 &&
+            !isError.birthDate &&
+            childData.birthDate.length > 0 &&
+            !isError.info &&
+            childData.info.length > 0 &&
+            !isPending
+        );
+      }
+    } else {
+      setIsReady(false);
+    }
+  }, [isError, switchIsOn, isEdit, isPending, selectedChild]);
 
   const switchChangeHandling = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSwitchIsOn(e.target.checked);
@@ -50,7 +136,11 @@ const ChildPersonalData: React.FC = () => {
   };
 
   const confirmButtonHandling = () => {
-    dispatch(addChildToParent(childData));
+    if (childId) {
+      isEdit
+        ? dispatch(updateChildData(childData, childId))
+        : dispatch(addChildToParent(childData));
+    }
   };
 
   const switchIsEditHandling = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,13 +164,14 @@ const ChildPersonalData: React.FC = () => {
         >
           <GridItem xs={12} sm={12} lg={4}>
             <CustomInput
-              isDisabled={!switchIsOn}
+              isDisabled={!switchIsOn || isPending}
               labelText="Imię dziecka..."
               id="firstName"
+              error={isError.firstName}
               labelProps={
-                switchIsOn
+                switchIsOn || !isPending
                   ? { style: { color: '#fff' } }
-                  : { disabled: !switchIsOn }
+                  : { disabled: !switchIsOn || isPending }
               }
               value={childData.firstName}
               formControlProps={{
@@ -101,13 +192,14 @@ const ChildPersonalData: React.FC = () => {
               }}
             />
             <CustomInput
-              isDisabled={!switchIsOn}
+              isDisabled={!switchIsOn || isPending}
               labelText="Nazwisko dziecka"
               id="lastName"
+              error={isError.lastName}
               labelProps={
-                switchIsOn
+                switchIsOn || !isPending
                   ? { style: { color: '#fff' } }
-                  : { disabled: !switchIsOn }
+                  : { disabled: !switchIsOn || isPending }
               }
               value={childData.lastName}
               formControlProps={{
@@ -128,13 +220,14 @@ const ChildPersonalData: React.FC = () => {
               }}
             />
             <CustomInput
-              isDisabled={!switchIsOn}
+              isDisabled={!switchIsOn || isPending}
               labelText="Data urodzenia..."
               id="birthDate"
+              error={isError.birthDate}
               labelProps={
-                switchIsOn
+                switchIsOn || !isPending
                   ? { style: { color: '#fff' } }
-                  : { disabled: !switchIsOn }
+                  : { disabled: !switchIsOn || isPending }
               }
               value={childData.birthDate.toString()}
               formControlProps={{
@@ -158,13 +251,14 @@ const ChildPersonalData: React.FC = () => {
           </GridItem>
           <GridItem xs={12} sm={12} lg={8}>
             <CustomInput
-              isDisabled={!switchIsOn}
+              isDisabled={!switchIsOn || isPending}
               labelText="Opis..."
               id="info"
+              error={isError.info}
               labelProps={
-                switchIsOn
+                switchIsOn || !isPending
                   ? { style: { color: '#fff' } }
-                  : { disabled: !switchIsOn }
+                  : { disabled: !switchIsOn || isPending }
               }
               value={childData.info}
               formControlProps={{
@@ -205,7 +299,7 @@ const ChildPersonalData: React.FC = () => {
             }}
           >
             <CustomButton
-              disabled={!switchIsOn}
+              disabled={!isReady}
               setSize="md"
               setColor="primary"
               onClick={confirmButtonHandling}
@@ -223,7 +317,7 @@ const ChildPersonalData: React.FC = () => {
             }}
           >
             <FormControlLabel
-              disabled={!switchIsOn}
+              disabled={!switchIsOn || isPending || childId === null}
               classes={{
                 label: classes.switch,
               }}
