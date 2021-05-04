@@ -39,9 +39,9 @@ const messageItemStyle = (theme: Theme) => ({
     content: {
         fontFamily: 'Roboto',
         fontWeight: 300,
-        padding: "5px",
+        padding: "2px 5px",
         position: "relative",
-        margin: "7px 0"
+        margin: "5px 0"
     },
     right: {
         textAlign: 'right'
@@ -59,6 +59,19 @@ const messageItemStyle = (theme: Theme) => ({
         top: -8,
         left: -12,
         height: "80%"
+    },
+    icon: {
+        backgroundColor: "rgba(166, 206, 57, 0.3)",
+        borderRadius: "50%"
+    },
+    common: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    message: {
+        display: 'flex',
+        alignItems: 'center'
     }
 })
 
@@ -70,6 +83,9 @@ export interface StyleProps {
     date: BaseCSSProperties;
     image: BaseCSSProperties;
     selected: BaseCSSProperties;
+    icon: BaseCSSProperties;
+    common: BaseCSSProperties;
+    message: BaseCSSProperties;
 }
 
 export type PropsClasses = Record<keyof StyleProps, string>;

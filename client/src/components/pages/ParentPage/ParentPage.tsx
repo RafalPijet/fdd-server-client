@@ -111,7 +111,7 @@ const ParentPage: React.FC = () => {
         </div>
       </Jumbotron>
       <div className={classNames(classes.main, classes.mainRaised)}>
-        <div style={{ height: '1800px' }}>
+        <div style={{ height: '3000px' }}>
           <ChildHandling />
         </div>
       </div>

@@ -153,7 +153,10 @@ const ChildPersonalData: React.FC<Props> = (props) => {
         isExistChild={false}
         onChange={switchChangeHandling}
         checked={switchIsOn}
-        helpText="Help text"
+        helpText="W tej sekcji mozesz dodać nowego podopiecznego lub edytować dane podopiecznego aktualnie
+        wybranego. Wprowadź dane w odpowiednie pola formularza, a następnie kliknij przycisk
+        DODAJ PODOPIECZNEGO w przypadku nowego dziecka lub AKTUALIZUJ DANE w przypadku zmian danych
+        w trybie EDYCJA."
         text="Włącz/Wyłącz sekcję dodawania i edycji danych podopiecznego."
       />
       <CardBody>

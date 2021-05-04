@@ -5,7 +5,7 @@ import image from '../../../images/sign.jpg';
 
 const childHandlingStyle = (theme: Theme) => ({
     root: {
-        height: "1770px",
+        height: "2970px",
         flexDirection: "column",
         padding: "15px",
         backgroundPosition: "bottom",

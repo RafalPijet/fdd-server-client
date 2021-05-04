@@ -96,7 +96,9 @@ export interface Props {
     error?: boolean;
     success?: boolean;
     white?: boolean;
+    autoFocus?: boolean;
     onChange?: ((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void);
+    onKeyDown?: ((e: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>) => void);
     mask?: boolean;
     formatMask?: string;
     iconType?: "edit" | "phone" | "done";

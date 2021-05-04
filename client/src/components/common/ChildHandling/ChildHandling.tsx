@@ -4,16 +4,18 @@ import GridContainer from '../../common/Grid/GridContainer';
 import GridItem from '../../common/Grid/GridItem';
 import AddingImage from '../AddingImage/AddingImage';
 import { getSelectedChild } from '../../../redux/actions/generalActions';
-import { getUserChildren } from '../../../redux/actions/userActions';
+import { getUserChildren, getUser } from '../../../redux/actions/userActions';
 import { ChildState } from '../../../types/global';
 import RemovingImage from '../RemovingImage/RemovingImage';
 import ChildPersonalData from '../ChildPersonalData/ChildPersonalData';
+import UserPersonalData from '../UserPersonalData/UserPersonalData';
 import { StyleProps, PropsClasses, useStyles } from './ChildHandlingStyle';
 
 const ChildHandling: React.FC = () => {
   const classes: PropsClasses = useStyles({} as StyleProps);
   const [selectedChild, setSelectedChild] = useState<ChildState | undefined>();
   const childId = useSelector(getSelectedChild);
+  const user = useSelector(getUser);
   const children = useSelector(getUserChildren);
 
   useEffect(() => {
@@ -56,6 +58,13 @@ const ChildHandling: React.FC = () => {
         style={{ width: '75%' }}
       >
         <ChildPersonalData childId={childId} selectedChild={selectedChild} />
+      </GridContainer>
+      <GridContainer
+        justify="center"
+        alignItems="center"
+        style={{ width: '85%' }}
+      >
+        <UserPersonalData user={user} isAdmin={false} />
       </GridContainer>
     </div>
   );

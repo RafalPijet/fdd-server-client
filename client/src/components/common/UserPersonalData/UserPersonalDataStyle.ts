@@ -1,10 +1,9 @@
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import { makeStyles } from '@material-ui/core/styles';
 import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
-import { primaryColor } from '../../../styles/globalStyles';
-import { ChildState } from '../../../types/global';
+import { UserState } from '../../../types/global';
 
-const childPersonalDataStyle = (theme: Theme) => ({
+const userPersonalDataStyle = (theme: Theme) => ({
     root: {
         minHeight: '490px',
     },
@@ -16,29 +15,20 @@ const childPersonalDataStyle = (theme: Theme) => ({
     },
     inputIconsColor: {
         color: "#495057"
-    },
-    switch: {
-        color: primaryColor
-    },
-    footer: {
-        width: '70%',
-        margin: '0 auto'
     }
 })
-
-export interface Props {
-    childId: string | null;
-    selectedChild: ChildState | undefined;
-}
 
 export interface StyleProps {
     root: BaseCSSProperties;
     back: BaseCSSProperties;
     active: BaseCSSProperties;
     inputIconsColor: BaseCSSProperties;
-    switch: BaseCSSProperties;
-    footer: BaseCSSProperties;
+}
+
+export interface Props {
+    isAdmin: boolean;
+    user: UserState;
 }
 
 export type PropsClasses = Record<keyof StyleProps, string>;
-export const useStyles = makeStyles(childPersonalDataStyle as any);
+export const useStyles = makeStyles(userPersonalDataStyle as any);

@@ -199,6 +199,20 @@ const LoginPage: React.FC = () => {
       : setLogin({ ...login, [event.target.id]: event.target.value });
   };
 
+  const onKeyDown = (
+    event: React.KeyboardEvent<
+      HTMLButtonElement | HTMLTextAreaElement | HTMLInputElement
+    >
+  ): void => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      event.stopPropagation();
+      if (isAccess && !isDisabled) {
+        handleSendButton();
+      }
+    }
+  };
+
   const handleSendButton = () => {
     if (serviceType === ServiceOptions.register) {
       const user = new Register(
@@ -368,6 +382,7 @@ const LoginPage: React.FC = () => {
                           labelText="Adres email..."
                           id="email"
                           isDisabled={isDisabled}
+                          autoFocus={serviceType === ServiceOptions.login}
                           value={
                             serviceType === ServiceOptions.register
                               ? register.email
@@ -407,6 +422,7 @@ const LoginPage: React.FC = () => {
                             fullWidth: true,
                           }}
                           onChange={handleTextField}
+                          onKeyDown={onKeyDown}
                           inputProps={{
                             type: 'password',
                             endAdornment: (
@@ -583,6 +599,7 @@ const LoginPage: React.FC = () => {
                   <CardFooter className={classes.cardFooter}>
                     <CustomButton
                       onClick={handleSendButton}
+                      onKeyDown={onKeyDown}
                       disabled={!isAccess || isDisabled}
                       setColor="primary"
                       setSize="md"

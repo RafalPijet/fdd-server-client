@@ -24,10 +24,12 @@ const CustomInput: React.FC<Props> = (props) => {
     inputRootCustomClasses,
     success,
     onChange,
+    onKeyDown,
     mask,
     formatMask,
     iconType,
     isDisabled,
+    autoFocus,
   } = props;
 
   const labelClasses = classNames({
@@ -115,6 +117,8 @@ const CustomInput: React.FC<Props> = (props) => {
         <Input
           value={value}
           onChange={onChange}
+          onKeyDown={onKeyDown}
+          autoFocus={autoFocus}
           classes={{
             input: inputClasses,
             root: marginTop,

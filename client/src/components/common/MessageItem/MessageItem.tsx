@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import classNames from 'classnames';
 import { useSelector } from 'react-redux';
+import ExpandLessIcon from '@material-ui/icons/ExpandLess';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { getUserId } from '../../../redux/actions/userActions';
 import { Props, StyleProps, PropsClasses, useStyles } from './MessageItemStyle';
 import Paper from '@material-ui/core/Paper';
@@ -78,20 +80,23 @@ const MessageItem: React.FC<Props> = (props) => {
       (dataType === MessageOptions.search && from !== userId)
     ) {
       return (
-        <>
-          <span className={classes.date}>
-            {isUnread ? (
-              <>
-                <img className={classes.image} src={image} alt="logo" />
-                {date.substring(0, 10)}
-              </>
-            ) : (
-              date.substring(0, 10)
-            )}
-            :
+        <span className={classes.common}>
+          <span className={classes.message}>
+            <span className={classes.date}>
+              {isUnread ? (
+                <>
+                  <img className={classes.image} src={image} alt="logo" />
+                  {date.substring(0, 10)}
+                </>
+              ) : (
+                date.substring(0, 10)
+              )}
+              :
+            </span>
+            <span>{cutText(message, 50)}</span>
           </span>
-          {cutText(message, 50)}
-        </>
+          <ExpandMoreIcon className={classes.icon} fontSize="default" />
+        </span>
       );
     } else if (
       dataType === MessageOptions.outcoming ||
@@ -99,10 +104,16 @@ const MessageItem: React.FC<Props> = (props) => {
       (dataType === MessageOptions.search && from === userId)
     ) {
       return (
-        <>
-          {cutText(message, 50)}
-          <span className={classes.date}>{` : ${date.substring(0, 10)}`}</span>
-        </>
+        <span className={classes.common}>
+          <ExpandLessIcon fontSize="default" className={classes.icon} />
+          <span className={classes.message}>
+            <span>{cutText(message, 50)}</span>
+            <span className={classes.date}>{` : ${date.substring(
+              0,
+              10
+            )}`}</span>
+          </span>
+        </span>
       );
     }
   };
