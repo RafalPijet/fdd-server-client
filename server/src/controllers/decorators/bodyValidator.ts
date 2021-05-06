@@ -7,6 +7,8 @@ export enum ValidatorKeys {
     addUser,
     addMessage,
     addChild,
+    updateUser,
+    updateUserPassword
 }
 
 export const bodyValidator = (validKey: ValidatorKeys) => {

@@ -7,6 +7,7 @@ import { UserModel, IUser, buildUser, IOutsideMessage, buildOutSideMessage } fro
 import HttpException from '../exceptions/HttpException';
 import UserWithThatEmailAlreadyExistsException from '../exceptions/UserWithThatEmailAlreadyExistsException';
 import WrongCredentialsException from '../exceptions/WrongCredentialException';
+import { UserDto } from '../utils/functions';
 
 @controller('/api/auth')
 class AuthController {
@@ -22,22 +23,9 @@ class AuthController {
                 if (await bcrypt.compare(password, user.password)) {
                     user.password = undefined;
                     const tokenData = createToken(user);
-                    const dto = {
-                        _id: user._id,
-                        status: user.status,
-                        firstName: user.firstName,
-                        lastName: user.lastName,
-                        email: user.email,
-                        phone: user.phone,
-                        children: user.children,
-                        adress: {
-                            zipCode: user.zipCode,
-                            town: user.town,
-                            street: user.street,
-                            number: user.number
-                        }
-                    }
-                    res.status(201).json({ dto, authorization: tokenData })
+
+                    const dto = new UserDto(user);
+                    res.status(201).json({ dto: dto.getContent(true), authorization: tokenData });
                 } else {
                     next(new WrongCredentialsException('hasło'));
                 }

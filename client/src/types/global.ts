@@ -51,7 +51,8 @@ export enum MessageOptions {
 
 export enum ModalAYSModes {
     null,
-    removeMessage
+    removeMessage,
+    changeUserStatus
 }
 
 export enum ArrowsDirection {
@@ -60,6 +61,12 @@ export enum ArrowsDirection {
     down,
     left,
     right
+}
+
+export enum UpdateUserTypeData {
+    all,
+    password,
+    data
 }
 
 export interface InvoiceState {
@@ -135,6 +142,8 @@ export interface ToastState {
 export interface ModalAvailableKeys {
     messageId?: string;
     isUser?: boolean;
+    userId?: string;
+    userStatus?: UserStatus;
 }
 
 export interface ModalAreYouSure {

@@ -1,5 +1,7 @@
 import fs from 'fs';
 import path from 'path';
+import { IUser } from '../models';
+import { UserDataDTO } from '../types';
 
 export const removeDuplicates = (data: any, key: any) => {
 
@@ -21,4 +23,27 @@ export const clearImage = (filePath: string) => {
     fs.unlink(filePath, err => {
         console.log(err)
     })
+}
+
+export class UserDto {
+    constructor(private user: IUser) {
+        this.user = user;
+    }
+    getContent(isChildren: boolean): UserDataDTO {
+        return {
+            _id: this.user._id!,
+            status: this.user.status,
+            firstName: this.user.firstName,
+            lastName: this.user.lastName,
+            email: this.user.email,
+            phone: this.user.phone,
+            children: isChildren ? this.user.children! : undefined,
+            adress: {
+                zipCode: this.user.zipCode,
+                town: this.user.town,
+                street: this.user.street,
+                number: this.user.number
+            }
+        }
+    }
 }

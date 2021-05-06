@@ -5,12 +5,14 @@ import {
     SetChildImagesListAction,
     SetChildAvatarAction,
     UpdateChildDataAction,
+    UpdateUserDataAction,
     ADD_USER,
     CLEAN_USER,
     ADD_CHILD_TO_USER,
     SET_CHILD_IMAGES_LIST,
     SET_CHILD_AVATAR,
-    UPDATE_CHILD_DATA
+    UPDATE_CHILD_DATA,
+    UPDATE_USER_DATA
 } from '../actions/userActions';
 import { UserState, UserStatus } from '../../types/global';
 
@@ -33,7 +35,7 @@ const initialState: UserState = {
 const userReducer = (
     state: UserState = initialState,
     action: AddUserAction | CleanUserAction | AddChildToUserAction | SetChildImagesListAction |
-        SetChildAvatarAction | UpdateChildDataAction
+        SetChildAvatarAction | UpdateChildDataAction | UpdateUserDataAction
 ) => {
     switch (action.type) {
         case ADD_USER:
@@ -83,6 +85,15 @@ const userReducer = (
                     }
                     return child;
                 })
+            }
+        case UPDATE_USER_DATA:
+            return {
+                ...state,
+                firstName: action.payload.firstName,
+                lastName: action.payload.lastName,
+                email: action.payload.email,
+                phone: action.payload.phone,
+                adress: action.payload.adress
             }
         default:
             return { ...state };

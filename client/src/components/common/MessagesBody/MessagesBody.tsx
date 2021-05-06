@@ -89,6 +89,7 @@ const MessagesBody: React.FC<MessagesBodyProps> = (props) => {
           formControlProps={{
             fullWidth: true,
           }}
+          labelProps={{ style: { color: '#fff' } }}
           white
           inputProps={{
             multiline: true,

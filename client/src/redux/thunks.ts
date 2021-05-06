@@ -28,11 +28,13 @@ import {
     setChildImagesList,
     setChildAvatar,
     updateChildData,
+    updateUserData,
     AddUserAction,
     AddChildToUserAction,
     SetChildImagesListAction,
     SetChildAvatarAction,
-    UpdateChildDataAction
+    UpdateChildDataAction,
+    UpdateUserDataAction
 } from './actions/userActions';
 import {
     loadUserMessages,
@@ -56,7 +58,8 @@ import {
     UserStatus,
     UserState,
     ChildState,
-    IChildData
+    IChildData,
+    UpdateUserTypeData
 } from '../types/global';
 import { API_URL, URL } from '../config';
 
@@ -116,8 +119,7 @@ export const addUser = (payload: Register): ThunkAction<
 
     try {
         await new Promise(resolve => setTimeout(resolve, 2000));
-        let res: AxiosResponse = await axios.post(`${API_URL}/auth/user`, payload.getContent())
-        console.log(res.data);
+        await axios.post(`${API_URL}/auth/user`, payload.getContent())
         dispatch(stopRequest());
     } catch (err) {
         if (err.response !== undefined) {
@@ -129,6 +131,59 @@ export const addUser = (payload: Register): ThunkAction<
         }
     }
 
+}
+
+export const updateUser = (payload: any, dataType: UpdateUserTypeData, userId: string): ThunkAction<
+    Promise<void>,
+    any,
+    RootState,
+    StartUpdatingRequestAction | StopUpdatingRequestAction | ErrorUpdatingRequestAction | SetToastAction | UpdateUserDataAction
+> => async (dispatch, getState) => {
+    dispatch(startUpdatingRequest());
+
+    try {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        let res: AxiosResponse;
+        if (dataType === UpdateUserTypeData.all) {
+            res = await axios.put(`${API_URL}/users/user/alldata/${userId}`, payload, {
+                headers: {
+                    'Authorization': localStorage.getItem('tokenFDD')
+                },
+            });
+        } else if (dataType === UpdateUserTypeData.data) {
+            res = await axios.put(`${API_URL}/users/user/data/${userId}`, payload.getContent(), {
+                headers: {
+                    'Authorization': localStorage.getItem('tokenFDD')
+                },
+            });
+        } else if (dataType === UpdateUserTypeData.password) {
+            res = await axios.put(`${API_URL}/users/user/password/${userId}`, payload, {
+                headers: {
+                    'Authorization': localStorage.getItem('tokenFDD')
+                },
+            });
+        }
+        if (getState().user.status === UserStatus.parent) {
+            const userAfterUpdated = res!.data.user;
+            dispatch(updateUserData({
+                firstName: userAfterUpdated.firstName,
+                lastName: userAfterUpdated.lastName,
+                email: userAfterUpdated.email,
+                phone: userAfterUpdated.phone,
+                adress: userAfterUpdated.adress,
+            }))
+        }
+        dispatch(setUserToast({ isOpen: true, content: res!.data.message, variant: "success" }));
+        dispatch(stopUpdatingRequest());
+    } catch (err) {
+        if (err.response !== undefined) {
+            err.response.data.message ?
+                dispatch(errorUpdatingRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorUpdatingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        } else {
+            dispatch(errorUpdatingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        }
+    }
 }
 
 export const addMessage = (payload: string, _id?: string): ThunkAction<

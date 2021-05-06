@@ -3,13 +3,15 @@ import { authMiddleware } from '../../middleware';
 import { ValidatorKeys } from './'
 import { AppRouter, Methods, MetadataKeys } from '../../routes';
 import { validationMiddleware } from '../../middleware';
-import { LoginDto, addUserDto, addMessageDto, addChildDto } from '../../dtoClasses';
+import { LoginDto, addUserDto, addMessageDto, addChildDto, addUserAllDto, passwordsDto } from '../../dtoClasses';
 
 export const availableDto = {
     1: LoginDto,
     2: addUserDto,
     3: addMessageDto,
     4: addChildDto,
+    5: addUserAllDto,
+    6: passwordsDto
 }
 
 export const controller = (routePrefix: string) => {

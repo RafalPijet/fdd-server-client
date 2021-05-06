@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import * as bcrypt from 'bcrypt';
 import sharp from 'sharp';
 import fs from 'fs';
 import path from 'path';
@@ -7,7 +8,7 @@ import { post, get, put } from '../routes';
 import { RequestWithUser } from '../middleware';
 import HttpException from '../exceptions/HttpException';
 import { IMessage, buildMessage, MessageModel, OutSideMessageModel, ChildModel, IChild, buildChild, IUser, UserModel } from '../models';
-import { clearImage } from '../utils/functions';
+import { clearImage, UserDto } from '../utils/functions';
 
 @controller('/api/users')
 class UserController {
@@ -239,6 +240,94 @@ class UserController {
             }
         } catch (err) {
             next(new HttpException(404, 'Nieudana zmiana listy zdjęć'));
+        }
+    }
+
+    @put('/user/alldata/:userId')
+    @bodyValidator(ValidatorKeys.updateUser)
+    async updateUserAllData(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const { userId } = req.params;
+        const payload = req.body;
+
+        try {
+            const user = await UserModel.findById(userId);
+            if (!user) {
+                next(new HttpException(404, "Nie znaleziono użytkownika"))
+            } else {
+                if (await bcrypt.compare(payload.oldPassword, user.password!)) {
+                    const hashedPassword = await bcrypt.hash(payload.newPassword, 10);
+                    user.password = hashedPassword;
+                    user.firstName = payload.firstName;
+                    user.lastName = payload.lastName;
+                    user.phone = payload.phone;
+                    user.email = payload.email;
+                    user.zipCode = payload.zipCode;
+                    user.town = payload.town;
+                    user.street = payload.street;
+                    user.number = payload.number;
+                    await user.save();
+                    const dto = new UserDto(user);
+                    res.status(201).json({ user: dto.getContent(false), message: `Dane użytkownika ${user.firstName} ${user.lastName} zostały zaktualizowane.` })
+                } else {
+                    next(new HttpException(404, "Niepoprawne stare hasło użytkownika"))
+                }
+            }
+        } catch (err) {
+            next(new HttpException(404, 'Nieudana aktualizacja danych użytkownika'));
+        }
+    }
+
+    @put('/user/data/:userId')
+    @bodyValidator(ValidatorKeys.addUser)
+    async updateUserData(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const { userId } = req.params;
+        const payload = req.body;
+
+        try {
+            const user = await UserModel.findById(userId);
+            if (!user) {
+                next(new HttpException(404, "Nie znaleziono użytkownika"))
+            } else {
+                user.firstName = payload.firstName;
+                user.lastName = payload.lastName;
+                user.phone = payload.phone;
+                user.email = payload.email;
+                user.zipCode = payload.zipCode;
+                user.town = payload.town;
+                user.street = payload.street;
+                user.number = payload.number;
+                await user.save();
+                const dto = new UserDto(user);
+                res.status(201).json({ user: dto.getContent(false), message: `Dane użytkownika ${user.firstName} ${user.lastName} zostały zaktualizowane.` })
+            }
+        } catch (err) {
+            next(new HttpException(404, 'Nieudana aktualizacja danych użytkownika'));
+        }
+    }
+
+    @put('/user/password/:userId')
+    @bodyValidator(ValidatorKeys.updateUserPassword)
+    async updateUserPassword(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const { userId } = req.params;
+        const payload = req.body;
+
+        try {
+            const user = await UserModel.findById(userId);
+            if (!user) {
+                next(new HttpException(404, "Nie znaleziono użytkownika"))
+            } else {
+                if (await bcrypt.compare(payload.oldPassword, user.password!)) {
+                    const hashedPassword = await bcrypt.hash(payload.newPassword, 10);
+                    user.password = hashedPassword;
+                    await user.save();
+                    const dto = new UserDto(user);
+                    res.status(201).json({ user: dto.getContent(false), message: `Dane użytkownika ${user.firstName} ${user.lastName} zostały zaktualizowane.` })
+                } else {
+                    next(new HttpException(404, "Niepoprawne stare hasło użytkownika"));
+                }
+            }
+        } catch (err) {
+            next(new HttpException(404, 'Nieudana aktualizacja danych użytkownika'));
         }
     }
 }

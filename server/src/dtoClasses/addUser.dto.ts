@@ -58,3 +58,58 @@ export class addUserDto implements IUser {
         this.number = number;
     }
 }
+
+export class addUserAllDto extends addUserDto {
+    @IsNotEmpty({ message: 'Hasło musi być podane' })
+    @MinLength(5, { message: 'Hasło musi zawierać minimum 5 znaków.' })
+    @IsString()
+    public newPassword: string;
+    @IsNotEmpty({ message: 'Hasło musi być podane' })
+    @MinLength(5, { message: 'Hasło musi zawierać minimum 5 znaków.' })
+    @IsString()
+    public oldPassword: string;
+    constructor(
+        status: UserStatus,
+        firstName: string,
+        lastName: string,
+        phone: string,
+        email: string,
+        password: string,
+        zipCode: string,
+        town: string,
+        street: string,
+        number: string,
+        newPassword: string,
+        oldPassword: string
+    ) {
+        super(
+            status,
+            firstName,
+            lastName,
+            phone,
+            email,
+            password,
+            zipCode,
+            town,
+            street,
+            number
+        ),
+            this.newPassword = newPassword,
+            this.oldPassword = oldPassword
+    }
+}
+
+export class passwordsDto {
+    @IsNotEmpty({ message: 'Hasło musi być podane' })
+    @MinLength(5, { message: 'Hasło musi zawierać minimum 5 znaków.' })
+    @IsString()
+    public newPassword: string;
+    @IsNotEmpty({ message: 'Hasło musi być podane' })
+    @MinLength(5, { message: 'Hasło musi zawierać minimum 5 znaków.' })
+    @IsString()
+    public oldPassword: string;
+    constructor(newPassword: string, oldPassword: string) {
+        this.newPassword = newPassword;
+        this.oldPassword = oldPassword;
+    }
+}

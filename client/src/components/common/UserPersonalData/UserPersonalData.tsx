@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ClassNames from 'classnames';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { Email, Lock, Edit, Done, LockOpen } from '@material-ui/icons';
 import InputAdornment from '@material-ui/core/InputAdornment';
@@ -11,44 +11,48 @@ import CardBody from '../../common/CardBody/CardBody';
 import CardFooter from '../../common/CardFooter/CardFooter';
 import CustomInput from '../../common/CustomInput/CustomInput';
 import CustomButton from '../../common/CustomButton/CustomButton';
-import { getUpdating } from '../../../redux/actions/requestActions';
+import {
+  getUpdating,
+  getUpdatingSuccess,
+  resetUpdatingRequest,
+} from '../../../redux/actions/requestActions';
 import SectionHeader from '../../common/SectionHeader/SectionHeader';
-import { FddSwitch } from '../../../types/global';
+import { setModalAreYouSure } from '../../../redux/actions/generalActions';
+import {
+  FddSwitch,
+  UserStatus,
+  ModalAYSModes,
+  UpdateUserTypeData,
+} from '../../../types/global';
+import { updateUser } from '../../../redux/thunks';
+import { Register } from '../../pages/LoginPage/LoginPageStyle';
 import {
   StyleProps,
   PropsClasses,
   useStyles,
   Props,
+  UserDataProps,
+  emptyUserData,
 } from './UserPersonalDataStyle';
 
 const UserPersonalData: React.FC<Props> = (props) => {
   const { isAdmin, user } = props;
   const classes: PropsClasses = useStyles({} as StyleProps);
+  const dispatch = useDispatch();
   const isUpdating = useSelector(getUpdating);
+  const isSuccess = useSelector(getUpdatingSuccess);
   const [switchIsOn, setSwitchIsOn] = useState<boolean>(false);
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
-  const [userIsAdmin, setUsetIsAdmin] = useState<boolean>(false);
-  const [userData, setUserData] = useState({
-    status: user.status,
-    email: user.email,
-    phone: user.phone,
-    zipCode: user.adress.zipCode,
-    town: user.adress.town,
-    street: user.adress.street,
-    number: user.adress.number,
-    firstNameUser: user.firstName,
-    lastNameUser: user.lastName,
-    newPassword: '',
-    confirmPassword: '',
-    oldPassword: '',
-  });
+  const [isRefresh, setIsRefresh] = useState<boolean>(true);
+  const [userIsAdmin, setUserIsAdmin] = useState<boolean>(
+    user.status === UserStatus.admin
+  );
+  const [userData, setUserData] = useState<UserDataProps>(emptyUserData);
   const [isError, setIsError] = useState<Record<keyof any, boolean>>({
-    status: false,
     firstName: false,
     lastName: false,
     email: false,
     phone: false,
-    adress: false,
     zipCode: false,
     town: false,
     street: false,
@@ -64,6 +68,133 @@ const UserPersonalData: React.FC<Props> = (props) => {
     [classes.active]: switchIsOn,
   });
 
+  useEffect(() => {
+    if (isRefresh) {
+      setUserData({
+        email: user.email,
+        phone: `(+${user.phone.substring(0, 2)}) ${user.phone.substring(
+          2,
+          5
+        )}-${user.phone.substring(5, 8)}-${user.phone.substring(
+          8,
+          user.phone.length
+        )}`,
+        zipCode: `${user.adress.zipCode.substring(
+          0,
+          2
+        )}-${user.adress.zipCode.substring(2, user.adress.zipCode.length)}`,
+        town: user.adress.town,
+        street: user.adress.street,
+        number: user.adress.number,
+        firstNameUser: user.firstName,
+        lastNameUser: user.lastName,
+        newPassword: '',
+        confirmPassword: '',
+        oldPassword: '',
+      });
+      setIsRefresh(false);
+    }
+  }, [isRefresh]);
+
+  useEffect(() => {
+    if (isSuccess && !checkIsDifferentData()) {
+      setIsRefresh(true);
+      dispatch(resetUpdatingRequest());
+    }
+  }, [user, isSuccess]);
+
+  useEffect(() => {
+    setIsError({
+      ...isError,
+      firstName:
+        userData.firstNameUser.length > 0 && userData.firstNameUser.length < 3,
+      lastName:
+        userData.lastNameUser.length > 0 && userData.lastNameUser.length < 3,
+      phone:
+        userData.phone.length > 5 &&
+        userData.phone.replaceAll('_', '').length !== 17,
+      email:
+        (!userData.email.includes('@') || !userData.email.includes('.')) &&
+        userData.email.length !== 0,
+      newPassword:
+        userData.newPassword.length > 0 && userData.newPassword.length < 5,
+      confirmPassword: userData.newPassword !== userData.confirmPassword,
+      oldPassword:
+        (userData.oldPassword.length > 0 && userData.oldPassword.length < 5) ||
+        (userData.newPassword.length > 0 &&
+          userData.confirmPassword.length > 0 &&
+          userData.oldPassword.length === 0) ||
+        (userData.newPassword.length === 0 &&
+          userData.confirmPassword.length === 0 &&
+          userData.oldPassword.length >= 5),
+      zipCode:
+        userData.zipCode.length > 0 &&
+        userData.zipCode.replace('_', '').length !== 6,
+      town: userData.town.length > 0 && userData.town.length < 3,
+      street: userData.town.length > 0 && userData.town.length < 3,
+      number: userData.number.length < 1,
+    });
+  }, [userData]);
+
+  useEffect(() => {
+    if (
+      userData.newPassword.length > 0 &&
+      userData.confirmPassword.length > 0 &&
+      userData.oldPassword.length > 0
+    ) {
+      setIsDisabled(checkUserData(true));
+    } else {
+      setIsDisabled(checkUserData(false));
+    }
+  }, [isError, userData]);
+
+  const checkIsDifferentData = (): boolean => {
+    return (
+      userData.firstNameUser !== user.firstName ||
+      userData.lastNameUser !== user.lastName ||
+      userData.phone !==
+        `(+${user.phone.substring(0, 2)}) ${user.phone.substring(
+          2,
+          5
+        )}-${user.phone.substring(5, 8)}-${user.phone.substring(
+          8,
+          user.phone.length
+        )}` ||
+      userData.email !== user.email ||
+      userData.zipCode !==
+        `${user.adress.zipCode.substring(0, 2)}-${user.adress.zipCode.substring(
+          2,
+          user.adress.zipCode.length
+        )}` ||
+      userData.town !== user.adress.town ||
+      userData.street !== user.adress.street ||
+      userData.number !== user.adress.number
+    );
+  };
+
+  const checkUserData = (isPassword: boolean): boolean => {
+    let checked: boolean;
+    if (!isPassword) {
+      checked = checkIsDifferentData();
+    } else {
+      checked = true;
+    }
+    return (
+      checked &&
+      !isError.firstName &&
+      !isError.lastName &&
+      !isError.phone &&
+      !isError.email &&
+      !isError.zipCode &&
+      !isError.town &&
+      !isError.street &&
+      !isError.number &&
+      !isError.newPassword &&
+      !isError.confirmPassword &&
+      !isError.oldPassword
+    );
+  };
+
   const switchChangeHandling = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSwitchIsOn(e.target.checked);
   };
@@ -78,7 +209,62 @@ const UserPersonalData: React.FC<Props> = (props) => {
   };
 
   const handleSendButton = () => {
-    console.log('Confirm button');
+    let newData: any;
+    if (checkIsDifferentData()) {
+      newData = new Register(
+        userData.firstNameUser,
+        userData.lastNameUser,
+        userData.phone,
+        userData.email,
+        'undefined',
+        userData.zipCode,
+        userData.town,
+        userData.street,
+        userData.number
+      );
+      newData.prepare();
+      if (userData.newPassword.length > 0 && userData.oldPassword.length > 0) {
+        newData = {
+          ...newData,
+          status: user.status,
+          newPassword: userData.newPassword,
+          oldPassword: userData.oldPassword,
+        };
+        dispatch(updateUser(newData, UpdateUserTypeData.all, user._id));
+      } else {
+        dispatch(updateUser(newData, UpdateUserTypeData.data, user._id));
+      }
+    } else {
+      if (userData.newPassword.length > 0 && userData.oldPassword.length > 0) {
+        newData = {
+          newPassword: userData.newPassword,
+          oldPassword: userData.oldPassword,
+        };
+        dispatch(updateUser(newData, UpdateUserTypeData.password, user._id));
+      }
+    }
+  };
+
+  const switchUserStatus = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (isAdmin) {
+      dispatch(
+        setModalAreYouSure({
+          mode: ModalAYSModes.changeUserStatus,
+          isOpen: true,
+          title: 'Chcesz zmienić status uzytkownika?',
+          description: `Zmiana statusu uzytkownika ${user.firstName} ${
+            user.lastName
+          } z ${userIsAdmin ? 'ADMIN' : 'RODZIC'} na ${
+            userIsAdmin ? 'RODZIC' : 'ADMIN'
+          }. Jesteś pewien?`,
+          data: {
+            userId: user._id,
+            userStatus: userIsAdmin ? UserStatus.parent : UserStatus.admin,
+          },
+        })
+      );
+    }
+    setUserIsAdmin(e.target.checked); // to remove in Admin mode
   };
 
   const onKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>): void => {
@@ -97,7 +283,8 @@ const UserPersonalData: React.FC<Props> = (props) => {
         isExistChild={false}
         onChange={switchChangeHandling}
         checked={switchIsOn}
-        helpText="Help text"
+        helpText="W tej sekcji można edytować dane użytkownika. Dokanaj zamirzonych zmian
+        w odpowiednich polach, następnie kliknij przycisk AKTUALIZUJ DANE"
         text="Włącz/Wyłącz sekcję edycji danych uzytkownika."
       />
       <CardBody>
@@ -110,7 +297,7 @@ const UserPersonalData: React.FC<Props> = (props) => {
             <CustomInput
               labelText="Imię..."
               id="firstNameUser"
-              isDisabled={isDisabled || isUpdating}
+              isDisabled={!switchIsOn || isUpdating}
               value={userData.firstNameUser}
               error={isError.firstName}
               formControlProps={{
@@ -138,7 +325,7 @@ const UserPersonalData: React.FC<Props> = (props) => {
             <CustomInput
               labelText="Nazwisko..."
               id="lastNameUser"
-              isDisabled={isDisabled || isUpdating}
+              isDisabled={!switchIsOn || isUpdating}
               value={userData.lastNameUser}
               error={isError.lastName}
               formControlProps={{
@@ -167,7 +354,7 @@ const UserPersonalData: React.FC<Props> = (props) => {
             <CustomInput
               labelText="Telefon..."
               id="phone"
-              isDisabled={isDisabled || isUpdating}
+              isDisabled={!switchIsOn || isUpdating}
               mask
               iconType={
                 !isError.phone && userData.phone.length > 5 ? 'done' : 'phone'
@@ -195,7 +382,7 @@ const UserPersonalData: React.FC<Props> = (props) => {
               error={isError.email}
               labelText="Adres email..."
               id="email"
-              isDisabled={isDisabled || isUpdating}
+              isDisabled={!switchIsOn || isUpdating}
               value={userData.email}
               formControlProps={{
                 fullWidth: true,
@@ -222,7 +409,7 @@ const UserPersonalData: React.FC<Props> = (props) => {
             <CustomInput
               labelText="Nowe hasło..."
               id="newPassword"
-              isDisabled={isDisabled}
+              isDisabled={!switchIsOn || isUpdating}
               value={userData.newPassword}
               error={isError.password}
               formControlProps={{
@@ -251,7 +438,7 @@ const UserPersonalData: React.FC<Props> = (props) => {
             <CustomInput
               labelText="Potwierdź hasło..."
               id="confirmPassword"
-              isDisabled={isDisabled}
+              isDisabled={!switchIsOn || isUpdating}
               value={userData.confirmPassword}
               error={isError.confirmPassword}
               formControlProps={{
@@ -283,7 +470,7 @@ const UserPersonalData: React.FC<Props> = (props) => {
             <CustomInput
               labelText="Stare hasło..."
               id="oldPassword"
-              isDisabled={isDisabled}
+              isDisabled={!switchIsOn || isUpdating}
               value={userData.oldPassword}
               error={isError.oldPassword}
               formControlProps={{
@@ -326,7 +513,7 @@ const UserPersonalData: React.FC<Props> = (props) => {
               }
               formatMask="99-999"
               id="zipCode"
-              isDisabled={isDisabled}
+              isDisabled={!switchIsOn || isUpdating}
               value={userData.zipCode}
               error={isError.zipCode}
               formControlProps={{
@@ -345,7 +532,7 @@ const UserPersonalData: React.FC<Props> = (props) => {
             <CustomInput
               labelText="Miejscowość..."
               id="town"
-              isDisabled={isDisabled}
+              isDisabled={!switchIsOn || isUpdating}
               value={userData.town}
               error={isError.town}
               formControlProps={{
@@ -376,7 +563,7 @@ const UserPersonalData: React.FC<Props> = (props) => {
                 <CustomInput
                   labelText="Ulica..."
                   id="street"
-                  isDisabled={isDisabled}
+                  isDisabled={!switchIsOn || isUpdating}
                   value={userData.street}
                   error={isError.street}
                   formControlProps={{
@@ -407,7 +594,7 @@ const UserPersonalData: React.FC<Props> = (props) => {
                 <CustomInput
                   labelText="Numer..."
                   id="number"
-                  isDisabled={isDisabled}
+                  isDisabled={!switchIsOn || isUpdating}
                   value={userData.number}
                   error={isError.number}
                   formControlProps={{
@@ -438,17 +625,37 @@ const UserPersonalData: React.FC<Props> = (props) => {
           </GridItem>
         </GridContainer>
       </CardBody>
-      <CardFooter className="">
-        <CustomButton
-          onClick={handleSendButton}
-          onKeyDown={onKeyDown}
-          disabled={isDisabled}
-          setColor="primary"
-          setSize="md"
-        >
-          Aktualizuj dane
-        </CustomButton>
-      </CardFooter>
+      <GridContainer justify="center">
+        <CardFooter className={classes.footer}>
+          <CustomButton
+            onClick={handleSendButton}
+            onKeyDown={onKeyDown}
+            disabled={!switchIsOn || !isDisabled || isUpdating}
+            setColor="primary"
+            setSize="md"
+          >
+            Aktualizuj dane
+          </CustomButton>
+          {isAdmin && (
+            <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+              <span className={classes.parent}>RODZIC</span>
+              <FormControlLabel
+                disabled={!switchIsOn || isUpdating}
+                classes={{
+                  label: classes.switch,
+                }}
+                control={
+                  <FddSwitch
+                    checked={userIsAdmin}
+                    onChange={switchUserStatus}
+                  />
+                }
+                label="ADMIN"
+              />
+            </span>
+          )}
+        </CardFooter>
+      </GridContainer>
     </Card>
   );
 };
