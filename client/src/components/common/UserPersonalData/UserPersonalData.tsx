@@ -271,7 +271,7 @@ const UserPersonalData: React.FC<Props> = (props) => {
     if (event.key === 'Enter') {
       event.preventDefault();
       event.stopPropagation();
-      if (!isDisabled) {
+      if (isDisabled) {
         handleSendButton();
       }
     }

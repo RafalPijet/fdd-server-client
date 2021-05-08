@@ -9,6 +9,7 @@ import { ChildState } from '../../../types/global';
 import RemovingImage from '../RemovingImage/RemovingImage';
 import ChildPersonalData from '../ChildPersonalData/ChildPersonalData';
 import UserPersonalData from '../UserPersonalData/UserPersonalData';
+import AddingInvoices from '../../features/AddingInvoices/AddingInvoices';
 import { StyleProps, PropsClasses, useStyles } from './ChildHandlingStyle';
 
 const ChildHandling: React.FC = () => {
@@ -51,6 +52,13 @@ const ChildHandling: React.FC = () => {
             imagesUrl={selectedChild !== undefined ? selectedChild.images : []}
           />
         </GridItem>
+      </GridContainer>
+      <GridContainer
+        justify="center"
+        alignItems="center"
+        style={{ width: '65%' }}
+      >
+        <AddingInvoices childId={childId} selectedChild={selectedChild} />
       </GridContainer>
       <GridContainer
         justify="center"
