@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import ClassNames from 'classnames';
 import { IDropzoneProps } from 'react-dropzone-uploader';
-import { Document, Page } from 'react-pdf/dist/esm/entry.webpack';
 import GridContainer from '../../common/Grid/GridContainer';
 import GridItem from '../../common/Grid/GridItem';
 import Card from '../../common/Card/Card';
@@ -13,6 +13,12 @@ import CustomButton from '../../common/CustomButton/CustomButton';
 import SectionHeader from '../../common/SectionHeader/SectionHeader';
 import CustomDropZone from '../../common/CustomDropZone/CustomDropZone';
 import {
+  getAdding,
+  getAddingSuccess,
+  resetAddingRequest,
+} from '../../../redux/actions/requestActions';
+import { addInvoiceToChild } from '../../../redux/thunks';
+import {
   PropsClasses,
   useStyles,
   StyleProps,
@@ -21,18 +27,46 @@ import {
 
 const AddingInvoices: React.FC<Props> = (props) => {
   const { childId, selectedChild } = props;
+  const dispatch = useDispatch();
+  const isAdding = useSelector(getAdding);
+  const isSuccess = useSelector(getAddingSuccess);
   const classes: PropsClasses = useStyles({} as StyleProps);
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
   const [switchIsOn, setSwitchIsOn] = useState<boolean>(false);
-  const [description, setDescription] = useState<string>('');
-  const [invoiceScans, setInvoiceScans] = useState<[any, any]>([null, null]);
   const [invoiceFiles, setInvoiceFiles] = useState<[any, any]>([null, null]);
+  const [description, setDescription] = useState<string>('');
+  const [isError, setIsError] = useState({
+    description: false,
+    images: false,
+  });
 
   const rootClasses = ClassNames({
     [classes.root]: true,
     [classes.back]: true,
     [classes.active]: switchIsOn,
   });
+
+  useEffect(() => {
+    if (switchIsOn && isSuccess) {
+      dispatch(resetAddingRequest());
+      setInvoiceFiles([null, null]);
+      setDescription('');
+    }
+  }, [isSuccess, switchIsOn]);
+
+  useEffect(() => {
+    setIsError({
+      ...isError,
+      description: description.length > 0 && description.length < 20,
+      images: invoiceFiles[0] === null && invoiceFiles[1] === null,
+    });
+  }, [description, invoiceFiles]);
+
+  useEffect(() => {
+    setIsDisabled(
+      isError.description || isError.images || !description.length || isAdding
+    );
+  }, [isError.description, isError.images, description, isAdding]);
 
   const switchChangeHandling = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSwitchIsOn(e.target.checked);
@@ -44,8 +78,18 @@ const AddingInvoices: React.FC<Props> = (props) => {
     setInvoiceFiles([filesState[0], filesState[1]]);
   };
 
-  const test = () => {
-    setInvoiceFiles([null, null]);
+  const filesHandling = () => {
+    if (childId !== null) {
+      dispatch(
+        addInvoiceToChild(
+          {
+            files: invoiceFiles,
+            description,
+          },
+          childId
+        )
+      );
+    }
   };
 
   const handleTextField = (
@@ -58,14 +102,11 @@ const AddingInvoices: React.FC<Props> = (props) => {
     if (files[0].file && childId !== null) {
       if (invoiceFiles[0] === null && invoiceFiles[1] === null) {
         setInvoiceFiles([files[0].file, null]);
-        console.log('2 x null');
       } else {
         if (invoiceFiles[0] !== null) {
-          console.log('0 = null');
           setInvoiceFiles([invoiceFiles[0], files[0].file]);
         }
         if (invoiceFiles[1] !== null) {
-          console.log('1 = null');
           setInvoiceFiles([files[0].file, invoiceFiles[1]]);
         }
       }
@@ -99,7 +140,11 @@ const AddingInvoices: React.FC<Props> = (props) => {
           >
             <CustomDropZone
               handleSubmit={handleSubmit}
-              isDisabled={invoiceFiles[0] !== null && invoiceFiles[1] !== null}
+              isDisabled={
+                (invoiceFiles[0] !== null && invoiceFiles[1] !== null) ||
+                isAdding ||
+                !switchIsOn
+              }
               buttonLabel="DODAJ SKAN"
               acceptFiles="application/pdf, image/jpg, image/jpeg, image/png"
               dropFieldLabel="Upuść plik lub kliknij"
@@ -114,6 +159,7 @@ const AddingInvoices: React.FC<Props> = (props) => {
           >
             <div style={{ width: 'fit-content' }}>
               <PreviewInvoiceItem
+                isDisabled={!switchIsOn || isAdding}
                 number="0"
                 file={invoiceFiles[0]}
                 getIsRemove={removeItemHandling}
@@ -127,6 +173,7 @@ const AddingInvoices: React.FC<Props> = (props) => {
               }}
             >
               <PreviewInvoiceItem
+                isDisabled={!switchIsOn || isAdding}
                 number="1"
                 file={invoiceFiles[1]}
                 getIsRemove={removeItemHandling}
@@ -137,7 +184,8 @@ const AddingInvoices: React.FC<Props> = (props) => {
             <CustomInput
               labelText="Opis..."
               id="description"
-              isDisabled={isDisabled}
+              isDisabled={!switchIsOn || isAdding}
+              error={isError.description}
               value={description}
               formControlProps={{
                 fullWidth: true,
@@ -157,12 +205,12 @@ const AddingInvoices: React.FC<Props> = (props) => {
       </CardBody>
       <CardFooter className={classes.footer}>
         <CustomButton
-          disabled={isDisabled}
+          disabled={isDisabled || !switchIsOn}
           setSize="md"
           setColor="primary"
-          onClick={test}
+          onClick={filesHandling}
         >
-          Wyślij falturę
+          Wyślij fakturę
         </CustomButton>
       </CardFooter>
     </Card>

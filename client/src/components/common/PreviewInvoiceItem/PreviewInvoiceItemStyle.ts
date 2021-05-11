@@ -23,6 +23,9 @@ const previewInvoiceItemStyle = (theme: Theme) => ({
         width: '140px',
         height: 'fit-content'
     },
+    disabled: {
+        filter: 'grayscale(100%)'
+    },
     zoomIcon: {
         position: 'absolute',
         left: 0,
@@ -32,6 +35,10 @@ const previewInvoiceItemStyle = (theme: Theme) => ({
         position: 'absolute',
         right: 0,
         bottom: 0
+    },
+    dialogFooter: {
+        display: 'flex',
+        justifyContent: 'space-between'
     }
 })
 
@@ -42,12 +49,15 @@ export interface StyleProps {
     logo: BaseCSSProperties;
     zoomIcon: BaseCSSProperties;
     removeIcon: BaseCSSProperties;
+    dialogFooter: BaseCSSProperties;
+    disabled: BaseCSSProperties;
 }
 
 export interface Props {
     file: File | null;
     number: string;
     getIsRemove: (isRemove: boolean, key: string) => void;
+    isDisabled: boolean;
 }
 
 export const getBase64 = (file: File) => {

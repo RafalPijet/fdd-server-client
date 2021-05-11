@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import classNames from 'classnames';
 import { useSelector } from 'react-redux';
+import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { getUserId } from '../../../redux/actions/userActions';
@@ -95,7 +97,7 @@ const MessageItem: React.FC<Props> = (props) => {
             </span>
             <span>{cutText(message, 50)}</span>
           </span>
-          <ExpandMoreIcon className={classes.icon} fontSize="default" />
+          <ArrowDownwardIcon className={classes.icon} fontSize="default" />
         </span>
       );
     } else if (
@@ -105,7 +107,7 @@ const MessageItem: React.FC<Props> = (props) => {
     ) {
       return (
         <span className={classes.common}>
-          <ExpandLessIcon fontSize="default" className={classes.icon} />
+          <ArrowUpwardIcon fontSize="default" className={classes.icon} />
           <span className={classes.message}>
             <span>{cutText(message, 50)}</span>
             <span className={classes.date}>{` : ${date.substring(

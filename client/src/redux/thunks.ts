@@ -500,6 +500,31 @@ export const addChildToParent = (payload: IChildData, userId?: string): ThunkAct
     }
 }
 
+export const addInvoiceToChild = (payload: any, childId: string): ThunkAction<
+    Promise<void>,
+    any,
+    RootState,
+    StartAddingRequestAction | StopAddingRequestAction | ErrorAddingRequestAction |
+    SetToastAction
+> => async (dispatch, getState) => {
+    dispatch(startAddingRequest());
+
+    try {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        console.log(payload);
+        console.log(childId);
+        dispatch(stopAddingRequest());
+    } catch (err) {
+        if (err.response !== undefined) {
+            err.response.data.message ?
+                dispatch(errorAddingRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorAddingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        } else {
+            dispatch(errorAddingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        }
+    }
+}
+
 export const addAvatarToChild = (avatar: File, childId: string): ThunkAction<
     Promise<void>,
     any,
@@ -530,7 +555,6 @@ export const addAvatarToChild = (avatar: File, childId: string): ThunkAction<
         } else {
             dispatch(errorAddingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }
-
     }
 }
 
