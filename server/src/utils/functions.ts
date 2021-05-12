@@ -13,7 +13,6 @@ export const removeDuplicates = (data: any, key: any) => {
 
 export const clearImage = (filePath: string) => {
     filePath = path.join(__dirname, '../', filePath)
-    console.log(filePath)
     if (filePath.includes('build')) {                             //It's will be remove
         fs.unlink(filePath, err => {                              //It's will be remove
             console.log(err)                                      //It's will be remove

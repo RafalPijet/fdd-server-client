@@ -511,8 +511,17 @@ export const addInvoiceToChild = (payload: any, childId: string): ThunkAction<
 
     try {
         await new Promise(resolve => setTimeout(resolve, 2000));
-        console.log(payload);
-        console.log(childId);
+        const formData = new FormData();
+        if (payload.files[0] !== null) formData.append('image', payload.files[0]);
+        if (payload.files[1] !== null) formData.append('image', payload.files[1]);
+        formData.append('description', payload.description)
+        let res: AxiosResponse = await axios.post(`${API_URL}/users/child/invoice/add/${childId}`, formData, {
+            headers: {
+                'Authorization': localStorage.getItem('tokenFDD'),
+                "Content-type": "multipart/form-data",
+            },
+        })
+        dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
         dispatch(stopAddingRequest());
     } catch (err) {
         if (err.response !== undefined) {
@@ -601,6 +610,7 @@ export const updateImagesList = (payload: ImagesLists): ThunkAction<
     SetToastAction | SetChildImagesListAction
 > => async (dispatch, getState) => {
     try {
+        console.log('thunk - updateImagesList')
         dispatch(startUpdatingRequest());
         await new Promise(resolve => setTimeout(resolve, 2000));
         const contentList = payload.contentList.map((item: string) => item.replace(URL, ''));

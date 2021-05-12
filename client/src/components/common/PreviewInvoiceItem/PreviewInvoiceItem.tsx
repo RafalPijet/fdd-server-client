@@ -51,6 +51,7 @@ const PreviewInvoiceItem: React.FC<Props> = (props) => {
     ) {
       getBase64(file).then((image) => setImage(image));
     }
+    if (file === null) setImage(null);
   }, [file]);
 
   const handleClose = () => {
@@ -67,7 +68,7 @@ const PreviewInvoiceItem: React.FC<Props> = (props) => {
         }
       }
       if (file !== null && file.type !== 'application/pdf') {
-        if (imageScale >= 1 && imageScale < 1.5) {
+        if (imageScale >= 0.5 && imageScale < 1.5) {
           setImageScale(+imageScale.toFixed(1) + 0.1);
         }
       }
@@ -78,7 +79,7 @@ const PreviewInvoiceItem: React.FC<Props> = (props) => {
         }
       }
       if (file !== null && file.type !== 'application/pdf') {
-        if (imageScale > 1 && imageScale <= 1.5) {
+        if (imageScale > 0.5 && imageScale <= 1.5) {
           setImageScale(+imageScale.toFixed(1) - 0.1);
         }
       }
@@ -232,7 +233,7 @@ const PreviewInvoiceItem: React.FC<Props> = (props) => {
               disabled={
                 file?.type === 'application/pdf'
                   ? scale <= 0.5
-                  : imageScale <= 1
+                  : imageScale <= 0.5
               }
               onClick={() => zoomPageHandling(false)}
             >

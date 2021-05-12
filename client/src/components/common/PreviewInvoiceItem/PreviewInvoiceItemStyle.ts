@@ -12,7 +12,8 @@ const previewInvoiceItemStyle = (theme: Theme) => ({
         position: 'relative'
     },
     image: {
-        width: '150px',
+        maxWidth: '150px',
+        maxHeight: "225px"
     },
     document: {
         display: 'flex',

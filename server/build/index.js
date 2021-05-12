@@ -47,7 +47,8 @@ var storage = multer_1.default.diskStorage({
     }
 });
 var fileFilter = function (req, file, cb) {
-    if (file.mimetype === 'image/png' || file.mimetype === 'image/jpg' || file.mimetype === 'image/jpeg') {
+    if (file.mimetype === 'image/png' || file.mimetype === 'image/jpg'
+        || file.mimetype === 'image/jpeg' || file.mimetype === 'application/pdf') {
         cb(null, true);
     }
     else {
@@ -59,7 +60,7 @@ app.use(express_mongo_sanitize_1.default());
 app.use(helmet_1.default());
 app.use(express_1.default.urlencoded({ extended: false }));
 app.use(express_1.default.json());
-app.use(multer_1.default({ storage: storage, fileFilter: fileFilter }).single('image'));
+app.use(multer_1.default({ storage: storage, fileFilter: fileFilter }).array('image', 2));
 app.use('/images', express_1.default.static(path_1.default.join(__dirname, 'images')));
 app.use('/avatars', express_1.default.static(path_1.default.join(__dirname, 'avatars')));
 app.use(function (req, res, next) {

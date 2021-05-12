@@ -7,7 +7,19 @@ import { controller, bodyValidator, ValidatorKeys } from './decorators';
 import { post, get, put } from '../routes';
 import { RequestWithUser } from '../middleware';
 import HttpException from '../exceptions/HttpException';
-import { IMessage, buildMessage, MessageModel, OutSideMessageModel, ChildModel, IChild, buildChild, IUser, UserModel } from '../models';
+import {
+    IMessage,
+    buildMessage,
+    MessageModel,
+    OutSideMessageModel,
+    ChildModel,
+    IChild,
+    buildChild,
+    IUser,
+    UserModel,
+    IInvoice,
+    buildInvoice
+} from '../models';
 import { clearImage, UserDto } from '../utils/functions';
 
 @controller('/api/users')
@@ -72,6 +84,78 @@ class UserController {
         } catch (err) {
             next(new HttpException(404,
                 `Niepowodzenie aktualizacji wiadomości dla ${request.user.firstName} ${request.user.lastName}. - ${err}`))
+        }
+    }
+
+    @post('/child/invoice/add/:childId')
+    async addInvoiceToChild(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const { childId } = req.params;
+        const { description } = req.body;
+        const invoices = 'invoices';
+        if (!req.files) {
+            next(new HttpException(404, 'Brak skanu faktury'));
+        } else {
+            try {
+                const foundChild = await ChildModel.findById(childId).populate('invoices');
+                if (foundChild) {
+                    const files = req.files as Express.Multer.File[];
+                    let imagesUrl: string[] = [];
+                    let filesToRemove: string[] = [];
+                    files.forEach(async (file: Express.Multer.File) => {
+                        const imageUrl = file.path.replace(file.destination, invoices);
+                        imagesUrl.push(imageUrl);
+                        const source = file.path.replace('uploads', invoices);  //It's will be remove
+                        const target = source.replace(invoices, 'build/invoices');  //It's will be remove
+                        await fs.copyFile(file.path, source, (err) => {
+                            console.log(err)
+                        })
+                        await fs.copyFile(source, target, (err) => {  //It's will be remove
+                            console.log(err)                    //It's will be remove
+                        })                                      //It's will be remove
+                        filesToRemove.push(file.path)
+                    })
+                    const invoice: IInvoice = {
+                        childId: foundChild.id,
+                        description,
+                        content: imagesUrl
+                    }
+                    const newInvoice = buildInvoice(invoice);
+                    await newInvoice.save();
+                    foundChild.invoices?.push(newInvoice);
+                    await foundChild.save();
+                    filesToRemove.forEach(item => {
+                        fs.unlinkSync(item);
+                    })
+                    res.status(201).json({ message: `Nowa faktura została dodana dla ${foundChild.firstName} ${foundChild.lastName}` });
+                } else {
+                    next(new HttpException(404, 'Nie znaleziono dziecka'));
+                }
+
+            } catch (err) {
+                next(new HttpException(404, 'Nieudane dodanie faktury'));
+            }
+        }
+    }
+
+    @put('/child/images')
+    async updateImagesList(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const { contentList, removeList, id } = req.body;
+        try {
+            const child = await ChildModel.findById(id);
+            if (!child) {
+                next(new HttpException(404, "Nie znaleziono dziecka"))
+            } else {
+                child.images = contentList;
+                if (removeList.length) {
+                    removeList.forEach((item: string) => {
+                        clearImage(item)
+                    })
+                }
+                await child.save();
+                res.status(200).json({ message: 'Dokonano zmian na liście zdjęć dziecka' });
+            }
+        } catch (err) {
+            next(new HttpException(404, 'Nieudana zmiana listy zdjęć'));
         }
     }
 
@@ -141,20 +225,21 @@ class UserController {
     async addChildAvatar(req: Request, res: Response, next: NextFunction): Promise<void> {
         const { childId } = req.params;
         const avatars = 'avatars';
-        if (!req.file) {
+        if (!req.files) {
             next(new HttpException(404, 'Brak portretu'));
         } else {
             try {
+                const files = req.files as Express.Multer.File[];
                 const foundChild = await ChildModel.findById(childId);
                 if (foundChild) {
-                    const imageUrl = req.file.path.replace(req.file.destination, avatars)
-                    const source = req.file.path.replace('uploads', avatars)   //It's will be remove
+                    const imageUrl = files[0].path.replace(files[0].destination, avatars)
+                    const source = files[0].path.replace('uploads', avatars)   //It's will be remove
                     const target = source.replace(avatars, 'build/avatars')     //It's will be remove
-                    await sharp(req.file.path)
+                    await sharp(files[0].path)
                         .resize(120, 120)
                         .jpeg({ quality: 90 })
-                        .toFile(path.resolve(avatars, req.file.filename))
-                    fs.unlinkSync(req.file.path);
+                        .toFile(path.resolve(avatars, files[0].filename))
+                    fs.unlinkSync(files[0].path);
                     fs.copyFile(source, target, (err) => {              //It's will be remove
                         console.log(err)                                //It's will be remove
                     })                                                  //It's will be remove
@@ -182,7 +267,7 @@ class UserController {
     async addChildImage(req: Request, res: Response, next: NextFunction): Promise<void> {
         const { childId } = req.params;
         const images = 'images';
-        if (!req.file) {
+        if (!req.files) {
             next(new HttpException(404, 'Brak obrazu'));
         } else {
             try {
@@ -191,14 +276,15 @@ class UserController {
                     if (foundChild.images && foundChild.images.length >= 5) {
                         next(new HttpException(404, 'Przekroczony limit ilości zdjęć'));
                     } else {
-                        const imageUrl = req.file.path.replace(req.file.destination, images)
-                        const source = req.file.path.replace('uploads', images)   //It's will be remove
+                        const files = req.files as Express.Multer.File[];
+                        const imageUrl = files[0].path.replace(files[0].destination, images)
+                        const source = files[0].path.replace('uploads', images)   //It's will be remove
                         const target = source.replace(images, 'build/images')     //It's will be remove
-                        await sharp(req.file.path)
+                        await sharp(files[0].path)
                             .resize(500, 332)
                             .jpeg({ quality: 90 })
-                            .toFile(path.resolve(images, req.file.filename))
-                        fs.unlinkSync(req.file.path);
+                            .toFile(path.resolve(images, files[0].filename))
+                        fs.unlinkSync(files[0].path);
                         fs.copyFile(source, target, (err) => {              //It's will be remove
                             console.log(err)                                //It's will be remove
                         })                                                  //It's will be remove
@@ -217,29 +303,6 @@ class UserController {
             } catch (err) {
                 next(new HttpException(404, 'Nieudane dodanie zdjęcia'));
             }
-        }
-    }
-
-    @put('/child/images')
-    async updateImagesList(req: Request, res: Response, next: NextFunction): Promise<void> {
-        const { contentList, removeList, id } = req.body;
-
-        try {
-            const child = await ChildModel.findById(id);
-            if (!child) {
-                next(new HttpException(404, "Nie znaleziono dziecka"))
-            } else {
-                child.images = contentList;
-                if (removeList.length) {
-                    removeList.forEach((item: string) => {
-                        clearImage(item)
-                    })
-                }
-                await child.save();
-                res.status(200).json({ message: 'Dokonano zmian na liście zdjęć dziecka' });
-            }
-        } catch (err) {
-            next(new HttpException(404, 'Nieudana zmiana listy zdjęć'));
         }
     }
 

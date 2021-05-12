@@ -7,3 +7,4 @@ node_modules
 /server/images
 /server/avatars
 /server/uploads
+/server/invoices

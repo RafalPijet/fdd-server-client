@@ -24,7 +24,9 @@ const storage = multer.diskStorage({
     }
 });
 const fileFilter = (req: Request, file: Express.Multer.File, cb: FileFilterCallback) => {
-    if (file.mimetype === 'image/png' || file.mimetype === 'image/jpg' || file.mimetype === 'image/jpeg') {
+
+    if (file.mimetype === 'image/png' || file.mimetype === 'image/jpg'
+        || file.mimetype === 'image/jpeg' || file.mimetype === 'application/pdf') {
         cb(null, true);
     } else {
         cb(null, false);
@@ -36,7 +38,7 @@ app.use(sanitize());
 app.use(helmet());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-app.use(multer({ storage, fileFilter }).single('image'));
+app.use(multer({ storage: storage, fileFilter }).array('image', 2));
 app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use('/avatars', express.static(path.join(__dirname, 'avatars')));
 app.use((req: Request, res: Response, next: NextFunction) => {
