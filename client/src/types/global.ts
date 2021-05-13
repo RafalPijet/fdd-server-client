@@ -69,6 +69,15 @@ export enum UpdateUserTypeData {
     data
 }
 
+export enum AvailableDestinations {
+    mainParent = 'main-parent',
+    addingImage = 'adding-image',
+    removingImage = 'removing-image',
+    addingInvoice = 'adding-invoice',
+    childData = 'child-data',
+    userData = 'user-data'
+}
+
 export interface InvoiceState {
     _id: string;
     addDate: Date;
@@ -78,6 +87,7 @@ export interface InvoiceState {
 
 export interface ChildState {
     _id: string;
+    active: boolean;
     parent: string;
     firstName: string;
     lastName: string;
@@ -166,9 +176,13 @@ export interface EventChangeReplyData {
     email?: string;
 }
 
+export interface EventChangeAvailableDestination {
+    actionName: AvailableDestinations
+}
+
 export interface EventChange {
     isAction: boolean;
-    data?: EventChangeReplyData;
+    data?: EventChangeReplyData | EventChangeAvailableDestination;
 }
 
 export interface GeneralState {

@@ -2,7 +2,7 @@ import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
 import IconButton from '@material-ui/core/IconButton';
-import { ChildState } from '../../../types/global';
+import { ChildState, AvailableDestinations } from '../../../types/global';
 import { primaryBoxShadow, primaryColor } from '../../../styles/globalStyles';
 
 const addingImageStyle = (theme: Theme) => ({
@@ -97,6 +97,7 @@ export const ArrowButton = withStyles({
 export interface Props {
     childId: string | null;
     selectedChild: ChildState | undefined;
+    name: AvailableDestinations;
 }
 
 export type PropsClasses = Record<keyof StyleProps, string>;

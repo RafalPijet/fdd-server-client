@@ -50,6 +50,7 @@ const AdminMessages: React.FC = () => {
   const classes: PropsClasses = useStyles({} as StyleProps);
   const dispatch = useDispatch();
   const eventChange = useSelector(getEventChange);
+  const eventData = eventChange.data as EventChangeReplyData;
   const userName = useSelector(getUserName);
   const isPending = useSelector(getPending);
   const isSuccess = useSelector(getSuccess);
@@ -147,7 +148,7 @@ const AdminMessages: React.FC = () => {
     if (eventChange.isAction) {
       setIsBodyAnimation(false);
       setTimeout(() => {
-        if (eventChange.data) setSelectedUserToReply(eventChange.data);
+        if (eventChange.data) setSelectedUserToReply(eventData);
         setMessageType(MessageOptions.new);
         setPage(0);
       }, 300);

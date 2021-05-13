@@ -6,7 +6,6 @@ import MenuList from '@material-ui/core/MenuList';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import Paper from '@material-ui/core/Paper';
 import Grow from '@material-ui/core/Grow';
-import Icon from '@material-ui/core/Icon';
 import Popper from '@material-ui/core/Popper';
 import CustomButton from '../CustomButton/CustomButton';
 import { setIsOpen, getIsOpen } from '../../../redux/actions/generalActions';
@@ -62,18 +61,7 @@ const CustomDropdown = (props: Props) => {
     [classes.noLiPadding]: noLiPadding,
     [classes.dropdownItemRTL]: rtlActive,
   });
-  let icon = null;
-  switch (typeof buttonIcon) {
-    case 'object':
-      // icon = <props.buttonIcon className={classes.buttonIcon} />;
-      break;
-    case 'string':
-      // icon = <Icon className={classes.buttonIcon}>{props.buttonIcon}</Icon>;
-      break;
-    default:
-      icon = null;
-      break;
-  }
+
   return (
     <div>
       <div>
@@ -87,7 +75,7 @@ const CustomDropdown = (props: Props) => {
           {...buttonProps}
           onClick={handleClick}
         >
-          {icon}
+          {buttonIcon}
           {buttonText !== undefined ? buttonText : null}
           {caret ? <b className={caretClasses} /> : null}
         </CustomButton>

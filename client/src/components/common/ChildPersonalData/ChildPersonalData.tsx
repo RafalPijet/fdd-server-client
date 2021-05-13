@@ -12,12 +12,21 @@ import GridContainer from '../../common/Grid/GridContainer';
 import GridItem from '../../common/Grid/GridItem';
 import CustomInput from '../../common/CustomInput/CustomInput';
 import CustomButton from '../../common/CustomButton/CustomButton';
-import { IChildData, FddSwitch, different } from '../../../types/global';
+import {
+  IChildData,
+  FddSwitch,
+  different,
+  EventChangeAvailableDestination,
+} from '../../../types/global';
 import {
   addChildToParent,
   updateChildDataRequest as updateChildData,
 } from '../../../redux/thunks';
 import { getPending } from '../../../redux/actions/requestActions';
+import {
+  getEventChange,
+  setEventChange,
+} from '../../../redux/actions/generalActions';
 import { calculateAge } from '../../../types/functions';
 import {
   StyleProps,
@@ -27,10 +36,12 @@ import {
 } from './ChildPersonalDataStyle';
 
 const ChildPersonalData: React.FC<Props> = (props) => {
-  const { childId, selectedChild } = props;
+  const { childId, selectedChild, name } = props;
   const classes: PropsClasses = useStyles({} as StyleProps);
   const dispatch = useDispatch();
   const isPending = useSelector(getPending);
+  const eventChange = useSelector(getEventChange);
+  const eventData = eventChange.data as EventChangeAvailableDestination;
   const currentlyDifferent = Date.now() - different;
   let availableStartDate = new Date(currentlyDifferent).toLocaleDateString();
   availableStartDate = `${availableStartDate.substring(
@@ -60,6 +71,13 @@ const ChildPersonalData: React.FC<Props> = (props) => {
     [classes.back]: true,
     [classes.active]: switchIsOn || isPending,
   });
+
+  useEffect(() => {
+    if (eventChange.isAction) {
+      setSwitchIsOn(eventData.actionName === name);
+      dispatch(setEventChange({ isAction: false, data: undefined }));
+    }
+  }, [eventChange.isAction]);
 
   useEffect(() => {
     if (selectedChild !== undefined && isEdit) {

@@ -25,6 +25,7 @@ import ChildrenZone from '../../features/ChildrenZone/ChildrenZone';
 import ChildHandling from '../../common/ChildHandling/ChildHandling';
 import { cleanCurrentUser } from '../../../redux/actions/userActions';
 import { loadUserMessages } from '../../../redux/actions/messageActions';
+import { AvailableDestinations } from '../../../types/global';
 import {
   getToast,
   setUserToast,
@@ -84,7 +85,7 @@ const ParentPage: React.FC = () => {
   };
 
   return (
-    <div>
+    <div id={AvailableDestinations.mainParent}>
       <Header
         isSpiner={isPending || isUpdating || isAdding}
         color="transparent"

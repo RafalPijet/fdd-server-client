@@ -1,7 +1,7 @@
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import { makeStyles } from '@material-ui/core/styles';
 import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
-import { UserState } from '../../../types/global';
+import { UserState, AvailableDestinations } from '../../../types/global';
 import { primaryColor } from '../../../styles/globalStyles';
 
 const userPersonalDataStyle = (theme: Theme) => ({
@@ -47,6 +47,7 @@ export interface StyleProps {
 export interface Props {
     isAdmin: boolean;
     user: UserState;
+    name: AvailableDestinations;
 }
 
 export interface UserDataProps {

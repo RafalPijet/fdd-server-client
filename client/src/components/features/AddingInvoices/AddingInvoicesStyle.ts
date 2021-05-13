@@ -1,7 +1,7 @@
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import { makeStyles } from '@material-ui/core/styles';
 import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
-import { ChildState } from '../../../types/global';
+import { AvailableDestinations } from '../../../types/global';
 
 const addingInvoicesStyle = (theme: Theme) => ({
     root: {
@@ -27,7 +27,7 @@ export interface StyleProps {
 
 export interface Props {
     childId: string | null;
-    selectedChild: ChildState | undefined;
+    name: AvailableDestinations;
 }
 
 export type PropsClasses = Record<keyof StyleProps, string>;

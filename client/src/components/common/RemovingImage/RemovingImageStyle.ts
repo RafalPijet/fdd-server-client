@@ -1,6 +1,7 @@
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import { makeStyles } from '@material-ui/core/styles';
 import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
+import { AvailableDestinations } from '../../../types/global';
 
 const removingImageStyle = (theme: Theme) => ({
     root: {
@@ -63,6 +64,7 @@ export interface State {
 export interface Props {
     imagesUrl: string[];
     childId: string | null;
+    name: AvailableDestinations
 }
 
 export const reorder = (list: [], startIndex: number, endIndex: number): object => {

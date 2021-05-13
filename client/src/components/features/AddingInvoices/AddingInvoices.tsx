@@ -13,10 +13,15 @@ import CustomButton from '../../common/CustomButton/CustomButton';
 import SectionHeader from '../../common/SectionHeader/SectionHeader';
 import CustomDropZone from '../../common/CustomDropZone/CustomDropZone';
 import {
+  setEventChange,
+  getEventChange,
+} from '../../../redux/actions/generalActions';
+import {
   getAdding,
   getAddingSuccess,
   resetAddingRequest,
 } from '../../../redux/actions/requestActions';
+import { EventChangeAvailableDestination } from '../../../types/global';
 import { addInvoiceToChild } from '../../../redux/thunks';
 import {
   PropsClasses,
@@ -26,10 +31,12 @@ import {
 } from './AddingInvoicesStyle';
 
 const AddingInvoices: React.FC<Props> = (props) => {
-  const { childId, selectedChild } = props;
+  const { childId, name } = props;
   const dispatch = useDispatch();
   const isAdding = useSelector(getAdding);
   const isSuccess = useSelector(getAddingSuccess);
+  const eventChange = useSelector(getEventChange);
+  const eventData = eventChange.data as EventChangeAvailableDestination;
   const classes: PropsClasses = useStyles({} as StyleProps);
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
   const [switchIsOn, setSwitchIsOn] = useState<boolean>(false);
@@ -45,6 +52,13 @@ const AddingInvoices: React.FC<Props> = (props) => {
     [classes.back]: true,
     [classes.active]: switchIsOn,
   });
+
+  useEffect(() => {
+    if (eventChange.isAction) {
+      setSwitchIsOn(eventData.actionName === name);
+      dispatch(setEventChange({ isAction: false, data: undefined }));
+    }
+  }, [eventChange.isAction]);
 
   useEffect(() => {
     if (switchIsOn && isSuccess) {
@@ -72,7 +86,7 @@ const AddingInvoices: React.FC<Props> = (props) => {
     setSwitchIsOn(e.target.checked);
   };
 
-  const removeItemHandling = (isRemove: boolean, number: string) => {
+  const removeItemHandling = (number: string) => {
     const filesState = [...invoiceFiles];
     filesState[+number] = null;
     setInvoiceFiles([filesState[0], filesState[1]]);
@@ -116,10 +130,14 @@ const AddingInvoices: React.FC<Props> = (props) => {
   return (
     <Card className={rootClasses}>
       <SectionHeader
-        isExistChild={false}
+        isExistChild={true}
         onChange={switchChangeHandling}
         checked={switchIsOn}
-        helpText="help text"
+        helpText="Ta sekcja służy do dodawania faktur rozliczeniowych podopiecznego. Aby 
+        dodać nową fakturę, dodaj plik ze skanem, zdjęciem faktury lub plikiem pdf zawierającym fakturę.
+         Możesz dodać dwa pliki z daną fakturą. Następnie w polu OPIS należy wpisać krótką informację
+          o przesyłanej fakturze. Jeśli wszystko jest zrobione prawidłowo, podświetli się przycisk WYŚLIJ FAKTURĘ. 
+          Naciśnij go, aby zakończyć proces dodawania faktury."
         text="Włącz/Wyłącz sekcję przesyłania skanów faktur."
       />
       <CardBody>
@@ -143,7 +161,8 @@ const AddingInvoices: React.FC<Props> = (props) => {
               isDisabled={
                 (invoiceFiles[0] !== null && invoiceFiles[1] !== null) ||
                 isAdding ||
-                !switchIsOn
+                !switchIsOn ||
+                childId === null
               }
               buttonLabel="DODAJ SKAN"
               acceptFiles="application/pdf, image/jpg, image/jpeg, image/png"
@@ -184,7 +203,7 @@ const AddingInvoices: React.FC<Props> = (props) => {
             <CustomInput
               labelText="Opis..."
               id="description"
-              isDisabled={!switchIsOn || isAdding}
+              isDisabled={!switchIsOn || isAdding || childId === null}
               error={isError.description}
               value={description}
               formControlProps={{

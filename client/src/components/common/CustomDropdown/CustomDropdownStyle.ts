@@ -155,7 +155,7 @@ const customDropdownStyle = (theme: Theme) => ({
 export interface Props {
     hoverColor: AvailableHoverColors,
     buttonText: React.ReactNode,
-    buttonIcon: OverridableComponent<SvgIconTypeMap>,
+    buttonIcon: React.ReactNode,
     dropdownList: React.ReactNode[],
     buttonProps: ButtonProps,
     rtlActive?: boolean,

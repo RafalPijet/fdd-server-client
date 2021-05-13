@@ -21,6 +21,12 @@ const ChildrenZone: React.FC = () => {
     [classes.root]: true,
     [classes.cardHidden]: isCardAnimation,
   });
+  const statusClasses = classNames({
+    [classes.status]: true,
+    [classes.active]: selectedChild !== null && selectedChild.active,
+    [classes.inactive]: selectedChild !== null && !selectedChild.active,
+    [classes.none]: selectedChild === null,
+  });
   const childId = useSelector(getSelectedChild);
   const children = useSelector(getUserChildren);
   setTimeout(() => {
@@ -42,6 +48,16 @@ const ChildrenZone: React.FC = () => {
     <div>
       <Card className={cardClasses}>
         <div className={classes.rowHeader}>
+          <span className={classes.statusRow}>
+            status:
+            <span className={statusClasses}>
+              {selectedChild !== null
+                ? selectedChild.active
+                  ? 'AKTYWNY'
+                  : 'NIEAKTYWNY'
+                : 'BRAK'}
+            </span>
+          </span>
           <CardHeader className={classes.cardHeader} color="infoCardHeader">
             <span
               style={{ maxHeight: '18px', overflow: 'auto', padding: '0 2px' }}

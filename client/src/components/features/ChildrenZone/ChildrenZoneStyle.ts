@@ -1,6 +1,7 @@
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import { makeStyles } from '@material-ui/core/styles';
 import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
+import { logoColor, dangerColor, warningColor } from '../../../styles/globalStyles';
 
 const childrenZoneStyle = (theme: Theme) => ({
     root: {
@@ -26,8 +27,29 @@ const childrenZoneStyle = (theme: Theme) => ({
         padding: "10px 0",
     },
     rowHeader: {
+        position: 'relative',
         display: "flex",
         margin: 0
+    },
+    statusRow: {
+        fontSize: '12px',
+        color: "#fff",
+        position: 'absolute',
+        top: '-20px',
+        right: 0
+    },
+    status: {
+        paddingLeft: '5px',
+        fontSize: '16px'
+    },
+    active: {
+        color: logoColor
+    },
+    inactive: {
+        color: warningColor
+    },
+    none: {
+        color: dangerColor
     },
     description: {
         display: "flex",
@@ -71,6 +93,11 @@ export interface StyleProps {
     description: BaseCSSProperties;
     content: BaseCSSProperties;
     cardHidden: BaseCSSProperties;
+    statusRow: BaseCSSProperties;
+    status: BaseCSSProperties;
+    active: BaseCSSProperties;
+    inactive: BaseCSSProperties;
+    none: BaseCSSProperties;
 }
 
 export type PropsClasses = Record<keyof StyleProps, string>;

@@ -57,7 +57,7 @@ export interface StyleProps {
 export interface Props {
     file: File | null;
     number: string;
-    getIsRemove: (isRemove: boolean, key: string) => void;
+    getIsRemove: (key: string) => void;
     isDisabled: boolean;
 }
 

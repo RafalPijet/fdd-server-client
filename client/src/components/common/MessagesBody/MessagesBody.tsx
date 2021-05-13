@@ -5,7 +5,7 @@ import CustomInput from '../CustomInput/CustomInput';
 import UsersSearcher from '../UsersSearcher/UsersSearcher';
 import { getEventChange } from '../../../redux/actions/generalActions';
 import { UserName } from '../UsersSearcher/UsersSearcherStyle';
-import { MessageOptions } from '../../../types/global';
+import { MessageOptions, EventChangeReplyData } from '../../../types/global';
 import { API_URL } from '../../../config';
 
 interface MessagesBodyProps {
@@ -33,6 +33,7 @@ const MessagesBody: React.FC<MessagesBodyProps> = (props) => {
   const [selectedUser, setSelectedUser] = useState<UserName | null>(null);
   const [isReady, setIsReady] = useState<boolean>(false);
   const eventChange = useSelector(getEventChange);
+  const eventData = eventChange.data as EventChangeReplyData;
 
   useEffect(() => {
     if (isAdmin) {
@@ -70,7 +71,7 @@ const MessagesBody: React.FC<MessagesBodyProps> = (props) => {
               <span style={{ color: '#fff', fontSize: '12px' }}>
                 odpowiedź do:{' '}
               </span>
-              {eventChange.data?.name}
+              {eventData.name}
             </p>
           ) : (
             <UsersSearcher

@@ -2,7 +2,7 @@ import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import { makeStyles } from '@material-ui/core/styles';
 import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
 import { primaryColor } from '../../../styles/globalStyles';
-import { ChildState } from '../../../types/global';
+import { ChildState, AvailableDestinations } from '../../../types/global';
 
 const childPersonalDataStyle = (theme: Theme) => ({
     root: {
@@ -29,6 +29,7 @@ const childPersonalDataStyle = (theme: Theme) => ({
 export interface Props {
     childId: string | null;
     selectedChild: ChildState | undefined;
+    name: AvailableDestinations;
 }
 
 export interface StyleProps {

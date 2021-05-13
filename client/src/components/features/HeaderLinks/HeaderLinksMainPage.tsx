@@ -29,7 +29,7 @@ const HeaderList: React.FC<Props> = (props) => {
           buttonProps={{
             className: classes.navLink,
           }}
-          buttonIcon={Apps}
+          buttonIcon={<Apps />}
           dropdownList={[
             <Link to="/parent" className={classes.dropdownLink}>
               Parent

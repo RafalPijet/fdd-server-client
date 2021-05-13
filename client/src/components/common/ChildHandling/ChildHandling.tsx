@@ -5,7 +5,7 @@ import GridItem from '../../common/Grid/GridItem';
 import AddingImage from '../AddingImage/AddingImage';
 import { getSelectedChild } from '../../../redux/actions/generalActions';
 import { getUserChildren, getUser } from '../../../redux/actions/userActions';
-import { ChildState } from '../../../types/global';
+import { ChildState, AvailableDestinations } from '../../../types/global';
 import RemovingImage from '../RemovingImage/RemovingImage';
 import ChildPersonalData from '../ChildPersonalData/ChildPersonalData';
 import UserPersonalData from '../UserPersonalData/UserPersonalData';
@@ -38,18 +38,25 @@ const ChildHandling: React.FC = () => {
           sm={12}
           lg={12}
           style={{ display: 'flex', justifyContent: 'center' }}
+          id={AvailableDestinations.addingImage}
         >
-          <AddingImage childId={childId} selectedChild={selectedChild} />
+          <AddingImage
+            childId={childId}
+            selectedChild={selectedChild}
+            name={AvailableDestinations.addingImage}
+          />
         </GridItem>
         <GridItem
           xs={12}
           sm={12}
           lg={6}
           style={{ display: 'flex', justifyContent: 'center' }}
+          id={AvailableDestinations.removingImage}
         >
           <RemovingImage
             childId={childId}
             imagesUrl={selectedChild !== undefined ? selectedChild.images : []}
+            name={AvailableDestinations.removingImage}
           />
         </GridItem>
       </GridContainer>
@@ -57,22 +64,36 @@ const ChildHandling: React.FC = () => {
         justify="center"
         alignItems="center"
         style={{ width: '65%' }}
+        id={AvailableDestinations.addingInvoice}
       >
-        <AddingInvoices childId={childId} selectedChild={selectedChild} />
+        <AddingInvoices
+          childId={childId}
+          name={AvailableDestinations.addingInvoice}
+        />
       </GridContainer>
       <GridContainer
         justify="center"
         alignItems="center"
         style={{ width: '75%' }}
+        id={AvailableDestinations.childData}
       >
-        <ChildPersonalData childId={childId} selectedChild={selectedChild} />
+        <ChildPersonalData
+          childId={childId}
+          selectedChild={selectedChild}
+          name={AvailableDestinations.childData}
+        />
       </GridContainer>
       <GridContainer
         justify="center"
         alignItems="center"
         style={{ width: '85%' }}
+        id={AvailableDestinations.userData}
       >
-        <UserPersonalData user={user} isAdmin={false} />
+        <UserPersonalData
+          user={user}
+          isAdmin={false}
+          name={AvailableDestinations.userData}
+        />
       </GridContainer>
     </div>
   );

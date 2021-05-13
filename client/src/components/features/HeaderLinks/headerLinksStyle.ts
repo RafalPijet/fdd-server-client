@@ -16,11 +16,13 @@ export interface StyleProps {
     registerNavLink: BaseCSSProperties;
     navLinkActive: BaseCSSProperties;
     icons: BaseCSSProperties;
+    avatar: BaseCSSProperties;
     socialIcons: BaseCSSProperties;
     dropdownLink: BaseCSSProperties;
     marginRight5: BaseCSSProperties;
     tooltipsStyle: BaseCSSProperties;
     disabled: BaseCSSProperties;
+    linkScroll: BaseCSSProperties;
 }
 
 const styles = (theme: Theme) => ({
@@ -114,7 +116,12 @@ const styles = (theme: Theme) => ({
     icons: {
         width: '20px',
         height: '20px',
-        marginRight: '3px',
+        marginRight: '5px',
+    },
+    avatar: {
+        width: '40px',
+        height: '40px',
+        marginRight: '10px',
     },
     socialIcons: {
         position: 'relative',
@@ -135,6 +142,11 @@ const styles = (theme: Theme) => ({
     },
     disabled: {
         color: grayColor
+    },
+    linkScroll: {
+        display: 'flex',
+        alignItems: 'center',
+        padding: "5px"
     }
 });
 

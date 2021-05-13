@@ -13,10 +13,15 @@ import CustomBotton from '../CustomButton/CustomButton';
 import { updateImagesList } from '../../../redux/thunks';
 import SectionHeader from '../SectionHeader/SectionHeader';
 import {
+  getEventChange,
+  setEventChange,
+} from '../../../redux/actions/generalActions';
+import {
   getUpdatingError,
   resetUpdatingRequest,
   getUpdating,
 } from '../../../redux/actions/requestActions';
+import { EventChangeAvailableDestination } from '../../../types/global';
 import {
   Props,
   State,
@@ -30,11 +35,13 @@ import {
 } from './RemovingImageStyle';
 
 const RemovingImage: React.FC<Props> = (props) => {
-  const { imagesUrl, childId } = props;
+  const { imagesUrl, childId, name } = props;
   const classes: PropsClasses = useStyles({} as StyleProps);
   const dispatch = useDispatch();
   const isUpdatingError = useSelector(getUpdatingError).isError;
   const isUpdating = useSelector(getUpdating);
+  const eventChange = useSelector(getEventChange);
+  const eventData = eventChange.data as EventChangeAvailableDestination;
   const [state, setState] = useState<State>({
     contentList: imagesUrl,
     removeList: [],
@@ -50,6 +57,13 @@ const RemovingImage: React.FC<Props> = (props) => {
     [classes.root]: true,
     [classes.active]: switchIsOn && !isUpdating,
   });
+
+  useEffect(() => {
+    if (eventChange.isAction) {
+      setSwitchIsOn(eventData.actionName === name);
+      dispatch(setEventChange({ isAction: false, data: undefined }));
+    }
+  }, [eventChange.isAction]);
 
   useEffect(() => {
     setState({ contentList: imagesUrl, removeList: [], id: childId });

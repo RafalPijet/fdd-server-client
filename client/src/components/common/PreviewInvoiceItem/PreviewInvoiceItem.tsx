@@ -54,8 +54,9 @@ const PreviewInvoiceItem: React.FC<Props> = (props) => {
     if (file === null) setImage(null);
   }, [file]);
 
-  const handleClose = () => {
+  const handleClose = async () => {
     setOpen(false);
+    await new Promise((resolve) => setTimeout(resolve, 500));
     setScale(0.5);
     setImageScale(1);
   };
@@ -104,7 +105,7 @@ const PreviewInvoiceItem: React.FC<Props> = (props) => {
   };
 
   const removeItemHandling = () => {
-    getIsRemove(true, number);
+    getIsRemove(number);
     setImage(null);
   };
 

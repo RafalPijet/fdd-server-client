@@ -17,12 +17,17 @@ import {
   resetUpdatingRequest,
 } from '../../../redux/actions/requestActions';
 import SectionHeader from '../../common/SectionHeader/SectionHeader';
-import { setModalAreYouSure } from '../../../redux/actions/generalActions';
+import {
+  setModalAreYouSure,
+  setEventChange,
+  getEventChange,
+} from '../../../redux/actions/generalActions';
 import {
   FddSwitch,
   UserStatus,
   ModalAYSModes,
   UpdateUserTypeData,
+  EventChangeAvailableDestination,
 } from '../../../types/global';
 import { updateUser } from '../../../redux/thunks';
 import { Register } from '../../pages/LoginPage/LoginPageStyle';
@@ -36,11 +41,13 @@ import {
 } from './UserPersonalDataStyle';
 
 const UserPersonalData: React.FC<Props> = (props) => {
-  const { isAdmin, user } = props;
+  const { isAdmin, user, name } = props;
   const classes: PropsClasses = useStyles({} as StyleProps);
   const dispatch = useDispatch();
   const isUpdating = useSelector(getUpdating);
   const isSuccess = useSelector(getUpdatingSuccess);
+  const eventChange = useSelector(getEventChange);
+  const eventData = eventChange.data as EventChangeAvailableDestination;
   const [switchIsOn, setSwitchIsOn] = useState<boolean>(false);
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
   const [isRefresh, setIsRefresh] = useState<boolean>(true);
@@ -67,6 +74,13 @@ const UserPersonalData: React.FC<Props> = (props) => {
     [classes.back]: true,
     [classes.active]: switchIsOn,
   });
+
+  useEffect(() => {
+    if (eventChange.isAction) {
+      setSwitchIsOn(eventData.actionName === name);
+      dispatch(setEventChange({ isAction: false, data: undefined }));
+    }
+  }, [eventChange.isAction]);
 
   useEffect(() => {
     if (isRefresh) {

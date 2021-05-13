@@ -34,6 +34,10 @@ import {
   getAddingError,
 } from '../../../redux/actions/requestActions';
 import {
+  getEventChange,
+  setEventChange,
+} from '../../../redux/actions/generalActions';
+import {
   StyleProps,
   PropsClasses,
   useStyles,
@@ -44,15 +48,21 @@ import {
 import 'react-dropzone-uploader/dist/styles.css';
 import logo from '../../../images/butterfly.png';
 import smile from '../../../images/smile.svg';
-import { ArrowsDirection, FddSwitch } from '../../../types/global';
+import {
+  ArrowsDirection,
+  FddSwitch,
+  EventChangeAvailableDestination,
+} from '../../../types/global';
 import { urltoFile } from '../../../types/functions';
 
 const AddingImage: React.FC<Props> = (props) => {
-  const { childId, selectedChild } = props;
+  const { childId, selectedChild, name } = props;
   const dispatch = useDispatch();
   const isAdding = useSelector(getAdding);
   const isSuccess = useSelector(getAddingSuccess);
   const isError = useSelector(getAddingError).isError;
+  const eventChange = useSelector(getEventChange);
+  const eventData = eventChange.data as EventChangeAvailableDestination;
   const classes: PropsClasses = useStyles({} as StyleProps);
   const [switchIsOn, setSwitchIsOn] = useState<boolean>(false);
   const [isGetImage, setIsGetImage] = useState<boolean>(false);
@@ -82,6 +92,13 @@ const AddingImage: React.FC<Props> = (props) => {
     [classes.previewContent]: true,
     [classes.activePreview]: switchIsOn || isAdding,
   });
+
+  useEffect(() => {
+    if (eventChange.isAction) {
+      setSwitchIsOn(eventData.actionName === name);
+      dispatch(setEventChange({ isAction: false, data: undefined }));
+    }
+  }, [eventChange.isAction]);
 
   useEffect(() => {
     if (isError) dispatch(resetAddingRequest());
