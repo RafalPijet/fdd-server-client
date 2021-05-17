@@ -40,3 +40,9 @@ export interface UserDataDTO {
         number: string
     }
 }
+
+export enum SearchUserType {
+    child = 'child',
+    parent = 'parent',
+    admin = 'admin'
+}

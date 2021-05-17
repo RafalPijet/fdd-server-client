@@ -3,7 +3,17 @@ import classNames from 'classnames';
 import { useSelector, useDispatch } from 'react-redux';
 import { VariantType, useSnackbar } from 'notistack';
 import { useStyles, StyleProps } from './AdminPageStyle';
-import { getPending, getError } from '../../../redux/actions/requestActions';
+import {
+  getPending,
+  getError,
+  resetRequest,
+  getUpdating,
+  getUpdatingError,
+  resetUpdatingRequest,
+  getAdding,
+  getAddingError,
+  resetAddingRequest,
+} from '../../../redux/actions/requestActions';
 import Header from '../../common/Header/Header';
 import HeaderLinks from '../../features/HeaderLinks/HeaderLinksAdminPage';
 import Jumbotron from '../../common/Jumbotron/Jumbotron';
@@ -12,9 +22,9 @@ import GridItem from '../../common/Grid/GridItem';
 import Footer from '../../common/Footer/Footer';
 import AdminMessages from '../../features/AdminMessages/AdminMessages';
 import RaportsZone from '../../features/RaportsZone/RaportsZone';
+import SearcherOfUsers from '../../features/SearcherOfUsers/SearcherOfUsers';
 import ModalAreYouSure from '../../common/ModalAreYouSure/ModalAreYouSure';
 import { cleanCurrentUser } from '../../../redux/actions/userActions';
-import { resetRequest } from '../../../redux/actions/requestActions';
 import {
   getToast,
   setUserToast,
@@ -29,9 +39,13 @@ import image from '../../../images/jumbotronAdmin.jpg';
 const AdminPage: React.FC = () => {
   const classes = useStyles({} as StyleProps);
   const isPending = useSelector(getPending);
+  const isUpdating = useSelector(getUpdating);
+  const isAdding = useSelector(getAdding);
   const toast = useSelector(getToast);
   const modalAYS = useSelector(getModalAreYouSure);
   const error = useSelector(getError);
+  const updatingError = useSelector(getUpdatingError);
+  const addingError = useSelector(getAddingError);
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -42,7 +56,13 @@ const AdminPage: React.FC = () => {
     if (error.isError) {
       handleToast(error.message, 'error');
     }
-  }, [toast.isOpen, error.isError]);
+    if (updatingError.isError) {
+      handleToast(updatingError.message, 'error');
+    }
+    if (addingError.isError) {
+      handleToast(addingError.message, 'error');
+    }
+  }, [toast.isOpen, error.isError, updatingError.isError, addingError.isError]);
 
   useEffect(() => {
     return () => {
@@ -50,6 +70,8 @@ const AdminPage: React.FC = () => {
       localStorage.removeItem('expiresInFDD');
       dispatch(cleanCurrentUser());
       dispatch(resetRequest());
+      dispatch(resetUpdatingRequest());
+      dispatch(resetAddingRequest());
       dispatch(loadUserMessages([], 0));
       dispatch(
         setUserToast({
@@ -98,11 +120,13 @@ const AdminPage: React.FC = () => {
   return (
     <div>
       <Header
-        isSpiner={isPending}
+        isSpiner={isPending || isUpdating || isAdding}
         color="transparent"
         brand="Fundacja Dorośli Dzieciom"
         fixed
-        rightLinks={<HeaderLinks isSpiner={isPending} />}
+        rightLinks={
+          <HeaderLinks isSpiner={isPending || isUpdating || isAdding} />
+        }
         changeColorOnScroll={{
           height: 400,
           color: 'white',
@@ -116,6 +140,7 @@ const AdminPage: React.FC = () => {
             </GridItem>
             <GridItem xs={12} sm={12} md={6}>
               <RaportsZone />
+              <SearcherOfUsers />
             </GridItem>
           </GridContainer>
         </div>

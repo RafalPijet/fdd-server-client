@@ -7,6 +7,7 @@ import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { setUserToast } from '../../../redux/actions/generalActions';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { CssTextField } from '../../../types/global';
 import {
   StyleProps,
   PropsClasses,
@@ -14,7 +15,6 @@ import {
   UserName,
   Props,
   FddSwitch,
-  CssTextField,
 } from './UsersSearcherStyle';
 
 const UsersSearcher: React.FC<Props> = (props) => {

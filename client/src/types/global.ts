@@ -1,6 +1,8 @@
 import { VariantType } from 'notistack';
 import { withStyles } from '@material-ui/core/styles';
 import Switch from '@material-ui/core/Switch';
+import TextField from '@material-ui/core/TextField';
+
 import { primaryColor, grayColor } from '../styles/globalStyles';
 
 export const different = 567993596000;
@@ -69,6 +71,12 @@ export enum UpdateUserTypeData {
     data
 }
 
+export enum SearchUserType {
+    child = 'child',
+    parent = 'parent',
+    admin = 'admin'
+}
+
 export enum AvailableDestinations {
     mainParent = 'main-parent',
     addingImage = 'adding-image',
@@ -88,7 +96,7 @@ export interface InvoiceState {
 export interface ChildState {
     _id: string;
     active: boolean;
-    parent: string;
+    parent: string | UserState;
     firstName: string;
     lastName: string;
     birthDate: string;
@@ -213,3 +221,30 @@ export const FddSwitch = withStyles({
     checked: {},
     track: {},
 })(Switch);
+
+export const CssTextField = withStyles({
+    root: {
+        '& .MuiAutocomplete-inputRoot': {
+            color: '#fff',
+        },
+        '& label': {
+            color: '#fff',
+            fontSize: "0.8rem",
+        },
+        '& .MuiSvgIcon-root': {
+            color: '#fff',
+        },
+        '& label.Mui-focused': {
+            color: '#fff',
+        },
+        '& .MuiInput-underline:after': {
+            borderBottomColor: '#fff',
+        },
+        '& .MuiInput-underline:before': {
+            borderBottomColor: '#fff',
+        },
+        '& .MuiInput-underline:hover:before': {
+            borderBottomColor: '#fff',
+        },
+    },
+})(TextField);

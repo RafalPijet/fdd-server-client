@@ -59,7 +59,8 @@ import {
     UserState,
     ChildState,
     IChildData,
-    UpdateUserTypeData
+    UpdateUserTypeData,
+    SearchUserType
 } from '../types/global';
 import { API_URL, URL } from '../config';
 
@@ -184,6 +185,35 @@ export const updateUser = (payload: any, dataType: UpdateUserTypeData, userId: s
             dispatch(errorUpdatingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }
     }
+}
+
+export const getPersonByIdRequest = (type: SearchUserType, id: string): ThunkAction<
+    Promise<void>,
+    any,
+    RootState,
+    StartAddingRequestAction | StopAddingRequestAction | ErrorAddingRequestAction
+> => async (dispatch, getState) => {
+    dispatch(startAddingRequest());
+
+    try {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        let res: AxiosResponse = await axios.get(`${API_URL}/admin/people/${type}/${id}`, {
+            headers: {
+                'Authorization': localStorage.getItem('tokenFDD')
+            },
+        });
+        console.log(res.data);
+        dispatch(stopAddingRequest());
+    } catch (err) {
+        if (err.response !== undefined) {
+            err.response.data.message ?
+                dispatch(errorAddingRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorAddingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        } else {
+            dispatch(errorAddingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        }
+    }
+
 }
 
 export const addMessage = (payload: string, _id?: string): ThunkAction<

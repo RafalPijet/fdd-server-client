@@ -12,9 +12,10 @@ import {
     IMessage,
     IOutsideMessage,
     UserModel,
-    UserStatus
+    UserStatus,
+    ChildModel
 } from '../models';
-import { TargetOptions, IAdminMessage } from '../types';
+import { TargetOptions, IAdminMessage, SearchUserType } from '../types';
 import { removeDuplicates } from '../utils/functions';
 import nodemailerSendgrid from 'nodemailer-sendgrid';
 import nodemailer from 'nodemailer';
@@ -196,6 +197,69 @@ class AdminController {
                 `Brak dostępnych danych. - ${err}`))
         }
     }
+    @get('/people/names/:type')
+    async getPeopleNames(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const { type } = req.params;
+        let names: any[] = [];
+
+        try {
+            if (type === SearchUserType.child) {
+                const children = await ChildModel.find();
+                names = children.map((child) => {
+                    return {
+                        _id: child._id,
+                        name: `${child.firstName} ${child.lastName}`
+                    }
+                })
+
+            } else if (type === SearchUserType.parent) {
+                const parents = await UserModel.find({ status: UserStatus.parent });
+                names = parents.map((parent => {
+                    return {
+                        _id: parent._id,
+                        name: `${parent.firstName} ${parent.lastName}`
+                    }
+                }))
+            } else if (type === SearchUserType.admin) {
+                const admins = await UserModel.find({ status: UserStatus.admin });
+                names = admins.map((admin) => {
+                    return {
+                        _id: admin._id,
+                        name: `${admin.firstName} ${admin.lastName}`
+                    }
+                })
+            } else {
+                next(new HttpException(404, 'Błędny typ użytkownika'));
+            }
+            res.status(200).json({ names });
+        } catch (err) {
+            next(new HttpException(404,
+                `Brak dostępnych danych. - ${err}`))
+        }
+    }
+
+    @get('/people/:type/:id')
+    async getPersonaByTypeAndId(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const { type, id } = req.params
+        let person: any;
+
+        try {
+            if (type === SearchUserType.child) {
+                person = await ChildModel.findById(id).populate('parent');
+                person.parent.password = undefined;
+            } else if (type === SearchUserType.parent || type === SearchUserType.admin) {
+                person = await UserModel.findById(id).populate('children');
+                person.password = undefined;
+            } else {
+                next(new HttpException(404, 'Błędny typ użytkownika'));
+            }
+            res.status(200).json({ person });
+        } catch (err) {
+            next(new HttpException(404,
+                `Znalezienie osoby nie powiodło się. - ${err}`))
+        }
+    }
+
     @del('/messages')
     async removeMessage(req: Request, res: Response, next: NextFunction): Promise<void> {
         const { messageId, isUser } = req.body;
