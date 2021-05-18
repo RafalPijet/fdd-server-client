@@ -34,6 +34,7 @@ import {
 import { removeMessage } from '../../../redux/thunks';
 import { ModalAYSModes } from '../../../types/global';
 import { loadUserMessages } from '../../../redux/actions/messageActions';
+import AdminContent from '../../features/AdminContent/AdminContent';
 import image from '../../../images/jumbotronAdmin.jpg';
 
 const AdminPage: React.FC = () => {
@@ -146,7 +147,9 @@ const AdminPage: React.FC = () => {
         </div>
       </Jumbotron>
       <div className={classNames(classes.main, classes.mainRaised)}>
-        <div style={{ height: '800px' }}>Preparing...</div>
+        <div style={{ height: '2500px' }}>
+          <AdminContent />
+        </div>
       </div>
       <Footer />
       <ModalAreYouSure

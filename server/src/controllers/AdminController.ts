@@ -239,13 +239,13 @@ class AdminController {
     }
 
     @get('/people/:type/:id')
-    async getPersonaByTypeAndId(req: Request, res: Response, next: NextFunction): Promise<void> {
+    async getPersonByTypeAndId(req: Request, res: Response, next: NextFunction): Promise<void> {
         const { type, id } = req.params
         let person: any;
 
         try {
             if (type === SearchUserType.child) {
-                person = await ChildModel.findById(id).populate('parent');
+                person = await ChildModel.findById(id).populate('parent').populate('invoices');
                 person.parent.password = undefined;
             } else if (type === SearchUserType.parent || type === SearchUserType.admin) {
                 person = await UserModel.findById(id).populate('children');

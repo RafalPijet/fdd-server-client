@@ -9,6 +9,8 @@ export const SET_IS_REMOVED = 'general/set_is_removed';
 export const SET_IS_OPEN = 'general/set_is_open';
 export const SET_EVENT_CHANGE = 'general/set_event_change';
 export const SET_SELECTED_CHILD = 'general/set_selected_child';
+export const SET_SELECTED_PERSON = 'general/set_selected_person';
+export const SET_SELECTED_USER_TYPE = 'general/set_selected_user_type';
 
 //ACTIONS TYPES
 export interface SetToastAction extends Action<typeof SET_TOAST> {
@@ -28,6 +30,12 @@ export interface SetEventChange extends Action<typeof SET_EVENT_CHANGE> {
 }
 export interface SetSelectedChild extends Action<typeof SET_SELECTED_CHILD> {
     payload: GeneralState["selectedChild"]
+}
+export interface SetSelectedPersonAction extends Action<typeof SET_SELECTED_PERSON> {
+    payload: GeneralState["selectedPerson"]
+}
+export interface SetSelectedUserTypeAction extends Action<typeof SET_SELECTED_USER_TYPE> {
+    payload: GeneralState["selectedUserType"]
 }
 
 //CREATORS OF ACTIONS
@@ -55,6 +63,14 @@ export const setSelectedChild = (childId: GeneralState["selectedChild"]): SetSel
     type: SET_SELECTED_CHILD,
     payload: childId
 })
+export const setSelectedPerson = (payload: GeneralState["selectedPerson"]): SetSelectedPersonAction => ({
+    type: SET_SELECTED_PERSON,
+    payload
+})
+export const setSelectedUserType = (userType: GeneralState["selectedUserType"]): SetSelectedUserTypeAction => ({
+    type: SET_SELECTED_USER_TYPE,
+    payload: userType
+})
 
 //SELECTORS
 export const getGeneral = (rootState: RootState) => rootState.general;
@@ -64,3 +80,5 @@ export const getIsRemoved = (rootState: RootState) => getGeneral(rootState).isRe
 export const getIsOpen = (rootState: RootState) => getGeneral(rootState).isOpen;
 export const getEventChange = (rootState: RootState) => getGeneral(rootState).eventChange;
 export const getSelectedChild = (rootState: RootState) => getGeneral(rootState).selectedChild;
+export const getSelectedPerson = (rootState: RootState) => getGeneral(rootState).selectedPerson;
+export const getSelectedUserType = (rootState: RootState) => getGeneral(rootState).selectedUserType;

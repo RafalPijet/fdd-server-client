@@ -2,6 +2,7 @@ import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import { makeStyles } from '@material-ui/core/styles';
 import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
 import { logoColor, dangerColor, warningColor } from '../../../styles/globalStyles';
+import { ChildState } from '../../../types/global';
 
 const childrenZoneStyle = (theme: Theme) => ({
     root: {
@@ -98,6 +99,10 @@ export interface StyleProps {
     active: BaseCSSProperties;
     inactive: BaseCSSProperties;
     none: BaseCSSProperties;
+}
+
+export interface Props {
+    childData?: ChildState;
 }
 
 export type PropsClasses = Record<keyof StyleProps, string>;

@@ -10,9 +10,13 @@ import {
     SET_EVENT_CHANGE,
     SetEventChange,
     SET_SELECTED_CHILD,
-    SetSelectedChild
+    SetSelectedChild,
+    SET_SELECTED_PERSON,
+    SetSelectedPersonAction,
+    SET_SELECTED_USER_TYPE,
+    SetSelectedUserTypeAction
 } from '../actions/generalActions';
-import { GeneralState, ModalAYSModes } from '../../types/global';
+import { GeneralState, ModalAYSModes, SearchUserType } from '../../types/global';
 
 const initialState: GeneralState = {
     toast: {
@@ -33,12 +37,15 @@ const initialState: GeneralState = {
         isAction: false,
         data: undefined
     },
-    selectedChild: null
+    selectedChild: null,
+    selectedPerson: null,
+    selectedUserType: SearchUserType.child
 }
 
 const generalReducer = (
     state: GeneralState = initialState,
-    action: SetToastAction | SetModalAreYouSure | SetIsRemoved | SetIsOpen | SetEventChange | SetSelectedChild
+    action: SetToastAction | SetModalAreYouSure | SetIsRemoved | SetIsOpen |
+        SetEventChange | SetSelectedChild | SetSelectedPersonAction | SetSelectedUserTypeAction
 ) => {
     switch (action.type) {
         case SET_TOAST:
@@ -53,6 +60,10 @@ const generalReducer = (
             return { ...state, eventChange: action.payload };
         case SET_SELECTED_CHILD:
             return { ...state, selectedChild: action.payload };
+        case SET_SELECTED_PERSON:
+            return { ...state, selectedPerson: action.payload };
+        case SET_SELECTED_USER_TYPE:
+            return { ...state, selectedUserType: action.payload };
         default:
             return { ...state }
     }

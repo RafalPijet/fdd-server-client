@@ -20,7 +20,7 @@ import {
     ErrorAddingRequestAction,
     startAddingRequest,
     stopAddingRequest,
-    errorAddingRequest
+    errorAddingRequest,
 } from './actions/requestActions';
 import {
     addCurrentUser,
@@ -34,7 +34,7 @@ import {
     SetChildImagesListAction,
     SetChildAvatarAction,
     UpdateChildDataAction,
-    UpdateUserDataAction
+    UpdateUserDataAction,
 } from './actions/userActions';
 import {
     loadUserMessages,
@@ -48,7 +48,9 @@ import {
     setIsRemoved,
     SetIsRemoved,
     setSelectedChild,
-    SetSelectedChild
+    SetSelectedChild,
+    setSelectedPerson,
+    SetSelectedPersonAction
 } from './actions/generalActions';
 import { State as ImagesLists } from '../components/common/RemovingImage/RemovingImageStyle';
 import {
@@ -191,7 +193,8 @@ export const getPersonByIdRequest = (type: SearchUserType, id: string): ThunkAct
     Promise<void>,
     any,
     RootState,
-    StartAddingRequestAction | StopAddingRequestAction | ErrorAddingRequestAction
+    StartAddingRequestAction | StopAddingRequestAction | ErrorAddingRequestAction |
+    SetSelectedPersonAction | SetSelectedChild
 > => async (dispatch, getState) => {
     dispatch(startAddingRequest());
 
@@ -202,7 +205,31 @@ export const getPersonByIdRequest = (type: SearchUserType, id: string): ThunkAct
                 'Authorization': localStorage.getItem('tokenFDD')
             },
         });
-        console.log(res.data);
+        if (type === SearchUserType.child) {
+            let person: ChildState = res.data.person;
+            person.avatar = `${URL}${person.avatar}`;
+            person.images = person.images.map(item => {
+                return `${URL}${item}`
+            })
+            person.invoices.forEach(invoice => {
+                invoice.content = invoice.content.map(item => {
+                    return `${URL}${item}`
+                })
+            })
+            dispatch(setSelectedPerson(person));
+            dispatch(setSelectedChild(person._id));
+        } else {
+            let person: UserState = res.data.person;
+            if (type === SearchUserType.parent) {
+                person.children.forEach(child => {
+                    child.avatar = `${URL}${child.avatar}`;
+                    child.images = child.images.map(image => {
+                        return `${URL}${image}`
+                    })
+                })
+            }
+            dispatch(setSelectedPerson(person));
+        }
         dispatch(stopAddingRequest());
     } catch (err) {
         if (err.response !== undefined) {

@@ -6,14 +6,24 @@ import Card from '../../common/Card/Card';
 import CardHeader from '../../common/CardHeader/CardHeader';
 import CustomCarousel from '../../common/CustomCarousel/CustomCarousel';
 import CardBody from '../../common/CardBody/CardBody';
-import { getSelectedChild } from '../../../redux/actions/generalActions';
+import {
+  getSelectedChild,
+  getSelectedPerson,
+} from '../../../redux/actions/generalActions';
 import { getUserChildren } from '../../../redux/actions/userActions';
-import { useStyles, StyleProps, PropsClasses } from './ChildrenZoneStyle';
+import {
+  useStyles,
+  StyleProps,
+  PropsClasses,
+  Props,
+} from './ChildrenZoneStyle';
 import { ChildState } from '../../../types/global';
 import { calculateAge } from '../../../types/functions';
 import logo from '../../../images/butterfly.png';
 
-const ChildrenZone: React.FC = () => {
+const ChildrenZone: React.FC<Props> = (props) => {
+  const { childData } = props;
+  const selectedPerson = useSelector(getSelectedPerson);
   const classes: PropsClasses = useStyles({} as StyleProps);
   const [isCardAnimation, setIsCardAnimation] = useState<boolean>(true);
   const [selectedChild, setSelectedChild] = useState<ChildState | null>(null);
@@ -35,12 +45,15 @@ const ChildrenZone: React.FC = () => {
 
   useEffect(() => {
     prepareSelectedChild();
-  }, [childId]);
+  }, [childId, selectedPerson]);
 
   const prepareSelectedChild = () => {
     if (childId !== null) {
       const child = children.find((item: ChildState) => item._id === childId);
       child !== undefined ? setSelectedChild(child) : setSelectedChild(null);
+    }
+    if (childData !== undefined) {
+      setSelectedChild(childData);
     }
   };
 

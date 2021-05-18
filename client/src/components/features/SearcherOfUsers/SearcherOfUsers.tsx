@@ -14,7 +14,13 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { getPersonByIdRequest } from '../../../redux/thunks';
 import { SearchUserType, CssTextField } from '../../../types/global';
-import { setUserToast } from '../../../redux/actions/generalActions';
+import {
+  setUserToast,
+  setSelectedPerson,
+  setSelectedUserType,
+  getSelectedUserType,
+  setSelectedChild,
+} from '../../../redux/actions/generalActions';
 import { getAdding } from '../../../redux/actions/requestActions';
 import { API_URL } from '../../../config';
 import {
@@ -29,6 +35,7 @@ const SearcherOfUsers: React.FC = () => {
   const classes: PropsClasses = useStyles({} as StyleProps);
   const dispatch = useDispatch();
   const isAdding = useSelector(getAdding);
+  const selectedUserType = useSelector(getSelectedUserType);
   const [open, setOpen] = useState<boolean>(false);
   const [
     selectedPersonName,
@@ -50,8 +57,17 @@ const SearcherOfUsers: React.FC = () => {
   }, 900);
 
   useEffect(() => {
+    if (userType !== selectedUserType) {
+      dispatch(setSelectedUserType(userType));
+    }
+  }, [userType]);
+
+  useEffect(() => {
     if (selectedPersonName !== null) {
       dispatch(getPersonByIdRequest(userType, selectedPersonName._id));
+    } else {
+      dispatch(setSelectedPerson(null));
+      dispatch(setSelectedChild(null));
     }
   }, [selectedPersonName]);
 

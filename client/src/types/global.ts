@@ -200,6 +200,8 @@ export interface GeneralState {
     isOpen: boolean;
     eventChange: EventChange;
     selectedChild: string | null;
+    selectedPerson: UserState | ChildState | null;
+    selectedUserType: SearchUserType;
 }
 
 export enum TargetOptions {
