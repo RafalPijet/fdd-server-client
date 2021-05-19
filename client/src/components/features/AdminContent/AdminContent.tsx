@@ -4,6 +4,7 @@ import GridContainer from '../../common/Grid/GridContainer';
 import GridItem from '../../common/Grid/GridItem';
 import Paper from '@material-ui/core/Paper';
 import ChildrenZone from '../../features/ChildrenZone/ChildrenZone';
+import ShowUserData from '../../features/ShowUserData/ShowUserData';
 import RemovingImage from '../../common/RemovingImage/RemovingImage';
 import AddingImage from '../../common/AddingImage/AddingImage';
 import ChildPersonalData from '../../common/ChildPersonalData/ChildPersonalData';
@@ -69,20 +70,35 @@ const AdminContent: React.FC = () => {
                 name={AvailableDestinations.addingImage}
               />
             </GridItem>
+            <GridItem
+              xs={12}
+              sm={12}
+              lg={10}
+              id={AvailableDestinations.childData}
+            >
+              <ChildPersonalData
+                childId={childId}
+                selectedChild={
+                  selectedChild !== null ? selectedChild : undefined
+                }
+                name={AvailableDestinations.childData}
+                isOnlyEdit={true}
+                infoText="Włącz/Wyłącz sekcję edycji danych podopiecznego."
+                helpText="W tej sekcji mozesz edytować dane podopiecznego aktualnie
+          wybranego. Wprowadź dane w odpowiednie pola formularza, a następnie kliknij przycisk
+           AKTUALIZUJ DANE."
+              />
+            </GridItem>
           </>
         )}
-      </GridContainer>
-      <GridContainer
-        justify="center"
-        alignItems="center"
-        style={{ width: '75%' }}
-        id={AvailableDestinations.childData}
-      >
-        <ChildPersonalData
-          childId={childId}
-          selectedChild={selectedChild !== null ? selectedChild : undefined}
-          name={AvailableDestinations.childData}
-        />
+        {(userType === SearchUserType.parent ||
+          userType === SearchUserType.admin) && (
+          <>
+            <GridItem xs={12} sm={12} lg={12}>
+              <ShowUserData user={selectedUser} />
+            </GridItem>
+          </>
+        )}
       </GridContainer>
     </div>
   );

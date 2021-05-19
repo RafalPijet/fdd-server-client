@@ -50,7 +50,13 @@ import {
     setSelectedChild,
     SetSelectedChild,
     setSelectedPerson,
-    SetSelectedPersonAction
+    SetSelectedPersonAction,
+    UpdateSelectedPersonChildDataAction,
+    updateSelectedPersonChildData,
+    UpdateSelectedPersonChildImagesListAction,
+    updateSelectedPersonalChildImagesList,
+    UpdateSelectedPersonChildAvatarAction,
+    updateSelectedPersonalChildAvatar
 } from './actions/generalActions';
 import { State as ImagesLists } from '../components/common/RemovingImage/RemovingImageStyle';
 import {
@@ -499,7 +505,8 @@ export const updateChildDataRequest = (payload: IChildData, childId: string): Th
     Promise<void>,
     any,
     RootState,
-    StartRequestAction | StopRequestAction | ErrorRequestAction | SetToastAction | UpdateChildDataAction
+    StartRequestAction | StopRequestAction | ErrorRequestAction | SetToastAction |
+    UpdateChildDataAction | UpdateSelectedPersonChildDataAction
 > => async (dispatch, getState) => {
     dispatch(startRequest());
 
@@ -510,7 +517,12 @@ export const updateChildDataRequest = (payload: IChildData, childId: string): Th
                 'Authorization': localStorage.getItem('tokenFDD')
             },
         })
-        dispatch(updateChildData(childId, res.data.child));
+
+        if (getState().user.status === UserStatus.parent) {
+            dispatch(updateChildData(childId, res.data.child));
+        } else {
+            dispatch(updateSelectedPersonChildData(res.data.child));
+        }
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
         dispatch(stopRequest());
     } catch (err) {
@@ -596,7 +608,7 @@ export const addAvatarToChild = (avatar: File, childId: string): ThunkAction<
     any,
     RootState,
     StartAddingRequestAction | StopAddingRequestAction | ErrorAddingRequestAction |
-    SetToastAction | SetChildAvatarAction
+    SetToastAction | SetChildAvatarAction | UpdateSelectedPersonChildAvatarAction
 > => async (dispatch, getState) => {
     dispatch(startAddingRequest());
 
@@ -610,7 +622,11 @@ export const addAvatarToChild = (avatar: File, childId: string): ThunkAction<
             },
         })
         const result = `${URL}${res.data.avatar}`;
-        dispatch(setChildAvatar(childId, result));
+        if (getState().user.status === UserStatus.parent) {
+            dispatch(setChildAvatar(childId, result));
+        } else {
+            dispatch(updateSelectedPersonalChildAvatar(result));
+        }
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
         dispatch(stopAddingRequest());
     } catch (err) {
@@ -629,7 +645,7 @@ export const addImageToChild = (image: File, childId: string): ThunkAction<
     any,
     RootState,
     StartAddingRequestAction | StopAddingRequestAction | ErrorAddingRequestAction |
-    SetToastAction | SetChildImagesListAction
+    SetToastAction | SetChildImagesListAction | UpdateSelectedPersonChildImagesListAction
 > => async (dispatch, getState) => {
     dispatch(startAddingRequest());
 
@@ -645,7 +661,11 @@ export const addImageToChild = (image: File, childId: string): ThunkAction<
         const images = res.data.images.map((image: string) => {
             return `${URL}${image}`
         })
-        dispatch(setChildImagesList(childId, images));
+        if (getState().user.status === UserStatus.parent) {
+            dispatch(setChildImagesList(childId, images));
+        } else {
+            dispatch(updateSelectedPersonalChildImagesList(images));
+        }
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
         dispatch(stopAddingRequest());
     } catch (err) {
@@ -664,10 +684,9 @@ export const updateImagesList = (payload: ImagesLists): ThunkAction<
     any,
     RootState,
     StartUpdatingRequestAction | StopUpdatingRequestAction | ErrorUpdatingRequestAction |
-    SetToastAction | SetChildImagesListAction
+    SetToastAction | SetChildImagesListAction | UpdateSelectedPersonChildImagesListAction
 > => async (dispatch, getState) => {
     try {
-        console.log('thunk - updateImagesList')
         dispatch(startUpdatingRequest());
         await new Promise(resolve => setTimeout(resolve, 2000));
         const contentList = payload.contentList.map((item: string) => item.replace(URL, ''));
@@ -682,7 +701,11 @@ export const updateImagesList = (payload: ImagesLists): ThunkAction<
                 'Authorization': localStorage.getItem('tokenFDD')
             },
         })
-        dispatch(setChildImagesList(payload.id!, payload.contentList));
+        if (getState().user.status === UserStatus.parent) {
+            dispatch(setChildImagesList(payload.id!, payload.contentList));
+        } else {
+            dispatch(updateSelectedPersonalChildImagesList(payload.contentList));
+        }
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
         dispatch(stopUpdatingRequest());
     } catch (err) {

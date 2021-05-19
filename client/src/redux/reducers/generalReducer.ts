@@ -14,7 +14,13 @@ import {
     SET_SELECTED_PERSON,
     SetSelectedPersonAction,
     SET_SELECTED_USER_TYPE,
-    SetSelectedUserTypeAction
+    SetSelectedUserTypeAction,
+    UPDATE_SELECTED_PERSON_CHILD_DATA,
+    UpdateSelectedPersonChildDataAction,
+    UPDATE_SELECTED_PERSON_CHILD_IMAGES_LIST,
+    UpdateSelectedPersonChildImagesListAction,
+    UPDATE_SELECTED_PERSON_CHILD_AVATAR,
+    UpdateSelectedPersonChildAvatarAction
 } from '../actions/generalActions';
 import { GeneralState, ModalAYSModes, SearchUserType } from '../../types/global';
 
@@ -45,7 +51,9 @@ const initialState: GeneralState = {
 const generalReducer = (
     state: GeneralState = initialState,
     action: SetToastAction | SetModalAreYouSure | SetIsRemoved | SetIsOpen |
-        SetEventChange | SetSelectedChild | SetSelectedPersonAction | SetSelectedUserTypeAction
+        SetEventChange | SetSelectedChild | SetSelectedPersonAction | SetSelectedUserTypeAction |
+        UpdateSelectedPersonChildDataAction | UpdateSelectedPersonChildImagesListAction |
+        UpdateSelectedPersonChildAvatarAction
 ) => {
     switch (action.type) {
         case SET_TOAST:
@@ -64,6 +72,33 @@ const generalReducer = (
             return { ...state, selectedPerson: action.payload };
         case SET_SELECTED_USER_TYPE:
             return { ...state, selectedUserType: action.payload };
+        case UPDATE_SELECTED_PERSON_CHILD_DATA:
+            return {
+                ...state,
+                selectedPerson: {
+                    ...state.selectedPerson,
+                    firstName: action.payload.firstName,
+                    lastName: action.payload.lastName,
+                    birthDate: action.payload.birthDate,
+                    info: action.payload.info
+                }
+            }
+        case UPDATE_SELECTED_PERSON_CHILD_IMAGES_LIST:
+            return {
+                ...state,
+                selectedPerson: {
+                    ...state.selectedPerson,
+                    images: action.payload
+                }
+            }
+        case UPDATE_SELECTED_PERSON_CHILD_AVATAR:
+            return {
+                ...state,
+                selectedPerson: {
+                    ...state.selectedPerson,
+                    avatar: action.payload
+                }
+            }
         default:
             return { ...state }
     }

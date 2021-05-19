@@ -30,6 +30,9 @@ export interface Props {
     childId: string | null;
     selectedChild: ChildState | undefined;
     name: AvailableDestinations;
+    isOnlyEdit?: boolean;
+    infoText: string;
+    helpText: string;
 }
 
 export interface StyleProps {

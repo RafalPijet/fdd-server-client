@@ -1,6 +1,6 @@
 import { Action } from 'redux';
 import { RootState } from '../store';
-import { GeneralState } from '../../types/global';
+import { GeneralState, IChildData } from '../../types/global';
 
 //ACTIONS NAMES
 export const SET_TOAST = 'general/set_toast';
@@ -11,6 +11,9 @@ export const SET_EVENT_CHANGE = 'general/set_event_change';
 export const SET_SELECTED_CHILD = 'general/set_selected_child';
 export const SET_SELECTED_PERSON = 'general/set_selected_person';
 export const SET_SELECTED_USER_TYPE = 'general/set_selected_user_type';
+export const UPDATE_SELECTED_PERSON_CHILD_DATA = 'general/update_selected_person_child_data';
+export const UPDATE_SELECTED_PERSON_CHILD_IMAGES_LIST = 'general/update_selected_person_child_images_list';
+export const UPDATE_SELECTED_PERSON_CHILD_AVATAR = 'general/update_selected_person_child_avatar';
 
 //ACTIONS TYPES
 export interface SetToastAction extends Action<typeof SET_TOAST> {
@@ -36,6 +39,15 @@ export interface SetSelectedPersonAction extends Action<typeof SET_SELECTED_PERS
 }
 export interface SetSelectedUserTypeAction extends Action<typeof SET_SELECTED_USER_TYPE> {
     payload: GeneralState["selectedUserType"]
+}
+export interface UpdateSelectedPersonChildDataAction extends Action<typeof UPDATE_SELECTED_PERSON_CHILD_DATA> {
+    payload: IChildData
+}
+export interface UpdateSelectedPersonChildImagesListAction extends Action<typeof UPDATE_SELECTED_PERSON_CHILD_IMAGES_LIST> {
+    payload: string[]
+}
+export interface UpdateSelectedPersonChildAvatarAction extends Action<typeof UPDATE_SELECTED_PERSON_CHILD_AVATAR> {
+    payload: string
 }
 
 //CREATORS OF ACTIONS
@@ -70,6 +82,18 @@ export const setSelectedPerson = (payload: GeneralState["selectedPerson"]): SetS
 export const setSelectedUserType = (userType: GeneralState["selectedUserType"]): SetSelectedUserTypeAction => ({
     type: SET_SELECTED_USER_TYPE,
     payload: userType
+})
+export const updateSelectedPersonChildData = (childData: IChildData): UpdateSelectedPersonChildDataAction => ({
+    type: UPDATE_SELECTED_PERSON_CHILD_DATA,
+    payload: childData
+})
+export const updateSelectedPersonalChildImagesList = (images: string[]): UpdateSelectedPersonChildImagesListAction => ({
+    type: UPDATE_SELECTED_PERSON_CHILD_IMAGES_LIST,
+    payload: images
+})
+export const updateSelectedPersonalChildAvatar = (image: string): UpdateSelectedPersonChildAvatarAction => ({
+    type: UPDATE_SELECTED_PERSON_CHILD_AVATAR,
+    payload: image
 })
 
 //SELECTORS

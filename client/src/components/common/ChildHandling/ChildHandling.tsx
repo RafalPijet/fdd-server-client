@@ -81,6 +81,11 @@ const ChildHandling: React.FC = () => {
           childId={childId}
           selectedChild={selectedChild}
           name={AvailableDestinations.childData}
+          infoText="Włącz/Wyłącz sekcję dodawania i edycji danych podopiecznego."
+          helpText="W tej sekcji mozesz dodać nowego podopiecznego lub edytować dane podopiecznego aktualnie
+          wybranego. Wprowadź dane w odpowiednie pola formularza, a następnie kliknij przycisk
+          DODAJ PODOPIECZNEGO w przypadku nowego dziecka lub AKTUALIZUJ DANE w przypadku zmian danych
+          w trybie EDYCJA."
         />
       </GridContainer>
       <GridContainer

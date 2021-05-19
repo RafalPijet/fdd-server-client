@@ -36,7 +36,14 @@ import {
 } from './ChildPersonalDataStyle';
 
 const ChildPersonalData: React.FC<Props> = (props) => {
-  const { childId, selectedChild, name } = props;
+  const {
+    childId,
+    selectedChild,
+    name,
+    isOnlyEdit,
+    infoText,
+    helpText,
+  } = props;
   const classes: PropsClasses = useStyles({} as StyleProps);
   const dispatch = useDispatch();
   const isPending = useSelector(getPending);
@@ -73,6 +80,12 @@ const ChildPersonalData: React.FC<Props> = (props) => {
   });
 
   useEffect(() => {
+    if (isOnlyEdit !== undefined) {
+      setIsEdit(isOnlyEdit);
+    }
+  }, []);
+
+  useEffect(() => {
     if (eventChange.isAction) {
       setSwitchIsOn(eventData.actionName === name);
       dispatch(setEventChange({ isAction: false, data: undefined }));
@@ -88,7 +101,7 @@ const ChildPersonalData: React.FC<Props> = (props) => {
         info: selectedChild.info,
       });
     }
-    if (!isEdit) {
+    if (!isEdit || (isOnlyEdit && selectedChild === undefined)) {
       setChildData({
         firstName: '',
         lastName: '',
@@ -171,11 +184,8 @@ const ChildPersonalData: React.FC<Props> = (props) => {
         isExistChild={false}
         onChange={switchChangeHandling}
         checked={switchIsOn}
-        helpText="W tej sekcji mozesz dodać nowego podopiecznego lub edytować dane podopiecznego aktualnie
-        wybranego. Wprowadź dane w odpowiednie pola formularza, a następnie kliknij przycisk
-        DODAJ PODOPIECZNEGO w przypadku nowego dziecka lub AKTUALIZUJ DANE w przypadku zmian danych
-        w trybie EDYCJA."
-        text="Włącz/Wyłącz sekcję dodawania i edycji danych podopiecznego."
+        helpText={helpText}
+        text={infoText}
       />
       <CardBody>
         <GridContainer
@@ -185,14 +195,21 @@ const ChildPersonalData: React.FC<Props> = (props) => {
         >
           <GridItem xs={12} sm={12} lg={4}>
             <CustomInput
-              isDisabled={!switchIsOn || isPending}
+              isDisabled={
+                !switchIsOn || isPending || (childId === null && isOnlyEdit)
+              }
               labelText="Imię dziecka..."
               id="firstName"
               error={isError.firstName}
               labelProps={
                 switchIsOn || !isPending
                   ? { style: { color: '#fff' } }
-                  : { disabled: !switchIsOn || isPending }
+                  : {
+                      disabled:
+                        !switchIsOn ||
+                        isPending ||
+                        (childId === null && isOnlyEdit),
+                    }
               }
               value={childData.firstName}
               formControlProps={{
@@ -213,14 +230,21 @@ const ChildPersonalData: React.FC<Props> = (props) => {
               }}
             />
             <CustomInput
-              isDisabled={!switchIsOn || isPending}
+              isDisabled={
+                !switchIsOn || isPending || (childId === null && isOnlyEdit)
+              }
               labelText="Nazwisko dziecka"
               id="lastName"
               error={isError.lastName}
               labelProps={
                 switchIsOn || !isPending
                   ? { style: { color: '#fff' } }
-                  : { disabled: !switchIsOn || isPending }
+                  : {
+                      disabled:
+                        !switchIsOn ||
+                        isPending ||
+                        (childId === null && isOnlyEdit),
+                    }
               }
               value={childData.lastName}
               formControlProps={{
@@ -241,14 +265,21 @@ const ChildPersonalData: React.FC<Props> = (props) => {
               }}
             />
             <CustomInput
-              isDisabled={!switchIsOn || isPending}
+              isDisabled={
+                !switchIsOn || isPending || (childId === null && isOnlyEdit)
+              }
               labelText="Data urodzenia..."
               id="birthDate"
               error={isError.birthDate}
               labelProps={
                 switchIsOn || !isPending
                   ? { style: { color: '#fff' } }
-                  : { disabled: !switchIsOn || isPending }
+                  : {
+                      disabled:
+                        !switchIsOn ||
+                        isPending ||
+                        (childId === null && isOnlyEdit),
+                    }
               }
               value={childData.birthDate.toString()}
               formControlProps={{
@@ -272,14 +303,21 @@ const ChildPersonalData: React.FC<Props> = (props) => {
           </GridItem>
           <GridItem xs={12} sm={12} lg={8}>
             <CustomInput
-              isDisabled={!switchIsOn || isPending}
+              isDisabled={
+                !switchIsOn || isPending || (childId === null && isOnlyEdit)
+              }
               labelText="Opis..."
               id="info"
               error={isError.info}
               labelProps={
                 switchIsOn || !isPending
                   ? { style: { color: '#fff' } }
-                  : { disabled: !switchIsOn || isPending }
+                  : {
+                      disabled:
+                        !switchIsOn ||
+                        isPending ||
+                        (childId === null && isOnlyEdit),
+                    }
               }
               value={childData.info}
               formControlProps={{
@@ -338,7 +376,12 @@ const ChildPersonalData: React.FC<Props> = (props) => {
             }}
           >
             <FormControlLabel
-              disabled={!switchIsOn || isPending || childId === null}
+              disabled={
+                !switchIsOn ||
+                isPending ||
+                childId === null ||
+                isOnlyEdit !== undefined
+              }
               classes={{
                 label: classes.switch,
               }}

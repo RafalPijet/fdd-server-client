@@ -200,7 +200,7 @@ export interface GeneralState {
     isOpen: boolean;
     eventChange: EventChange;
     selectedChild: string | null;
-    selectedPerson: UserState | ChildState | null;
+    selectedPerson: any;
     selectedUserType: SearchUserType;
 }
 
