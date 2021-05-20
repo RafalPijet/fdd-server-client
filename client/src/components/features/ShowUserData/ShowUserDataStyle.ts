@@ -6,26 +6,48 @@ import { logoColor } from '../../../styles/globalStyles';
 
 const showUserDataStyle = (theme: Theme) => ({
     root: {
+        margin: "20px auto",
         backgroundColor: "rgba(156, 39, 176, 0.8)",
-        fontFamily: 'Roboto'
+        fontFamily: 'Roboto',
+        padding: '10px'
     },
-    basicData: {
-        width: "100%",
-        padding: '10px',
-        display: 'flex',
-        justifyContent: 'space-around'
+    header: {
+        backgroundColor: "rgba(255, 255, 255, 0.2)",
     },
     title: {
         display: 'inline-flex',
         color: logoColor,
         fontSize: '12px',
+    },
+    alignBaseline: {
+        alignItems: 'baseline',
+    },
+    alignCenter: {
+        alignItems: 'center'
+    },
+    text: {
+        paddingLeft: '5px',
+        color: '#fff'
+    },
+    email: {
+        fontSize: '1.25rem',
+        textDecoration: 'none'
+    },
+    childZone: {
+        width: '74%',
+        margin: '80px auto'
     }
 })
 
 export interface StyleProps {
     root: BaseCSSProperties;
-    basicData: BaseCSSProperties;
+    header: BaseCSSProperties;
     title: BaseCSSProperties;
+    alignBaseline: BaseCSSProperties;
+    alignCenter: BaseCSSProperties;
+    text: BaseCSSProperties;
+    email: BaseCSSProperties;
+    childZone: BaseCSSProperties;
 }
 
 export interface Props {

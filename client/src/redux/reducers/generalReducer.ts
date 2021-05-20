@@ -20,7 +20,11 @@ import {
     UPDATE_SELECTED_PERSON_CHILD_IMAGES_LIST,
     UpdateSelectedPersonChildImagesListAction,
     UPDATE_SELECTED_PERSON_CHILD_AVATAR,
-    UpdateSelectedPersonChildAvatarAction
+    UpdateSelectedPersonChildAvatarAction,
+    ADD_CHILD_TO_SELECTED_PERSON,
+    AddChildToSelectedPersonAction,
+    UPDATE_SELECTED_PERSON_USER_DATA,
+    UpdateSelectedPersonUserDataAction
 } from '../actions/generalActions';
 import { GeneralState, ModalAYSModes, SearchUserType } from '../../types/global';
 
@@ -53,7 +57,8 @@ const generalReducer = (
     action: SetToastAction | SetModalAreYouSure | SetIsRemoved | SetIsOpen |
         SetEventChange | SetSelectedChild | SetSelectedPersonAction | SetSelectedUserTypeAction |
         UpdateSelectedPersonChildDataAction | UpdateSelectedPersonChildImagesListAction |
-        UpdateSelectedPersonChildAvatarAction
+        UpdateSelectedPersonChildAvatarAction | AddChildToSelectedPersonAction |
+        UpdateSelectedPersonUserDataAction
 ) => {
     switch (action.type) {
         case SET_TOAST:
@@ -97,6 +102,26 @@ const generalReducer = (
                 selectedPerson: {
                     ...state.selectedPerson,
                     avatar: action.payload
+                }
+            }
+        case ADD_CHILD_TO_SELECTED_PERSON:
+            return {
+                ...state,
+                selectedPerson: {
+                    ...state.selectedPerson,
+                    children: [...state.selectedPerson.children, action.payload]
+                }
+            }
+        case UPDATE_SELECTED_PERSON_USER_DATA:
+            return {
+                ...state,
+                selectedPerson: {
+                    ...state.selectedPerson,
+                    firstName: action.payload.firstName,
+                    lastName: action.payload.lastName,
+                    email: action.payload.email,
+                    phone: action.payload.phone,
+                    adress: action.payload.adress
                 }
             }
         default:

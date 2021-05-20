@@ -56,7 +56,11 @@ import {
     UpdateSelectedPersonChildImagesListAction,
     updateSelectedPersonalChildImagesList,
     UpdateSelectedPersonChildAvatarAction,
-    updateSelectedPersonalChildAvatar
+    updateSelectedPersonalChildAvatar,
+    AddChildToSelectedPersonAction,
+    addChildToSelectedPerson,
+    UpdateSelectedPersonUserDataAction,
+    updateSelectedPersonUserData
 } from './actions/generalActions';
 import { State as ImagesLists } from '../components/common/RemovingImage/RemovingImageStyle';
 import {
@@ -146,7 +150,8 @@ export const updateUser = (payload: any, dataType: UpdateUserTypeData, userId: s
     Promise<void>,
     any,
     RootState,
-    StartUpdatingRequestAction | StopUpdatingRequestAction | ErrorUpdatingRequestAction | SetToastAction | UpdateUserDataAction
+    StartUpdatingRequestAction | StopUpdatingRequestAction | ErrorUpdatingRequestAction |
+    SetToastAction | UpdateUserDataAction | UpdateSelectedPersonUserDataAction
 > => async (dispatch, getState) => {
     dispatch(startUpdatingRequest());
 
@@ -172,9 +177,17 @@ export const updateUser = (payload: any, dataType: UpdateUserTypeData, userId: s
                 },
             });
         }
+        const userAfterUpdated = res!.data.user;
         if (getState().user.status === UserStatus.parent) {
-            const userAfterUpdated = res!.data.user;
             dispatch(updateUserData({
+                firstName: userAfterUpdated.firstName,
+                lastName: userAfterUpdated.lastName,
+                email: userAfterUpdated.email,
+                phone: userAfterUpdated.phone,
+                adress: userAfterUpdated.adress,
+            }))
+        } else {
+            dispatch(updateSelectedPersonUserData({
                 firstName: userAfterUpdated.firstName,
                 lastName: userAfterUpdated.lastName,
                 email: userAfterUpdated.email,
@@ -225,8 +238,23 @@ export const getPersonByIdRequest = (type: SearchUserType, id: string): ThunkAct
             dispatch(setSelectedPerson(person));
             dispatch(setSelectedChild(person._id));
         } else {
-            let person: UserState = res.data.person;
+            let person: UserState = {
+                _id: res.data.person._id,
+                status: res.data.person.status,
+                firstName: res.data.person.firstName,
+                lastName: res.data.person.lastName,
+                email: res.data.person.email,
+                phone: res.data.person.phone,
+                children: res.data.person.children,
+                adress: {
+                    zipCode: res.data.person.zipCode,
+                    town: res.data.person.town,
+                    street: res.data.person.street,
+                    number: res.data.person.number
+                }
+            };
             if (type === SearchUserType.parent) {
+
                 person.children.forEach(child => {
                     child.avatar = `${URL}${child.avatar}`;
                     child.images = child.images.map(image => {
@@ -540,7 +568,8 @@ export const addChildToParent = (payload: IChildData, userId?: string): ThunkAct
     Promise<void>,
     any,
     RootState,
-    StartRequestAction | StopRequestAction | ErrorRequestAction | SetToastAction | AddChildToUserAction | SetSelectedChild
+    StartRequestAction | StopRequestAction | ErrorRequestAction | SetToastAction |
+    AddChildToUserAction | SetSelectedChild | AddChildToSelectedPersonAction
 > => async (dispatch, getState) => {
     dispatch(startRequest());
 
@@ -555,6 +584,8 @@ export const addChildToParent = (payload: IChildData, userId?: string): ThunkAct
         if (getState().user.status === UserStatus.parent) {
             dispatch(addChildToUser(res.data.child));
             dispatch(setSelectedChild(res.data.child._id));
+        } else {
+            dispatch(addChildToSelectedPerson(res.data.child));
         }
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
         dispatch(stopRequest());

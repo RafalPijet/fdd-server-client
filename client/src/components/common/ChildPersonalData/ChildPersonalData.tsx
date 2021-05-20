@@ -22,7 +22,11 @@ import {
   addChildToParent,
   updateChildDataRequest as updateChildData,
 } from '../../../redux/thunks';
-import { getPending } from '../../../redux/actions/requestActions';
+import {
+  getPending,
+  getSuccess,
+  resetRequest,
+} from '../../../redux/actions/requestActions';
 import {
   getEventChange,
   setEventChange,
@@ -43,10 +47,12 @@ const ChildPersonalData: React.FC<Props> = (props) => {
     isOnlyEdit,
     infoText,
     helpText,
+    userId,
   } = props;
   const classes: PropsClasses = useStyles({} as StyleProps);
   const dispatch = useDispatch();
   const isPending = useSelector(getPending);
+  const isSuccess = useSelector(getSuccess);
   const eventChange = useSelector(getEventChange);
   const eventData = eventChange.data as EventChangeAvailableDestination;
   const currentlyDifferent = Date.now() - different;
@@ -78,6 +84,18 @@ const ChildPersonalData: React.FC<Props> = (props) => {
     [classes.back]: true,
     [classes.active]: switchIsOn || isPending,
   });
+
+  useEffect(() => {
+    if (!isPending && isSuccess && userId !== undefined && !isOnlyEdit) {
+      setChildData({
+        firstName: '',
+        lastName: '',
+        birthDate: availableStartDate,
+        info: '',
+      });
+      dispatch(resetRequest());
+    }
+  }, [isPending, isSuccess]);
 
   useEffect(() => {
     if (isOnlyEdit !== undefined) {
@@ -171,6 +189,9 @@ const ChildPersonalData: React.FC<Props> = (props) => {
       isEdit
         ? dispatch(updateChildData(childData, childId))
         : dispatch(addChildToParent(childData));
+    }
+    if (userId !== undefined && !isOnlyEdit) {
+      dispatch(addChildToParent(childData, userId));
     }
   };
 

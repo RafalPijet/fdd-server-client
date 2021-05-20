@@ -1,6 +1,6 @@
 import { Action } from 'redux';
 import { RootState } from '../store';
-import { GeneralState, IChildData } from '../../types/global';
+import { GeneralState, IChildData, ChildState, UserState } from '../../types/global';
 
 //ACTIONS NAMES
 export const SET_TOAST = 'general/set_toast';
@@ -14,6 +14,8 @@ export const SET_SELECTED_USER_TYPE = 'general/set_selected_user_type';
 export const UPDATE_SELECTED_PERSON_CHILD_DATA = 'general/update_selected_person_child_data';
 export const UPDATE_SELECTED_PERSON_CHILD_IMAGES_LIST = 'general/update_selected_person_child_images_list';
 export const UPDATE_SELECTED_PERSON_CHILD_AVATAR = 'general/update_selected_person_child_avatar';
+export const ADD_CHILD_TO_SELECTED_PERSON = 'general/add_child_to_selected_person';
+export const UPDATE_SELECTED_PERSON_USER_DATA = 'general/update_selected_person_user_data';
 
 //ACTIONS TYPES
 export interface SetToastAction extends Action<typeof SET_TOAST> {
@@ -48,6 +50,12 @@ export interface UpdateSelectedPersonChildImagesListAction extends Action<typeof
 }
 export interface UpdateSelectedPersonChildAvatarAction extends Action<typeof UPDATE_SELECTED_PERSON_CHILD_AVATAR> {
     payload: string
+}
+export interface AddChildToSelectedPersonAction extends Action<typeof ADD_CHILD_TO_SELECTED_PERSON> {
+    payload: ChildState
+}
+export interface UpdateSelectedPersonUserDataAction extends Action<typeof UPDATE_SELECTED_PERSON_USER_DATA> {
+    payload: Omit<UserState, "_id" | "status" | "children">
 }
 
 //CREATORS OF ACTIONS
@@ -94,6 +102,14 @@ export const updateSelectedPersonalChildImagesList = (images: string[]): UpdateS
 export const updateSelectedPersonalChildAvatar = (image: string): UpdateSelectedPersonChildAvatarAction => ({
     type: UPDATE_SELECTED_PERSON_CHILD_AVATAR,
     payload: image
+})
+export const addChildToSelectedPerson = (child: ChildState): AddChildToSelectedPersonAction => ({
+    type: ADD_CHILD_TO_SELECTED_PERSON,
+    payload: child
+})
+export const updateSelectedPersonUserData = (userData: Omit<UserState, "_id" | "status" | "children">): UpdateSelectedPersonUserDataAction => ({
+    type: UPDATE_SELECTED_PERSON_USER_DATA,
+    payload: userData
 })
 
 //SELECTORS

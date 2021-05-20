@@ -31,6 +31,7 @@ export interface Props {
     selectedChild: ChildState | undefined;
     name: AvailableDestinations;
     isOnlyEdit?: boolean;
+    userId?: string;
     infoText: string;
     helpText: string;
 }
