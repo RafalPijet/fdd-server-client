@@ -13,6 +13,9 @@ import {
   getAdding,
   getAddingError,
   resetAddingRequest,
+  getMessages,
+  getMessagesError,
+  resetMessagesRequest,
 } from '../../../redux/actions/requestActions';
 import Header from '../../common/Header/Header';
 import HeaderLinks from '../../features/HeaderLinks/HeaderLinksAdminPage';
@@ -30,9 +33,12 @@ import {
   setUserToast,
   getModalAreYouSure,
   setModalAreYouSure,
+  setSelectedChild,
+  setSelectedPerson,
+  setSelectedUserType,
 } from '../../../redux/actions/generalActions';
 import { removeMessage } from '../../../redux/thunks';
-import { ModalAYSModes } from '../../../types/global';
+import { ModalAYSModes, SearchUserType } from '../../../types/global';
 import { loadUserMessages } from '../../../redux/actions/messageActions';
 import AdminContent from '../../features/AdminContent/AdminContent';
 import image from '../../../images/jumbotronAdmin.jpg';
@@ -42,11 +48,13 @@ const AdminPage: React.FC = () => {
   const isPending = useSelector(getPending);
   const isUpdating = useSelector(getUpdating);
   const isAdding = useSelector(getAdding);
+  const isMessages = useSelector(getMessages);
   const toast = useSelector(getToast);
   const modalAYS = useSelector(getModalAreYouSure);
   const error = useSelector(getError);
   const updatingError = useSelector(getUpdatingError);
   const addingError = useSelector(getAddingError);
+  const messagesError = useSelector(getMessagesError);
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -63,7 +71,16 @@ const AdminPage: React.FC = () => {
     if (addingError.isError) {
       handleToast(addingError.message, 'error');
     }
-  }, [toast.isOpen, error.isError, updatingError.isError, addingError.isError]);
+    if (messagesError.isError) {
+      handleToast(messagesError.message, 'error');
+    }
+  }, [
+    toast.isOpen,
+    error.isError,
+    updatingError.isError,
+    addingError.isError,
+    messagesError.isError,
+  ]);
 
   useEffect(() => {
     return () => {
@@ -73,6 +90,10 @@ const AdminPage: React.FC = () => {
       dispatch(resetRequest());
       dispatch(resetUpdatingRequest());
       dispatch(resetAddingRequest());
+      dispatch(resetMessagesRequest());
+      dispatch(setSelectedChild(null));
+      dispatch(setSelectedPerson(null));
+      dispatch(setSelectedUserType(SearchUserType.child));
       dispatch(loadUserMessages([], 0));
       dispatch(
         setUserToast({
@@ -121,12 +142,14 @@ const AdminPage: React.FC = () => {
   return (
     <div>
       <Header
-        isSpiner={isPending || isUpdating || isAdding}
+        isSpiner={isPending || isUpdating || isAdding || isMessages}
         color="transparent"
         brand="Fundacja Dorośli Dzieciom"
         fixed
         rightLinks={
-          <HeaderLinks isSpiner={isPending || isUpdating || isAdding} />
+          <HeaderLinks
+            isSpiner={isPending || isUpdating || isAdding || isMessages}
+          />
         }
         changeColorOnScroll={{
           height: 400,

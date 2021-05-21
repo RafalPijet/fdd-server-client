@@ -18,10 +18,10 @@ import CustomButton from '../../common/CustomButton/CustomButton';
 import CustomPagination from '../../common/CustomPagination/CustomPagination';
 import { TargetOptions } from '../../../types/global';
 import {
-  getPending,
-  getSuccess,
-  resetRequest,
-  getError,
+  getMessages,
+  getMessagesSuccess,
+  resetMessagesRequest,
+  getMessagesError,
 } from '../../../redux/actions/requestActions';
 import CustomBottomNavigation from '../../common/CustomBottomNavigation/CustomBottomNavigation';
 import MessagesBody from '../../common/MessagesBody/MessagesBody';
@@ -30,9 +30,9 @@ import { naviMessagesData } from '../../../data/entry';
 const ParentMessages: React.FC = () => {
   const classes: PropsClasses = useStyles({} as StyleProps);
   const userName = useSelector(getUserName);
-  const isPending = useSelector(getPending);
-  const isSuccess = useSelector(getSuccess);
-  const isError = useSelector(getError).isError;
+  const isPending = useSelector(getMessages);
+  const isSuccess = useSelector(getMessagesSuccess);
+  const isError = useSelector(getMessagesError).isError;
   const isToast = useSelector(getToast).isOpen;
   const quantity = useSelector(getQuantity);
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
@@ -82,7 +82,7 @@ const ParentMessages: React.FC = () => {
           variant: 'success',
         })
       );
-    if (isError) dispatch(resetRequest());
+    if (isError) dispatch(resetMessagesRequest());
   }, [isToast, isError]);
 
   const handleChangePage = (
@@ -108,7 +108,7 @@ const ParentMessages: React.FC = () => {
       setIsBodyAnimation(false);
       setTimeout(() => {
         setMessageType(newValue);
-        dispatch(resetRequest());
+        dispatch(resetMessagesRequest());
       }, 300);
     }
   };

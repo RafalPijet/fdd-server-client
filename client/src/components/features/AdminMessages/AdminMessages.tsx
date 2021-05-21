@@ -18,10 +18,10 @@ import {
   loadUserMessages,
 } from '../../../redux/actions/messageActions';
 import {
-  getPending,
-  getSuccess,
-  resetRequest,
-  getError,
+  getMessages,
+  getMessagesSuccess,
+  resetMessagesRequest,
+  getMessagesError,
 } from '../../../redux/actions/requestActions';
 import { getToast, setUserToast } from '../../../redux/actions/generalActions';
 import {
@@ -52,9 +52,9 @@ const AdminMessages: React.FC = () => {
   const eventChange = useSelector(getEventChange);
   const eventData = eventChange.data as EventChangeReplyData;
   const userName = useSelector(getUserName);
-  const isPending = useSelector(getPending);
-  const isSuccess = useSelector(getSuccess);
-  const isError = useSelector(getError).isError;
+  const isPending = useSelector(getMessages);
+  const isSuccess = useSelector(getMessagesSuccess);
+  const isError = useSelector(getMessagesError).isError;
   const isToast = useSelector(getToast).isOpen;
   const isRemoved = useSelector(getIsRemoved);
   const quantity = useSelector(getQuantity);
@@ -134,7 +134,7 @@ const AdminMessages: React.FC = () => {
           variant: 'success',
         })
       );
-    if (isError) dispatch(resetRequest());
+    if (isError) dispatch(resetMessagesRequest());
   }, [isToast, isError]);
 
   useEffect(() => {

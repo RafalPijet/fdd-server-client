@@ -2,7 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import classnames from 'classnames';
 import Paper from '@material-ui/core/Paper';
-import { getSuccess, getPending } from '../../../redux/actions/requestActions';
+import {
+  getMessagesSuccess,
+  getMessages as getPending,
+} from '../../../redux/actions/requestActions';
 import { getMessages } from '../../../redux/actions/messageActions';
 import { getUserId } from '../../../redux/actions/userActions';
 import { updateMessageIsReaded } from '../../../redux/thunks';
@@ -34,7 +37,7 @@ const MessagesContent: React.FC<Props> = (props) => {
   const [fromId, setFromId] = useState<string | undefined>(undefined);
   const [isAdminMessage, setIsAdminMessage] = useState<boolean>(false);
   const isPending = useSelector(getPending);
-  const isSuccess = useSelector(getSuccess);
+  const isSuccess = useSelector(getMessagesSuccess);
   const userId = useSelector(getUserId);
   const dispatch = useDispatch();
 

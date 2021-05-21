@@ -1,10 +1,5 @@
-import React, { cloneElement, useState } from 'react';
-import {
-  makeStyles,
-  useTheme,
-  Theme,
-  createStyles,
-} from '@material-ui/core/styles';
+import React from 'react';
+import { useTheme } from '@material-ui/core/styles';
 import TablePagination from '@material-ui/core/TablePagination';
 import IconButton from '@material-ui/core/IconButton';
 import FirstPageIcon from '@material-ui/icons/FirstPage';

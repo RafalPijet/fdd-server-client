@@ -3,8 +3,6 @@ import classNames from 'classnames';
 import { useSelector } from 'react-redux';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
-import ExpandLessIcon from '@material-ui/icons/ExpandLess';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { getUserId } from '../../../redux/actions/userActions';
 import { Props, StyleProps, PropsClasses, useStyles } from './MessageItemStyle';
 import Paper from '@material-ui/core/Paper';

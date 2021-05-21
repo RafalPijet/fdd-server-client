@@ -21,6 +21,12 @@ import {
     startAddingRequest,
     stopAddingRequest,
     errorAddingRequest,
+    StartMessagesRequestAction,
+    StopMessagesRequestAction,
+    ErrorMessagesRequestAction,
+    startMessagesRequest,
+    stopMessagesRequest,
+    errorMessagesRequest
 } from './actions/requestActions';
 import {
     addCurrentUser,
@@ -281,9 +287,9 @@ export const addMessage = (payload: string, _id?: string): ThunkAction<
     Promise<void>,
     any,
     RootState,
-    StartRequestAction | StopRequestAction | ErrorRequestAction | SetToastAction
+    StartMessagesRequestAction | StopMessagesRequestAction | ErrorMessagesRequestAction | SetToastAction
 > => async (dispatch, getState) => {
-    dispatch(startRequest());
+    dispatch(startMessagesRequest());
 
     try {
         await new Promise(resolve => setTimeout(resolve, 2000));
@@ -293,14 +299,14 @@ export const addMessage = (payload: string, _id?: string): ThunkAction<
             },
         });
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }))
-        dispatch(stopRequest());
+        dispatch(stopMessagesRequest());
     } catch (err) {
         if (err.response !== undefined) {
             err.response.data.message ?
-                dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
-                dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+                dispatch(errorMessagesRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorMessagesRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         } else {
-            dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+            dispatch(errorMessagesRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }
     }
 }
@@ -363,9 +369,9 @@ export const addAnswerToOutsideMessage = (content: string, email: string, name: 
     Promise<void>,
     any,
     RootState,
-    StartRequestAction | StopRequestAction | ErrorRequestAction | SetToastAction
+    StartMessagesRequestAction | StopMessagesRequestAction | ErrorMessagesRequestAction | SetToastAction
 > => async (dispatch, getState) => {
-    dispatch(startRequest());
+    dispatch(startMessagesRequest());
 
     try {
         await new Promise(resolve => setTimeout(resolve, 2000));
@@ -375,14 +381,14 @@ export const addAnswerToOutsideMessage = (content: string, email: string, name: 
             },
         });
         if (res.status === 201) dispatch(setUserToast({ isOpen: true, content: `Odpowiedź do ${name} na email ${email} została wysłana.`, variant: "success" }));
-        dispatch(stopRequest());
+        dispatch(stopMessagesRequest());
     } catch (err) {
         if (err.response !== undefined) {
             err.response.data.message ?
-                dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
-                dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+                dispatch(errorMessagesRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorMessagesRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         } else {
-            dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+            dispatch(errorMessagesRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }
     }
 }
@@ -391,9 +397,9 @@ export const sendMessageByEmail = (content: string, email: string, name: string)
     Promise<void>,
     any,
     RootState,
-    StartRequestAction | StopRequestAction | ErrorRequestAction | SetToastAction
+    StartMessagesRequestAction | StopMessagesRequestAction | ErrorMessagesRequestAction | SetToastAction
 > => async (dispatch, getState) => {
-    dispatch(startRequest());
+    dispatch(startMessagesRequest());
     try {
         await new Promise(resolve => setTimeout(resolve, 2000));
         let res: AxiosResponse = await axios.post(`${API_URL}/admin/messages/email`, { content, email, name }, {
@@ -402,14 +408,14 @@ export const sendMessageByEmail = (content: string, email: string, name: string)
             },
         });
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
-        dispatch(stopRequest());
+        dispatch(stopMessagesRequest());
     } catch (err) {
         if (err.response !== undefined) {
             err.response.data.message ?
-                dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
-                dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+                dispatch(errorMessagesRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorMessagesRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         } else {
-            dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+            dispatch(errorMessagesRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }
     }
 }
@@ -418,9 +424,9 @@ export const getUserMessages = (target: TargetOptions, page: number, rowsPerPage
     Promise<void>,
     any,
     RootState,
-    StartRequestAction | StopRequestAction | ErrorRequestAction | LoadMessagesAction
+    StartMessagesRequestAction | StopMessagesRequestAction | ErrorMessagesRequestAction | LoadMessagesAction
 > => async (dispatch, getState) => {
-    dispatch(startRequest());
+    dispatch(startMessagesRequest());
     let start = Math.ceil(page * rowsPerPage);
     let limit = rowsPerPage;
 
@@ -432,14 +438,14 @@ export const getUserMessages = (target: TargetOptions, page: number, rowsPerPage
             },
         })
         dispatch(loadUserMessages(res.data.messages, res.data.quantity));
-        dispatch(stopRequest());
+        dispatch(stopMessagesRequest());
     } catch (err) {
         if (err.response !== undefined) {
             err.response.data.message ?
-                dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
-                dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+                dispatch(errorMessagesRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorMessagesRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         } else {
-            dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+            dispatch(errorMessagesRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }
     }
 }
@@ -448,9 +454,9 @@ export const getAdminMessages = (target: TargetOptions, page: number, rowsPerPag
     Promise<void>,
     any,
     RootState,
-    StartRequestAction | StopRequestAction | ErrorRequestAction | LoadMessagesAction
+    StartMessagesRequestAction | StopMessagesRequestAction | ErrorMessagesRequestAction | LoadMessagesAction
 > => async (dispatch, getState) => {
-    dispatch(startRequest());
+    dispatch(startMessagesRequest());
     let start = Math.ceil(page * rowsPerPage);
     let limit = rowsPerPage;
     try {
@@ -461,15 +467,15 @@ export const getAdminMessages = (target: TargetOptions, page: number, rowsPerPag
             },
         })
         dispatch(loadUserMessages(res.data.messages, res.data.quantity));
-        dispatch(stopRequest());
+        dispatch(stopMessagesRequest());
 
     } catch (err) {
         if (err.response !== undefined) {
             err.response.data.message ?
-                dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
-                dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+                dispatch(errorMessagesRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorMessagesRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         } else {
-            dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+            dispatch(errorMessagesRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }
     }
 }
@@ -478,9 +484,9 @@ export const getAdminMessagesByUser = (isParent: boolean, user: string, page: nu
     Promise<void>,
     any,
     RootState,
-    StartRequestAction | StopRequestAction | ErrorRequestAction | LoadMessagesAction
+    StartMessagesRequestAction | StopMessagesRequestAction | ErrorMessagesRequestAction | LoadMessagesAction
 > => async (dispatch, getState) => {
-    dispatch(startRequest());
+    dispatch(startMessagesRequest());
     let start = Math.ceil(page * rowsPerPage);
     let limit = rowsPerPage;
 
@@ -492,14 +498,14 @@ export const getAdminMessagesByUser = (isParent: boolean, user: string, page: nu
             },
         })
         dispatch(loadUserMessages(res.data.messages, res.data.quantity));
-        dispatch(stopRequest());
+        dispatch(stopMessagesRequest());
     } catch (err) {
         if (err.response !== undefined) {
             err.response.data.message ?
-                dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
-                dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+                dispatch(errorMessagesRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorMessagesRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         } else {
-            dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+            dispatch(errorMessagesRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }
     }
 }

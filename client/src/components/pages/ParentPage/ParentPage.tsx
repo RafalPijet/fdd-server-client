@@ -13,6 +13,9 @@ import {
   getAdding,
   getAddingError,
   resetAddingRequest,
+  getMessages,
+  getMessagesError,
+  resetMessagesRequest,
 } from '../../../redux/actions/requestActions';
 import Header from '../../common/Header/Header';
 import HeaderLinks from '../../features/HeaderLinks/HeaderLinksParentPage';
@@ -38,10 +41,12 @@ const ParentPage: React.FC = () => {
   const isPending = useSelector(getPending);
   const isUpdating = useSelector(getUpdating);
   const isAdding = useSelector(getAdding);
+  const isMessages = useSelector(getMessages);
   const toast = useSelector(getToast);
   const error = useSelector(getError);
   const updatingError = useSelector(getUpdatingError);
   const addingError = useSelector(getAddingError);
+  const messagesError = useSelector(getMessagesError);
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -58,7 +63,16 @@ const ParentPage: React.FC = () => {
     if (addingError.isError) {
       handleToast(addingError.message, 'error');
     }
-  }, [toast.isOpen, error.isError, updatingError.isError, addingError.isError]);
+    if (messagesError.isError) {
+      handleToast(messagesError.message, 'error');
+    }
+  }, [
+    toast.isOpen,
+    error.isError,
+    updatingError.isError,
+    addingError.isError,
+    messagesError.isError,
+  ]);
 
   useEffect(() => {
     return () => {
@@ -68,6 +82,7 @@ const ParentPage: React.FC = () => {
       dispatch(resetRequest());
       dispatch(resetUpdatingRequest());
       dispatch(resetAddingRequest());
+      dispatch(resetMessagesRequest());
       dispatch(loadUserMessages([], 0));
       dispatch(setSelectedChild(null));
       dispatch(
@@ -87,12 +102,14 @@ const ParentPage: React.FC = () => {
   return (
     <div id={AvailableDestinations.mainParent}>
       <Header
-        isSpiner={isPending || isUpdating || isAdding}
+        isSpiner={isPending || isUpdating || isAdding || isMessages}
         color="transparent"
         brand="Fundacja Dorośli Dzieciom"
         fixed
         rightLinks={
-          <HeaderLinks isSpiner={isPending || isUpdating || isAdding} />
+          <HeaderLinks
+            isSpiner={isPending || isUpdating || isAdding || isMessages}
+          />
         }
         changeColorOnScroll={{
           height: 400,
