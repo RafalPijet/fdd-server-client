@@ -56,6 +56,7 @@ const ParentPage: React.FC = () => {
     }
     if (error.isError) {
       handleToast(error.message, 'error');
+      dispatch(resetRequest());
     }
     if (updatingError.isError) {
       handleToast(updatingError.message, 'error');

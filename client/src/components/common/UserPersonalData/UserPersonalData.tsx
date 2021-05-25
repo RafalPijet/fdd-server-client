@@ -22,6 +22,7 @@ import {
   setEventChange,
   getEventChange,
 } from '../../../redux/actions/generalActions';
+import { getUserEmail, getUserId } from '../../../redux/actions/userActions';
 import {
   FddSwitch,
   UserStatus,
@@ -29,6 +30,7 @@ import {
   UpdateUserTypeData,
   EventChangeAvailableDestination,
 } from '../../../types/global';
+import { SUPER_ADMIN } from '../../../config';
 import { updateUser } from '../../../redux/thunks';
 import { Register } from '../../pages/LoginPage/LoginPageStyle';
 import {
@@ -46,14 +48,14 @@ const UserPersonalData: React.FC<Props> = (props) => {
   const dispatch = useDispatch();
   const isUpdating = useSelector(getUpdating);
   const isSuccess = useSelector(getUpdatingSuccess);
+  const userEmail = useSelector(getUserEmail);
+  const userId = useSelector(getUserId);
   const eventChange = useSelector(getEventChange);
   const eventData = eventChange.data as EventChangeAvailableDestination;
   const [switchIsOn, setSwitchIsOn] = useState<boolean>(false);
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
   const [isRefresh, setIsRefresh] = useState<boolean>(true);
-  const [userIsAdmin, setUserIsAdmin] = useState<boolean>(
-    user.status === UserStatus.admin
-  );
+  const [userIsAdmin] = useState<boolean>(user.status === UserStatus.admin);
   const [userData, setUserData] = useState<UserDataProps>(emptyUserData);
   const [isError, setIsError] = useState<Record<keyof any, boolean>>({
     firstName: false,
@@ -74,6 +76,16 @@ const UserPersonalData: React.FC<Props> = (props) => {
     [classes.back]: true,
     [classes.active]: switchIsOn,
   });
+
+  useEffect(() => {
+    if (
+      isAdmin &&
+      user.status === UserStatus.admin &&
+      userEmail !== SUPER_ADMIN
+    ) {
+      setSwitchIsOn(userId === user._id);
+    }
+  }, [isAdmin, userId, user._id, user.status, switchIsOn]);
 
   useEffect(() => {
     if (eventChange.isAction) {
@@ -265,8 +277,8 @@ const UserPersonalData: React.FC<Props> = (props) => {
         setModalAreYouSure({
           mode: ModalAYSModes.changeUserStatus,
           isOpen: true,
-          title: 'Chcesz zmienić status uzytkownika?',
-          description: `Zmiana statusu uzytkownika ${user.firstName} ${
+          title: 'Chcesz zmienić status użytkownika?',
+          description: `Zmiana statusu użytkownika ${user.firstName} ${
             user.lastName
           } z ${userIsAdmin ? 'ADMIN' : 'RODZIC'} na ${
             userIsAdmin ? 'RODZIC' : 'ADMIN'
@@ -278,7 +290,6 @@ const UserPersonalData: React.FC<Props> = (props) => {
         })
       );
     }
-    setUserIsAdmin(e.target.checked); // to remove in Admin mode
   };
 
   const onKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>): void => {
@@ -650,7 +661,7 @@ const UserPersonalData: React.FC<Props> = (props) => {
           >
             Aktualizuj dane
           </CustomButton>
-          {isAdmin && (
+          {userEmail === SUPER_ADMIN && (
             <span style={{ display: 'inline-flex', alignItems: 'center' }}>
               <span className={classes.parent}>RODZIC</span>
               <FormControlLabel

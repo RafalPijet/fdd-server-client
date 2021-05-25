@@ -152,6 +152,35 @@ export const addUser = (payload: Register): ThunkAction<
 
 }
 
+export const updateUserStatus = (userId: string, status: UserStatus): ThunkAction<
+    Promise<void>,
+    any,
+    RootState,
+    StartUpdatingRequestAction | StopUpdatingRequestAction | ErrorUpdatingRequestAction |
+    SetToastAction | SetSelectedPersonAction
+> => async (dispatch, getState) => {
+    dispatch(startUpdatingRequest());
+
+    try {
+        let res: AxiosResponse = await axios.put(`${API_URL}/admin/user/status/${userId}`, { status }, {
+            headers: {
+                'Authorization': localStorage.getItem('tokenFDD')
+            },
+        });
+        dispatch(setSelectedPerson(null));
+        dispatch(setUserToast({ isOpen: true, content: res!.data.message, variant: "success" }));
+        dispatch(stopUpdatingRequest());
+    } catch (err) {
+        if (err.response !== undefined) {
+            err.response.data.message ?
+                dispatch(errorUpdatingRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorUpdatingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        } else {
+            dispatch(errorUpdatingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        }
+    }
+}
+
 export const updateUser = (payload: any, dataType: UpdateUserTypeData, userId: string): ThunkAction<
     Promise<void>,
     any,

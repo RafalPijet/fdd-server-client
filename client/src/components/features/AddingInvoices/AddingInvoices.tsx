@@ -174,7 +174,7 @@ const AddingInvoices: React.FC<Props> = (props) => {
             xs={12}
             sm={12}
             lg={6}
-            style={{ display: 'flex', justifyContent: 'space-between' }}
+            style={{ display: 'flex', justifyContent: 'space-around' }}
           >
             <div style={{ width: 'fit-content' }}>
               <PreviewInvoiceItem

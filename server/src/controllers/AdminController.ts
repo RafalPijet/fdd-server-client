@@ -332,4 +332,23 @@ class AdminController {
                 `Wysłanie wiadomości email ${email} do ${name} nie powiodło się. - ${err}`))
         }
     }
+
+    @put('/user/status/:userId')
+    async updateUserStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const { userId } = req.params;
+        const { status } = req.body;
+
+        try {
+            const user = await UserModel.findById(userId);
+            if (user) {
+                user.status = status;
+                await user.save();
+                res.status(201).json({ message: `Status użytkownika ${user.firstName} ${user.lastName} został zmieniony na ${status}` })
+            } else {
+                next(new HttpException(404, 'Nie znaleziono użytkownika'))
+            }
+        } catch (err) {
+            next(new HttpException(404, `Zmiana status użytkownika nie powiodła się`))
+        }
+    }
 }

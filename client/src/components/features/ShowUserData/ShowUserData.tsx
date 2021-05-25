@@ -7,6 +7,7 @@ import GridContainer from '../../common/Grid/GridContainer';
 import GridItem from '../../common/Grid/GridItem';
 import ChildrenZone from '../../features/ChildrenZone/ChildrenZone';
 import Typography from '@material-ui/core/Typography';
+import { UserStatus } from '../../../types/global';
 import {
   StyleProps,
   Props,
@@ -94,27 +95,29 @@ const ShowUserData: React.FC<Props> = (props) => {
               </Typography>
             </span>
           </GridItem>
-          <GridItem
-            xs={12}
-            sm={12}
-            lg={6}
-            style={{ display: 'flex', justifyContent: 'inherit' }}
-          >
-            <span className={titleClasses}>
-              ilość podopiecznych:
-              <Typography variant="h6" className={classes.text}>
-                {user.children.length}
-              </Typography>
-            </span>
-          </GridItem>
+          {user.status === UserStatus.parent && (
+            <GridItem
+              xs={12}
+              sm={12}
+              lg={6}
+              style={{ display: 'flex', justifyContent: 'inherit' }}
+            >
+              <span className={titleClasses}>
+                ilość podopiecznych:
+                <Typography variant="h6" className={classes.text}>
+                  {user.children.length}
+                </Typography>
+              </span>
+            </GridItem>
+          )}
         </GridContainer>
       </Paper>
       <GridContainer justify="center">
         {user.children.map((child, index) => (
           <GridItem key={index} xs={12} sm={12} lg={7}>
-            <div className={classes.childZone}>
-              <ChildrenZone childData={child} />;
-            </div>
+            <Paper elevation={8} className={classes.childZone}>
+              <ChildrenZone childData={child} />
+            </Paper>
           </GridItem>
         ))}
       </GridContainer>

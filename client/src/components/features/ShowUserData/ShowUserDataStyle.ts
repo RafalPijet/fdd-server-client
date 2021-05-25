@@ -34,8 +34,10 @@ const showUserDataStyle = (theme: Theme) => ({
         textDecoration: 'none'
     },
     childZone: {
-        width: '74%',
-        margin: '80px auto'
+        backgroundColor: "rgba(255, 255, 255, 0.2)",
+        maxWidth: '580px',
+        margin: '80px auto',
+        padding: '70px 100px'
     }
 })
 

@@ -10,6 +10,7 @@ import AddingImage from '../../common/AddingImage/AddingImage';
 import ChildPersonalData from '../../common/ChildPersonalData/ChildPersonalData';
 import UserPersonalData from '../../common/UserPersonalData/UserPersonalData';
 import AdminContentHeader from '../../common/AdminContentHeader/AdminContentHeader';
+import ChildInvoices from '../../features/ChildInvoices/ChildInvoices';
 import {
   getSelectedUserType,
   getSelectedPerson,
@@ -91,6 +92,14 @@ const AdminContent: React.FC = () => {
           wybranego. Wprowadź dane w odpowiednie pola formularza, a następnie kliknij przycisk
            AKTUALIZUJ DANE."
                 />
+              </GridItem>
+              <GridItem
+                xs={12}
+                sm={12}
+                lg={8}
+                id={AvailableDestinations.addingInvoice}
+              >
+                <ChildInvoices invoices={selectedChild.invoices} />
               </GridItem>
             </>
           ) : (

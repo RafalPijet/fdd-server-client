@@ -37,7 +37,7 @@ import {
   setSelectedPerson,
   setSelectedUserType,
 } from '../../../redux/actions/generalActions';
-import { removeMessage } from '../../../redux/thunks';
+import { removeMessage, updateUserStatus } from '../../../redux/thunks';
 import { ModalAYSModes, SearchUserType } from '../../../types/global';
 import { loadUserMessages } from '../../../redux/actions/messageActions';
 import AdminContent from '../../features/AdminContent/AdminContent';
@@ -64,12 +64,15 @@ const AdminPage: React.FC = () => {
     }
     if (error.isError) {
       handleToast(error.message, 'error');
+      dispatch(resetRequest());
     }
     if (updatingError.isError) {
       handleToast(updatingError.message, 'error');
+      dispatch(resetUpdatingRequest());
     }
     if (addingError.isError) {
       handleToast(addingError.message, 'error');
+      dispatch(resetAddingRequest());
     }
     if (messagesError.isError) {
       handleToast(messagesError.message, 'error');
@@ -119,11 +122,17 @@ const AdminPage: React.FC = () => {
   };
 
   const handleModalAYS = (isConfirm: boolean) => {
-    const { messageId, isUser } = modalAYS.data;
     if (isConfirm) {
       if (modalAYS.mode === ModalAYSModes.removeMessage) {
+        const { messageId, isUser } = modalAYS.data;
         if (messageId !== undefined && isUser !== undefined) {
           dispatch(removeMessage(messageId, isUser));
+        }
+      }
+      if (modalAYS.mode === ModalAYSModes.changeUserStatus) {
+        const { userId, userStatus } = modalAYS.data;
+        if (userId !== undefined && userStatus !== undefined) {
+          dispatch(updateUserStatus(userId, userStatus));
         }
       }
     }
