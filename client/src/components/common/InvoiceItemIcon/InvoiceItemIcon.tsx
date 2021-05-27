@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import ClassNames from 'classnames';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import DescriptionIcon from '@material-ui/icons/Description';
@@ -11,13 +12,21 @@ import {
 import logo from '../../../images/butterflyMini.png';
 
 const InvoiceItemIcon: React.FC<Props> = (props) => {
-  const { invoice } = props;
+  const { invoice, choisenId, getChosenInvoice, isDisabled } = props;
   const classes: PropsClasses = useStyles({} as StyleProps);
   const [isChosen, setIsChosen] = useState<boolean>(false);
 
+  const iconClasses = ClassNames({
+    [classes.icon]: true,
+    [classes.chosen]: isChosen,
+  });
+
+  useEffect(() => {
+    setIsChosen(choisenId === invoice._id);
+  }, [choisenId]);
+
   const clickIconHandling = () => {
-    setIsChosen(!isChosen);
-    console.log('Click');
+    if (!isDisabled) getChosenInvoice(invoice);
   };
 
   return (
@@ -26,7 +35,7 @@ const InvoiceItemIcon: React.FC<Props> = (props) => {
       className={classes.root}
       onClick={clickIconHandling}
     >
-      <DescriptionIcon className={classes.icon} />
+      <DescriptionIcon className={iconClasses} />
       <Paper elevation={12} className={classes.main}>
         <Paper elevation={9} className={classes.dayBox}>
           <Typography className={classes.dayValue}>
@@ -39,14 +48,7 @@ const InvoiceItemIcon: React.FC<Props> = (props) => {
           </Typography>
         </Paper>
         {isChosen && (
-          <div
-            style={{
-              position: 'absolute',
-              bottom: '-14px',
-              left: '-17px',
-              zIndex: 20,
-            }}
-          >
+          <div className={classes.logo}>
             <img src={logo} alt="logo" />
           </div>
         )}

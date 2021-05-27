@@ -69,8 +69,8 @@ const AdminMessages: React.FC = () => {
   const [selectedUserToReply, setSelectedUserToReply] = useState<
     EventChangeReplyData | undefined
   >(undefined);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(6);
+  const [page, setPage] = useState<number>(0);
+  const [rowsPerPage, setRowsPerPage] = useState<number>(6);
   const cardClasses = classNames({
     [classes.card]: true,
     [classes.cardHidden]: isCardAnimation,

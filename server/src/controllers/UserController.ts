@@ -109,7 +109,7 @@ class UserController {
                         await fs.copyFile(file.path, source, (err) => {
                             console.log(err)
                         })
-                        await fs.copyFile(source, target, (err) => {  //It's will be remove
+                        await fs.copyFile(file.path, target, (err) => {  //It's will be remove
                             console.log(err)                    //It's will be remove
                         })                                      //It's will be remove
                         filesToRemove.push(file.path)

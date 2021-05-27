@@ -217,6 +217,7 @@ const AddingInvoices: React.FC<Props> = (props) => {
               inputProps={{
                 multiline: true,
                 autoFocus: true,
+                rows: 3,
               }}
             />
           </GridItem>

@@ -51,7 +51,7 @@ const PreviewInvoiceItem: React.FC<Props> = (props) => {
     ) {
       getBase64(file).then((image) => setImage(image));
     }
-    if (file === null) setImage(null);
+    if (file === null || file.type === 'application/pdf') setImage(null);
   }, [file]);
 
   const handleClose = async () => {
@@ -105,8 +105,10 @@ const PreviewInvoiceItem: React.FC<Props> = (props) => {
   };
 
   const removeItemHandling = () => {
-    getIsRemove(number);
-    setImage(null);
+    if (getIsRemove !== undefined) {
+      getIsRemove(number);
+      setImage(null);
+    }
   };
 
   const showContent = () => {
@@ -154,15 +156,17 @@ const PreviewInvoiceItem: React.FC<Props> = (props) => {
           >
             <ZoomOutMapIcon fontSize="large" />
           </IconButton>
-          <IconButton
-            className={classes.removeIcon}
-            color="secondary"
-            component="span"
-            onClick={removeItemHandling}
-            disabled={isDisabled}
-          >
-            <HighlightOffIcon fontSize="large" />
-          </IconButton>
+          {getIsRemove !== undefined && (
+            <IconButton
+              className={classes.removeIcon}
+              color="secondary"
+              component="span"
+              onClick={removeItemHandling}
+              disabled={isDisabled}
+            >
+              <HighlightOffIcon fontSize="large" />
+            </IconButton>
+          )}
         </>
       )}
       <Dialog open={open} onClose={handleClose} maxWidth="lg">

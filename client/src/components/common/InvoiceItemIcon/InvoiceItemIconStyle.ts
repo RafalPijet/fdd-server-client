@@ -2,12 +2,15 @@ import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import { makeStyles } from '@material-ui/core/styles';
 import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
 import { InvoiceState } from '../../../types/global';
+import { grayColor } from '../../../styles/globalStyles';
 
 const invoiceItemIconStyle = (theme: Theme) => ({
     root: {
         position: 'relative',
         zIndex: 10,
-        cursor: 'pointer'
+        cursor: 'pointer',
+        margin: '25px 15px 10px 15px',
+        maxHeight: '60px'
     },
     icon: {
         color: '#fff',
@@ -62,6 +65,15 @@ const invoiceItemIconStyle = (theme: Theme) => ({
     yearValue: {
         color: 'rgba(166, 206, 57, 0.8)',
         fontSize: '0.8rem'
+    },
+    logo: {
+        position: 'absolute',
+        bottom: '-14px',
+        left: '-17px',
+        zIndex: 20,
+    },
+    chosen: {
+        color: grayColor
     }
 })
 
@@ -75,10 +87,15 @@ export interface StyleProps {
     monthValue: BaseCSSProperties;
     yearBox: BaseCSSProperties;
     yearValue: BaseCSSProperties;
+    logo: BaseCSSProperties;
+    chosen: BaseCSSProperties;
 }
 
 export interface Props {
     invoice: InvoiceState;
+    choisenId: string;
+    getChosenInvoice: (invoice: InvoiceState) => void;
+    isDisabled: boolean;
 }
 
 export type PropsClasses = Record<keyof StyleProps, string>;
