@@ -39,12 +39,12 @@ const InvoiceItemIcon: React.FC<Props> = (props) => {
       <Paper elevation={12} className={classes.main}>
         <Paper elevation={9} className={classes.dayBox}>
           <Typography className={classes.dayValue}>
-            {invoice.addDate.toString().substring(8, 10)}
+            {invoice.createdAt.toString().substring(8, 10)}
           </Typography>
         </Paper>
         <Paper elevation={0} className={classes.monthBox}>
           <Typography className={classes.monthValue}>
-            {invoice.addDate.toString().substring(5, 7)}
+            {invoice.createdAt.toString().substring(5, 7)}
           </Typography>
         </Paper>
         {isChosen && (
@@ -54,7 +54,7 @@ const InvoiceItemIcon: React.FC<Props> = (props) => {
         )}
         <Paper elevation={8} className={classes.yearBox}>
           <Typography className={classes.yearValue}>
-            {invoice.addDate.toString().substring(0, 4)}
+            {invoice.createdAt.toString().substring(0, 4)}
           </Typography>
         </Paper>
       </Paper>

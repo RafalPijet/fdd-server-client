@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ClassNames from 'classnames';
+import { useSelector, useDispatch } from 'react-redux';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import GridContainer from '../../common/Grid/GridContainer';
@@ -12,6 +13,12 @@ import PreviewInvoiceItem from '../../common/PreviewInvoiceItem/PreviewInvoiceIt
 import InvoiceItemIcon from '../../common/InvoiceItemIcon/InvoiceItemIcon';
 import CustomPagination from '../../common/CustomPagination/CustomPagination';
 import { urltoFile } from '../../../types/functions';
+import { getCurrentlyInvoicesList } from '../../../redux/thunks';
+import {
+  getSelectedQuantity,
+  getSelectedChild,
+} from '../../../redux/actions/generalActions';
+import { getUpdating } from '../../../redux/actions/requestActions';
 import {
   PropsClasses,
   StyleProps,
@@ -22,6 +29,10 @@ import { InvoiceState } from '../../../types/global';
 
 const ChildInvoices: React.FC<Props> = (props) => {
   const { invoices } = props;
+  const dispatch = useDispatch();
+  const quantity = useSelector(getSelectedQuantity);
+  const childId = useSelector(getSelectedChild);
+  const isUpdating = useSelector(getUpdating);
   const classes: PropsClasses = useStyles({} as StyleProps);
   const [switchIsOn, setSwitchIsOn] = useState<boolean>(false);
   const [invoiceFiles, setInvoiceFiles] = useState<[any, any]>([null, null]);
@@ -39,7 +50,7 @@ const ChildInvoices: React.FC<Props> = (props) => {
   const iconsClasses = ClassNames({
     [classes.icons]: true,
     [classes.back]: true,
-    [classes.active]: switchIsOn,
+    [classes.active]: switchIsOn && !isUpdating,
     [classes.center]: invoices.length === 0,
   });
 
@@ -55,6 +66,11 @@ const ChildInvoices: React.FC<Props> = (props) => {
       setChosenId(invoices[0]._id);
     }
   }, [invoices]);
+
+  useEffect(() => {
+    if (childId !== null)
+      dispatch(getCurrentlyInvoicesList(childId, page, rowsPerPage));
+  }, [page, rowsPerPage]);
 
   const switchChangeHandling = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSwitchIsOn(e.target.checked);
@@ -162,7 +178,7 @@ const ChildInvoices: React.FC<Props> = (props) => {
                   return (
                     <InvoiceItemIcon
                       key={invoice._id}
-                      isDisabled={!switchIsOn}
+                      isDisabled={!switchIsOn || isUpdating}
                       choisenId={chosenId}
                       invoice={invoice}
                       getChosenInvoice={chosenInvoiceHandling}
@@ -184,7 +200,7 @@ const ChildInvoices: React.FC<Props> = (props) => {
           >
             <div style={{ width: 'fit-content' }}>
               <PreviewInvoiceItem
-                isDisabled={!switchIsOn}
+                isDisabled={!switchIsOn || isUpdating}
                 number="0"
                 file={invoiceFiles[0]}
               />
@@ -197,7 +213,7 @@ const ChildInvoices: React.FC<Props> = (props) => {
               }}
             >
               <PreviewInvoiceItem
-                isDisabled={!switchIsOn}
+                isDisabled={!switchIsOn || isUpdating}
                 number="1"
                 file={invoiceFiles[1]}
               />
@@ -215,12 +231,13 @@ const ChildInvoices: React.FC<Props> = (props) => {
       <CardFooter className={classes.footer}>
         <CustomPagination
           rowsPerPageOptions={[8, 16, 24]}
-          isHidden={!switchIsOn}
-          quantity={invoices.length}
+          isHidden={!switchIsOn || !invoices.length || isUpdating}
+          quantity={quantity !== null ? quantity : 0}
           onChangePage={handleChangePage}
           onChangeRowsPerPage={handleChangeRowsPerPage}
           page={page}
           rowsPerPage={rowsPerPage}
+          label="Ilość faktur"
         />
       </CardFooter>
     </Card>

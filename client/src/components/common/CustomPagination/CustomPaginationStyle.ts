@@ -40,5 +40,6 @@ export interface Props {
     rowsPerPage: number;
     page: number;
     isHidden: boolean;
-    rowsPerPageOptions: number[]
+    rowsPerPageOptions: number[],
+    label: string
 }

@@ -36,6 +36,7 @@ import {
   setSelectedChild,
   setSelectedPerson,
   setSelectedUserType,
+  setSelectedQuantity,
 } from '../../../redux/actions/generalActions';
 import { removeMessage, updateUserStatus } from '../../../redux/thunks';
 import { ModalAYSModes, SearchUserType } from '../../../types/global';
@@ -96,6 +97,7 @@ const AdminPage: React.FC = () => {
       dispatch(resetMessagesRequest());
       dispatch(setSelectedChild(null));
       dispatch(setSelectedPerson(null));
+      dispatch(setSelectedQuantity(null));
       dispatch(setSelectedUserType(SearchUserType.child));
       dispatch(loadUserMessages([], 0));
       dispatch(

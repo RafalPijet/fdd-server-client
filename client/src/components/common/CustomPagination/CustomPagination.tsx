@@ -96,13 +96,14 @@ const CustomPagination: React.FC<Props> = (props) => {
     onChangeRowsPerPage,
     isHidden,
     rowsPerPageOptions,
+    label,
   } = props;
   const classes = useStyles();
   return (
     <TablePagination
       hidden={isHidden}
       component="div"
-      labelRowsPerPage="Ilość wiadomości"
+      labelRowsPerPage={label}
       rowsPerPageOptions={rowsPerPageOptions}
       colSpan={3}
       count={quantity}

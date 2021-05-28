@@ -2,7 +2,7 @@ import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import { makeStyles } from '@material-ui/core/styles';
 import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
 import { InvoiceState } from '../../../types/global';
-import { primaryColor } from '../../../styles/globalStyles';
+import { lightGrayColor } from '../../../styles/globalStyles';
 
 const childInvoicesStyle = (theme: Theme) => ({
     root: {
@@ -18,8 +18,8 @@ const childInvoicesStyle = (theme: Theme) => ({
     icons: {
         display: 'flex',
         justifyContent: 'space-around',
-        padding: '20px 10px 0',
-        height: '210px',
+        padding: '15px 10px 0',
+        height: '215px',
         overflow: 'auto',
         flexWrap: 'wrap',
         alignItems: 'center'
@@ -35,8 +35,8 @@ const childInvoicesStyle = (theme: Theme) => ({
         marginTop: '20px'
     },
     textColor: {
-        color: primaryColor,
-        fontWeight: 700
+        color: lightGrayColor,
+        fontWeight: 500
     },
     footer: {
         width: '100%',

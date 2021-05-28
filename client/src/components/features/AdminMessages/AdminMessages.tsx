@@ -302,6 +302,7 @@ const AdminMessages: React.FC = () => {
               onChangeRowsPerPage={handleChangeRowsPerPage}
               page={page}
               rowsPerPage={rowsPerPage}
+              label="Ilość wiadomości"
             />
           ) : (
             <CustomButton

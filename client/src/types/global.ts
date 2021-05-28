@@ -88,7 +88,8 @@ export enum AvailableDestinations {
 
 export interface InvoiceState {
     _id: string;
-    addDate: Date;
+    createdAt: Date;
+    uptatedAt: Date;
     description: string;
     content: string[];
 }
@@ -202,6 +203,7 @@ export interface GeneralState {
     selectedChild: string | null;
     selectedPerson: any;
     selectedUserType: SearchUserType;
+    selectedQuantity: number | null;
 }
 
 export enum TargetOptions {

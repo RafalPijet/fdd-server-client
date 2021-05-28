@@ -2,14 +2,14 @@ import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import { makeStyles } from '@material-ui/core/styles';
 import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
 import { InvoiceState } from '../../../types/global';
-import { grayColor } from '../../../styles/globalStyles';
+import { lightGrayColor } from '../../../styles/globalStyles';
 
 const invoiceItemIconStyle = (theme: Theme) => ({
     root: {
         position: 'relative',
         zIndex: 10,
         cursor: 'pointer',
-        margin: '25px 15px 10px 15px',
+        margin: '30px 15px',
         maxHeight: '60px'
     },
     icon: {
@@ -73,7 +73,7 @@ const invoiceItemIconStyle = (theme: Theme) => ({
         zIndex: 20,
     },
     chosen: {
-        color: grayColor
+        color: lightGrayColor
     }
 })
 

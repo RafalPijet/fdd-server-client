@@ -66,7 +66,11 @@ import {
     AddChildToSelectedPersonAction,
     addChildToSelectedPerson,
     UpdateSelectedPersonUserDataAction,
-    updateSelectedPersonUserData
+    updateSelectedPersonUserData,
+    SetSelectedQuantityAction,
+    setSelectedQuantity,
+    UpdateSelectedPersonChildInvoicesListAction,
+    updateSelectedPersonalChildInvoicesList
 } from './actions/generalActions';
 import { State as ImagesLists } from '../components/common/RemovingImage/RemovingImageStyle';
 import {
@@ -78,7 +82,8 @@ import {
     ChildState,
     IChildData,
     UpdateUserTypeData,
-    SearchUserType
+    SearchUserType,
+    InvoiceState
 } from '../types/global';
 import { API_URL, URL } from '../config';
 
@@ -248,7 +253,7 @@ export const getPersonByIdRequest = (type: SearchUserType, id: string): ThunkAct
     any,
     RootState,
     StartAddingRequestAction | StopAddingRequestAction | ErrorAddingRequestAction |
-    SetSelectedPersonAction | SetSelectedChild
+    SetSelectedPersonAction | SetSelectedChild | SetSelectedQuantityAction
 > => async (dispatch, getState) => {
     dispatch(startAddingRequest());
 
@@ -260,12 +265,13 @@ export const getPersonByIdRequest = (type: SearchUserType, id: string): ThunkAct
             },
         });
         if (type === SearchUserType.child) {
+            dispatch(setSelectedQuantity(res.data.quantity));
             let person: ChildState = res.data.person;
             person.avatar = `${URL}${person.avatar}`;
             person.images = person.images.map(item => {
                 return `${URL}${item}`
             })
-            person.invoices.forEach(invoice => {
+            person.invoices.forEach((invoice: InvoiceState) => {
                 invoice.content = invoice.content.map(item => {
                     return `${URL}${item}`
                 })
@@ -773,6 +779,44 @@ export const updateImagesList = (payload: ImagesLists): ThunkAction<
             dispatch(updateSelectedPersonalChildImagesList(payload.contentList));
         }
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
+        dispatch(stopUpdatingRequest());
+    } catch (err) {
+        if (err.response !== undefined) {
+            err.response.data.message ?
+                dispatch(errorUpdatingRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorUpdatingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        } else {
+            dispatch(errorUpdatingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        }
+    }
+}
+
+export const getCurrentlyInvoicesList = (childId: string, page: number, rowsPerPage: number): ThunkAction<
+    Promise<void>,
+    any,
+    RootState,
+    StartUpdatingRequestAction | StopUpdatingRequestAction | ErrorUpdatingRequestAction |
+    SetSelectedQuantityAction | UpdateSelectedPersonChildInvoicesListAction
+
+> => async (dispatch, getState) => {
+    try {
+        dispatch(startUpdatingRequest());
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        let res: AxiosResponse = await axios.get(`${API_URL}/admin/child/invoices/${childId}?page=${page}&rowsPerPage=${rowsPerPage}`, {
+            headers: {
+                'Authorization': localStorage.getItem('tokenFDD')
+            },
+        })
+        let { quantity, invoices } = res.data;
+        if (invoices.length) {
+            invoices.forEach(invoice => {
+                invoice.content = invoice.content.map(item => {
+                    return `${URL}${item}`
+                })
+            })
+            dispatch(updateSelectedPersonalChildInvoicesList(invoices));
+        }
+        dispatch(setSelectedQuantity(quantity));
         dispatch(stopUpdatingRequest());
     } catch (err) {
         if (err.response !== undefined) {

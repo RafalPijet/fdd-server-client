@@ -24,7 +24,11 @@ import {
     ADD_CHILD_TO_SELECTED_PERSON,
     AddChildToSelectedPersonAction,
     UPDATE_SELECTED_PERSON_USER_DATA,
-    UpdateSelectedPersonUserDataAction
+    UpdateSelectedPersonUserDataAction,
+    SET_SELECTED_QUANTITY,
+    SetSelectedQuantityAction,
+    UPDATE_SELECTED_PERSON_CHILD_INVOICES_LIST,
+    UpdateSelectedPersonChildInvoicesListAction
 } from '../actions/generalActions';
 import { GeneralState, ModalAYSModes, SearchUserType } from '../../types/global';
 
@@ -49,7 +53,8 @@ const initialState: GeneralState = {
     },
     selectedChild: null,
     selectedPerson: null,
-    selectedUserType: SearchUserType.child
+    selectedUserType: SearchUserType.child,
+    selectedQuantity: null
 }
 
 const generalReducer = (
@@ -58,7 +63,7 @@ const generalReducer = (
         SetEventChange | SetSelectedChild | SetSelectedPersonAction | SetSelectedUserTypeAction |
         UpdateSelectedPersonChildDataAction | UpdateSelectedPersonChildImagesListAction |
         UpdateSelectedPersonChildAvatarAction | AddChildToSelectedPersonAction |
-        UpdateSelectedPersonUserDataAction
+        UpdateSelectedPersonUserDataAction | SetSelectedQuantityAction | UpdateSelectedPersonChildInvoicesListAction
 ) => {
     switch (action.type) {
         case SET_TOAST:
@@ -122,6 +127,19 @@ const generalReducer = (
                     email: action.payload.email,
                     phone: action.payload.phone,
                     adress: action.payload.adress
+                }
+            }
+        case SET_SELECTED_QUANTITY:
+            return {
+                ...state,
+                selectedQuantity: action.payload
+            }
+        case UPDATE_SELECTED_PERSON_CHILD_INVOICES_LIST:
+            return {
+                ...state,
+                selectedPerson: {
+                    ...state.selectedPerson,
+                    invoices: action.payload
                 }
             }
         default:

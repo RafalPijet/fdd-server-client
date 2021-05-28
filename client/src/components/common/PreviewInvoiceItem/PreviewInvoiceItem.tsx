@@ -51,7 +51,11 @@ const PreviewInvoiceItem: React.FC<Props> = (props) => {
     ) {
       getBase64(file).then((image) => setImage(image));
     }
-    if (file === null || file.type === 'application/pdf') setImage(null);
+    if (file === null || file.type === 'application/pdf') {
+      setImage(null);
+      setNumPages(null);
+      setPageNumber(1);
+    }
   }, [file]);
 
   const handleClose = async () => {

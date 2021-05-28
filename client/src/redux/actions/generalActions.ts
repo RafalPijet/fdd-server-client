@@ -13,9 +13,11 @@ export const SET_SELECTED_PERSON = 'general/set_selected_person';
 export const SET_SELECTED_USER_TYPE = 'general/set_selected_user_type';
 export const UPDATE_SELECTED_PERSON_CHILD_DATA = 'general/update_selected_person_child_data';
 export const UPDATE_SELECTED_PERSON_CHILD_IMAGES_LIST = 'general/update_selected_person_child_images_list';
+export const UPDATE_SELECTED_PERSON_CHILD_INVOICES_LIST = 'general/update_selected_person_child_invoices_list';
 export const UPDATE_SELECTED_PERSON_CHILD_AVATAR = 'general/update_selected_person_child_avatar';
 export const ADD_CHILD_TO_SELECTED_PERSON = 'general/add_child_to_selected_person';
 export const UPDATE_SELECTED_PERSON_USER_DATA = 'general/update_selected_person_user_data';
+export const SET_SELECTED_QUANTITY = 'general/set_selected_quantity';
 
 //ACTIONS TYPES
 export interface SetToastAction extends Action<typeof SET_TOAST> {
@@ -48,6 +50,9 @@ export interface UpdateSelectedPersonChildDataAction extends Action<typeof UPDAT
 export interface UpdateSelectedPersonChildImagesListAction extends Action<typeof UPDATE_SELECTED_PERSON_CHILD_IMAGES_LIST> {
     payload: string[]
 }
+export interface UpdateSelectedPersonChildInvoicesListAction extends Action<typeof UPDATE_SELECTED_PERSON_CHILD_INVOICES_LIST> {
+    payload: string[]
+}
 export interface UpdateSelectedPersonChildAvatarAction extends Action<typeof UPDATE_SELECTED_PERSON_CHILD_AVATAR> {
     payload: string
 }
@@ -56,6 +61,9 @@ export interface AddChildToSelectedPersonAction extends Action<typeof ADD_CHILD_
 }
 export interface UpdateSelectedPersonUserDataAction extends Action<typeof UPDATE_SELECTED_PERSON_USER_DATA> {
     payload: Omit<UserState, "_id" | "status" | "children">
+}
+export interface SetSelectedQuantityAction extends Action<typeof SET_SELECTED_QUANTITY> {
+    payload: GeneralState["selectedQuantity"];
 }
 
 //CREATORS OF ACTIONS
@@ -99,6 +107,10 @@ export const updateSelectedPersonalChildImagesList = (images: string[]): UpdateS
     type: UPDATE_SELECTED_PERSON_CHILD_IMAGES_LIST,
     payload: images
 })
+export const updateSelectedPersonalChildInvoicesList = (invoices: string[]): UpdateSelectedPersonChildInvoicesListAction => ({
+    type: UPDATE_SELECTED_PERSON_CHILD_INVOICES_LIST,
+    payload: invoices
+})
 export const updateSelectedPersonalChildAvatar = (image: string): UpdateSelectedPersonChildAvatarAction => ({
     type: UPDATE_SELECTED_PERSON_CHILD_AVATAR,
     payload: image
@@ -111,6 +123,10 @@ export const updateSelectedPersonUserData = (userData: Omit<UserState, "_id" | "
     type: UPDATE_SELECTED_PERSON_USER_DATA,
     payload: userData
 })
+export const setSelectedQuantity = (quantity: GeneralState["selectedQuantity"]): SetSelectedQuantityAction => ({
+    type: SET_SELECTED_QUANTITY,
+    payload: quantity
+})
 
 //SELECTORS
 export const getGeneral = (rootState: RootState) => rootState.general;
@@ -122,3 +138,4 @@ export const getEventChange = (rootState: RootState) => getGeneral(rootState).ev
 export const getSelectedChild = (rootState: RootState) => getGeneral(rootState).selectedChild;
 export const getSelectedPerson = (rootState: RootState) => getGeneral(rootState).selectedPerson;
 export const getSelectedUserType = (rootState: RootState) => getGeneral(rootState).selectedUserType;
+export const getSelectedQuantity = (rootState: RootState) => getGeneral(rootState).selectedQuantity;

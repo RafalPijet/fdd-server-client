@@ -13,7 +13,8 @@ import {
     IOutsideMessage,
     UserModel,
     UserStatus,
-    ChildModel
+    ChildModel,
+    InvoiceModel
 } from '../models';
 import { TargetOptions, IAdminMessage, SearchUserType } from '../types';
 import { removeDuplicates } from '../utils/functions';
@@ -242,10 +243,16 @@ class AdminController {
     async getPersonByTypeAndId(req: Request, res: Response, next: NextFunction): Promise<void> {
         const { type, id } = req.params
         let person: any;
+        let quantity: number | undefined = undefined;
 
         try {
             if (type === SearchUserType.child) {
-                person = await ChildModel.findById(id).populate('parent').populate('invoices');
+                person = await ChildModel.findById(id).populate('parent');
+                quantity = await InvoiceModel.find({ childId: id }).countDocuments();
+                const invoices = await InvoiceModel.find({ childId: id })
+                    .sort({ createdAt: -1 })
+                    .limit(8);
+                person.invoices = invoices;
                 person.parent.password = undefined;
             } else if (type === SearchUserType.parent || type === SearchUserType.admin) {
                 person = await UserModel.findById(id).populate('children');
@@ -253,10 +260,31 @@ class AdminController {
             } else {
                 next(new HttpException(404, 'Błędny typ użytkownika'));
             }
-            res.status(200).json({ person });
+            res.status(200).json({ person, quantity });
         } catch (err) {
             next(new HttpException(404,
                 `Znalezienie osoby nie powiodło się. - ${err}`))
+        }
+    }
+    @get('/child/invoices/:childId')
+    async getChildInvoices(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { childId } = req.params;
+            const { page, rowsPerPage } = req.query;
+            const quantity = await InvoiceModel.find({ childId }).countDocuments();
+            if (page !== undefined && rowsPerPage !== undefined && childId !== undefined) {
+                const invoices = await InvoiceModel.find({ childId })
+                    .sort({ createdAt: -1 })
+                    .skip(+page * +rowsPerPage)
+                    .limit(+rowsPerPage);
+                res.status(200).json({ invoices, quantity });
+            } else {
+                next(new HttpException(404,
+                    `Brak wszystkich parametrów zapytania.`))
+            }
+        } catch (err) {
+            next(new HttpException(404,
+                `Znalezienie listy faktur nie powiodło się. - ${err}`))
         }
     }
 
