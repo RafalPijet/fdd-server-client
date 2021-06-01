@@ -99,7 +99,7 @@ const MessageSection: React.FC<Props> = (props) => {
   return (
     <div {...rest} className={classes.section}>
       <GridContainer justify="center">
-        <GridItem xs={12} sm={12} md={8}>
+        <GridItem xs={12} sm={12} md={9}>
           <Typography variant="h4" className={classes.title}>
             Napisz do nas
           </Typography>

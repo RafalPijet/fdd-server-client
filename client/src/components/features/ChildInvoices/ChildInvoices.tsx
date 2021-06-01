@@ -157,7 +157,12 @@ const ChildInvoices: React.FC<Props> = (props) => {
         isExistChild={false}
         onChange={switchChangeHandling}
         checked={switchIsOn}
-        helpText="help text"
+        helpText="W tej sekcji możesz przeglądać faktury przesłane przez rodziców danego podopiecznego.
+         W lewym oknie widoczne są ikony. Każda z nich reprezentuje jedną fakturę. Na ikonie
+         widoczna jest data przesłania. Kliknij wybraną ikonę, a otrzymasz dostęp do pliku lub 
+         dwóch plików z obrazem faktury. Możesz powiększyć dany obraz faktury i odpowiednio go przeglądąć.
+          Dodatkowo wyświetlany jest opis faktury. Standardowo
+         wyświetlanych jest osiem ikon. Możesz to zmienić na 16 lub 24 ikony wyświetlane jednocześnie."
         text="Włącz/Wyłącz sekcję przeglądania faktur."
       />
       <CardBody>

@@ -56,3 +56,7 @@ export const urltoFile = (url: string, filename: string, mimeType?: any) => {
         .then(function (buf) { return new File([buf], filename, { type: mimeType }); })
     );
 }
+
+export const isEven = (value: number) => {
+    return (value % 2 === 0)
+}

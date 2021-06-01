@@ -9,6 +9,7 @@ import GridItem from '../../common/Grid/GridItem';
 import Header from '../../common/Header/Header';
 import Jumbotron from '../../common/Jumbotron/Jumbotron';
 import MessageSection from '../../features/MessageSection/MessageSection';
+import NewsSection from '../../features/NewsSection/NewsSection';
 import Footer from '../../common/Footer/Footer';
 import HeaderLinks from '../../features/HeaderLinks/HeaderLinksMainPage';
 import {
@@ -75,13 +76,15 @@ const MainPage: React.FC = () => {
           <GridContainer>
             <GridItem xs={12} sm={12} md={6}>
               <Typography variant="h3" className={classes.title}>
-                Preparing...
+                Zapewnienie każdej osobie możliwości pomocy dzieciom w leczeniu,
+                nauce i rozwoju
               </Typography>
             </GridItem>
           </GridContainer>
         </div>
       </Jumbotron>
       <div className={classNames(classes.main, classes.mainRaised)}>
+        <NewsSection />
         <MessageSection isDisabled={isPending} />
       </div>
       <Footer />

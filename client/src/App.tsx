@@ -4,6 +4,8 @@ import { createBrowserHistory } from 'history';
 import MainPage from './components/pages/MainPage/MainPage';
 import LoginPage from './components/pages/LoginPage/LoginPage';
 import AdminPage from './components/pages/AdminPage/AdminPage';
+import NewsPage from './components/pages/NewsPage/NewsPage';
+import AdminNewsPage from './components/pages/AdminNewsPage/AdminNewsPage';
 
 const ParentPage = React.lazy(
   () => import('./components/pages/ParentPage/ParentPage')
@@ -20,6 +22,8 @@ const App = () => {
             <Route exact path="/login" component={LoginPage} />
             <Route exact path="/parent" component={ParentPage} />
             <Route exact path="/admin" component={AdminPage} />
+            <Route exact path="/admin/news" component={AdminNewsPage} />
+            <Route exact path="/news/:id" component={NewsPage} />
             <Route exact path="/" component={MainPage} />
           </Switch>
         </BrowserRouter>
