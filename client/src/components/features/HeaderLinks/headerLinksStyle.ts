@@ -1,7 +1,7 @@
 import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import { makeStyles } from '@material-ui/core/styles';
-import { defaultFont, tooltipsStyle, grayColor } from '../../../styles/globalStyles';
+import { defaultFont, tooltipsStyle, grayColor, primaryColor } from '../../../styles/globalStyles';
 
 export interface Props {
     isSpiner?: boolean

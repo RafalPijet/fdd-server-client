@@ -11,7 +11,7 @@ import { cutText, isEven } from '../../../types/functions';
 import { useStyles, Props } from './NewsItemStyle';
 
 const NewsItem: React.FC<Props> = (props) => {
-  const { url, title, content, index } = props;
+  const { news, index } = props;
   const classes = useStyles();
   const [isRedirect, setIsRedirect] = useState(false);
 
@@ -36,14 +36,14 @@ const NewsItem: React.FC<Props> = (props) => {
             style={{ display: 'flex', alignItems: 'center' }}
           >
             <Typography className={contentClasses} align="justify">
-              {cutText(content, 300)}
+              {cutText(news.content, 300)}
             </Typography>
           </GridItem>
         )}
         <GridItem xs={12} sm={12} md={6}>
           <ButtonBase
             focusRipple
-            onClick={() => setIsRedirect(true)}
+            onClick={() => setTimeout(() => setIsRedirect(true), 300)}
             className={classes.image}
             focusVisibleClassName={classes.focusVisible}
             style={{
@@ -53,7 +53,7 @@ const NewsItem: React.FC<Props> = (props) => {
             <span
               className={classes.imageSrc}
               style={{
-                backgroundImage: `url(${url})`,
+                backgroundImage: `url(${news.images[0]})`,
               }}
             />
             <span className={classes.imageBackdrop} />
@@ -64,7 +64,7 @@ const NewsItem: React.FC<Props> = (props) => {
                 color="inherit"
                 className={classes.imageTitle}
               >
-                {title}
+                {news.title}
                 <span className={classes.imageMarked}>
                   <PhotoLibraryIcon fontSize="large" />
                 </span>
@@ -81,7 +81,7 @@ const NewsItem: React.FC<Props> = (props) => {
             style={{ display: 'flex', alignItems: 'center' }}
           >
             <Typography className={contentClasses} align="justify">
-              {cutText(content, 300)}
+              {cutText(news.content, 300)}
             </Typography>
           </GridItem>
         )}

@@ -94,6 +94,15 @@ export interface InvoiceState {
     content: string[];
 }
 
+export interface NewsState {
+    _id: string;
+    title: string;
+    content: string;
+    images: string[];
+    createdAt: Date;
+    uptatedAt?: Date;
+}
+
 export interface ChildState {
     _id: string;
     active: boolean;

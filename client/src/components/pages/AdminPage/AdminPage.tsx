@@ -15,7 +15,6 @@ import {
   resetAddingRequest,
   getMessages,
   getMessagesError,
-  resetMessagesRequest,
 } from '../../../redux/actions/requestActions';
 import Header from '../../common/Header/Header';
 import HeaderLinks from '../../features/HeaderLinks/HeaderLinksAdminPage';
@@ -27,10 +26,8 @@ import AdminMessages from '../../features/AdminMessages/AdminMessages';
 import RaportsZone from '../../features/RaportsZone/RaportsZone';
 import SearcherOfUsers from '../../features/SearcherOfUsers/SearcherOfUsers';
 import ModalAreYouSure from '../../common/ModalAreYouSure/ModalAreYouSure';
-import { cleanCurrentUser } from '../../../redux/actions/userActions';
 import {
   getToast,
-  setUserToast,
   getModalAreYouSure,
   setModalAreYouSure,
   setSelectedChild,
@@ -40,7 +37,6 @@ import {
 } from '../../../redux/actions/generalActions';
 import { removeMessage, updateUserStatus } from '../../../redux/thunks';
 import { ModalAYSModes, SearchUserType } from '../../../types/global';
-import { loadUserMessages } from '../../../redux/actions/messageActions';
 import AdminContent from '../../features/AdminContent/AdminContent';
 import image from '../../../images/jumbotronAdmin.jpg';
 
@@ -58,6 +54,15 @@ const AdminPage: React.FC = () => {
   const messagesError = useSelector(getMessagesError);
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
+
+  useEffect(() => {
+    return () => {
+      dispatch(setSelectedChild(null));
+      dispatch(setSelectedPerson(null));
+      dispatch(setSelectedQuantity(null));
+      dispatch(setSelectedUserType(SearchUserType.child));
+    };
+  }, []);
 
   useEffect(() => {
     if (toast.isOpen) {
@@ -85,39 +90,6 @@ const AdminPage: React.FC = () => {
     addingError.isError,
     messagesError.isError,
   ]);
-
-  useEffect(() => {
-    return () => {
-      localStorage.removeItem('tokenFDD');
-      localStorage.removeItem('expiresInFDD');
-      dispatch(cleanCurrentUser());
-      dispatch(resetRequest());
-      dispatch(resetUpdatingRequest());
-      dispatch(resetAddingRequest());
-      dispatch(resetMessagesRequest());
-      dispatch(setSelectedChild(null));
-      dispatch(setSelectedPerson(null));
-      dispatch(setSelectedQuantity(null));
-      dispatch(setSelectedUserType(SearchUserType.child));
-      dispatch(loadUserMessages([], 0));
-      dispatch(
-        setUserToast({
-          isOpen: false,
-          content: '',
-          variant: 'success',
-        })
-      );
-      dispatch(
-        setModalAreYouSure({
-          mode: ModalAYSModes.null,
-          isOpen: false,
-          title: '',
-          description: '',
-          data: {},
-        })
-      );
-    };
-  }, []);
 
   const handleToast = (message: string, variant: VariantType) => {
     enqueueSnackbar(message, { variant });

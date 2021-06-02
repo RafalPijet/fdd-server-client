@@ -5,6 +5,17 @@ import ListItem from '@material-ui/core/ListItem';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
 import { cleanCurrentUser } from '../../../redux/actions/userActions';
+import { resetMessagesRequest } from '../../../redux/actions/requestActions';
+import {
+  setSelectedChild,
+  setSelectedPerson,
+  setSelectedUserType,
+  setSelectedQuantity,
+  setUserToast,
+  setModalAreYouSure,
+} from '../../../redux/actions/generalActions';
+import { loadUserMessages } from '../../../redux/actions/messageActions';
+import { SearchUserType, ModalAYSModes } from '../../../types/global';
 import { Props, StyleProps, PropsClasses, useStyles } from './headerLinksStyle';
 import CustomButton from '../../common/CustomButton/CustomButton';
 import CustomDropdown from '../../common/CustomDropdown/CustomDropdown';
@@ -24,6 +35,28 @@ const HeaderList: React.FC<Props> = (props) => {
     localStorage.removeItem('tokenFDD');
     localStorage.removeItem('expiresInFDD');
     dispatch(cleanCurrentUser());
+    dispatch(resetMessagesRequest());
+    dispatch(setSelectedChild(null));
+    dispatch(setSelectedPerson(null));
+    dispatch(setSelectedQuantity(null));
+    dispatch(setSelectedUserType(SearchUserType.child));
+    dispatch(loadUserMessages([], 0));
+    dispatch(
+      setUserToast({
+        isOpen: false,
+        content: '',
+        variant: 'success',
+      })
+    );
+    dispatch(
+      setModalAreYouSure({
+        mode: ModalAYSModes.null,
+        isOpen: false,
+        title: '',
+        description: '',
+        data: {},
+      })
+    );
   };
 
   return (
@@ -32,7 +65,7 @@ const HeaderList: React.FC<Props> = (props) => {
         <CustomDropdown
           isDisabled={isSpiner}
           caret
-          hoverColor="warningHover"
+          hoverColor="primaryHover"
           noLiPadding
           buttonText="Menu"
           buttonProps={{
@@ -40,11 +73,11 @@ const HeaderList: React.FC<Props> = (props) => {
           }}
           buttonIcon={<Apps />}
           dropdownList={[
-            <Link to="/parent" className={classes.dropdownLink}>
-              Parent
+            <Link to="/admin" className={classes.dropdownLink}>
+              Home
             </Link>,
-            <Link to="/login" className={classes.dropdownLink}>
-              Login
+            <Link to="/admin/news" className={classes.dropdownLink}>
+              Aktualności
             </Link>,
           ]}
         />

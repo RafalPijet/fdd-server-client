@@ -1,5 +1,6 @@
 import { Theme, makeStyles, createStyles } from '@material-ui/core/styles';
 import { grayColor } from '../../../styles/globalStyles';
+import { NewsState } from '../../../types/global';
 
 export const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -88,8 +89,6 @@ export const useStyles = makeStyles((theme: Theme) =>
 );
 
 export interface Props {
-    url: string;
-    title: string;
-    content: string;
+    news: NewsState;
     index: number;
 }

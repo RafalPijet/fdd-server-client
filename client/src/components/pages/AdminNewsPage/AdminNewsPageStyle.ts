@@ -1,6 +1,8 @@
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
-import { container } from '../../../styles/globalStyles';
+import { container, logoColor } from '../../../styles/globalStyles';
+import image from '../../../images/jumbotronAdmin.jpg';
+import imageBack from '../../../images/sign.jpg';
 
 const justContainer = container as BaseCSSProperties;
 
@@ -9,24 +11,22 @@ export const useStyles = makeStyles((theme: Theme) =>
         container: {
             zIndex: 2,
             position: 'relative',
-            paddingTop: '20vh',
-            color: '#FFFFFF',
-            paddingBottom: '200px',
+            display: 'inherit',
+            justifyContent: 'center',
             ...justContainer,
         },
-        cardHidden: {
-            opacity: '0',
-            transform: 'translate3d(0, -60px, 0)',
-        },
         pageHeader: {
-            minHeight: '100vh',
+            minHeight: '30vh',
             height: 'auto',
-            display: 'inherit',
+            display: 'flex',
             position: 'relative',
             margin: '0',
             padding: '0',
             border: '0',
             alignItems: 'center',
+            backgroundImage: 'url(' + image + ')',
+            backgroundSize: 'cover',
+            backgroundPosition: 'top center',
             '&:before': {
                 background: 'rgba(0, 0, 0, 0.5)',
             },
@@ -49,48 +49,21 @@ export const useStyles = makeStyles((theme: Theme) =>
                 width: '100%',
             },
         },
-        form: {
-            margin: '0 auto',
+        titlePage: {
+            color: logoColor
         },
-        cardHeader: {
-            maxWidth: '320px',
-            width: 'auto',
-            textAlign: 'center',
-            marginLeft: '20px',
-            marginRight: '20px',
-            marginTop: '-40px',
-            padding: '20px 0',
-            marginBottom: '15px',
+        main: {
+            backgroundImage: 'url(' + imageBack + ')',
+            backgroundSize: 'cover',
+            backgroundPosition: 'top center',
+            position: "relative",
+            zIndex: 3
         },
-        socialIcons: {
-            maxWidth: '24px',
-            marginTop: '0',
-            width: '100%',
-            transform: 'none',
-            left: '0',
-            top: '0',
-            height: '100%',
-            lineHeight: '41px',
-            fontSize: '20px',
-        },
-        divider: {
-            marginTop: '30px',
-            marginBottom: '0px',
-            textAlign: 'center',
-        },
-        cardFooter: {
-            paddingTop: '0rem',
-            border: '0',
-            borderRadius: '6px',
-            justifyContent: 'center !important',
-        },
-        socialLine: {
-            marginTop: '1rem',
-            textAlign: 'center',
-            padding: '0',
-        },
-        inputIconsColor: {
-            color: '#495057',
+        mainRaised: {
+            margin: "-60px 30px 0px",
+            borderRadius: "6px",
+            boxShadow:
+                "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2)"
         },
     })
 );

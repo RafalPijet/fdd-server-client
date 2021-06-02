@@ -35,7 +35,7 @@ import {
 } from './RemovingImageStyle';
 
 const RemovingImage: React.FC<Props> = (props) => {
-  const { imagesUrl, childId, name } = props;
+  const { imagesUrl, childId, name, isNewsHandling, getImagesState } = props;
   const classes: PropsClasses = useStyles({} as StyleProps);
   const dispatch = useDispatch();
   const isUpdatingError = useSelector(getUpdatingError).isError;
@@ -124,7 +124,11 @@ const RemovingImage: React.FC<Props> = (props) => {
   };
 
   const confirmButtonHandling = () => {
-    dispatch(updateImagesList(state));
+    if (isNewsHandling && getImagesState !== undefined) {
+      getImagesState(state);
+    } else {
+      dispatch(updateImagesList(state));
+    }
   };
 
   const switchChangeHandling = (e: React.ChangeEvent<HTMLInputElement>) => {

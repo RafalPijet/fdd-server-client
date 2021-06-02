@@ -64,7 +64,9 @@ export interface State {
 export interface Props {
     imagesUrl: string[];
     childId: string | null;
-    name: AvailableDestinations
+    name: AvailableDestinations;
+    isNewsHandling?: boolean;
+    getImagesState?: (state: State) => void;
 }
 
 export const reorder = (list: [], startIndex: number, endIndex: number): object => {
