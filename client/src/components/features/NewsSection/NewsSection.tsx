@@ -12,6 +12,7 @@ import image3 from '../../../images/jumbotronParent.jpg';
 const news: NewsState[] = [
   {
     _id: '1',
+    isPublication: false,
     images: [image1],
     title: 'Zbiórka dla Stasia',
     createdAt: new Date(),
@@ -20,6 +21,7 @@ const news: NewsState[] = [
   },
   {
     _id: '2',
+    isPublication: false,
     images: [image2],
     title: 'Spotkanie z prezydentem miasta',
     createdAt: new Date(),
@@ -28,6 +30,7 @@ const news: NewsState[] = [
   },
   {
     _id: '3',
+    isPublication: false,
     images: [image3],
     title: 'Impreza dobroczynna z udziałem mistrza Polski w skoku o tyczce',
     createdAt: new Date(),

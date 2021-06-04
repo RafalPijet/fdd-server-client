@@ -12,5 +12,6 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
 }))
 
 export interface Props {
-    news: NewsState[]
+    news: NewsState[];
+    getCurrentNews: (data: NewsState | null) => void;
 }

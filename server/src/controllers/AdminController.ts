@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import mongoose from 'mongoose';
-import { controller } from './decorators';
+import { controller, bodyValidator, ValidatorKeys } from './decorators';
 import { post, get, put, del } from '../routes';
 import { RequestWithUser } from '../middleware';
 import HttpException from '../exceptions/HttpException';
@@ -14,7 +14,11 @@ import {
     UserModel,
     UserStatus,
     ChildModel,
-    InvoiceModel
+    InvoiceModel,
+    INews,
+    NewsModel,
+    buildChild,
+    buildNews
 } from '../models';
 import { TargetOptions, IAdminMessage, SearchUserType } from '../types';
 import { removeDuplicates } from '../utils/functions';
@@ -377,6 +381,31 @@ class AdminController {
             }
         } catch (err) {
             next(new HttpException(404, `Zmiana status użytkownika nie powiodła się`))
+        }
+    }
+    @post('/news')
+    @bodyValidator(ValidatorKeys.addNews)
+    async addNews(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const payload = req.body;
+
+        try {
+            const newsQuantity = await NewsModel.find().countDocuments();
+            if (newsQuantity >= 5) {
+                next(new HttpException(404, 'Ilość artukułów nie może przekroczyć 5!'));
+            } else {
+                const currentNews: INews = {
+                    publication: payload.isPublication,
+                    title: payload.title,
+                    content: payload.content,
+                    images: payload.images
+                }
+                const newNews = buildNews(currentNews);
+                await newNews.save();
+                res.status(201).json({ newNews, message: "Nowy artukuł wiadomości został dodany." })
+            }
+
+        } catch (err) {
+            next(new HttpException(404, 'Nieudane utworzenie artykułu wiadomości!'));
         }
     }
 }

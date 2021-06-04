@@ -83,7 +83,8 @@ import {
     IChildData,
     UpdateUserTypeData,
     SearchUserType,
-    InvoiceState
+    InvoiceState,
+    NewsState
 } from '../types/global';
 import { API_URL, URL } from '../config';
 
@@ -825,6 +826,34 @@ export const getCurrentlyInvoicesList = (childId: string, page: number, rowsPerP
                 dispatch(errorUpdatingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         } else {
             dispatch(errorUpdatingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        }
+    }
+}
+
+export const addNewsRequest = (payload: NewsState): ThunkAction<
+    Promise<void>,
+    any,
+    RootState,
+    StartRequestAction | StopRequestAction | ErrorRequestAction | SetToastAction
+> => async (dispatch, getState) => {
+    dispatch(startRequest());
+
+    try {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        let res: AxiosResponse = await axios.post(`${API_URL}/admin/news`, payload, {
+            headers: {
+                'Authorization': localStorage.getItem('tokenFDD')
+            },
+        })
+        console.log(res.data);
+        dispatch(stopRequest());
+    } catch (err) {
+        if (err.response !== undefined) {
+            err.response.data.message ?
+                dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        } else {
+            dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }
     }
 }

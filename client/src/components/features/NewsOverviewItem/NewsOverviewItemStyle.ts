@@ -23,7 +23,7 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
                 margin: '0 15px',
                 backgroundColor: "rgba(156, 39, 176, 0.4)",
                 border: `4px solid ${primaryColor}`,
-                transition: '.3s'
+                transition: '.1s'
             },
         },
     },

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import ClassNames from 'classnames';
 import Typography from '@material-ui/core/Typography';
 import GridContainer from '../../common/Grid/GridContainer';
@@ -18,6 +19,7 @@ import image4 from '../../../images/newsBackground.jpg';
 const news: NewsState[] = [
   {
     _id: '1',
+    isPublication: false,
     images: [image4, image1],
     title: 'Zbiórka dla Stasia',
     createdAt: new Date(),
@@ -26,6 +28,7 @@ const news: NewsState[] = [
   },
   {
     _id: '2',
+    isPublication: false,
     images: [image2],
     title: 'Spotkanie z prezydentem miasta',
     createdAt: new Date(),
@@ -34,6 +37,7 @@ const news: NewsState[] = [
   },
   {
     _id: '3',
+    isPublication: false,
     images: [image3],
     title: 'Impreza dobroczynna z udziałem mistrza Polski w skoku o tyczce',
     createdAt: new Date(),
@@ -49,6 +53,10 @@ const AdminNewsPage: React.FC = () => {
   useEffect(() => {
     setCurrentNews(news[0]);
   }, []);
+
+  const selectCurrentNewsHandling = (data: NewsState | null) => {
+    setCurrentNews(data);
+  };
 
   return (
     <div>
@@ -73,7 +81,10 @@ const AdminNewsPage: React.FC = () => {
       <div className={ClassNames(classes.main, classes.mainRaised)}>
         <GridContainer justify="center">
           <GridItem xs={12} sm={12} md={10}>
-            <NewsOverview news={news} />
+            <NewsOverview
+              news={news}
+              getCurrentNews={selectCurrentNewsHandling}
+            />
           </GridItem>
           <GridItem xs={12} sm={12} md={12}>
             <NewsCreateEdit currentNews={currentNews} />

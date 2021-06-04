@@ -5,7 +5,7 @@ import { NewsState } from '../../../types/global';
 import { useStyles, Props } from './NewsOverviewStyle';
 
 const NewsOverview: React.FC<Props> = (props) => {
-  const { news } = props;
+  const { news, getCurrentNews } = props;
   const classes = useStyles();
 
   const [currentNews, setCurrentNews] = useState<NewsState | null>(null);
@@ -13,12 +13,16 @@ const NewsOverview: React.FC<Props> = (props) => {
 
   useEffect(() => {
     setCurrentNews(news[0]);
-    setChosenId(news[0]._id);
+    if (news[0]._id) setChosenId(news[0]._id);
   }, []);
+
+  useEffect(() => {
+    getCurrentNews(currentNews);
+  }, [currentNews]);
 
   const currentNewsHandling = (data: NewsState) => {
     setCurrentNews(data);
-    setChosenId(data._id);
+    if (data._id) setChosenId(data._id);
   };
 
   return (

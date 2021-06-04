@@ -2,6 +2,7 @@ import mongoose, { Schema } from 'mongoose';
 
 export interface INews {
     _id?: string;
+    publication?: boolean;
     title: string;
     content: string;
     images: string[];
@@ -10,6 +11,7 @@ export interface INews {
 }
 
 const newsSchema = new Schema({
+    publication: { type: Boolean, default: false },
     title: { type: String, required: true },
     content: { type: String, required: true },
     images: [{ type: String, default: [] }]

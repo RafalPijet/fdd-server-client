@@ -95,11 +95,12 @@ export interface InvoiceState {
 }
 
 export interface NewsState {
-    _id: string;
+    _id?: string;
+    isPublication: boolean;
     title: string;
     content: string;
     images: string[];
-    createdAt: Date;
+    createdAt?: Date;
     uptatedAt?: Date;
 }
 
