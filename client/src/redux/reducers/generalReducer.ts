@@ -28,7 +28,9 @@ import {
     SET_SELECTED_QUANTITY,
     SetSelectedQuantityAction,
     UPDATE_SELECTED_PERSON_CHILD_INVOICES_LIST,
-    UpdateSelectedPersonChildInvoicesListAction
+    UpdateSelectedPersonChildInvoicesListAction,
+    SET_ALL_NEWS,
+    SetAllNewsAction
 } from '../actions/generalActions';
 import { GeneralState, ModalAYSModes, SearchUserType } from '../../types/global';
 
@@ -54,7 +56,8 @@ const initialState: GeneralState = {
     selectedChild: null,
     selectedPerson: null,
     selectedUserType: SearchUserType.child,
-    selectedQuantity: null
+    selectedQuantity: null,
+    news: null
 }
 
 const generalReducer = (
@@ -62,7 +65,7 @@ const generalReducer = (
     action: SetToastAction | SetModalAreYouSure | SetIsRemoved | SetIsOpen |
         SetEventChange | SetSelectedChild | SetSelectedPersonAction | SetSelectedUserTypeAction |
         UpdateSelectedPersonChildDataAction | UpdateSelectedPersonChildImagesListAction |
-        UpdateSelectedPersonChildAvatarAction | AddChildToSelectedPersonAction |
+        UpdateSelectedPersonChildAvatarAction | AddChildToSelectedPersonAction | SetAllNewsAction |
         UpdateSelectedPersonUserDataAction | SetSelectedQuantityAction | UpdateSelectedPersonChildInvoicesListAction
 ) => {
     switch (action.type) {
@@ -141,6 +144,11 @@ const generalReducer = (
                     ...state.selectedPerson,
                     invoices: action.payload
                 }
+            }
+        case SET_ALL_NEWS:
+            return {
+                ...state,
+                news: action.payload
             }
         default:
             return { ...state }

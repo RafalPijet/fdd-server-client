@@ -18,6 +18,7 @@ export const UPDATE_SELECTED_PERSON_CHILD_AVATAR = 'general/update_selected_pers
 export const ADD_CHILD_TO_SELECTED_PERSON = 'general/add_child_to_selected_person';
 export const UPDATE_SELECTED_PERSON_USER_DATA = 'general/update_selected_person_user_data';
 export const SET_SELECTED_QUANTITY = 'general/set_selected_quantity';
+export const SET_ALL_NEWS = 'general/set_all_news';
 
 //ACTIONS TYPES
 export interface SetToastAction extends Action<typeof SET_TOAST> {
@@ -64,6 +65,9 @@ export interface UpdateSelectedPersonUserDataAction extends Action<typeof UPDATE
 }
 export interface SetSelectedQuantityAction extends Action<typeof SET_SELECTED_QUANTITY> {
     payload: GeneralState["selectedQuantity"];
+}
+export interface SetAllNewsAction extends Action<typeof SET_ALL_NEWS> {
+    payload: GeneralState["news"];
 }
 
 //CREATORS OF ACTIONS
@@ -127,6 +131,10 @@ export const setSelectedQuantity = (quantity: GeneralState["selectedQuantity"]):
     type: SET_SELECTED_QUANTITY,
     payload: quantity
 })
+export const setAllNews = (news: GeneralState["news"]): SetAllNewsAction => ({
+    type: SET_ALL_NEWS,
+    payload: news
+})
 
 //SELECTORS
 export const getGeneral = (rootState: RootState) => rootState.general;
@@ -139,3 +147,4 @@ export const getSelectedChild = (rootState: RootState) => getGeneral(rootState).
 export const getSelectedPerson = (rootState: RootState) => getGeneral(rootState).selectedPerson;
 export const getSelectedUserType = (rootState: RootState) => getGeneral(rootState).selectedUserType;
 export const getSelectedQuantity = (rootState: RootState) => getGeneral(rootState).selectedQuantity;
+export const getNews = (rootState: RootState) => getGeneral(rootState).news;

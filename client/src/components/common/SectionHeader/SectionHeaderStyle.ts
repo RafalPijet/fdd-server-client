@@ -1,7 +1,5 @@
-import Switch from '@material-ui/core/Switch';
-import Tooltip from '@material-ui/core/Tooltip';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import { makeStyles, withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
 import { grayColor, primaryColor } from '../../../styles/globalStyles';
 
@@ -21,15 +19,6 @@ const sectionHeaderStyle = (theme: Theme) => ({
         color: grayColor
     }
 })
-
-export const FddTooltip = withStyles((theme: Theme) => ({
-    tooltip: {
-        backgroundColor: primaryColor,
-        color: '#fff',
-        boxShadow: theme.shadows[2],
-        fontSize: 12,
-    },
-}))(Tooltip);
 
 export interface StyleProps {
     icon: BaseCSSProperties;

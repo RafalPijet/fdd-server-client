@@ -3,6 +3,7 @@ import ClassNames from 'classnames';
 import ButtonBase from '@material-ui/core/ButtonBase';
 import Typography from '@material-ui/core/Typography';
 import { Props, useStyles } from './NewsOverviewItemStyle';
+import thumbnail from '../../../images/thumbnail.jpg';
 
 const NewsOverviewItem: React.FC<Props> = (props) => {
   const { currentNews, chosenId, getChosenNews } = props;
@@ -32,7 +33,9 @@ const NewsOverviewItem: React.FC<Props> = (props) => {
       <span
         className={classes.imageSrc}
         style={{
-          backgroundImage: `url(${currentNews.images[0]})`,
+          backgroundImage: `url(${
+            currentNews.images.length ? currentNews.images[0] : thumbnail
+          })`,
         }}
       />
       <span className={classes.imageBackdrop} />

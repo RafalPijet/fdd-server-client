@@ -1,6 +1,8 @@
 import { VariantType } from 'notistack';
 import { withStyles } from '@material-ui/core/styles';
+import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import Switch from '@material-ui/core/Switch';
+import Tooltip from '@material-ui/core/Tooltip';
 import TextField from '@material-ui/core/TextField';
 
 import { primaryColor, grayColor } from '../styles/globalStyles';
@@ -54,7 +56,8 @@ export enum MessageOptions {
 export enum ModalAYSModes {
     null,
     removeMessage,
-    changeUserStatus
+    changeUserStatus,
+    removeNews
 }
 
 export enum ArrowsDirection {
@@ -96,7 +99,7 @@ export interface InvoiceState {
 
 export interface NewsState {
     _id?: string;
-    isPublication: boolean;
+    publication: boolean;
     title: string;
     content: string;
     images: string[];
@@ -214,6 +217,7 @@ export interface GeneralState {
     selectedPerson: any;
     selectedUserType: SearchUserType;
     selectedQuantity: number | null;
+    news: NewsState[] | null;
 }
 
 export enum TargetOptions {
@@ -262,3 +266,12 @@ export const CssTextField = withStyles({
         },
     },
 })(TextField);
+
+export const FddTooltip = withStyles((theme: Theme) => ({
+    tooltip: {
+        backgroundColor: primaryColor,
+        color: '#fff',
+        boxShadow: theme.shadows[2],
+        fontSize: 12,
+    },
+}))(Tooltip);

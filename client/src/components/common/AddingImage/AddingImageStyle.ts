@@ -98,6 +98,10 @@ export interface Props {
     childId: string | null;
     selectedChild: ChildState | undefined;
     name: AvailableDestinations;
+    newsId?: string;
+    isExistChild: boolean;
+    helpText: string;
+    isAvatarAvailable: boolean;
 }
 
 export type PropsClasses = Record<keyof StyleProps, string>;

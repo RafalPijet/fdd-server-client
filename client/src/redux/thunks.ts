@@ -70,7 +70,9 @@ import {
     SetSelectedQuantityAction,
     setSelectedQuantity,
     UpdateSelectedPersonChildInvoicesListAction,
-    updateSelectedPersonalChildInvoicesList
+    updateSelectedPersonalChildInvoicesList,
+    SetAllNewsAction,
+    setAllNews
 } from './actions/generalActions';
 import { State as ImagesLists } from '../components/common/RemovingImage/RemovingImageStyle';
 import {
@@ -156,6 +158,32 @@ export const addUser = (payload: Register): ThunkAction<
         }
     }
 
+}
+
+export const getAllNewsRequest = (): ThunkAction<
+    Promise<void>,
+    any,
+    RootState,
+    StartUpdatingRequestAction | StopUpdatingRequestAction | ErrorUpdatingRequestAction |
+    SetAllNewsAction
+> => async (dispatch, getState) => {
+    dispatch(startUpdatingRequest());
+
+    try {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        let res: AxiosResponse = await axios.get(`${API_URL}/auth/news`);
+        const news: NewsState[] = res.data.news;
+        if (news.length) dispatch(setAllNews(news));
+        dispatch(stopUpdatingRequest());
+    } catch (err) {
+        if (err.response !== undefined) {
+            err.response.data.message ?
+                dispatch(errorUpdatingRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorUpdatingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        } else {
+            dispatch(errorUpdatingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        }
+    }
 }
 
 export const updateUserStatus = (userId: string, status: UserStatus): ThunkAction<
@@ -845,7 +873,7 @@ export const addNewsRequest = (payload: NewsState): ThunkAction<
                 'Authorization': localStorage.getItem('tokenFDD')
             },
         })
-        console.log(res.data);
+        dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
         dispatch(stopRequest());
     } catch (err) {
         if (err.response !== undefined) {

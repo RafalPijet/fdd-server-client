@@ -44,6 +44,20 @@ const ChildHandling: React.FC = () => {
             childId={childId}
             selectedChild={selectedChild}
             name={AvailableDestinations.addingImage}
+            helpText="Aby dodać zdjęcie, upuść je lub kliknij w celu wyboru zdjęcia z Twojego dysku.
+            Następnie klikając przycisk DODAJ ZDJĘCIE, przenosisz je do pola edytora, natomiast klikając X,
+             wracasz do mozliwości dodania innego zdjęcia. Suwakiem PORTRET ustalasz, czy będziesz dodawać 
+             portret - miniaturkę dziecka czy jedno z 5-ciu zdjęć kolekcji. Standardowo ustawiona jest
+              opcja dodawania zdjęć kolekcji. W edytorze powinieneś wykadrować docelowe zdjęcię.
+               Ramka kadrowania jest inna dla zdjęcia niz dla portretu. Uzywając przycisków edytora mozesz
+               zblizać, oddalać, obracać oraz przesuwać obrabiane zdjęcie. Jeśli chcesz cofnąć zmiany podczas
+               kadrowania, naciśnij przycisk z ikoną prostokąta z krzyzykiem. Jeśli wykadrowałeś w sposób zadowalający
+                Cię naciśnij przycisk z ikoną aparatu fotograficznego. Zobaczysz wówczas gotowe zdjęcie. Mozesz oczywiście ponownie wrócić do kadrowania zdjęcia, czy portetu.
+                 Po naciśnięciu przycisku ZAPISZ ZDJĘCIE nastąpi dodanie zdjęcia do kolekcji lub portretu.
+                 Pamiętaj, ze w kolekcji mozesz mieć tylko 5 zdjęć! Naciśnięcia przycisku ANULUJ
+                 likwiduje cały proces dodawania nowego zdjęcia."
+            isExistChild={true}
+            isAvatarAvailable={true}
           />
         </GridItem>
         <GridItem

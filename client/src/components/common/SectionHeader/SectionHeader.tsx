@@ -7,13 +7,12 @@ import {
   getSelectedChild,
   setUserToast,
 } from '../../../redux/actions/generalActions';
-import { FddSwitch } from '../../../types/global';
+import { FddSwitch, FddTooltip } from '../../../types/global';
 import {
   PropsClasses,
   Props,
   useStyles,
   StyleProps,
-  FddTooltip,
 } from './SectionHeaderStyle';
 
 const SectionHeader: React.FC<Props> = (props) => {

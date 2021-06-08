@@ -8,10 +8,11 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
         margin: '20px',
         backgroundColor: 'rgba(255, 255, 255, 0.4)',
         padding: '10px',
+        minHeight: '200px'
     }
 }))
 
 export interface Props {
-    news: NewsState[];
+    news: NewsState[] | null;
     getCurrentNews: (data: NewsState | null) => void;
 }

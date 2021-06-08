@@ -56,7 +56,15 @@ import {
 import { urltoFile } from '../../../types/functions';
 
 const AddingImage: React.FC<Props> = (props) => {
-  const { childId, selectedChild, name } = props;
+  const {
+    childId,
+    selectedChild,
+    name,
+    newsId,
+    isExistChild,
+    helpText,
+    isAvatarAvailable,
+  } = props;
   const dispatch = useDispatch();
   const isAdding = useSelector(getAdding);
   const isSuccess = useSelector(getAddingSuccess);
@@ -114,7 +122,10 @@ const AddingImage: React.FC<Props> = (props) => {
 
   const handleSubmit: IDropzoneProps['onSubmit'] = async (files, allFiles) => {
     if (preview !== logo) setPreview(logo);
-    if (files[0].file && childId !== null) {
+    if (
+      (files[0].file && childId !== null) ||
+      (files[0].file && newsId !== undefined)
+    ) {
       setEnteredImage(files[0].file);
 
       const reader = new FileReader();
@@ -134,6 +145,9 @@ const AddingImage: React.FC<Props> = (props) => {
         dispatch(addImageToChild(file, childId));
       }
     }
+    if (file && newsId !== undefined) {
+      console.log(file);
+    }
   };
 
   const cancelSelectedImage = () => {
@@ -148,7 +162,9 @@ const AddingImage: React.FC<Props> = (props) => {
       dispatch(resetAddingRequest());
       await urltoFile(
         image,
-        `${selectedChild?.firstName}_${selectedChild?.lastName}.png`
+        newsId !== undefined
+          ? `${newsId}.png`
+          : `${selectedChild?.firstName}_${selectedChild?.lastName}.png`
       ).then((file) => {
         setFile(file);
       });
@@ -192,21 +208,10 @@ const AddingImage: React.FC<Props> = (props) => {
   return (
     <Card className={rootClasses}>
       <SectionHeader
-        isExistChild={true}
+        isExistChild={isExistChild}
         onChange={switchChangeHandling}
         checked={switchIsOn}
-        helpText="Aby dodać zdjęcie, upuść je lub kliknij w celu wyboru zdjęcia z Twojego dysku.
-         Następnie klikając przycisk DODAJ ZDJĘCIE, przenosisz je do pola edytora, natomiast klikając X,
-          wracasz do mozliwości dodania innego zdjęcia. Suwakiem PORTRET ustalasz, czy będziesz dodawać 
-          portret - miniaturkę dziecka czy jedno z 5-ciu zdjęć kolekcji. Standardowo ustawiona jest
-           opcja dodawania zdjęć kolekcji. W edytorze powinieneś wykadrować docelowe zdjęcię.
-            Ramka kadrowania jest inna dla zdjęcia niz dla portretu. Uzywając przycisków edytora mozesz
-            zblizać, oddalać, obracać oraz przesuwać obrabiane zdjęcie. Jeśli chcesz cofnąć zmiany podczas
-            kadrowania, naciśnij przycisk z ikoną prostokąta z krzyzykiem. Jeśli wykadrowałeś w sposób zadowalający
-             Cię naciśnij przycisk z ikoną aparatu fotograficznego. Zobaczysz wówczas gotowe zdjęcie. Mozesz oczywiście ponownie wrócić do kadrowania zdjęcia, czy portetu.
-              Po naciśnięciu przycisku ZAPISZ ZDJĘCIE nastąpi dodanie zdjęcia do kolekcji lub portretu.
-              Pamiętaj, ze w kolekcji mozesz mieć tylko 5 zdjęć! Naciśnięcia przycisku ANULUJ
-              likwiduje cały proces dodawania nowego zdjęcia."
+        helpText={helpText}
         text="Włącz/Wyłącz sekcję dodawania i edycji zdjęć."
       />
       <CardBody>
@@ -228,10 +233,12 @@ const AddingImage: React.FC<Props> = (props) => {
             <CustomDropZone
               handleSubmit={handleSubmit}
               isDisabled={
-                selectedChild === undefined ||
+                (selectedChild === undefined && newsId === undefined) ||
                 !switchIsOn ||
                 isAdding ||
-                (!isAvatar && selectedChild!.images.length > 4)
+                (!isAvatar &&
+                  selectedChild !== undefined &&
+                  selectedChild.images.length > 4)
               }
               buttonLabel="DODAJ ZDJĘCIE"
               acceptFiles="image/jpg, image/jpeg, image/png"
@@ -335,6 +342,7 @@ const AddingImage: React.FC<Props> = (props) => {
             </CustomButton>
             <FormControlLabel
               disabled={
+                !isAvatarAvailable ||
                 !switchIsOn ||
                 isAdding ||
                 (isAvatar &&

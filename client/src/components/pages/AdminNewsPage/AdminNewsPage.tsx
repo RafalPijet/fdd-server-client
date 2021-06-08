@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { VariantType, useSnackbar } from 'notistack';
 import ClassNames from 'classnames';
 import Typography from '@material-ui/core/Typography';
 import GridContainer from '../../common/Grid/GridContainer';
@@ -8,64 +9,106 @@ import Header from '../../common/Header/Header';
 import HeaderLinks from '../../features/HeaderLinks/HeaderLinksAdminPage';
 import NewsOverview from '../../features/NewsOverview/NewsOverview';
 import NewsCreateEdit from '../../features/NewsCreateEdit/NewsCreateEdit';
+import ModalAreYouSure from '../../common/ModalAreYouSure/ModalAreYouSure';
+import {
+  getToast,
+  getModalAreYouSure,
+  setModalAreYouSure,
+  getNews,
+} from '../../../redux/actions/generalActions';
+import {
+  getSuccess,
+  getPending,
+  getAdding,
+  getUpdating,
+  getError,
+  getAddingError,
+  getUpdatingError,
+  resetRequest,
+  resetAddingRequest,
+  resetUpdatingRequest,
+} from '../../../redux/actions/requestActions';
+import { NewsState, ModalAYSModes } from '../../../types/global';
+import { getAllNewsRequest } from '../../../redux/thunks';
 import { useStyles } from './AdminNewsPageStyle';
-
-import { NewsState } from '../../../types/global';
-import image1 from '../../../images/jumbotronAdmin.jpg';
-import image2 from '../../../images/jumbotronMain.jpg';
-import image3 from '../../../images/jumbotronParent.jpg';
-import image4 from '../../../images/newsBackground.jpg';
-
-const news: NewsState[] = [
-  {
-    _id: '1',
-    isPublication: false,
-    images: [image4, image1],
-    title: 'Zbiórka dla Stasia',
-    createdAt: new Date(),
-    content:
-      "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like)",
-  },
-  {
-    _id: '2',
-    isPublication: false,
-    images: [image2],
-    title: 'Spotkanie z prezydentem miasta',
-    createdAt: new Date(),
-    content:
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-  },
-  {
-    _id: '3',
-    isPublication: false,
-    images: [image3],
-    title: 'Impreza dobroczynna z udziałem mistrza Polski w skoku o tyczce',
-    createdAt: new Date(),
-    content:
-      "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).",
-  },
-];
 
 const AdminNewsPage: React.FC = () => {
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const toast = useSelector(getToast);
+  const modalAYS = useSelector(getModalAreYouSure);
+  const isPending = useSelector(getPending);
+  const isAdding = useSelector(getAdding);
+  const isUpdating = useSelector(getUpdating);
+  const isSuccess = useSelector(getSuccess);
+  const news = useSelector(getNews);
+  const error = useSelector(getError);
+  const updatingError = useSelector(getUpdatingError);
+  const addingError = useSelector(getAddingError);
+  const { enqueueSnackbar } = useSnackbar();
   const [currentNews, setCurrentNews] = useState<NewsState | null>(null);
 
   useEffect(() => {
-    setCurrentNews(news[0]);
-  }, []);
+    if (news === null || (news !== null && isSuccess)) {
+      dispatch(getAllNewsRequest());
+    }
+    setCurrentNews(news !== null ? news[0] : news);
+  }, [news, isSuccess]);
+
+  useEffect(() => {
+    if (toast.isOpen) {
+      handleToast(toast.content, toast.variant);
+    }
+    if (error.isError) {
+      handleToast(error.message, 'error');
+      dispatch(resetRequest());
+    }
+    if (updatingError.isError) {
+      handleToast(updatingError.message, 'error');
+      dispatch(resetUpdatingRequest());
+    }
+    if (addingError.isError) {
+      handleToast(addingError.message, 'error');
+      dispatch(resetAddingRequest());
+    }
+  }, [toast.isOpen, error.isError, updatingError.isError, addingError.isError]);
 
   const selectCurrentNewsHandling = (data: NewsState | null) => {
     setCurrentNews(data);
   };
 
+  const handleToast = (message: string, variant: VariantType) => {
+    enqueueSnackbar(message, { variant });
+  };
+
+  const handleModalAYS = (isConfirm: boolean) => {
+    if (isConfirm) {
+      if (modalAYS.mode === ModalAYSModes.removeNews) {
+        console.log('Modal Remove News');
+      }
+    }
+
+    dispatch(
+      setModalAreYouSure({
+        mode: ModalAYSModes.null,
+        isOpen: false,
+        title: '',
+        description: '',
+        data: {},
+      })
+    );
+  };
+
   return (
     <div>
       <Header
-        isSpiner={false}
+        isSpiner={isPending || isUpdating || isAdding}
         fixed
         color="transparent"
         brand="Fundacja Dorośli Dzieciom"
-        rightLinks={<HeaderLinks isSpiner={false} />}
+        rightLinks={
+          <HeaderLinks isSpiner={isPending || isUpdating || isAdding} />
+        }
         changeColorOnScroll={{
           height: 400,
           color: 'white',
@@ -87,10 +130,19 @@ const AdminNewsPage: React.FC = () => {
             />
           </GridItem>
           <GridItem xs={12} sm={12} md={12}>
-            <NewsCreateEdit currentNews={currentNews} />
+            <NewsCreateEdit
+              newsQuantity={news === null ? 0 : news.length}
+              currentNews={currentNews}
+            />
           </GridItem>
         </GridContainer>
       </div>
+      <ModalAreYouSure
+        isOpen={modalAYS.isOpen}
+        title={modalAYS.title}
+        descriprion={modalAYS.description}
+        isConfirm={handleModalAYS}
+      />
     </div>
   );
 };

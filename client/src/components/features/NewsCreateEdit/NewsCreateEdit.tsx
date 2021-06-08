@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import ClassNames from 'classnames';
 import Paper from '@material-ui/core/Paper';
 import GridContainer from '../../common/Grid/GridContainer';
 import GridItem from '../../common/Grid/GridItem';
@@ -7,30 +8,40 @@ import Card from '../../common/Card/Card';
 import CardBody from '../../common/CardBody/CardBody';
 import CardFooter from '../../common/CardFooter/CardFooter';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import IconButton from '@material-ui/core/IconButton';
+import Zoom from '@material-ui/core/Zoom';
 import CustomInput from '../../common/CustomInput/CustomInput';
 import CustomButton from '../../common/CustomButton/CustomButton';
 import RemovingImage from '../../common/RemovingImage/RemovingImage';
 import AddingImage from '../../common/AddingImage/AddingImage';
 import { addNewsRequest } from '../../../redux/thunks';
-import { getPending } from '../../../redux/actions/requestActions';
+import {
+  getPending,
+  getSuccess,
+  resetRequest,
+} from '../../../redux/actions/requestActions';
+import { setUserToast } from '../../../redux/actions/generalActions';
 import {
   AvailableDestinations,
   FddSwitch,
   NewsState,
+  FddTooltip,
 } from '../../../types/global';
 import { primaryColor } from '../../../styles/globalStyles';
 import { State } from '../../common/RemovingImage/RemovingImageStyle';
 import { Props, useStyles } from './NewsCreateEditStyle';
 
 const NewsCreateEdit: React.FC<Props> = (props) => {
-  const { currentNews } = props;
+  const { currentNews, newsQuantity } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
   const isPending = useSelector(getPending);
+  const isSuccess = useSelector(getSuccess);
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [currentNewsState, setCurrentNewsState] = useState<NewsState>({
-    isPublication: false,
+    publication: false,
     title: '',
     content: '',
     images: [],
@@ -39,7 +50,7 @@ const NewsCreateEdit: React.FC<Props> = (props) => {
     Record<
       keyof Omit<
         NewsState,
-        'isPublication' | 'images' | '_id' | 'createdAt' | 'uptatedAt'
+        'publication' | 'images' | '_id' | 'createdAt' | 'uptatedAt'
       >,
       boolean
     >
@@ -48,24 +59,29 @@ const NewsCreateEdit: React.FC<Props> = (props) => {
     content: false,
   });
 
+  const deleteButtonClasses = ClassNames({
+    [classes.icon]: isEdit,
+    [classes.disabled]: !isEdit,
+  });
+
   useEffect(() => {
     if (isEdit) {
       if (currentNews !== null)
         setCurrentNewsState({
-          isPublication: currentNews.isPublication,
+          publication: currentNews.publication,
           title: currentNews.title,
           content: currentNews.content,
           images: currentNews.images,
         });
     } else {
       setCurrentNewsState({
-        isPublication: false,
+        publication: false,
         title: '',
         content: '',
         images: [],
       });
     }
-  }, [isEdit]);
+  }, [isEdit, currentNews]);
 
   useEffect(() => {
     setIserror({
@@ -88,6 +104,29 @@ const NewsCreateEdit: React.FC<Props> = (props) => {
       );
   }, [isEdit, isError]);
 
+  useEffect(() => {
+    if (isSuccess) {
+      setCurrentNewsState({
+        publication: false,
+        title: '',
+        content: '',
+        images: [],
+      });
+      dispatch(resetRequest());
+      dispatch(
+        setUserToast({
+          isOpen: false,
+          content: '',
+          variant: 'success',
+        })
+      );
+    }
+  }, [isSuccess]);
+
+  useEffect(() => {
+    setIsEdit(newsQuantity >= 5);
+  }, [newsQuantity]);
+
   const currentNewsImagesHandling = (data: State) => {
     console.log(data);
   };
@@ -108,7 +147,7 @@ const NewsCreateEdit: React.FC<Props> = (props) => {
   const switchIsPublicHandling = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCurrentNewsState({
       ...currentNewsState,
-      isPublication: e.target.checked,
+      publication: e.target.checked,
     });
   };
 
@@ -153,27 +192,51 @@ const NewsCreateEdit: React.FC<Props> = (props) => {
                 white
                 inputProps={{
                   multiline: true,
-                  rows: 10,
+                  rows: 9,
                 }}
               />
             </CardBody>
             <CardFooter className={classes.footer}>
               <GridContainer style={{ width: '100%' }}>
                 <GridItem
-                  xs={4}
-                  sm={4}
-                  md={4}
+                  xs={1}
+                  sm={1}
+                  md={1}
+                  style={{ display: 'flex', justifyContent: 'center' }}
+                >
+                  <FddTooltip
+                    title="Usuń artukuł"
+                    arrow
+                    placement="top"
+                    TransitionComponent={Zoom}
+                    enterDelay={1000}
+                    enterNextDelay={1000}
+                  >
+                    <span>
+                      <IconButton disabled={isPending || !isEdit}>
+                        <DeleteForeverIcon
+                          className={deleteButtonClasses}
+                          fontSize="large"
+                        />
+                      </IconButton>
+                    </span>
+                  </FddTooltip>
+                </GridItem>
+                <GridItem
+                  xs={3}
+                  sm={3}
+                  md={3}
                   style={{ display: 'flex', justifyContent: 'center' }}
                 >
                   <FormControlLabel
-                    disabled={isPending}
+                    disabled={isPending || !isEdit}
                     classes={{
                       label: classes.switchLabel,
                     }}
                     label="PUBLIKUJ"
                     control={
                       <FddSwitch
-                        checked={currentNewsState.isPublication}
+                        checked={currentNewsState.publication}
                         onChange={switchIsPublicHandling}
                       />
                     }
@@ -201,7 +264,7 @@ const NewsCreateEdit: React.FC<Props> = (props) => {
                   style={{ display: 'flex', justifyContent: 'center' }}
                 >
                   <FormControlLabel
-                    disabled={isPending}
+                    disabled={isPending || newsQuantity >= 5}
                     classes={{
                       label: classes.switchLabel,
                     }}
@@ -219,20 +282,38 @@ const NewsCreateEdit: React.FC<Props> = (props) => {
           </Card>
         </GridItem>
         <GridItem xs={12} sm={12} md={6}>
-          <RemovingImage
-            imagesUrl={currentNews !== null ? currentNews.images : []}
-            childId={null}
-            name={AvailableDestinations.removingImage}
-            isNewsHandling={true}
-            getImagesState={currentNewsImagesHandling}
-          />
+          {currentNews !== null && (
+            <RemovingImage
+              imagesUrl={currentNews !== null ? currentNews.images : []}
+              childId={null}
+              name={AvailableDestinations.removingImage}
+              isNewsHandling={true}
+              getImagesState={currentNewsImagesHandling}
+            />
+          )}
         </GridItem>
         <GridItem xs={12} sm={12} md={12}>
-          <AddingImage
-            childId={null}
-            name={AvailableDestinations.addingImage}
-            selectedChild={undefined}
-          />
+          {currentNews !== null && (
+            <AddingImage
+              childId={null}
+              name={AvailableDestinations.addingImage}
+              selectedChild={undefined}
+              isExistChild={false}
+              helpText="Aby dodać zdjęcie, upuść je lub kliknij w celu wyboru zdjęcia z Twojego dysku.
+              Następnie klikając przycisk DODAJ ZDJĘCIE, przenosisz je do pola edytora, natomiast klikając X,
+               wracasz do mozliwości dodania innego zdjęcia. W edytorze powinieneś wykadrować docelowe zdjęcię.
+             Uzywając przycisków edytora mozesz zblizać, oddalać, obracać oraz przesuwać obrabiane zdjęcie. Jeśli chcesz cofnąć zmiany podczas
+                 kadrowania, naciśnij przycisk z ikoną prostokąta z krzyzykiem. Jeśli wykadrowałeś w sposób zadowalający
+                  Cię naciśnij przycisk z ikoną aparatu fotograficznego. Zobaczysz wówczas gotowe zdjęcie. Mozesz oczywiście ponownie wrócić do kadrowania zdjęcia.
+                   Po naciśnięciu przycisku ZAPISZ ZDJĘCIE nastąpi dodanie zdjęcia do kolekcji.
+                   Pamiętaj, ze w kolekcji mozesz mieć tylko 5 zdjęć! Naciśnięcia przycisku ANULUJ
+                   likwiduje cały proces dodawania nowego zdjęcia."
+              isAvatarAvailable={false}
+              newsId={
+                currentNews.images.length > 4 ? undefined : currentNews._id
+              }
+            />
+          )}
         </GridItem>
       </GridContainer>
     </Paper>

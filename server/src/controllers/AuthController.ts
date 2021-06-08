@@ -2,8 +2,8 @@ import * as bcrypt from 'bcrypt';
 import { Request, Response, NextFunction } from 'express';
 import { controller, bodyValidator, ValidatorKeys } from './decorators';
 import { createToken } from './token.service';
-import { post } from '../routes';
-import { UserModel, IUser, buildUser, IOutsideMessage, buildOutSideMessage } from '../models';
+import { get, post } from '../routes';
+import { UserModel, IUser, buildUser, IOutsideMessage, buildOutSideMessage, NewsModel } from '../models';
 import HttpException from '../exceptions/HttpException';
 import UserWithThatEmailAlreadyExistsException from '../exceptions/UserWithThatEmailAlreadyExistsException';
 import WrongCredentialsException from '../exceptions/WrongCredentialException';
@@ -74,6 +74,17 @@ class AuthController {
             res.status(201).json({ message: "Wiadomość została wysłana." });
         } catch (err) {
             next(new HttpException(404, `Wiadomość nie została wysłana!. - ${err}`))
+        }
+    }
+
+    @get('/news')
+    async getAllNews(req: Request, res: Response, next: NextFunction): Promise<void> {
+
+        try {
+            const news = await NewsModel.find();
+            res.status(200).json({ news });
+        } catch (err) {
+            next(new HttpException(404, `Błąd pobierania artukułów!. - ${err}`))
         }
     }
 }
