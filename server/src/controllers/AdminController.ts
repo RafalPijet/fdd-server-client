@@ -1,5 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import mongoose from 'mongoose';
+import sharp from 'sharp';
+import fs from 'fs';
+import path from 'path';
 import { controller, bodyValidator, ValidatorKeys } from './decorators';
 import { post, get, put, del } from '../routes';
 import { RequestWithUser } from '../middleware';
@@ -406,6 +409,50 @@ class AdminController {
 
         } catch (err) {
             next(new HttpException(404, 'Nieudane utworzenie artykułu wiadomości!'));
+        }
+    }
+
+    @post('/news/picture/:newsId')
+    async addPictureToNews(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const { newsId } = req.params;
+        const pictures = 'pictures';
+        if (!req.files) {
+            next(new HttpException(404, 'Brak obrazu'));
+        } else {
+
+            try {
+                const currentNews = await NewsModel.findById(newsId);
+                if (currentNews) {
+                    if (currentNews.images && currentNews.images.length >= 5) {
+                        next(new HttpException(404, 'Przekroczony limit ilości zdjęć'));
+                    } else {
+                        const files = req.files as Express.Multer.File[];
+                        const pictureUrl = files[0].path.replace(files[0].destination, pictures);
+                        const source = files[0].path.replace('uploads', pictures)  //It's will be remove
+                        const target = source.replace(pictures, 'build/pictures')  //It's will be remove
+                        await sharp(files[0].path)
+                            .resize(500, 332)
+                            .jpeg({ quality: 90 })
+                            .toFile(path.resolve(pictures, files[0].filename))
+                        fs.unlinkSync(files[0].path);
+                        fs.copyFile(source, target, (err) => {              //It's will be remove
+                            console.log(err)                                //It's will be remove
+                        })                                                  //It's will be remove
+                        currentNews.images = [...currentNews.images, pictureUrl];
+                        await currentNews.save();
+                        res.status(201).json(
+                            {
+                                message: `Dodano zdjęcia dla artukułu ${currentNews.title}`,
+                                images: currentNews.images
+                            });
+                    }
+                } else {
+                    next(new HttpException(404, 'Nieudane dodanie zdjęcia. Nie znaleziono artukułu.'));
+                }
+
+            } catch (err) {
+                next(new HttpException(404, 'Nieudane dodanie zdjęcia do artukułu'));
+            }
         }
     }
 }

@@ -26,7 +26,11 @@ import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import ArrowLeftIcon from '@material-ui/icons/ArrowLeft';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import CancelPresentationIcon from '@material-ui/icons/CancelPresentation';
-import { addImageToChild, addAvatarToChild } from '../../../redux/thunks';
+import {
+  addImageToChild,
+  addAvatarToChild,
+  addPictureToNewsRequest,
+} from '../../../redux/thunks';
 import {
   getAdding,
   getAddingSuccess,
@@ -145,8 +149,8 @@ const AddingImage: React.FC<Props> = (props) => {
         dispatch(addImageToChild(file, childId));
       }
     }
-    if (file && newsId !== undefined) {
-      console.log(file);
+    if (file && newsId !== undefined && childId === null) {
+      dispatch(addPictureToNewsRequest(file, newsId));
     }
   };
 

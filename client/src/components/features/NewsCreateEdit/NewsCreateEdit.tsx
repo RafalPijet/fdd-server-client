@@ -19,7 +19,9 @@ import { addNewsRequest } from '../../../redux/thunks';
 import {
   getPending,
   getSuccess,
+  getAddingSuccess,
   resetRequest,
+  resetAddingRequest,
 } from '../../../redux/actions/requestActions';
 import { setUserToast } from '../../../redux/actions/generalActions';
 import {
@@ -38,6 +40,7 @@ const NewsCreateEdit: React.FC<Props> = (props) => {
   const dispatch = useDispatch();
   const isPending = useSelector(getPending);
   const isSuccess = useSelector(getSuccess);
+  const isAddingSuccess = useSelector(getAddingSuccess);
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [currentNewsState, setCurrentNewsState] = useState<NewsState>({
@@ -121,7 +124,10 @@ const NewsCreateEdit: React.FC<Props> = (props) => {
         })
       );
     }
-  }, [isSuccess]);
+    if (isAddingSuccess) {
+      dispatch(resetAddingRequest());
+    }
+  }, [isSuccess, isAddingSuccess]);
 
   useEffect(() => {
     setIsEdit(newsQuantity >= 5);

@@ -15,6 +15,7 @@ import {
   getModalAreYouSure,
   setModalAreYouSure,
   getNews,
+  setAllNews,
 } from '../../../redux/actions/generalActions';
 import {
   getSuccess,
@@ -49,10 +50,18 @@ const AdminNewsPage: React.FC = () => {
   const [currentNews, setCurrentNews] = useState<NewsState | null>(null);
 
   useEffect(() => {
+    return () => {
+      dispatch(setAllNews(null));
+    };
+  }, []);
+
+  useEffect(() => {
     if (news === null || (news !== null && isSuccess)) {
       dispatch(getAllNewsRequest());
     }
-    setCurrentNews(news !== null ? news[0] : news);
+    if (currentNews === null) {
+      setCurrentNews(news !== null ? news[0] : news);
+    }
   }, [news, isSuccess]);
 
   useEffect(() => {
@@ -127,6 +136,7 @@ const AdminNewsPage: React.FC = () => {
             <NewsOverview
               news={news}
               getCurrentNews={selectCurrentNewsHandling}
+              chosenNews={currentNews}
             />
           </GridItem>
           <GridItem xs={12} sm={12} md={12}>

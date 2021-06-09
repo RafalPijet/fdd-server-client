@@ -8,7 +8,7 @@ import { NewsState } from '../../../types/global';
 import { useStyles, Props } from './NewsOverviewStyle';
 
 const NewsOverview: React.FC<Props> = (props) => {
-  const { news, getCurrentNews } = props;
+  const { news, getCurrentNews, chosenNews } = props;
   const classes = useStyles();
   const isPending = useSelector(getUpdating);
   const [currentNews, setCurrentNews] = useState<NewsState | null>(null);
@@ -16,8 +16,11 @@ const NewsOverview: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (news !== null) {
-      setCurrentNews(news[0]);
-      if (news.length && news[0]._id) setChosenId(news[0]._id);
+      setCurrentNews(chosenNews === null ? news[0] : chosenNews);
+      if (chosenNews === null && news.length && news[0]._id) {
+        setChosenId(news[0]._id);
+      }
+      if (chosenNews !== null && chosenNews._id) setChosenId(chosenNews._id);
     }
   }, [news]);
 

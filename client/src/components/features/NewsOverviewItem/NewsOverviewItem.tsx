@@ -1,18 +1,27 @@
 import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import ClassNames from 'classnames';
 import ButtonBase from '@material-ui/core/ButtonBase';
 import Typography from '@material-ui/core/Typography';
+import {
+  getAdding,
+  getPending,
+  getUpdating,
+} from '../../../redux/actions/requestActions';
 import { Props, useStyles } from './NewsOverviewItemStyle';
 import thumbnail from '../../../images/thumbnail.jpg';
 
 const NewsOverviewItem: React.FC<Props> = (props) => {
   const { currentNews, chosenId, getChosenNews } = props;
   const classes = useStyles();
+  const isPending = useSelector(getPending);
+  const isAdding = useSelector(getAdding);
+  const isUpdating = useSelector(getUpdating);
   const [isChosen, setIsChosen] = useState<boolean>(false);
 
   const imagesClasses = ClassNames({
     [classes.image]: true,
-    [classes.active]: isChosen,
+    [classes.active]: isChosen && !isPending && !isAdding && !isUpdating,
   });
 
   useEffect(() => {
@@ -20,7 +29,9 @@ const NewsOverviewItem: React.FC<Props> = (props) => {
   }, [chosenId]);
 
   const selectButtonHandling = () => {
-    getChosenNews(currentNews);
+    if (!isPending && !isAdding && !isUpdating) {
+      getChosenNews(currentNews);
+    }
   };
 
   return (

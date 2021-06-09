@@ -72,7 +72,9 @@ import {
     UpdateSelectedPersonChildInvoicesListAction,
     updateSelectedPersonalChildInvoicesList,
     SetAllNewsAction,
-    setAllNews
+    setAllNews,
+    UpdatePicturesOfCurrentNewsAction,
+    updatePicturesOfCurrentNews
 } from './actions/generalActions';
 import { State as ImagesLists } from '../components/common/RemovingImage/RemovingImageStyle';
 import {
@@ -173,7 +175,14 @@ export const getAllNewsRequest = (): ThunkAction<
         await new Promise(resolve => setTimeout(resolve, 2000));
         let res: AxiosResponse = await axios.get(`${API_URL}/auth/news`);
         const news: NewsState[] = res.data.news;
-        if (news.length) dispatch(setAllNews(news));
+        if (news.length) {
+            news.forEach((item: NewsState) => {
+                item.images = item.images.map((image: string) => {
+                    return `${URL}${image}`
+                })
+            })
+            dispatch(setAllNews(news));
+        }
         dispatch(stopUpdatingRequest());
     } catch (err) {
         if (err.response !== undefined) {
@@ -741,6 +750,41 @@ export const addAvatarToChild = (avatar: File, childId: string): ThunkAction<
     }
 }
 
+export const addPictureToNewsRequest = (picture: File, newsId: string): ThunkAction<
+    Promise<void>,
+    any,
+    RootState,
+    StartAddingRequestAction | StopAddingRequestAction | ErrorAddingRequestAction |
+    SetToastAction | UpdatePicturesOfCurrentNewsAction
+> => async (dispatch, getState) => {
+    dispatch(startAddingRequest());
+
+    try {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        const formData = new FormData();
+        formData.append('image', picture);
+        let res: AxiosResponse = await axios.post(`${API_URL}/admin/news/picture/${newsId}`, formData, {
+            headers: {
+                'Authorization': localStorage.getItem('tokenFDD')
+            },
+        })
+        const images = res.data.images.map((image: string) => {
+            return `${URL}${image}`
+        })
+        dispatch(updatePicturesOfCurrentNews(newsId, images));
+        dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
+        dispatch(stopAddingRequest());
+    } catch (err) {
+        if (err.response !== undefined) {
+            err.response.data.message ?
+                dispatch(errorAddingRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorAddingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        } else {
+            dispatch(errorAddingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        }
+    }
+}
+
 export const addImageToChild = (image: File, childId: string): ThunkAction<
     Promise<void>,
     any,
@@ -867,7 +911,7 @@ export const addNewsRequest = (payload: NewsState): ThunkAction<
     dispatch(startRequest());
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise(resolve => setTimeout(resolve, 30000));
         let res: AxiosResponse = await axios.post(`${API_URL}/admin/news`, payload, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD')

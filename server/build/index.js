@@ -64,6 +64,7 @@ app.use(multer_1.default({ storage: storage, fileFilter: fileFilter }).array('im
 app.use('/images', express_1.default.static(path_1.default.join(__dirname, 'images')));
 app.use('/avatars', express_1.default.static(path_1.default.join(__dirname, 'avatars')));
 app.use('/invoices', express_1.default.static(path_1.default.join(__dirname, 'invoices')));
+app.use('/pictures', express_1.default.static(path_1.default.join(__dirname, 'pictures')));
 app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', "*");
     res.setHeader('Access-Control-Allow-Methods', "GET, POST, PUT, PATCH, DELETE, OPTIONS");

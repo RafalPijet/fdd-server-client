@@ -30,9 +30,11 @@ import {
     UPDATE_SELECTED_PERSON_CHILD_INVOICES_LIST,
     UpdateSelectedPersonChildInvoicesListAction,
     SET_ALL_NEWS,
-    SetAllNewsAction
+    SetAllNewsAction,
+    UPDATE_PICTURES_OF_CURRENT_NEWS,
+    UpdatePicturesOfCurrentNewsAction
 } from '../actions/generalActions';
-import { GeneralState, ModalAYSModes, SearchUserType } from '../../types/global';
+import { GeneralState, ModalAYSModes, NewsState, SearchUserType } from '../../types/global';
 
 const initialState: GeneralState = {
     toast: {
@@ -66,7 +68,8 @@ const generalReducer = (
         SetEventChange | SetSelectedChild | SetSelectedPersonAction | SetSelectedUserTypeAction |
         UpdateSelectedPersonChildDataAction | UpdateSelectedPersonChildImagesListAction |
         UpdateSelectedPersonChildAvatarAction | AddChildToSelectedPersonAction | SetAllNewsAction |
-        UpdateSelectedPersonUserDataAction | SetSelectedQuantityAction | UpdateSelectedPersonChildInvoicesListAction
+        UpdateSelectedPersonUserDataAction | SetSelectedQuantityAction |
+        UpdateSelectedPersonChildInvoicesListAction | UpdatePicturesOfCurrentNewsAction
 ) => {
     switch (action.type) {
         case SET_TOAST:
@@ -149,6 +152,20 @@ const generalReducer = (
             return {
                 ...state,
                 news: action.payload
+            }
+        case UPDATE_PICTURES_OF_CURRENT_NEWS:
+            if (state.news !== null) {
+                return {
+                    ...state,
+                    news: state.news.map((item: NewsState) => {
+                        if (item._id === action.newsId) {
+                            item.images = action.payload
+                        }
+                        return item;
+                    })
+                }
+            } else {
+                return { ...state };
             }
         default:
             return { ...state }

@@ -8,3 +8,4 @@ node_modules
 /server/avatars
 /server/uploads
 /server/invoices
+/server/pictures
