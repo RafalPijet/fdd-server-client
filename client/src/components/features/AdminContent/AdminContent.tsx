@@ -54,6 +54,7 @@ const AdminContent: React.FC = () => {
                 id={AvailableDestinations.removingImage}
               >
                 <RemovingImage
+                  isExistChild={false}
                   childId={childId}
                   imagesUrl={selectedChild !== null ? selectedChild.images : []}
                   name={AvailableDestinations.removingImage}

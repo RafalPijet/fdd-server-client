@@ -152,7 +152,7 @@ class UserController {
                     })
                 }
                 await child.save();
-                res.status(200).json({ message: 'Dokonano zmian na liście zdjęć dziecka' });
+                res.status(201).json({ message: 'Dokonano zmian na liście zdjęć dziecka' });
             }
         } catch (err) {
             next(new HttpException(404, 'Nieudana zmiana listy zdjęć'));

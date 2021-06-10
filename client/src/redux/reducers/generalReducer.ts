@@ -32,7 +32,9 @@ import {
     SET_ALL_NEWS,
     SetAllNewsAction,
     UPDATE_PICTURES_OF_CURRENT_NEWS,
-    UpdatePicturesOfCurrentNewsAction
+    UpdatePicturesOfCurrentNewsAction,
+    UPDATE_NEWS_OF_PUBLICATION,
+    UpdateNewsOfPublicationAction
 } from '../actions/generalActions';
 import { GeneralState, ModalAYSModes, NewsState, SearchUserType } from '../../types/global';
 
@@ -64,7 +66,7 @@ const initialState: GeneralState = {
 
 const generalReducer = (
     state: GeneralState = initialState,
-    action: SetToastAction | SetModalAreYouSure | SetIsRemoved | SetIsOpen |
+    action: SetToastAction | SetModalAreYouSure | SetIsRemoved | SetIsOpen | UpdateNewsOfPublicationAction |
         SetEventChange | SetSelectedChild | SetSelectedPersonAction | SetSelectedUserTypeAction |
         UpdateSelectedPersonChildDataAction | UpdateSelectedPersonChildImagesListAction |
         UpdateSelectedPersonChildAvatarAction | AddChildToSelectedPersonAction | SetAllNewsAction |
@@ -160,6 +162,20 @@ const generalReducer = (
                     news: state.news.map((item: NewsState) => {
                         if (item._id === action.newsId) {
                             item.images = action.payload
+                        }
+                        return item;
+                    })
+                }
+            } else {
+                return { ...state };
+            }
+        case UPDATE_NEWS_OF_PUBLICATION:
+            if (state.news !== null) {
+                return {
+                    ...state,
+                    news: state.news.map((item: NewsState) => {
+                        if (item._id === action.newsId) {
+                            item.publication = action.payload
                         }
                         return item;
                     })

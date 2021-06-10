@@ -20,6 +20,7 @@ export const UPDATE_SELECTED_PERSON_USER_DATA = 'general/update_selected_person_
 export const SET_SELECTED_QUANTITY = 'general/set_selected_quantity';
 export const SET_ALL_NEWS = 'general/set_all_news';
 export const UPDATE_PICTURES_OF_CURRENT_NEWS = 'general/update_pictures_of_current_news';
+export const UPDATE_NEWS_OF_PUBLICATION = 'general/update_news_of_publication';
 
 //ACTIONS TYPES
 export interface SetToastAction extends Action<typeof SET_TOAST> {
@@ -72,6 +73,10 @@ export interface SetAllNewsAction extends Action<typeof SET_ALL_NEWS> {
 }
 export interface UpdatePicturesOfCurrentNewsAction extends Action<typeof UPDATE_PICTURES_OF_CURRENT_NEWS> {
     payload: string[],
+    newsId: string
+}
+export interface UpdateNewsOfPublicationAction extends Action<typeof UPDATE_NEWS_OF_PUBLICATION> {
+    payload: boolean,
     newsId: string
 }
 
@@ -143,6 +148,11 @@ export const setAllNews = (news: GeneralState["news"]): SetAllNewsAction => ({
 export const updatePicturesOfCurrentNews = (newsId: string, pictures: string[]): UpdatePicturesOfCurrentNewsAction => ({
     type: UPDATE_PICTURES_OF_CURRENT_NEWS,
     payload: pictures,
+    newsId
+})
+export const updateNewsOfPublication = (newsId: string, isPublication: boolean): UpdateNewsOfPublicationAction => ({
+    type: UPDATE_NEWS_OF_PUBLICATION,
+    payload: isPublication,
     newsId
 })
 

@@ -1,11 +1,9 @@
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import { makeStyles, withStyles } from '@material-ui/core/styles';
-import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
+import { Theme, makeStyles, createStyles, withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import { ChildState, AvailableDestinations } from '../../../types/global';
 import { primaryBoxShadow, primaryColor } from '../../../styles/globalStyles';
 
-const addingImageStyle = (theme: Theme) => ({
+export const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
         minHeight: '450px',
     },
@@ -48,19 +46,7 @@ const addingImageStyle = (theme: Theme) => ({
         flexDirection: 'column',
         justifyContent: 'center',
     }
-})
-
-export interface StyleProps {
-    root: BaseCSSProperties;
-    back: BaseCSSProperties;
-    preview: BaseCSSProperties;
-    active: BaseCSSProperties;
-    previewContent: BaseCSSProperties;
-    activePreview: BaseCSSProperties;
-    avatar: BaseCSSProperties;
-    arrowsBox: BaseCSSProperties;
-    upDown: BaseCSSProperties;
-}
+}))
 
 export const OperationButton = withStyles({
     root: {
@@ -103,6 +89,3 @@ export interface Props {
     helpText: string;
     isAvatarAvailable: boolean;
 }
-
-export type PropsClasses = Record<keyof StyleProps, string>;
-export const useStyles = makeStyles(addingImageStyle as any);

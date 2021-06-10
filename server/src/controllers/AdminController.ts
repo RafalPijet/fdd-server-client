@@ -24,7 +24,7 @@ import {
     buildNews
 } from '../models';
 import { TargetOptions, IAdminMessage, SearchUserType } from '../types';
-import { removeDuplicates } from '../utils/functions';
+import { removeDuplicates, clearImage } from '../utils/functions';
 import nodemailerSendgrid from 'nodemailer-sendgrid';
 import nodemailer from 'nodemailer';
 dotenv.config();
@@ -453,6 +453,47 @@ class AdminController {
             } catch (err) {
                 next(new HttpException(404, 'Nieudane dodanie zdjęcia do artukułu'));
             }
+        }
+    }
+
+    @put('/news/pictures')
+    async updatePicturesList(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const { contentList, removeList, id } = req.body;
+
+        try {
+            const news = await NewsModel.findById(id);
+            if (!news) {
+                next(new HttpException(404, "Nie znaleziono artykułu"))
+            } else {
+                news.images = contentList;
+                if (removeList.length) {
+                    removeList.forEach((item: string) => {
+                        clearImage(item)
+                    })
+                }
+                await news.save();
+                res.status(201).json({ message: `Dokonano zmian na liście zdjęć artukułu: "${news.title}"` });
+            }
+        } catch (err) {
+            next(new HttpException(404, 'Nieudana zmiana listy zdjęć'));
+        }
+    }
+
+    @put('/news/publication')
+    async updateNewsPublication(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const { newsId, isPublication } = req.body;
+
+        try {
+            const currentNews = await NewsModel.findById(newsId);
+            if (!currentNews) {
+                next(new HttpException(404, "Nie znaleziono artykułu"));
+            } else {
+                currentNews.publication = isPublication;
+                currentNews.save();
+                res.status(201).json({ message: `Artukuł "${currentNews.title}" ${isPublication ? "jest" : "nie jest"} publikowany.` })
+            }
+        } catch (err) {
+            next(new HttpException(404, 'Nieudana zmiana listy zdjęć'));
         }
     }
 }

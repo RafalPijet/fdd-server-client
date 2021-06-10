@@ -74,7 +74,9 @@ import {
     SetAllNewsAction,
     setAllNews,
     UpdatePicturesOfCurrentNewsAction,
-    updatePicturesOfCurrentNews
+    updatePicturesOfCurrentNews,
+    UpdateNewsOfPublicationAction,
+    updateNewsOfPublication
 } from './actions/generalActions';
 import { State as ImagesLists } from '../components/common/RemovingImage/RemovingImageStyle';
 import {
@@ -824,6 +826,45 @@ export const addImageToChild = (image: File, childId: string): ThunkAction<
     }
 }
 
+export const updatePicturesListRequest = (payload: ImagesLists): ThunkAction<
+    Promise<void>,
+    any,
+    RootState,
+    StartUpdatingRequestAction | StopUpdatingRequestAction | ErrorUpdatingRequestAction |
+    SetToastAction | UpdatePicturesOfCurrentNewsAction
+> => async (dispatch, getState) => {
+    dispatch(startUpdatingRequest());
+
+    try {
+        await new Promise(resolve => setTimeout(resolve, 20000));
+        const contentList = payload.contentList.map((item: string) => item.replace(URL, ''));
+        const removeList = payload.removeList.map((item: string) => item.replace(URL, ''));
+        const data: ImagesLists = {
+            contentList,
+            removeList,
+            id: payload.id
+        }
+        let res: AxiosResponse = await axios.put(`${API_URL}/admin/news/pictures`, data, {
+            headers: {
+                'Authorization': localStorage.getItem('tokenFDD')
+            },
+        })
+        if (payload.id !== null) {
+            dispatch(updatePicturesOfCurrentNews(payload.id, payload.contentList))
+        }
+        dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
+        dispatch(stopUpdatingRequest());
+    } catch (err) {
+        if (err.response !== undefined) {
+            err.response.data.message ?
+                dispatch(errorUpdatingRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorUpdatingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        } else {
+            dispatch(errorUpdatingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        }
+    }
+}
+
 export const updateImagesList = (payload: ImagesLists): ThunkAction<
     Promise<void>,
     any,
@@ -911,7 +952,7 @@ export const addNewsRequest = (payload: NewsState): ThunkAction<
     dispatch(startRequest());
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 30000));
+        await new Promise(resolve => setTimeout(resolve, 2000));
         let res: AxiosResponse = await axios.post(`${API_URL}/admin/news`, payload, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD')
@@ -926,6 +967,37 @@ export const addNewsRequest = (payload: NewsState): ThunkAction<
                 dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         } else {
             dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        }
+    }
+}
+
+export const updateNewsPublication = (newsId: string, isPublication: boolean): ThunkAction<
+    Promise<void>,
+    any,
+    RootState,
+    StartUpdatingRequestAction | StopUpdatingRequestAction | ErrorUpdatingRequestAction |
+    SetToastAction | UpdateNewsOfPublicationAction
+> => async (dispatch, getState) => {
+    const payload = { newsId, isPublication };
+    dispatch(startUpdatingRequest());
+
+    try {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        let res: AxiosResponse = await axios.put(`${API_URL}/admin/news/publication`, payload, {
+            headers: {
+                'Authorization': localStorage.getItem('tokenFDD')
+            },
+        })
+        dispatch(updateNewsOfPublication(newsId, isPublication));
+        dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
+        dispatch(stopUpdatingRequest());
+    } catch (err) {
+        if (err.response !== undefined) {
+            err.response.data.message ?
+                dispatch(errorUpdatingRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorUpdatingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        } else {
+            dispatch(errorUpdatingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }
     }
 }

@@ -42,8 +42,6 @@ import {
   setEventChange,
 } from '../../../redux/actions/generalActions';
 import {
-  StyleProps,
-  PropsClasses,
   useStyles,
   Props,
   OperationButton,
@@ -75,7 +73,7 @@ const AddingImage: React.FC<Props> = (props) => {
   const isError = useSelector(getAddingError).isError;
   const eventChange = useSelector(getEventChange);
   const eventData = eventChange.data as EventChangeAvailableDestination;
-  const classes: PropsClasses = useStyles({} as StyleProps);
+  const classes = useStyles();
   const [switchIsOn, setSwitchIsOn] = useState<boolean>(false);
   const [isGetImage, setIsGetImage] = useState<boolean>(false);
   const [isZoom, setIsZoom] = useState<boolean | null>(null);

@@ -1,9 +1,7 @@
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import { makeStyles } from '@material-ui/core/styles';
-import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
+import { Theme, makeStyles, createStyles } from '@material-ui/core/styles';
 import { AvailableDestinations } from '../../../types/global';
 
-const removingImageStyle = (theme: Theme) => ({
+export const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
         height: '450px',
         backgroundColor: "rgba(255, 255, 255, 0.6)"
@@ -43,17 +41,7 @@ const removingImageStyle = (theme: Theme) => ({
     footer: {
         justifyContent: "center"
     }
-})
-
-export interface StyleProps {
-    root: BaseCSSProperties;
-    active: BaseCSSProperties;
-    disabled: BaseCSSProperties;
-    body: BaseCSSProperties;
-    row: BaseCSSProperties;
-    icon: BaseCSSProperties;
-    footer: BaseCSSProperties;
-}
+}))
 
 export interface State {
     contentList: string[];
@@ -67,6 +55,7 @@ export interface Props {
     name: AvailableDestinations;
     isNewsHandling?: boolean;
     getImagesState?: (state: State) => void;
+    isExistChild: boolean;
 }
 
 export const reorder = (list: [], startIndex: number, endIndex: number): object => {
@@ -118,6 +107,3 @@ export const getListStyle = (
     margin: '3px',
     width: '100%',
 });
-
-export type PropsClasses = Record<keyof StyleProps, string>;
-export const useStyles = makeStyles(removingImageStyle as any);

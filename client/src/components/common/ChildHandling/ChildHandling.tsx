@@ -68,6 +68,7 @@ const ChildHandling: React.FC = () => {
           id={AvailableDestinations.removingImage}
         >
           <RemovingImage
+            isExistChild={true}
             childId={childId}
             imagesUrl={selectedChild !== undefined ? selectedChild.images : []}
             name={AvailableDestinations.removingImage}

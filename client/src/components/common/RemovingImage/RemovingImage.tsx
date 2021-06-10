@@ -25,8 +25,6 @@ import { EventChangeAvailableDestination } from '../../../types/global';
 import {
   Props,
   State,
-  StyleProps,
-  PropsClasses,
   useStyles,
   reorder,
   move,
@@ -35,8 +33,15 @@ import {
 } from './RemovingImageStyle';
 
 const RemovingImage: React.FC<Props> = (props) => {
-  const { imagesUrl, childId, name, isNewsHandling, getImagesState } = props;
-  const classes: PropsClasses = useStyles({} as StyleProps);
+  const {
+    imagesUrl,
+    childId,
+    name,
+    isNewsHandling,
+    getImagesState,
+    isExistChild,
+  } = props;
+  const classes = useStyles();
   const dispatch = useDispatch();
   const isUpdatingError = useSelector(getUpdatingError).isError;
   const isUpdating = useSelector(getUpdating);
@@ -138,7 +143,7 @@ const RemovingImage: React.FC<Props> = (props) => {
   return (
     <Card className={rootClasses}>
       <SectionHeader
-        isExistChild={true}
+        isExistChild={isExistChild}
         onChange={switchChangeHandling}
         checked={switchIsOn}
         helpText="Aby zmienić kolejność zdjęć, na górnej liście złap wybrane zdjęcie i

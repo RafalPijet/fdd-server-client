@@ -15,9 +15,15 @@ import CustomInput from '../../common/CustomInput/CustomInput';
 import CustomButton from '../../common/CustomButton/CustomButton';
 import RemovingImage from '../../common/RemovingImage/RemovingImage';
 import AddingImage from '../../common/AddingImage/AddingImage';
-import { addNewsRequest } from '../../../redux/thunks';
+import {
+  addNewsRequest,
+  updatePicturesListRequest,
+  updateNewsPublication,
+} from '../../../redux/thunks';
 import {
   getPending,
+  getAdding,
+  getUpdating,
   getSuccess,
   getAddingSuccess,
   resetRequest,
@@ -39,6 +45,8 @@ const NewsCreateEdit: React.FC<Props> = (props) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const isPending = useSelector(getPending);
+  const isAdding = useSelector(getAdding);
+  const isUpdating = useSelector(getUpdating);
   const isSuccess = useSelector(getSuccess);
   const isAddingSuccess = useSelector(getAddingSuccess);
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
@@ -64,18 +72,19 @@ const NewsCreateEdit: React.FC<Props> = (props) => {
 
   const deleteButtonClasses = ClassNames({
     [classes.icon]: isEdit,
-    [classes.disabled]: !isEdit,
+    [classes.disabled]: !isEdit || isPending || isAdding || isUpdating,
   });
 
   useEffect(() => {
     if (isEdit) {
-      if (currentNews !== null)
+      if (currentNews !== null) {
         setCurrentNewsState({
           publication: currentNews.publication,
           title: currentNews.title,
           content: currentNews.content,
           images: currentNews.images,
         });
+      }
     } else {
       setCurrentNewsState({
         publication: false,
@@ -84,7 +93,7 @@ const NewsCreateEdit: React.FC<Props> = (props) => {
         images: [],
       });
     }
-  }, [isEdit, currentNews]);
+  }, [isEdit, currentNews, isUpdating]);
 
   useEffect(() => {
     setIserror({
@@ -98,14 +107,26 @@ const NewsCreateEdit: React.FC<Props> = (props) => {
   }, [currentNewsState]);
 
   useEffect(() => {
-    if (!isEdit)
+    if (!isEdit) {
       setIsDisabled(
         currentNewsState.content.length === 0 ||
           currentNewsState.title.length === 0 ||
           isError.content ||
           isError.title
       );
-  }, [isEdit, isError]);
+    } else {
+      if (currentNews !== null) {
+        setIsDisabled(
+          !(
+            (currentNewsState.content !== currentNews.content ||
+              currentNewsState.title !== currentNews.title) &&
+            !isError.title &&
+            !isError.content
+          )
+        );
+      }
+    }
+  }, [isEdit, isError, currentNewsState]);
 
   useEffect(() => {
     if (isSuccess) {
@@ -134,7 +155,10 @@ const NewsCreateEdit: React.FC<Props> = (props) => {
   }, [newsQuantity]);
 
   const currentNewsImagesHandling = (data: State) => {
-    console.log(data);
+    if (currentNews !== null && currentNews._id !== undefined) {
+      data.id = currentNews._id;
+      dispatch(updatePicturesListRequest(data));
+    }
   };
 
   const handleTextField = (
@@ -151,10 +175,9 @@ const NewsCreateEdit: React.FC<Props> = (props) => {
   };
 
   const switchIsPublicHandling = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCurrentNewsState({
-      ...currentNewsState,
-      publication: e.target.checked,
-    });
+    if (currentNews !== null && currentNews._id !== undefined) {
+      dispatch(updateNewsPublication(currentNews._id, e.target.checked));
+    }
   };
 
   const confirmButtonHandling = () => {
@@ -172,7 +195,7 @@ const NewsCreateEdit: React.FC<Props> = (props) => {
           <Card className={classes.typingArea}>
             <CardBody>
               <CustomInput
-                isDisabled={isPending}
+                isDisabled={isPending || isAdding || isUpdating}
                 labelText="Tytuł"
                 id="title"
                 error={isError.title}
@@ -185,7 +208,7 @@ const NewsCreateEdit: React.FC<Props> = (props) => {
                 white
               />
               <CustomInput
-                isDisabled={isPending}
+                isDisabled={isPending || isAdding || isUpdating}
                 labelText="Treść"
                 id="content"
                 error={isError.content}
@@ -219,7 +242,11 @@ const NewsCreateEdit: React.FC<Props> = (props) => {
                     enterNextDelay={1000}
                   >
                     <span>
-                      <IconButton disabled={isPending || !isEdit}>
+                      <IconButton
+                        disabled={
+                          isPending || isAdding || isUpdating || !isEdit
+                        }
+                      >
                         <DeleteForeverIcon
                           className={deleteButtonClasses}
                           fontSize="large"
@@ -235,7 +262,7 @@ const NewsCreateEdit: React.FC<Props> = (props) => {
                   style={{ display: 'flex', justifyContent: 'center' }}
                 >
                   <FormControlLabel
-                    disabled={isPending || !isEdit}
+                    disabled={isPending || isAdding || isUpdating || !isEdit}
                     classes={{
                       label: classes.switchLabel,
                     }}
@@ -258,7 +285,7 @@ const NewsCreateEdit: React.FC<Props> = (props) => {
                     setSize="md"
                     setColor="primary"
                     onClick={confirmButtonHandling}
-                    disabled={isDisabled || isPending}
+                    disabled={isDisabled || isPending || isAdding || isUpdating}
                   >
                     {isEdit ? 'AKTUALIZUJ PUBLIKACJĘ' : 'DODAJ PUBLIKACJĘ'}
                   </CustomButton>
@@ -290,6 +317,7 @@ const NewsCreateEdit: React.FC<Props> = (props) => {
         <GridItem xs={12} sm={12} md={6}>
           {currentNews !== null && (
             <RemovingImage
+              isExistChild={false}
               imagesUrl={currentNews !== null ? currentNews.images : []}
               childId={null}
               name={AvailableDestinations.removingImage}
