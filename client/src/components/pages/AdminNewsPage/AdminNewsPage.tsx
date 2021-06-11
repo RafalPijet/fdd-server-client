@@ -16,6 +16,8 @@ import {
   setModalAreYouSure,
   getNews,
   setAllNews,
+  getIsRemoved,
+  setIsRemoved,
 } from '../../../redux/actions/generalActions';
 import {
   getSuccess,
@@ -30,7 +32,10 @@ import {
   resetUpdatingRequest,
 } from '../../../redux/actions/requestActions';
 import { NewsState, ModalAYSModes } from '../../../types/global';
-import { getAllNewsRequest } from '../../../redux/thunks';
+import {
+  getAllNewsRequest,
+  removeCurrentNewsRequest,
+} from '../../../redux/thunks';
 import { useStyles } from './AdminNewsPageStyle';
 
 const AdminNewsPage: React.FC = () => {
@@ -41,6 +46,7 @@ const AdminNewsPage: React.FC = () => {
   const isPending = useSelector(getPending);
   const isAdding = useSelector(getAdding);
   const isUpdating = useSelector(getUpdating);
+  const isRemoved = useSelector(getIsRemoved);
   const isSuccess = useSelector(getSuccess);
   const news = useSelector(getNews);
   const error = useSelector(getError);
@@ -62,7 +68,15 @@ const AdminNewsPage: React.FC = () => {
     if (currentNews === null) {
       setCurrentNews(news !== null ? news[0] : news);
     }
-  }, [news, isSuccess]);
+    if (isRemoved && news !== null) {
+      console.log('Removed done');
+      setCurrentNews(news[0]);
+      dispatch(setIsRemoved(false));
+    }
+    if (news !== null && news.length !== 0 && !isRemoved) {
+      setCurrentNews(news[news.length - 1]);
+    }
+  }, [news, isSuccess, isRemoved]);
 
   useEffect(() => {
     if (toast.isOpen) {
@@ -93,7 +107,18 @@ const AdminNewsPage: React.FC = () => {
   const handleModalAYS = (isConfirm: boolean) => {
     if (isConfirm) {
       if (modalAYS.mode === ModalAYSModes.removeNews) {
-        console.log('Modal Remove News');
+        if (
+          modalAYS.data.newsStatus !== undefined &&
+          modalAYS.data.newsStatus._id !== undefined
+        ) {
+          dispatch(
+            removeCurrentNewsRequest(
+              modalAYS.data.newsStatus._id,
+              modalAYS.data.newsStatus.images
+            )
+          );
+          setCurrentNews(null);
+        }
       }
     }
 

@@ -107,6 +107,12 @@ export interface NewsState {
     uptatedAt?: Date;
 }
 
+export interface NewsDataUpdate {
+    newsId: string;
+    title?: string;
+    content?: string;
+}
+
 export interface ChildState {
     _id: string;
     active: boolean;
@@ -176,6 +182,7 @@ export interface ModalAvailableKeys {
     isUser?: boolean;
     userId?: string;
     userStatus?: UserStatus;
+    newsStatus?: NewsState
 }
 
 export interface ModalAreYouSure {

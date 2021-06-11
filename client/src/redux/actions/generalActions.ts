@@ -1,6 +1,6 @@
 import { Action } from 'redux';
 import { RootState } from '../store';
-import { GeneralState, IChildData, ChildState, UserState } from '../../types/global';
+import { GeneralState, IChildData, ChildState, UserState, NewsDataUpdate } from '../../types/global';
 
 //ACTIONS NAMES
 export const SET_TOAST = 'general/set_toast';
@@ -21,6 +21,7 @@ export const SET_SELECTED_QUANTITY = 'general/set_selected_quantity';
 export const SET_ALL_NEWS = 'general/set_all_news';
 export const UPDATE_PICTURES_OF_CURRENT_NEWS = 'general/update_pictures_of_current_news';
 export const UPDATE_NEWS_OF_PUBLICATION = 'general/update_news_of_publication';
+export const UPDATE_NEWS_OF_DATA = 'general/update_news_of_data';
 
 //ACTIONS TYPES
 export interface SetToastAction extends Action<typeof SET_TOAST> {
@@ -78,6 +79,9 @@ export interface UpdatePicturesOfCurrentNewsAction extends Action<typeof UPDATE_
 export interface UpdateNewsOfPublicationAction extends Action<typeof UPDATE_NEWS_OF_PUBLICATION> {
     payload: boolean,
     newsId: string
+}
+export interface UpdateNewsOfDataAction extends Action<typeof UPDATE_NEWS_OF_DATA> {
+    payload: NewsDataUpdate
 }
 
 //CREATORS OF ACTIONS
@@ -154,6 +158,10 @@ export const updateNewsOfPublication = (newsId: string, isPublication: boolean):
     type: UPDATE_NEWS_OF_PUBLICATION,
     payload: isPublication,
     newsId
+})
+export const updateNewsOfData = (payload: NewsDataUpdate): UpdateNewsOfDataAction => ({
+    type: UPDATE_NEWS_OF_DATA,
+    payload
 })
 
 //SELECTORS

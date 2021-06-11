@@ -34,7 +34,9 @@ import {
     UPDATE_PICTURES_OF_CURRENT_NEWS,
     UpdatePicturesOfCurrentNewsAction,
     UPDATE_NEWS_OF_PUBLICATION,
-    UpdateNewsOfPublicationAction
+    UpdateNewsOfPublicationAction,
+    UPDATE_NEWS_OF_DATA,
+    UpdateNewsOfDataAction
 } from '../actions/generalActions';
 import { GeneralState, ModalAYSModes, NewsState, SearchUserType } from '../../types/global';
 
@@ -70,7 +72,7 @@ const generalReducer = (
         SetEventChange | SetSelectedChild | SetSelectedPersonAction | SetSelectedUserTypeAction |
         UpdateSelectedPersonChildDataAction | UpdateSelectedPersonChildImagesListAction |
         UpdateSelectedPersonChildAvatarAction | AddChildToSelectedPersonAction | SetAllNewsAction |
-        UpdateSelectedPersonUserDataAction | SetSelectedQuantityAction |
+        UpdateSelectedPersonUserDataAction | SetSelectedQuantityAction | UpdateNewsOfDataAction |
         UpdateSelectedPersonChildInvoicesListAction | UpdatePicturesOfCurrentNewsAction
 ) => {
     switch (action.type) {
@@ -182,6 +184,25 @@ const generalReducer = (
                 }
             } else {
                 return { ...state };
+            }
+        case UPDATE_NEWS_OF_DATA:
+            if (state.news !== null) {
+                return {
+                    ...state,
+                    news: state.news.map((item: NewsState) => {
+                        if (item._id === action.payload.newsId) {
+                            if (action.payload.title !== undefined) {
+                                item.title = action.payload.title
+                            }
+                            if (action.payload.content !== undefined) {
+                                item.content = action.payload.content
+                            }
+                        }
+                        return item;
+                    })
+                }
+            } else {
+                return { ...state }
             }
         default:
             return { ...state }

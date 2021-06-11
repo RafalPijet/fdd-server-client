@@ -19,6 +19,7 @@ import {
   addNewsRequest,
   updatePicturesListRequest,
   updateNewsPublication,
+  updateNewsDataRequest,
 } from '../../../redux/thunks';
 import {
   getPending,
@@ -26,15 +27,22 @@ import {
   getUpdating,
   getSuccess,
   getAddingSuccess,
+  getUpdatingSuccess,
   resetRequest,
   resetAddingRequest,
+  resetUpdatingRequest,
 } from '../../../redux/actions/requestActions';
-import { setUserToast } from '../../../redux/actions/generalActions';
+import {
+  setUserToast,
+  setModalAreYouSure,
+} from '../../../redux/actions/generalActions';
 import {
   AvailableDestinations,
   FddSwitch,
   NewsState,
   FddTooltip,
+  NewsDataUpdate,
+  ModalAYSModes,
 } from '../../../types/global';
 import { primaryColor } from '../../../styles/globalStyles';
 import { State } from '../../common/RemovingImage/RemovingImageStyle';
@@ -49,6 +57,7 @@ const NewsCreateEdit: React.FC<Props> = (props) => {
   const isUpdating = useSelector(getUpdating);
   const isSuccess = useSelector(getSuccess);
   const isAddingSuccess = useSelector(getAddingSuccess);
+  const isUpdatingSuccess = useSelector(getUpdatingSuccess);
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [currentNewsState, setCurrentNewsState] = useState<NewsState>({
@@ -77,7 +86,7 @@ const NewsCreateEdit: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (isEdit) {
-      if (currentNews !== null) {
+      if (currentNews !== null && !isUpdating) {
         setCurrentNewsState({
           publication: currentNews.publication,
           title: currentNews.title,
@@ -148,7 +157,10 @@ const NewsCreateEdit: React.FC<Props> = (props) => {
     if (isAddingSuccess) {
       dispatch(resetAddingRequest());
     }
-  }, [isSuccess, isAddingSuccess]);
+    if (isUpdatingSuccess) {
+      dispatch(resetUpdatingRequest());
+    }
+  }, [isSuccess, isAddingSuccess, isUpdatingSuccess]);
 
   useEffect(() => {
     setIsEdit(newsQuantity >= 5);
@@ -182,9 +194,39 @@ const NewsCreateEdit: React.FC<Props> = (props) => {
 
   const confirmButtonHandling = () => {
     if (isEdit) {
-      console.log('Edit mode');
+      if (currentNews !== null && currentNews._id !== undefined) {
+        const payload: NewsDataUpdate = {
+          newsId: currentNews._id,
+          title:
+            currentNewsState.title !== currentNews.title
+              ? currentNewsState.title
+              : undefined,
+          content:
+            currentNewsState.content !== currentNews.content
+              ? currentNewsState.content
+              : undefined,
+        };
+        dispatch(updateNewsDataRequest(payload));
+      }
     } else {
       dispatch(addNewsRequest(currentNewsState));
+    }
+  };
+
+  const removeCurrentNewsHandling = () => {
+    if (currentNews !== null) {
+      dispatch(
+        setModalAreYouSure({
+          isOpen: true,
+          title: 'Usuwanie artykułu',
+          mode: ModalAYSModes.removeNews,
+          description:
+            'Czy aby napewno? Potwierdzenie spowoduje bezpowrotne usunięcie całego artykułu wraz ze zdjęciami!',
+          data: {
+            newsStatus: currentNews,
+          },
+        })
+      );
     }
   };
 
@@ -243,6 +285,7 @@ const NewsCreateEdit: React.FC<Props> = (props) => {
                   >
                     <span>
                       <IconButton
+                        onClick={removeCurrentNewsHandling}
                         disabled={
                           isPending || isAdding || isUpdating || !isEdit
                         }
@@ -262,7 +305,14 @@ const NewsCreateEdit: React.FC<Props> = (props) => {
                   style={{ display: 'flex', justifyContent: 'center' }}
                 >
                   <FormControlLabel
-                    disabled={isPending || isAdding || isUpdating || !isEdit}
+                    disabled={
+                      isPending ||
+                      isAdding ||
+                      isUpdating ||
+                      !isEdit ||
+                      isError.content ||
+                      isError.title
+                    }
                     classes={{
                       label: classes.switchLabel,
                     }}

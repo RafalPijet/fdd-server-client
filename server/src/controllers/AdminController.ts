@@ -451,7 +451,7 @@ class AdminController {
                 }
 
             } catch (err) {
-                next(new HttpException(404, 'Nieudane dodanie zdjęcia do artukułu'));
+                next(new HttpException(404, 'Nieudane dodanie zdjęcia do artykułu'));
             }
         }
     }
@@ -494,6 +494,47 @@ class AdminController {
             }
         } catch (err) {
             next(new HttpException(404, 'Nieudana zmiana listy zdjęć'));
+        }
+    }
+
+    @put('/news/data')
+    @bodyValidator(ValidatorKeys.addNews)
+    async updateNewsData(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const { newsId, title, content } = req.body;
+
+        try {
+            const currentNews = await NewsModel.findById(newsId);
+            if (!currentNews) {
+                next(new HttpException(404, "Nie znaleziono artykułu"));
+            } else {
+                if (title !== undefined) {
+                    currentNews.title = title;
+                }
+                if (content !== undefined) {
+                    currentNews.content = content;
+                }
+                await currentNews.save();
+                res.status(201).json({ message: `Aktualizacja powiodła się: ${title !== undefined ? "zmiana tytułu" : ""}; ${content !== undefined ? "zmiana treści" : ""}` })
+            }
+        } catch (err) {
+            next(new HttpException(404, 'Nieudana aktualizacja danych artykułu'));
+        }
+    }
+
+    @del('/news')
+    async removeCurrentNews(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const { newsId, images } = req.body
+
+        try {
+            await NewsModel.findByIdAndDelete(newsId);
+            if (images.length) {
+                images.forEach((item: string) => {
+                    clearImage(item)
+                })
+            }
+            res.status(202).json({ message: 'Artukuł został usunięty' });
+        } catch (err) {
+            next(new HttpException(404, 'Nieudane usunięcie artykułu'));
         }
     }
 }

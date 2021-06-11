@@ -76,7 +76,9 @@ import {
     UpdatePicturesOfCurrentNewsAction,
     updatePicturesOfCurrentNews,
     UpdateNewsOfPublicationAction,
-    updateNewsOfPublication
+    updateNewsOfPublication,
+    updateNewsOfData,
+    UpdateNewsOfDataAction
 } from './actions/generalActions';
 import { State as ImagesLists } from '../components/common/RemovingImage/RemovingImageStyle';
 import {
@@ -90,7 +92,8 @@ import {
     UpdateUserTypeData,
     SearchUserType,
     InvoiceState,
-    NewsState
+    NewsState,
+    NewsDataUpdate
 } from '../types/global';
 import { API_URL, URL } from '../config';
 
@@ -836,7 +839,7 @@ export const updatePicturesListRequest = (payload: ImagesLists): ThunkAction<
     dispatch(startUpdatingRequest());
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 20000));
+        await new Promise(resolve => setTimeout(resolve, 2000));
         const contentList = payload.contentList.map((item: string) => item.replace(URL, ''));
         const removeList = payload.removeList.map((item: string) => item.replace(URL, ''));
         const data: ImagesLists = {
@@ -998,6 +1001,71 @@ export const updateNewsPublication = (newsId: string, isPublication: boolean): T
                 dispatch(errorUpdatingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         } else {
             dispatch(errorUpdatingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        }
+    }
+}
+
+export const updateNewsDataRequest = (payload: NewsDataUpdate): ThunkAction<
+    Promise<void>,
+    any,
+    RootState,
+    StartUpdatingRequestAction | StopUpdatingRequestAction | ErrorUpdatingRequestAction |
+    SetToastAction | UpdateNewsOfDataAction
+> => async (dispatch, getState) => {
+    dispatch(startUpdatingRequest());
+
+    try {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        let res: AxiosResponse = await axios.put(`${API_URL}/admin/news/data`, payload, {
+            headers: {
+                'Authorization': localStorage.getItem('tokenFDD')
+            },
+        })
+
+        dispatch(updateNewsOfData(payload));
+        dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
+        dispatch(stopUpdatingRequest());
+    } catch (err) {
+        if (err.response !== undefined) {
+            err.response.data.message ?
+                dispatch(errorUpdatingRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorUpdatingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        } else {
+            dispatch(errorUpdatingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        }
+    }
+
+}
+
+export const removeCurrentNewsRequest = (newsId: string, images: string[]): ThunkAction<
+    Promise<void>,
+    any,
+    RootState,
+    StartRequestAction | StopRequestAction | ErrorRequestAction | SetToastAction | SetIsRemoved
+> => async (dispatch, getState) => {
+    dispatch(startRequest());
+
+    try {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        if (images.length) {
+            images = images.map((item: string) => item.replace(URL, ''));
+        }
+        let res: AxiosResponse = await axios.delete(`${API_URL}/admin/news`,
+            {
+                data: { newsId, images }, headers: {
+                    'Authorization': localStorage.getItem('tokenFDD')
+                }
+            })
+        dispatch(setIsRemoved(true));
+        dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
+        dispatch(stopRequest());
+    } catch (err) {
+        if (err.response !== undefined) {
+            err.response.data.message ?
+                dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        } else {
+            dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }
     }
 }
