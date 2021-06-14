@@ -21,6 +21,7 @@ import {
 } from '../../../redux/actions/generalActions';
 import {
   getSuccess,
+  getUpdatingSuccess,
   getPending,
   getAdding,
   getUpdating,
@@ -48,12 +49,14 @@ const AdminNewsPage: React.FC = () => {
   const isUpdating = useSelector(getUpdating);
   const isRemoved = useSelector(getIsRemoved);
   const isSuccess = useSelector(getSuccess);
+  const isUpdatingSuccess = useSelector(getUpdatingSuccess);
   const news = useSelector(getNews);
   const error = useSelector(getError);
   const updatingError = useSelector(getUpdatingError);
   const addingError = useSelector(getAddingError);
   const { enqueueSnackbar } = useSnackbar();
   const [currentNews, setCurrentNews] = useState<NewsState | null>(null);
+  const [newsQuantity, setNewsQuantity] = useState<number | null>(null);
 
   useEffect(() => {
     return () => {
@@ -67,16 +70,28 @@ const AdminNewsPage: React.FC = () => {
     }
     if (currentNews === null) {
       setCurrentNews(news !== null ? news[0] : news);
+      setNewsQuantity(news !== null ? news.length : news);
     }
-    if (isRemoved && news !== null) {
-      console.log('Removed done');
+  }, [news, isSuccess]);
+
+  useEffect(() => {
+    if (isRemoved && news !== null && isUpdatingSuccess) {
       setCurrentNews(news[0]);
+      setNewsQuantity(news.length);
       dispatch(setIsRemoved(false));
     }
-    if (news !== null && news.length !== 0 && !isRemoved) {
+
+    if (
+      news !== null &&
+      newsQuantity !== news.length &&
+      !isUpdatingSuccess &&
+      !isRemoved &&
+      newsQuantity !== null
+    ) {
+      setNewsQuantity(news.length);
       setCurrentNews(news[news.length - 1]);
     }
-  }, [news, isSuccess, isRemoved]);
+  }, [isRemoved, isUpdatingSuccess, news, newsQuantity]);
 
   useEffect(() => {
     if (toast.isOpen) {
@@ -97,7 +112,9 @@ const AdminNewsPage: React.FC = () => {
   }, [toast.isOpen, error.isError, updatingError.isError, addingError.isError]);
 
   const selectCurrentNewsHandling = (data: NewsState | null) => {
-    setCurrentNews(data);
+    if (currentNews !== data) {
+      setCurrentNews(data);
+    }
   };
 
   const handleToast = (message: string, variant: VariantType) => {
@@ -117,7 +134,6 @@ const AdminNewsPage: React.FC = () => {
               modalAYS.data.newsStatus.images
             )
           );
-          setCurrentNews(null);
         }
       }
     }

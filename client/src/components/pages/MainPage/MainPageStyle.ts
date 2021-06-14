@@ -1,16 +1,17 @@
-import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
-import { makeStyles } from '@material-ui/core/styles';
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
+import { BaseCSSProperties } from '@material-ui/styles';
 import { container, title } from '../../../styles/globalStyles';
 
-const mainPageStyle = (theme: Theme) => ({
+const globaTitle = title as BaseCSSProperties
+
+export const useStyles = makeStyles((theme: Theme) => createStyles({
     container: {
-        zIndex: "12",
+        zIndex: 12,
         color: "#FFFFFF",
         ...container
     },
     title: {
-        ...title,
+        ...globaTitle,
         display: "inline-block",
         position: "relative",
         marginTop: "30px",
@@ -26,7 +27,7 @@ const mainPageStyle = (theme: Theme) => ({
     main: {
         background: "#FFFFFF",
         position: "relative",
-        zIndex: "3"
+        zIndex: 3
     },
     mainRaised: {
         margin: "-60px 30px 0px",
@@ -34,16 +35,4 @@ const mainPageStyle = (theme: Theme) => ({
         boxShadow:
             "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2)"
     }
-})
-
-export interface StyleProps {
-    container: BaseCSSProperties;
-    title: BaseCSSProperties;
-    subtitle: BaseCSSProperties;
-    main: BaseCSSProperties;
-    mainRaised: BaseCSSProperties
-}
-
-export type PropsClasses = Record<keyof StyleProps, string>;
-export const useStyles = makeStyles(mainPageStyle as any);
-
+}))

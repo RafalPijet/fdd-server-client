@@ -22,7 +22,7 @@ const NewsItem: React.FC<Props> = (props) => {
   });
 
   if (isRedirect) {
-    return <Redirect to={`/news/:${index}`} />;
+    return <Redirect to={`/news/${news._id}`} />;
   }
 
   return (

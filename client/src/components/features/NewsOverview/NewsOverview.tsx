@@ -22,7 +22,7 @@ const NewsOverview: React.FC<Props> = (props) => {
       }
       if (chosenNews !== null && chosenNews._id) setChosenId(chosenNews._id);
     }
-  }, [news]);
+  }, [news, chosenNews]);
 
   useEffect(() => {
     getCurrentNews(currentNews);

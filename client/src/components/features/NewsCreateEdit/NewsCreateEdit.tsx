@@ -220,8 +220,7 @@ const NewsCreateEdit: React.FC<Props> = (props) => {
           isOpen: true,
           title: 'Usuwanie artykułu',
           mode: ModalAYSModes.removeNews,
-          description:
-            'Czy aby napewno? Potwierdzenie spowoduje bezpowrotne usunięcie całego artykułu wraz ze zdjęciami!',
+          description: `Czy aby napewno? Potwierdzenie spowoduje bezpowrotne usunięcie artykułu: "${currentNews.title}" wraz ze zdjęciami!`,
           data: {
             newsStatus: currentNews,
           },

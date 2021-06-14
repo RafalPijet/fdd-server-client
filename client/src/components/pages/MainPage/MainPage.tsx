@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import classNames from 'classnames';
 import { VariantType, useSnackbar } from 'notistack';
 import { Typography } from '@material-ui/core';
-import { PropsClasses, useStyles, StyleProps } from './MainPageStyle';
+import { useStyles } from './MainPageStyle';
 import GridContainer from '../../common/Grid/GridContainer';
 import GridItem from '../../common/Grid/GridItem';
 import Header from '../../common/Header/Header';
@@ -17,13 +17,19 @@ import {
   getError,
   resetRequest,
 } from '../../../redux/actions/requestActions';
-import { setUserToast, getToast } from '../../../redux/actions/generalActions';
+import {
+  setUserToast,
+  getToast,
+  getNews,
+} from '../../../redux/actions/generalActions';
+import { getAllNewsRequest } from '../../../redux/thunks';
 import image from '../../../images/jumbotronMain.jpg';
 
 const MainPage: React.FC = () => {
-  const classes: PropsClasses = useStyles({} as StyleProps);
+  const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const isPending = useSelector(getPending);
+  const news = useSelector(getNews);
   const toast = useSelector(getToast);
   const error = useSelector(getError);
   const dispatch = useDispatch();
@@ -38,6 +44,7 @@ const MainPage: React.FC = () => {
   }, [toast.isOpen, error.isError]);
 
   useEffect(() => {
+    dispatch(getAllNewsRequest());
     return () => {
       if (toast.isOpen) {
         dispatch(
@@ -84,7 +91,7 @@ const MainPage: React.FC = () => {
         </div>
       </Jumbotron>
       <div className={classNames(classes.main, classes.mainRaised)}>
-        <NewsSection />
+        <NewsSection news={news} />
         <MessageSection isDisabled={isPending} />
       </div>
       <Footer />
