@@ -59,6 +59,7 @@ const AdminNewsPage: React.FC = () => {
   const [newsQuantity, setNewsQuantity] = useState<number | null>(null);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     return () => {
       dispatch(setAllNews(null));
     };

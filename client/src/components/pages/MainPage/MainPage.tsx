@@ -10,6 +10,7 @@ import Header from '../../common/Header/Header';
 import Jumbotron from '../../common/Jumbotron/Jumbotron';
 import MessageSection from '../../features/MessageSection/MessageSection';
 import NewsSection from '../../features/NewsSection/NewsSection';
+import ChildrenSection from '../../features/ChildrenSection/ChildrenSection';
 import Footer from '../../common/Footer/Footer';
 import HeaderLinks from '../../features/HeaderLinks/HeaderLinksMainPage';
 import {
@@ -45,6 +46,7 @@ const MainPage: React.FC = () => {
 
   useEffect(() => {
     dispatch(getAllNewsRequest());
+    window.scrollTo(0, 0);
     return () => {
       if (toast.isOpen) {
         dispatch(
@@ -92,6 +94,13 @@ const MainPage: React.FC = () => {
       </Jumbotron>
       <div className={classNames(classes.main, classes.mainRaised)}>
         <NewsSection news={news} />
+        <div
+          className={classNames(classes.commonEntracte, classes.firstEntrance)}
+        ></div>
+        <ChildrenSection />
+        {/* <div
+          className={classNames(classes.commonEntracte, classes.secondEntrance)}
+        ></div> */}
         <MessageSection isDisabled={isPending} />
       </div>
       <Footer />

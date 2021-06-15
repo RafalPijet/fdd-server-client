@@ -5,7 +5,6 @@ import image from '../../../images/sign.jpg';
 
 const adminContentStyle = (theme: Theme) => ({
     root: {
-        height: "2470px",
         flexDirection: "column",
         padding: "15px",
         backgroundPosition: "bottom",

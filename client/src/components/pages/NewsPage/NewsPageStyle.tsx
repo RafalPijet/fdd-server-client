@@ -1,6 +1,10 @@
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
-import { container } from '../../../styles/globalStyles';
+import {
+  container,
+  primaryColor,
+  lightGrayColor,
+} from '../../../styles/globalStyles';
 
 const justContainer = container as BaseCSSProperties;
 
@@ -15,8 +19,26 @@ export const useStyles = makeStyles((theme: Theme) =>
       ...justContainer,
     },
     root: {
+      minHeight: '80vh',
       padding: '10px',
       backgroundColor: 'rgba(255, 255, 255, 0.4)',
+    },
+    center: {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    title: {
+      backgroundColor: 'rgba(166, 206, 57, 0.9)',
+      color: primaryColor,
+    },
+    content: {
+      margin: '10px 0 30px',
+      padding: '10px',
+      color: lightGrayColor,
+      backgroundColor: 'inherit',
+      height: '230px',
+      overflow: 'scroll',
     },
     pageHeader: {
       minHeight: '100vh',

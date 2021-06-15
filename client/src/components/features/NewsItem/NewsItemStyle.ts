@@ -9,7 +9,7 @@ export const useStyles = makeStyles((theme: Theme) =>
             margin: '20px 0',
             padding: '10px',
             width: '100%',
-            backgroundColor: "rgba(166, 206, 57, 0.1)",
+            backgroundColor: "#fff",
         },
         image: {
             position: 'relative',

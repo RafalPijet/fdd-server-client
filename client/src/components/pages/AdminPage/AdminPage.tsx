@@ -56,6 +56,7 @@ const AdminPage: React.FC = () => {
   const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     return () => {
       dispatch(setSelectedChild(null));
       dispatch(setSelectedPerson(null));
@@ -153,7 +154,7 @@ const AdminPage: React.FC = () => {
         </div>
       </Jumbotron>
       <div className={classNames(classes.main, classes.mainRaised)}>
-        <div style={{ height: '2500px' }}>
+        <div>
           <AdminContent />
         </div>
       </div>

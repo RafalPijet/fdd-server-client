@@ -281,7 +281,7 @@ class UserController {
                         const source = files[0].path.replace('uploads', images)   //It's will be remove
                         const target = source.replace(images, 'build/images')     //It's will be remove
                         await sharp(files[0].path)
-                            .resize(500, 332)
+                            .resize(833, 553)
                             .jpeg({ quality: 90 })
                             .toFile(path.resolve(images, files[0].filename))
                         fs.unlinkSync(files[0].path);

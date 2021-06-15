@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import classNames from 'classnames';
 import { useSelector, useDispatch } from 'react-redux';
 import { VariantType, useSnackbar } from 'notistack';
-import { useStyles, StyleProps } from './ParentPageStyle';
 import {
   getPending,
   getError,
@@ -34,6 +33,7 @@ import {
   setUserToast,
   setSelectedChild,
 } from '../../../redux/actions/generalActions';
+import { useStyles, StyleProps } from './ParentPageStyle';
 import image from '../../../images/jumbotronParent.jpg';
 
 const ParentPage: React.FC = () => {
