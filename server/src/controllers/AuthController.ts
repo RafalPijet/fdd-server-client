@@ -3,7 +3,7 @@ import { Request, Response, NextFunction } from 'express';
 import { controller, bodyValidator, ValidatorKeys } from './decorators';
 import { createToken } from './token.service';
 import { get, post } from '../routes';
-import { UserModel, IUser, buildUser, IOutsideMessage, buildOutSideMessage, NewsModel } from '../models';
+import { UserModel, IUser, buildUser, IOutsideMessage, buildOutSideMessage, NewsModel, ChildModel } from '../models';
 import HttpException from '../exceptions/HttpException';
 import UserWithThatEmailAlreadyExistsException from '../exceptions/UserWithThatEmailAlreadyExistsException';
 import WrongCredentialsException from '../exceptions/WrongCredentialException';
@@ -85,6 +85,48 @@ class AuthController {
             res.status(200).json({ news });
         } catch (err) {
             next(new HttpException(404, `Błąd pobierania artukułów!. - ${err}`))
+        }
+    }
+    @get('/children/basic/data')
+    async getChildrenBasicData(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const { page, rowsPerPage } = req.query;
+
+        try {
+            const quantity = await ChildModel.find({ active: true }).countDocuments();
+            if (page !== undefined && rowsPerPage !== undefined) {
+                const children = await ChildModel.find({ active: true })
+                    .sort({ createdAt: -1 })
+                    .skip(+page * +rowsPerPage)
+                    .limit(+rowsPerPage);
+                const childrenToSend = children.map((child) => {
+                    return {
+                        _id: child._id,
+                        name: `${child.firstName} ${child.lastName}`,
+                        avatar: child.avatar
+                    }
+                })
+                res.status(200).json({ children: childrenToSend, quantity });
+            }
+        } catch (err) {
+            next(new HttpException(404, `Błąd pobierania listy podopiecznych!. - ${err}`))
+        }
+    }
+
+    @get('/child/:id')
+    async getChildById(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const { id } = req.params;
+
+        try {
+            const child = await ChildModel.findById(id);
+            if (!child) {
+                next(new HttpException(404, 'Nie znaleziono podopiecznego'));
+            } else {
+                child.invoices = undefined;
+                child.parent = undefined;
+                res.status(200).json({ child });
+            }
+        } catch (err) {
+            next(new HttpException(404, `Błąd pobierania danych podopiecznego!. - ${err}`))
         }
     }
 }

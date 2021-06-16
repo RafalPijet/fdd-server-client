@@ -1,8 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import classNames from 'classnames';
 import { VariantType, useSnackbar } from 'notistack';
 import { Typography } from '@material-ui/core';
+import ButtonBase from '@material-ui/core/ButtonBase';
+import { Redirect } from 'react-router';
 import { useStyles } from './MainPageStyle';
 import GridContainer from '../../common/Grid/GridContainer';
 import GridItem from '../../common/Grid/GridItem';
@@ -10,7 +12,6 @@ import Header from '../../common/Header/Header';
 import Jumbotron from '../../common/Jumbotron/Jumbotron';
 import MessageSection from '../../features/MessageSection/MessageSection';
 import NewsSection from '../../features/NewsSection/NewsSection';
-import ChildrenSection from '../../features/ChildrenSection/ChildrenSection';
 import Footer from '../../common/Footer/Footer';
 import HeaderLinks from '../../features/HeaderLinks/HeaderLinksMainPage';
 import {
@@ -23,8 +24,12 @@ import {
   getToast,
   getNews,
 } from '../../../redux/actions/generalActions';
-import { getAllNewsRequest } from '../../../redux/thunks';
+import {
+  getAllNewsRequest,
+  getChildrenBasicDataRequest,
+} from '../../../redux/thunks';
 import image from '../../../images/jumbotronMain.jpg';
+import buttonImage from '../../../images/childrenButton.jpg';
 
 const MainPage: React.FC = () => {
   const classes = useStyles();
@@ -34,6 +39,8 @@ const MainPage: React.FC = () => {
   const toast = useSelector(getToast);
   const error = useSelector(getError);
   const dispatch = useDispatch();
+  const [isRedirectToChildren, setIsRedirectToChildren] =
+    useState<boolean>(false);
 
   useEffect(() => {
     if (toast.isOpen) {
@@ -46,6 +53,7 @@ const MainPage: React.FC = () => {
 
   useEffect(() => {
     dispatch(getAllNewsRequest());
+    dispatch(getChildrenBasicDataRequest(0, 15));
     window.scrollTo(0, 0);
     return () => {
       if (toast.isOpen) {
@@ -66,6 +74,10 @@ const MainPage: React.FC = () => {
   const handleToast = (message: string, variant: VariantType) => {
     enqueueSnackbar(message, { variant });
   };
+
+  if (isRedirectToChildren) {
+    return <Redirect to="/children" />;
+  }
 
   return (
     <div>
@@ -97,10 +109,37 @@ const MainPage: React.FC = () => {
         <div
           className={classNames(classes.commonEntracte, classes.firstEntrance)}
         ></div>
-        <ChildrenSection />
-        {/* <div
+        <ButtonBase
+          focusRipple
+          onClick={() => setTimeout(() => setIsRedirectToChildren(true), 300)}
+          className={classes.image}
+          focusVisibleClassName={classes.focusVisible}
+          style={{
+            width: '100%',
+          }}
+        >
+          <span
+            className={classes.imageSrc}
+            style={{
+              backgroundImage: `url(${buttonImage})`,
+            }}
+          />
+          <span className={classes.imageBackdrop} />
+          <div className={classes.imageButton}>
+            <Typography
+              component="span"
+              variant="subtitle1"
+              color="inherit"
+              className={classes.imageTitle}
+            >
+              Podopieczni - poznaj ich historie...
+            </Typography>
+          </div>
+        </ButtonBase>
+        {/* <ChildrenSection /> */}
+        <div
           className={classNames(classes.commonEntracte, classes.secondEntrance)}
-        ></div> */}
+        ></div>
         <MessageSection isDisabled={isPending} />
       </div>
       <Footer />

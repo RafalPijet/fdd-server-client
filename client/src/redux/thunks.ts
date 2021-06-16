@@ -78,7 +78,9 @@ import {
     UpdateNewsOfPublicationAction,
     updateNewsOfPublication,
     updateNewsOfData,
-    UpdateNewsOfDataAction
+    UpdateNewsOfDataAction,
+    SetChildrenListAction,
+    setChildrenList
 } from './actions/generalActions';
 import { State as ImagesLists } from '../components/common/RemovingImage/RemovingImageStyle';
 import {
@@ -93,7 +95,8 @@ import {
     SearchUserType,
     InvoiceState,
     NewsState,
-    NewsDataUpdate
+    NewsDataUpdate,
+    ChildBasicState
 } from '../types/global';
 import { API_URL, URL } from '../config';
 
@@ -896,6 +899,79 @@ export const updateImagesList = (payload: ImagesLists): ThunkAction<
             dispatch(updateSelectedPersonalChildImagesList(payload.contentList));
         }
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
+        dispatch(stopUpdatingRequest());
+    } catch (err) {
+        if (err.response !== undefined) {
+            err.response.data.message ?
+                dispatch(errorUpdatingRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorUpdatingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        } else {
+            dispatch(errorUpdatingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        }
+    }
+}
+
+export const getChildrenBasicDataRequest = (page: number, rowsPerPage: number): ThunkAction<
+    Promise<void>,
+    any,
+    RootState,
+    StartUpdatingRequestAction | StopUpdatingRequestAction | ErrorUpdatingRequestAction |
+    SetSelectedQuantityAction | SetChildrenListAction | SetSelectedQuantityAction
+
+> => async (dispatch, getState) => {
+    dispatch(startUpdatingRequest());
+
+    try {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        let res: AxiosResponse = await axios.get(`${API_URL}/auth/children/basic/data?page=${page}&rowsPerPage=${rowsPerPage}`, {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        let { quantity, children } = res.data;
+        if (children.length) {
+            children = children.map((child: ChildBasicState) => {
+                child.avatar = `${URL}${child.avatar}`;
+                return child;
+            })
+            dispatch(setChildrenList(children));
+            dispatch(setSelectedQuantity(quantity));
+        }
+        dispatch(stopUpdatingRequest());
+    } catch (err) {
+        if (err.response !== undefined) {
+            err.response.data.message ?
+                dispatch(errorUpdatingRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorUpdatingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        } else {
+            dispatch(errorUpdatingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        }
+    }
+}
+
+export const getChildByIdRequest = (childId: string): ThunkAction<
+    Promise<void>,
+    any,
+    RootState,
+    StartUpdatingRequestAction | StopUpdatingRequestAction | ErrorUpdatingRequestAction |
+    SetSelectedPersonAction | SetSelectedChild
+> => async (dispatch, getState) => {
+    dispatch(startUpdatingRequest());
+
+    try {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        let res: AxiosResponse = await axios.get(`${API_URL}/auth/child/${childId}`, {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        const { child } = res.data;
+        child.avatar = `${URL}${child.avatar}`;
+        child.images = child.images.map(item => {
+            return `${URL}${item}`
+        });
+        dispatch(setSelectedPerson(child));
+        dispatch(setSelectedChild(child._id));
         dispatch(stopUpdatingRequest());
     } catch (err) {
         if (err.response !== undefined) {

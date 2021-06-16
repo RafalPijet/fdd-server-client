@@ -12,6 +12,8 @@ export interface IChild {
     images?: string[];
     avatar?: string;
     invoices?: IInvoice[];
+    createdAt?: Date;
+    uptatedAt?: Date;
 }
 
 const childSchema = new Schema({
@@ -30,7 +32,7 @@ const childSchema = new Schema({
         ref: 'User',
         type: mongoose.Schema.Types.ObjectId
     }
-})
+}, { timestamps: true })
 
 export const ChildModel = mongoose.model<IChild & mongoose.Document>('Child', childSchema);
 export const buildChild = (data: IChild) => {

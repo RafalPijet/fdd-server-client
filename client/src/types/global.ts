@@ -124,6 +124,14 @@ export interface ChildState {
     images: string[];
     avatar: string;
     invoices: InvoiceState[];
+    createdAt?: Date;
+    uptatedAt?: Date;
+}
+
+export interface ChildBasicState {
+    _id: string;
+    name: string;
+    avatar: string;
 }
 
 export interface IChildData {
@@ -225,6 +233,7 @@ export interface GeneralState {
     selectedUserType: SearchUserType;
     selectedQuantity: number | null;
     news: NewsState[] | null;
+    childrenList: ChildBasicState[] | null;
 }
 
 export enum TargetOptions {

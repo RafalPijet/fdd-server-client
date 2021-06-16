@@ -36,7 +36,9 @@ import {
     UPDATE_NEWS_OF_PUBLICATION,
     UpdateNewsOfPublicationAction,
     UPDATE_NEWS_OF_DATA,
-    UpdateNewsOfDataAction
+    UpdateNewsOfDataAction,
+    SET_CHILDREN_LIST,
+    SetChildrenListAction
 } from '../actions/generalActions';
 import { GeneralState, ModalAYSModes, NewsState, SearchUserType } from '../../types/global';
 
@@ -63,7 +65,8 @@ const initialState: GeneralState = {
     selectedPerson: null,
     selectedUserType: SearchUserType.child,
     selectedQuantity: null,
-    news: null
+    news: null,
+    childrenList: null
 }
 
 const generalReducer = (
@@ -73,7 +76,8 @@ const generalReducer = (
         UpdateSelectedPersonChildDataAction | UpdateSelectedPersonChildImagesListAction |
         UpdateSelectedPersonChildAvatarAction | AddChildToSelectedPersonAction | SetAllNewsAction |
         UpdateSelectedPersonUserDataAction | SetSelectedQuantityAction | UpdateNewsOfDataAction |
-        UpdateSelectedPersonChildInvoicesListAction | UpdatePicturesOfCurrentNewsAction
+        UpdateSelectedPersonChildInvoicesListAction | UpdatePicturesOfCurrentNewsAction |
+        SetChildrenListAction
 ) => {
     switch (action.type) {
         case SET_TOAST:
@@ -203,6 +207,11 @@ const generalReducer = (
                 }
             } else {
                 return { ...state }
+            }
+        case SET_CHILDREN_LIST:
+            return {
+                ...state,
+                childrenList: action.payload
             }
         default:
             return { ...state }
