@@ -27,7 +27,7 @@ export const useStyles = makeStyles((theme: Theme) =>
                     opacity: 0,
                 },
                 '& $imageTitle': {
-                    fontSize: '20px',
+                    transform: 'scale(1.4)',
                     transition: '.3s'
                 },
             },

@@ -1,6 +1,7 @@
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
 import { container, logoColor } from '../../../styles/globalStyles';
+import { ChildState } from '../../../types/global';
 import image from '../../../images/jumbotronAdmin.jpg';
 import imageBack from '../../../images/sign.jpg';
 
@@ -15,7 +16,7 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
         ...justContainer,
     },
     pageHeader: {
-        minHeight: '30vh',
+        minHeight: '20vh',
         height: 'auto',
         display: 'flex',
         position: 'relative',
@@ -65,3 +66,14 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
             "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2)"
     },
 }))
+
+export const dummyData: Omit<ChildState, "invoices" | "parent" | "active"> = {
+    firstName: '',
+    lastName: '',
+    avatar: '',
+    birthDate: '2020-06-17T00:00:00.000Z',
+    images: [],
+    _id: '',
+    info: ''
+
+}
