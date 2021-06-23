@@ -65,6 +65,11 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
         boxShadow:
             "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2)"
     },
+    footerOperations: {
+        padding: 5,
+        marginTop: '20px',
+        backgroundColor: 'rgba(255, 255, 255, 0.3)'
+    }
 }))
 
 export const dummyData: Omit<ChildState, "invoices" | "parent" | "active"> = {
@@ -75,5 +80,9 @@ export const dummyData: Omit<ChildState, "invoices" | "parent" | "active"> = {
     images: [],
     _id: '',
     info: ''
+}
 
+export interface SelectedChild {
+    _id: string,
+    name: string
 }

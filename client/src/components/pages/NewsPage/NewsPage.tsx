@@ -102,7 +102,10 @@ const NewsPage: React.FC = () => {
                   </Paper>
                 </GridItem>
                 <GridItem xs={12} sm={12} lg={9}>
-                  <CustomCarousel images={currentNews.images} />
+                  <CustomCarousel
+                    images={currentNews.images}
+                    isAutoPlay={true}
+                  />
                 </GridItem>
               </GridContainer>
             ) : (

@@ -67,7 +67,8 @@ const childrenZoneStyle = (theme: Theme) => ({
     },
     content: {
         margin: 0,
-        padding: "0 5px"
+        padding: "0 5px",
+        textAlign: "justify"
     },
     small: {
         width: theme.spacing(3),

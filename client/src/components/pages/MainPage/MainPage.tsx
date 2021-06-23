@@ -53,7 +53,7 @@ const MainPage: React.FC = () => {
 
   useEffect(() => {
     dispatch(getAllNewsRequest());
-    dispatch(getChildrenBasicDataRequest(0, 15));
+    dispatch(getChildrenBasicDataRequest(0, 12));
     window.scrollTo(0, 0);
     return () => {
       if (toast.isOpen) {

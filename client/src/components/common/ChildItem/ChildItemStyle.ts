@@ -4,7 +4,7 @@ import { primaryColor, grayColor } from '../../../styles/globalStyles';
 
 export const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
-        backgroundColor: "rgba(166, 206, 57, 0.6)",
+        backgroundColor: "rgba(166, 206, 57, 0.5)",
         padding: '7px',
         marginTop: '20px',
         height: '55px',
@@ -18,14 +18,15 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
     names: {
         fontSize: '0.9rem',
         color: primaryColor,
-        fontWeight: 600,
+        fontWeight: 500,
         padding: '0 10px 0 6px'
     },
     active: {
         backgroundColor: "rgba(166, 206, 57, 1)"
     },
     disabled: {
-        backgroundColor: grayColor
+        backgroundColor: grayColor,
+        cursor: 'progress'
     }
 }))
 

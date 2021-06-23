@@ -99,7 +99,7 @@ const ChildrenZone: React.FC<Props> = (props) => {
         </div>
         <CardBody>
           {selectedChild !== null && selectedChild?.images.length > 0 ? (
-            <CustomCarousel images={selectedChild.images} />
+            <CustomCarousel images={selectedChild.images} isAutoPlay={true} />
           ) : (
             <div
               style={{

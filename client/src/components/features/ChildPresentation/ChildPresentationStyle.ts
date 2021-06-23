@@ -36,6 +36,12 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
     primaryColor: {
         color: primaryColor,
         fontWeight: 500
+    },
+    empty: {
+        height: 550,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
     }
 }))
 

@@ -4,16 +4,18 @@ import 'react-responsive-carousel/lib/styles/carousel.min.css';
 
 interface Props {
   images: string[];
+  isAutoPlay: boolean;
 }
 
 const CustomCarousel: React.FC<Props> = (props) => {
-  const { images } = props;
+  const { images, isAutoPlay } = props;
   return (
     <Carousel
-      showArrows
-      showThumbs
+      // showArrows
+      // showThumbs={false}
+      autoFocus
       infiniteLoop
-      autoPlay
+      autoPlay={isAutoPlay}
       useKeyboardArrows
       interval={5000}
       transitionTime={1000}

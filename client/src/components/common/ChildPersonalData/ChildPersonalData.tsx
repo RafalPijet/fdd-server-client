@@ -190,7 +190,7 @@ const ChildPersonalData: React.FC<Props> = (props) => {
         ? dispatch(updateChildData(childData, childId))
         : dispatch(addChildToParent(childData));
     }
-    if (userId !== undefined && !isOnlyEdit) {
+    if (childId === null && !isOnlyEdit) {
       dispatch(addChildToParent(childData, userId));
     }
   };

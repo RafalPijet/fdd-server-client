@@ -59,7 +59,7 @@ const NewsItem: React.FC<Props> = (props) => {
             <span className={classes.imageBackdrop} />
             <span className={classes.imageButton}>
               <Typography
-                component="span"
+                // component="div"
                 variant="subtitle1"
                 color="inherit"
                 className={classes.imageTitle}

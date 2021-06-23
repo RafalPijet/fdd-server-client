@@ -9,10 +9,8 @@ import GridItem from '../../common/Grid/GridItem';
 import {
   getSelectedChild,
   setSelectedChild,
-  setSelectedPerson,
 } from '../../../redux/actions/generalActions';
 import { getUpdating } from '../../../redux/actions/requestActions';
-import { getChildByIdRequest } from '../../../redux/thunks';
 import { useStyles, Props } from './ChildItemStyle';
 
 const ChildItem: React.FC<Props> = (props) => {
@@ -31,40 +29,48 @@ const ChildItem: React.FC<Props> = (props) => {
   const clickElementHandling = () => {
     if (!isUpdating) {
       dispatch(setSelectedChild(childItem._id));
-      //   dispatch(setSelectedPerson(null));
-      //   dispatch(getChildByIdRequest(childItem._id));
     }
   };
 
   return (
-    <Paper
-      elevation={childItem._id === selectedChild ? 3 : 20}
-      className={rootClasses}
-      onClick={clickElementHandling}
+    <GridItem
+      xs={6}
+      sm={4}
+      md={3}
+      lg={2}
+      style={{ display: 'flex', justifyContent: 'center', padding: '0 2px' }}
     >
-      <GridContainer>
-        <GridItem xs={3} sm={3} md={3}>
-          <Avatar
-            variant="rounded"
-            src={childItem.avatar}
-            alt={`${childItem.name}`}
-            className={classes.avatar}
-          />
-        </GridItem>
-        <GridItem
-          xs={9}
-          sm={9}
-          md={9}
-          style={{
-            display: 'flex',
-            justifyContent: 'flex-start',
-            alignItems: 'center',
-          }}
-        >
-          <Typography className={classes.names}>{childItem.name}</Typography>
-        </GridItem>
-      </GridContainer>
-    </Paper>
+      <Paper
+        elevation={childItem._id === selectedChild ? 3 : 20}
+        className={rootClasses}
+        onClick={clickElementHandling}
+      >
+        <GridContainer>
+          <GridItem xs={12} sm={6} md={4} lg={3}>
+            <Avatar
+              variant="rounded"
+              src={childItem.avatar}
+              alt={`${childItem.name}`}
+              className={classes.avatar}
+            />
+          </GridItem>
+          <GridItem
+            xs={12}
+            sm={6}
+            md={8}
+            lg={9}
+            style={{
+              display: 'flex',
+              justifyContent: 'flex-start',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+            }}
+          >
+            <Typography className={classes.names}>{childItem.name}</Typography>
+          </GridItem>
+        </GridContainer>
+      </Paper>
+    </GridItem>
   );
 };
 

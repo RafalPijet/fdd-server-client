@@ -129,4 +129,26 @@ class AuthController {
             next(new HttpException(404, `Błąd pobierania danych podopiecznego!. - ${err}`))
         }
     }
+
+    @get('/children/names')
+    async getChildrenNames(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const children = await ChildModel.find();
+            if (!children) {
+                next(new HttpException(404,
+                    `Brak dostępnych danych`))
+            } else {
+                const names = children.map((child) => {
+                    return {
+                        _id: child._id,
+                        name: `${child.firstName} ${child.lastName}`
+                    }
+                })
+                res.status(200).json({ names });
+            }
+        } catch (err) {
+            next(new HttpException(404,
+                `Brak dostępnych danych. - ${err}`))
+        }
+    }
 }

@@ -7,6 +7,8 @@ import GridItem from '../../common/Grid/GridItem';
 import CustomCarousel from '../../common/CustomCarousel/CustomCarousel';
 import { calculateAge } from '../../../types/functions';
 import { useStyles, Props } from './ChildPresentationStyle';
+import image from '../../../images/butterfly.png';
+import { height } from '@material-ui/system';
 
 const ChildPresentation: React.FC<Props> = (props) => {
   const { selectedChild } = props;
@@ -58,7 +60,16 @@ const ChildPresentation: React.FC<Props> = (props) => {
         <Paper elevation={24} className={classes.root}>
           <GridContainer justify="center" alignItems="center">
             <GridItem xs={12} sm={12} lg={12} style={{ maxWidth: '860px' }}>
-              <CustomCarousel images={selectedChild.images} />
+              {selectedChild.images.length ? (
+                <CustomCarousel
+                  images={selectedChild.images}
+                  isAutoPlay={false}
+                />
+              ) : (
+                <div className={classes.empty}>
+                  <img src={image} alt="without-logo" />
+                </div>
+              )}
             </GridItem>
           </GridContainer>
         </Paper>
