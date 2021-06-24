@@ -41,5 +41,6 @@ export interface Props {
     page: number;
     isHidden: boolean;
     rowsPerPageOptions: number[],
-    label: string
+    label: string,
+    isPending?: boolean;
 }

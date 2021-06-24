@@ -1,6 +1,6 @@
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { ChildBasicState } from '../../../types/global';
-import { primaryColor, grayColor } from '../../../styles/globalStyles';
+import { primaryColor } from '../../../styles/globalStyles';
 
 export const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
@@ -25,7 +25,7 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
         backgroundColor: "rgba(166, 206, 57, 1)"
     },
     disabled: {
-        backgroundColor: grayColor,
+        backgroundColor: 'rgba(153, 153, 153, 0.5)',
         cursor: 'progress'
     }
 }))

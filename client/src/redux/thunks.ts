@@ -922,7 +922,7 @@ export const getChildrenBasicDataRequest = (page: number, rowsPerPage: number): 
     dispatch(startUpdatingRequest());
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise(resolve => setTimeout(resolve, 1000));
         let res: AxiosResponse = await axios.get(`${API_URL}/auth/children/basic/data?page=${page}&rowsPerPage=${rowsPerPage}`, {
             headers: {
                 'Content-Type': 'application/json'
@@ -959,7 +959,7 @@ export const getChildByIdRequest = (childId: string): ThunkAction<
     dispatch(startUpdatingRequest());
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise(resolve => setTimeout(resolve, 1000));
         let res: AxiosResponse = await axios.get(`${API_URL}/auth/child/${childId}`, {
             headers: {
                 'Content-Type': 'application/json'

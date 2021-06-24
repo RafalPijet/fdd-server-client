@@ -23,6 +23,7 @@ import {
   setSelectedPerson,
   setSelectedChild,
   getSelectedQuantity,
+  setChildrenList,
 } from '../../../redux/actions/generalActions';
 import { getUpdating } from '../../../redux/actions/requestActions';
 import { ChildBasicState, CssTextField } from '../../../types/global';
@@ -69,11 +70,31 @@ const ChildrenSection: React.FC = () => {
   }, [childId, selectedId]);
 
   useEffect(() => {
-    console.log('effect');
-    // setIsReady(false);
     setIsListReady(false);
-    // dispatch(getChildrenBasicDataRequest(page, rowsPerPage));
   }, [page, rowsPerPage]);
+
+  //change
+  useEffect(() => {
+    console.log(!isListReady && selectedChildName === null && childId !== null);
+    if (
+      !isListReady &&
+      selectedChildName === null &&
+      childId !== null &&
+      childrenList !== null &&
+      childrenList.length
+    ) {
+      //change
+      console.log(childId);
+      console.log(selectedId);
+      dispatch(getChildByIdRequest(childrenList[0]._id));
+      // setIsReady(false);
+      setIsListReady(true);
+    }
+    if (isListReady && selectedChildName !== null) {
+      setIsListReady(false);
+    }
+    // setIsListReady(selectedChildName === null);
+  }, [selectedChildName]);
 
   useEffect(() => {
     if (childrenList !== null) {
@@ -84,10 +105,14 @@ const ChildrenSection: React.FC = () => {
   }, [childrenList]);
 
   useEffect(() => {
-    if (selectedPerson !== null && !isUpdating) {
+    if (selectedPerson !== null && !isUpdating && isListReady) {
       setIsReady(true);
     }
-  }, [selectedPerson, isUpdating]);
+    if (selectedPerson !== null && !isUpdating && selectedChildName !== null) {
+      //change
+      setIsReady(true);
+    }
+  }, [selectedPerson, isUpdating, selectedChildName]); //change
 
   useEffect(() => {
     let active = true;
@@ -124,15 +149,21 @@ const ChildrenSection: React.FC = () => {
   }, [open]);
 
   useEffect(() => {
-    if (childrenList !== null && !isUpdating) {
+    if (childrenList !== null && !isUpdating && selectedChildName === null) {
+      //change
       setIsListReady(childrenList.length > 0);
     }
   }, [childrenList, isUpdating]);
 
   const changeChildHandling = () => {
     dispatch(setSelectedPerson(null));
-    if (selectedId !== null) {
+    if (selectedId !== null && selectedChildName === null) {
+      //change
       dispatch(getChildByIdRequest(selectedId));
+    }
+    if (selectedChildName !== null) {
+      //change
+      dispatch(getChildByIdRequest(selectedChildName._id));
     }
   };
 
@@ -154,6 +185,7 @@ const ChildrenSection: React.FC = () => {
     e: React.ChangeEvent<{}>,
     value: SelectedChild | null
   ) => {
+    console.log(value);
     setSelectedChildName(value);
   };
 
@@ -199,31 +231,51 @@ const ChildrenSection: React.FC = () => {
               </div>
             </Grow>
           </GridItem>
-          <GridItem xs={10} sm={10} md={10} style={{ height: 180 }}>
+          <GridItem xs={10} sm={10} md={10}>
             <Fade
               in={isListReady}
-              unmountOnExit={true}
-              onExited={() =>
-                dispatch(getChildrenBasicDataRequest(page, rowsPerPage))
-              }
+              timeout={1000}
+              onExited={() => {
+                if (selectedChildName === null) {
+                  //change
+                  dispatch(getChildrenBasicDataRequest(page, rowsPerPage));
+                }
+                setIsReady(false);
+              }}
             >
               <GridContainer
-                style={{ display: 'flex', flexWrap: 'wrap' }}
-                justify="space-between"
+                style={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  height: !isListReady && isUpdating ? 0 : 200,
+                  overflow: 'auto',
+                }}
+                justify={
+                  childrenList !== null && childrenList.length < 6
+                    ? 'center'
+                    : 'space-between'
+                }
+                alignItems="center"
               >
-                {childrenList !== null ? (
+                {childrenList !== null && selectedChildName === null ? ( //change
                   childrenList.map((child: ChildBasicState) => (
                     <ChildItem key={child._id} childItem={child} />
                   ))
                 ) : (
-                  <Typography style={{ color: '#fff' }}>
-                    Brak podopiecznych...
-                  </Typography>
+                  <div className={classes.waiting}>
+                    <Typography style={{ color: '#fff' }}>
+                      Brak podopiecznych...
+                    </Typography>
+                  </div>
                 )}
               </GridContainer>
             </Fade>
             {!isListReady && isUpdating && (
-              <Typography style={{ color: '#fff' }}>Wczytywanie...</Typography>
+              <div className={classes.waiting}>
+                <Typography style={{ color: '#fff' }}>
+                  Wczytywanie...
+                </Typography>
+              </div>
             )}
           </GridItem>
           <GridItem xs={10} sm={10} md={8}>
@@ -237,13 +289,14 @@ const ChildrenSection: React.FC = () => {
                 >
                   <CustomPagination
                     rowsPerPageOptions={[12, 24, 36]}
-                    isHidden={false}
+                    isHidden={selectedChildName !== null}
                     quantity={quantity !== null ? quantity : 0}
                     onChangePage={handleChangePage}
                     onChangeRowsPerPage={handleChangeRowsPerPage}
                     page={page}
                     rowsPerPage={rowsPerPage}
                     label="Ilość podopiecznych"
+                    isPending={isUpdating}
                   />
                 </GridItem>
                 <GridItem
@@ -254,7 +307,7 @@ const ChildrenSection: React.FC = () => {
                 >
                   <Autocomplete
                     style={{ width: '70%' }}
-                    disabled={false}
+                    disabled={isUpdating}
                     id="children-searcher"
                     open={open}
                     size="medium"

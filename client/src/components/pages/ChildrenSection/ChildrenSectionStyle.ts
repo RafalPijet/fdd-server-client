@@ -69,6 +69,13 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
         padding: 5,
         marginTop: '20px',
         backgroundColor: 'rgba(255, 255, 255, 0.3)'
+    },
+    waiting: {
+        height: 200,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100%',
     }
 }))
 

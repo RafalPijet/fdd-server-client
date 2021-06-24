@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { useTheme } from '@material-ui/core/styles';
 import TablePagination from '@material-ui/core/TablePagination';
 import IconButton from '@material-ui/core/IconButton';
@@ -6,6 +7,7 @@ import FirstPageIcon from '@material-ui/icons/FirstPage';
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import LastPageIcon from '@material-ui/icons/LastPage';
+import { getUpdating } from '../../../redux/actions/requestActions';
 import {
   useStyles,
   TablePaginationActionsProps,
@@ -15,6 +17,7 @@ import {
 const TablePaginationActions = (props: TablePaginationActionsProps) => {
   const classes = useStyles();
   const theme = useTheme();
+  const isUpdating = useSelector(getUpdating);
   const { count, page, rowsPerPage, onChangePage } = props;
 
   const handleFirstPageButtonClick = (
@@ -46,7 +49,7 @@ const TablePaginationActions = (props: TablePaginationActionsProps) => {
       <IconButton
         color="inherit"
         onClick={handleFirstPageButtonClick}
-        disabled={page === 0}
+        disabled={page === 0 || isUpdating}
         aria-label="first page"
       >
         {theme.direction === 'rtl' ? <LastPageIcon /> : <FirstPageIcon />}
@@ -54,7 +57,7 @@ const TablePaginationActions = (props: TablePaginationActionsProps) => {
       <IconButton
         color="inherit"
         onClick={handleBackButtonClick}
-        disabled={page === 0}
+        disabled={page === 0 || isUpdating}
         aria-label="previous page"
       >
         {theme.direction === 'rtl' ? (
@@ -66,7 +69,7 @@ const TablePaginationActions = (props: TablePaginationActionsProps) => {
       <IconButton
         color="inherit"
         onClick={handleNextButtonClick}
-        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+        disabled={page >= Math.ceil(count / rowsPerPage) - 1 || isUpdating}
         aria-label="next page"
       >
         {theme.direction === 'rtl' ? (
@@ -78,7 +81,7 @@ const TablePaginationActions = (props: TablePaginationActionsProps) => {
       <IconButton
         color="inherit"
         onClick={handleLastPageButtonClick}
-        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+        disabled={page >= Math.ceil(count / rowsPerPage) - 1 || isUpdating}
         aria-label="last page"
       >
         {theme.direction === 'rtl' ? <FirstPageIcon /> : <LastPageIcon />}
@@ -97,6 +100,7 @@ const CustomPagination: React.FC<Props> = (props) => {
     isHidden,
     rowsPerPageOptions,
     label,
+    isPending,
   } = props;
   const classes = useStyles();
   return (
@@ -112,6 +116,7 @@ const CustomPagination: React.FC<Props> = (props) => {
       page={page}
       SelectProps={{
         inputProps: { 'aria-label': 'rows per page' },
+        disabled: isPending,
         native: true,
         classes: {
           icon: classes.icon,
