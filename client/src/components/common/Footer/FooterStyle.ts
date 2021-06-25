@@ -15,6 +15,17 @@ const footerStyle = (theme: Theme) => ({
         position: "relative",
         display: "block"
     },
+    button: {
+        border: 'none',
+        background: 'inherit',
+        color: "inherit",
+        padding: "0.9375rem",
+        fontFamily: "Times New Roman",
+        fontWeight: "500",
+        fontSize: "12px",
+        textTransform: "uppercase",
+        cursor: 'pointer'
+    },
     left: {
         float: "left!important",
         display: "block"
@@ -67,6 +78,7 @@ export interface Props {
 export interface StyleProps {
     block: BaseCSSProperties;
     left: BaseCSSProperties;
+    button: BaseCSSProperties;
     right: BaseCSSProperties;
     footer: BaseCSSProperties;
     a: BaseCSSProperties;

@@ -22,13 +22,14 @@ const Footer: React.FC<Props> = (props) => {
         <div className={classes.left}>
           <List className={classes.list}>
             <ListItem className={classes.inlineBlock}>
-              <a
+              {/* <a
                 href="http://doroslidzieciom.org/"
                 className={classes.block}
                 target="_blank"
               >
                 O nas
-              </a>
+              </a> */}
+              <button className={classes.button}>O nas</button>
             </ListItem>
             <ListItem className={classes.inlineBlock}>
               <a

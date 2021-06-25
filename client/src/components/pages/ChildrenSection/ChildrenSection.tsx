@@ -23,7 +23,6 @@ import {
   setSelectedPerson,
   setSelectedChild,
   getSelectedQuantity,
-  setChildrenList,
 } from '../../../redux/actions/generalActions';
 import { getUpdating } from '../../../redux/actions/requestActions';
 import { ChildBasicState, CssTextField } from '../../../types/global';
@@ -52,6 +51,7 @@ const ChildrenSection: React.FC = () => {
   const [selectedChildName, setSelectedChildName] =
     useState<SelectedChild | null>(null);
   const [options, setOptions] = useState<any[]>([]);
+  const [isSearchMode, setIsSearchMode] = useState<boolean>(false);
   const loading = open && options.length === 0;
 
   useEffect(() => {
@@ -73,9 +73,7 @@ const ChildrenSection: React.FC = () => {
     setIsListReady(false);
   }, [page, rowsPerPage]);
 
-  //change
   useEffect(() => {
-    console.log(!isListReady && selectedChildName === null && childId !== null);
     if (
       !isListReady &&
       selectedChildName === null &&
@@ -83,17 +81,12 @@ const ChildrenSection: React.FC = () => {
       childrenList !== null &&
       childrenList.length
     ) {
-      //change
-      console.log(childId);
-      console.log(selectedId);
-      dispatch(getChildByIdRequest(childrenList[0]._id));
-      // setIsReady(false);
+      setIsReady(false);
       setIsListReady(true);
     }
     if (isListReady && selectedChildName !== null) {
       setIsListReady(false);
     }
-    // setIsListReady(selectedChildName === null);
   }, [selectedChildName]);
 
   useEffect(() => {
@@ -109,10 +102,9 @@ const ChildrenSection: React.FC = () => {
       setIsReady(true);
     }
     if (selectedPerson !== null && !isUpdating && selectedChildName !== null) {
-      //change
       setIsReady(true);
     }
-  }, [selectedPerson, isUpdating, selectedChildName]); //change
+  }, [selectedPerson, isUpdating, selectedChildName]);
 
   useEffect(() => {
     let active = true;
@@ -150,20 +142,22 @@ const ChildrenSection: React.FC = () => {
 
   useEffect(() => {
     if (childrenList !== null && !isUpdating && selectedChildName === null) {
-      //change
       setIsListReady(childrenList.length > 0);
     }
   }, [childrenList, isUpdating]);
 
   const changeChildHandling = () => {
     dispatch(setSelectedPerson(null));
-    if (selectedId !== null && selectedChildName === null) {
-      //change
+    if (selectedId !== null && selectedChildName === null && !isSearchMode) {
       dispatch(getChildByIdRequest(selectedId));
     }
     if (selectedChildName !== null) {
-      //change
       dispatch(getChildByIdRequest(selectedChildName._id));
+      setIsSearchMode(true);
+    }
+    if (selectedChildName === null && isSearchMode && childrenList) {
+      dispatch(getChildByIdRequest(childrenList[0]._id));
+      setIsSearchMode(false);
     }
   };
 
@@ -185,7 +179,6 @@ const ChildrenSection: React.FC = () => {
     e: React.ChangeEvent<{}>,
     value: SelectedChild | null
   ) => {
-    console.log(value);
     setSelectedChildName(value);
   };
 
@@ -237,7 +230,6 @@ const ChildrenSection: React.FC = () => {
               timeout={1000}
               onExited={() => {
                 if (selectedChildName === null) {
-                  //change
                   dispatch(getChildrenBasicDataRequest(page, rowsPerPage));
                 }
                 setIsReady(false);

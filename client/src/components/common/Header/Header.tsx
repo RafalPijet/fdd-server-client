@@ -8,6 +8,7 @@ import Hidden from '@material-ui/core/Hidden';
 import Drawer from '@material-ui/core/Drawer';
 import Menu from '@material-ui/icons/Menu';
 import RequestProgress from '../RequestProgress/RequestProgress';
+import ModalFddInfo from '../ModalFddInfo/ModalFddInfo';
 import { Props, PropsClasses, useStyles, StyleProps } from './HeaderStyle';
 import logo from '../../../images/butterflyMini.png';
 
@@ -24,6 +25,7 @@ const Header: React.FC<Props> = (props) => {
   } = props;
   const classes: PropsClasses = useStyles({} as StyleProps);
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);
+  const [isModalInfo, setIsModalInfo] = useState<boolean>(false);
 
   useEffect(() => {
     if (props.changeColorOnScroll) {
@@ -38,6 +40,10 @@ const Header: React.FC<Props> = (props) => {
 
   const handleDrawerToggle = (): void => {
     setMobileOpen(!mobileOpen);
+  };
+
+  const handleBrand = () => {
+    setIsModalInfo(!isModalInfo);
   };
 
   const headerColorChange = (): void => {
@@ -69,7 +75,7 @@ const Header: React.FC<Props> = (props) => {
   });
 
   const brandComponent = (
-    <Button disabled={isSpiner} className={classes.title}>
+    <Button disabled={isSpiner} className={classes.title} onClick={handleBrand}>
       <img style={{ paddingRight: '5px' }} src={logo} alt="logo" />
       {brand}
     </Button>
@@ -123,6 +129,7 @@ const Header: React.FC<Props> = (props) => {
           hidden={!isSpiner}
         />
       </div>
+      <ModalFddInfo isOpen={isModalInfo} closeModal={handleBrand} />
     </AppBar>
   );
 };
