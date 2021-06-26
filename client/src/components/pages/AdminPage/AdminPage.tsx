@@ -21,7 +21,6 @@ import HeaderLinks from '../../features/HeaderLinks/HeaderLinksAdminPage';
 import Jumbotron from '../../common/Jumbotron/Jumbotron';
 import GridContainer from '../../common/Grid/GridContainer';
 import GridItem from '../../common/Grid/GridItem';
-import Footer from '../../common/Footer/Footer';
 import AdminMessages from '../../features/AdminMessages/AdminMessages';
 import RaportsZone from '../../features/RaportsZone/RaportsZone';
 import SearcherOfUsers from '../../features/SearcherOfUsers/SearcherOfUsers';
@@ -158,7 +157,6 @@ const AdminPage: React.FC = () => {
           <AdminContent />
         </div>
       </div>
-      <Footer />
       <ModalAreYouSure
         isOpen={modalAYS.isOpen}
         title={modalAYS.title}

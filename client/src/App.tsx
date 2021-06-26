@@ -1,12 +1,34 @@
 import React from 'react';
 import { Router, Route, Switch, BrowserRouter } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
-import MainPage from './components/pages/MainPage/MainPage';
-import LoginPage from './components/pages/LoginPage/LoginPage';
-import AdminPage from './components/pages/AdminPage/AdminPage';
-import NewsPage from './components/pages/NewsPage/NewsPage';
-import AdminNewsPage from './components/pages/AdminNewsPage/AdminNewsPage';
-import ChildrenSection from './components/pages/ChildrenSection/ChildrenSection';
+
+const MainPage = React.lazy(
+  () => import('./components/pages/MainPage/MainPage')
+);
+
+const LoginPage = React.lazy(
+  () => import('./components/pages/LoginPage/LoginPage')
+);
+
+const AdminPage = React.lazy(
+  () => import('./components/pages/AdminPage/AdminPage')
+);
+
+const AdminNewsPage = React.lazy(
+  () => import('./components/pages/AdminNewsPage/AdminNewsPage')
+);
+
+const ChildrenSection = React.lazy(
+  () => import('./components/pages/ChildrenSection/ChildrenSection')
+);
+
+const NewsPage = React.lazy(
+  () => import('./components/pages/NewsPage/NewsPage')
+);
+
+const StatutPage = React.lazy(
+  () => import('./components/pages/StatutPage/StatutPage')
+);
 
 const ParentPage = React.lazy(
   () => import('./components/pages/ParentPage/ParentPage')
@@ -24,6 +46,7 @@ const App = () => {
             <Route exact path="/parent" component={ParentPage} />
             <Route exact path="/admin" component={AdminPage} />
             <Route exact path="/children" component={ChildrenSection} />
+            <Route exact path="/statut" component={StatutPage} />
             <Route exact path="/admin/news" component={AdminNewsPage} />
             <Route exact path="/news/:id" component={NewsPage} />
             <Route exact path="/" component={MainPage} />

@@ -1,12 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import classNames from 'classnames';
 import { List, ListItem } from '@material-ui/core';
 import Favorite from '@material-ui/icons/Favorite';
+import ModalFddInfo from '../ModalFddInfo/ModalFddInfo';
+import { InfoType } from '../ModalFddInfo/ModalFddInfoStyle';
 import { PropsClasses, useStyles, StyleProps, Props } from './FooterStyle';
+import { MAIN_URL, URL } from '../../../config';
 
 const Footer: React.FC<Props> = (props) => {
   const classes: PropsClasses = useStyles({} as StyleProps);
   const { whiteFont } = props;
+  const [isModalInfo, setIsModalInfo] = useState<boolean>(false);
+  const [infoType, setInfoType] = useState<InfoType>(InfoType.aboutUs);
+
   const footerClasses = classNames({
     [classes.footer]: true,
     [classes.footerWhiteFont]: whiteFont,
@@ -16,37 +22,36 @@ const Footer: React.FC<Props> = (props) => {
     [classes.footerWhiteFont]: whiteFont,
   });
   let date: number = new Date().getFullYear();
+
+  const handleModalInfo = (type: InfoType) => {
+    setInfoType(type);
+    setIsModalInfo(!isModalInfo);
+  };
+
   return (
     <footer className={footerClasses}>
       <div className={classes.container}>
         <div className={classes.left}>
           <List className={classes.list}>
             <ListItem className={classes.inlineBlock}>
-              {/* <a
-                href="http://doroslidzieciom.org/"
-                className={classes.block}
-                target="_blank"
+              <button
+                onClick={() => handleModalInfo(InfoType.aboutUs)}
+                className={classes.button}
               >
                 O nas
-              </a> */}
-              <button className={classes.button}>O nas</button>
+              </button>
             </ListItem>
             <ListItem className={classes.inlineBlock}>
-              <a
-                href="http://doroslidzieciom.org/"
-                className={classes.block}
-                target="_blank"
+              <button
+                onClick={() => handleModalInfo(InfoType.contact)}
+                className={classes.button}
               >
                 Kontakt
-              </a>
+              </button>
             </ListItem>
             <ListItem className={classes.inlineBlock}>
-              <a
-                href="http://doroslidzieciom.org/"
-                className={classes.block}
-                target="_blank"
-              >
-                Status
+              <a href={`${MAIN_URL}statut`} className={classes.block}>
+                Statut
               </a>
             </ListItem>
             <ListItem className={classes.inlineBlock}>
@@ -71,6 +76,11 @@ const Footer: React.FC<Props> = (props) => {
           </a>
         </div>
       </div>
+      <ModalFddInfo
+        infoType={infoType}
+        isOpen={isModalInfo}
+        closeModal={() => handleModalInfo(infoType)}
+      />
     </footer>
   );
 };

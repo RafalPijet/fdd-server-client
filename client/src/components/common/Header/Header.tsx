@@ -9,6 +9,7 @@ import Drawer from '@material-ui/core/Drawer';
 import Menu from '@material-ui/icons/Menu';
 import RequestProgress from '../RequestProgress/RequestProgress';
 import ModalFddInfo from '../ModalFddInfo/ModalFddInfo';
+import { InfoType } from '../ModalFddInfo/ModalFddInfoStyle';
 import { Props, PropsClasses, useStyles, StyleProps } from './HeaderStyle';
 import logo from '../../../images/butterflyMini.png';
 
@@ -42,7 +43,7 @@ const Header: React.FC<Props> = (props) => {
     setMobileOpen(!mobileOpen);
   };
 
-  const handleBrand = () => {
+  const handleModalInfo = (type: InfoType) => {
     setIsModalInfo(!isModalInfo);
   };
 
@@ -75,7 +76,11 @@ const Header: React.FC<Props> = (props) => {
   });
 
   const brandComponent = (
-    <Button disabled={isSpiner} className={classes.title} onClick={handleBrand}>
+    <Button
+      disabled={isSpiner}
+      className={classes.title}
+      onClick={() => handleModalInfo(InfoType.aboutUs)}
+    >
       <img style={{ paddingRight: '5px' }} src={logo} alt="logo" />
       {brand}
     </Button>
@@ -129,7 +134,11 @@ const Header: React.FC<Props> = (props) => {
           hidden={!isSpiner}
         />
       </div>
-      <ModalFddInfo isOpen={isModalInfo} closeModal={handleBrand} />
+      <ModalFddInfo
+        infoType={InfoType.aboutUs}
+        isOpen={isModalInfo}
+        closeModal={() => handleModalInfo(InfoType.aboutUs)}
+      />
     </AppBar>
   );
 };

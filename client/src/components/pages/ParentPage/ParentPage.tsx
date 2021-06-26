@@ -21,7 +21,6 @@ import HeaderLinks from '../../features/HeaderLinks/HeaderLinksParentPage';
 import Jumbotron from '../../common/Jumbotron/Jumbotron';
 import GridContainer from '../../common/Grid/GridContainer';
 import GridItem from '../../common/Grid/GridItem';
-import Footer from '../../common/Footer/Footer';
 import ParentMessages from '../../features/ParentMessages/ParentMessages';
 import ChildrenZone from '../../features/ChildrenZone/ChildrenZone';
 import ChildHandling from '../../common/ChildHandling/ChildHandling';
@@ -134,7 +133,6 @@ const ParentPage: React.FC = () => {
           <ChildHandling />
         </div>
       </div>
-      <Footer />
     </div>
   );
 };
