@@ -30,6 +30,10 @@ const StatutPage = React.lazy(
   () => import('./components/pages/StatutPage/StatutPage')
 );
 
+const ClausePage = React.lazy(
+  () => import('./components/pages/ClausePage/ClausePage')
+);
+
 const ParentPage = React.lazy(
   () => import('./components/pages/ParentPage/ParentPage')
 );
@@ -47,6 +51,7 @@ const App = () => {
             <Route exact path="/admin" component={AdminPage} />
             <Route exact path="/children" component={ChildrenSection} />
             <Route exact path="/statut" component={StatutPage} />
+            <Route exact path="/clause" component={ClausePage} />
             <Route exact path="/admin/news" component={AdminNewsPage} />
             <Route exact path="/news/:id" component={NewsPage} />
             <Route exact path="/" component={MainPage} />

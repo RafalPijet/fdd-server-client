@@ -55,6 +55,11 @@ const Footer: React.FC<Props> = (props) => {
               </a>
             </ListItem>
             <ListItem className={classes.inlineBlock}>
+              <a href={`${MAIN_URL}clause`} className={classes.block}>
+                Klauzula informacyjna
+              </a>
+            </ListItem>
+            <ListItem className={classes.inlineBlock}>
               <a
                 href="https://www.gov.pl/web/rodzina/przekaz-1-podatku-dla-opp"
                 className={classes.block}

@@ -180,7 +180,7 @@ export const getAllNewsRequest = (): ThunkAction<
     dispatch(startUpdatingRequest());
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        // await new Promise(resolve => setTimeout(resolve, 2000));
         let res: AxiosResponse = await axios.get(`${API_URL}/auth/news`);
         const news: NewsState[] = res.data.news;
         if (news.length) {

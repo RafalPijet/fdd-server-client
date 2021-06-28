@@ -21,7 +21,7 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
         minHeight: '80vh',
         maxHeight: '810px',
         padding: '10px',
-        backgroundColor: 'rgba(255, 255, 255, 0.3)',
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
         overflow: 'auto'
     },
     pageHeader: {
