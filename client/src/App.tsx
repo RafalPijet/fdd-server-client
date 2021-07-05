@@ -18,6 +18,10 @@ const AdminNewsPage = React.lazy(
   () => import('./components/pages/AdminNewsPage/AdminNewsPage')
 );
 
+const AdminReportsPage = React.lazy(
+  () => import('./components/pages/AdminReportsPage/AdminRepotsPage')
+);
+
 const ChildrenSection = React.lazy(
   () => import('./components/pages/ChildrenSection/ChildrenSection')
 );
@@ -38,6 +42,10 @@ const ParentPage = React.lazy(
   () => import('./components/pages/ParentPage/ParentPage')
 );
 
+const ReportsPage = React.lazy(
+  () => import('./components/pages/ReportsPage/ReportsPage')
+);
+
 const hist = createBrowserHistory();
 
 const App = () => {
@@ -52,7 +60,9 @@ const App = () => {
             <Route exact path="/children" component={ChildrenSection} />
             <Route exact path="/statut" component={StatutPage} />
             <Route exact path="/clause" component={ClausePage} />
+            <Route exact path="/reports" component={ReportsPage} />
             <Route exact path="/admin/news" component={AdminNewsPage} />
+            <Route exact path="/admin/reports" component={AdminReportsPage} />
             <Route exact path="/news/:id" component={NewsPage} />
             <Route exact path="/" component={MainPage} />
           </Switch>

@@ -1,6 +1,6 @@
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { BaseCSSProperties } from '@material-ui/styles';
-import { container, title, primaryColor, lightGrayColor } from '../../../styles/globalStyles';
+import { container, title, primaryColor, lightGrayColor, logoColor } from '../../../styles/globalStyles';
 
 const globaTitle = title as BaseCSSProperties
 
@@ -30,7 +30,7 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
         zIndex: 3
     },
     mainRaised: {
-        margin: "-60px 30px 0px",
+        margin: "-60px 30px 20px",
         borderRadius: "6px",
         boxShadow:
             "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2)"
@@ -44,11 +44,21 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
         transform: 'rotate(-1deg)',
     },
     firstEntrance: {
-        bottom: '1157px',
+        bottom: '1757px',
         zIndex: 0,
     },
     secondEntrance: {
-        bottom: '563px',
+        bottom: '1162px',
+        zIndex: -1,
+    },
+    thirdEntrance: {
+        bottom: '577px',
+        backgroundColor: logoColor,
+        zIndex: 0,
+    },
+    fourthEntrance: {
+        bottom: '-16px',
+        backgroundColor: logoColor,
         zIndex: -1,
     },
     image: {
@@ -71,6 +81,11 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
                 color: primaryColor,
                 transition: '10s'
             },
+            '& $imageReports': {
+                transform: 'scale(1.2)',
+                color: logoColor,
+                transition: '10s'
+            }
         },
     },
     focusVisible: {},
@@ -80,6 +95,18 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
         left: '43vw',
         right: 0,
         top: '8vh',
+        bottom: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: theme.palette.common.white,
+    },
+    reportsButton: {
+        maxHeight: '60px',
+        position: 'absolute',
+        left: '19vw',
+        right: 0,
+        top: '29vh',
         bottom: 0,
         display: 'flex',
         alignItems: 'center',
@@ -109,6 +136,13 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
         fontFamily: 'Roboto Slab',
         fontSize: '40px',
         position: 'relative',
+        padding: `${theme.spacing(2)}px ${theme.spacing(4)}px ${theme.spacing(1) + 6}px`,
+    },
+    imageReports: {
+        fontFamily: 'Roboto Slab',
+        fontSize: '40px',
+        position: 'relative',
+        maxWidth: 650,
         padding: `${theme.spacing(2)}px ${theme.spacing(4)}px ${theme.spacing(1) + 6}px`,
     },
     imageMarked: {

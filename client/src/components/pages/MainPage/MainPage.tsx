@@ -29,7 +29,8 @@ import {
   getChildrenBasicDataRequest,
 } from '../../../redux/thunks';
 import image from '../../../images/jumbotronMain.jpg';
-import buttonImage from '../../../images/childrenButton.jpg';
+import childrenButton from '../../../images/childrenButton.jpg';
+import reportsButton from '../../../images/test.jpg';
 
 const MainPage: React.FC = () => {
   const classes = useStyles();
@@ -40,6 +41,8 @@ const MainPage: React.FC = () => {
   const error = useSelector(getError);
   const dispatch = useDispatch();
   const [isRedirectToChildren, setIsRedirectToChildren] =
+    useState<boolean>(false);
+  const [isRedirectToReports, setIsRedirectToReports] =
     useState<boolean>(false);
 
   useEffect(() => {
@@ -77,6 +80,10 @@ const MainPage: React.FC = () => {
 
   if (isRedirectToChildren) {
     return <Redirect to="/children" />;
+  }
+
+  if (isRedirectToReports) {
+    return <Redirect to="/reports" />;
   }
 
   return (
@@ -121,7 +128,7 @@ const MainPage: React.FC = () => {
           <span
             className={classes.imageSrc}
             style={{
-              backgroundImage: `url(${buttonImage})`,
+              backgroundImage: `url(${childrenButton})`,
             }}
           />
           <span className={classes.imageBackdrop} />
@@ -136,11 +143,43 @@ const MainPage: React.FC = () => {
             </Typography>
           </div>
         </ButtonBase>
-        {/* <ChildrenSection /> */}
         <div
           className={classNames(classes.commonEntracte, classes.secondEntrance)}
         ></div>
         <MessageSection isDisabled={isPending} />
+        <div
+          className={classNames(classes.commonEntracte, classes.thirdEntrance)}
+        ></div>
+        <ButtonBase
+          focusRipple
+          onClick={() => setTimeout(() => setIsRedirectToReports(true), 300)}
+          className={classes.image}
+          focusVisibleClassName={classes.focusVisible}
+          style={{
+            width: '100%',
+          }}
+        >
+          <span
+            className={classes.imageSrc}
+            style={{
+              backgroundImage: `url(${reportsButton})`,
+            }}
+          />
+          <span className={classes.imageBackdrop} />
+          <div className={classes.reportsButton}>
+            <Typography
+              component="span"
+              variant="subtitle1"
+              color="inherit"
+              className={classes.imageReports}
+            >
+              Sprawozdania Organizacji Pożytku Publicznego
+            </Typography>
+          </div>
+        </ButtonBase>
+        <div
+          className={classNames(classes.commonEntracte, classes.fourthEntrance)}
+        ></div>
       </div>
       <Footer />
     </div>

@@ -79,6 +79,9 @@ const HeaderList: React.FC<Props> = (props) => {
             <Link to="/admin/news" className={classes.dropdownLink}>
               Aktualności
             </Link>,
+            <Link to="/admin/reports" className={classes.dropdownLink}>
+              Sprawozdania
+            </Link>,
           ]}
         />
       </ListItem>
