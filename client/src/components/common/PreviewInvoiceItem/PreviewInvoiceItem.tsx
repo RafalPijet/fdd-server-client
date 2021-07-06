@@ -13,18 +13,12 @@ import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import { Document, Page } from 'react-pdf/dist/esm/entry.webpack';
-import {
-  StyleProps,
-  PropsClasses,
-  useStyles,
-  Props,
-  getBase64,
-} from './PreviewInvoiceItemStyle';
+import { useStyles, Props, getBase64 } from './PreviewInvoiceItemStyle';
 import logo from '../../../images/butterfly.png';
 
 const PreviewInvoiceItem: React.FC<Props> = (props) => {
   const { file, getIsRemove, number, isDisabled } = props;
-  const classes: PropsClasses = useStyles({} as StyleProps);
+  const classes = useStyles();
   const [image, setImage] = useState<any>(null);
   const [open, setOpen] = React.useState(false);
   const [numPages, setNumPages] = useState<number | null>(null);

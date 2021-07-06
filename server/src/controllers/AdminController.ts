@@ -20,8 +20,9 @@ import {
     InvoiceModel,
     INews,
     NewsModel,
-    buildChild,
-    buildNews
+    buildNews,
+    IReport,
+    buildReport
 } from '../models';
 import { TargetOptions, IAdminMessage, SearchUserType } from '../types';
 import { removeDuplicates, clearImage } from '../utils/functions';
@@ -535,6 +536,37 @@ class AdminController {
             res.status(202).json({ message: 'Artukuł został usunięty' });
         } catch (err) {
             next(new HttpException(404, 'Nieudane usunięcie artykułu'));
+        }
+    }
+
+    @post('/reports')
+    async addReport(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const { title } = req.body;
+        const reports = 'reports'
+        if (!req.files.length) {
+            next(new HttpException(404, 'Brak pliku ze sprawozdaniem'));
+        } else {
+            try {
+                const files = req.files as Express.Multer.File[];
+                const fileUrl = files[0].path.replace(files[0].destination, reports);
+                const report = buildReport({
+                    report: fileUrl,
+                    title
+                });
+                const newReport: IReport = await report.save();
+                const source = files[0].path.replace('uploads', reports);  //It's will be remove
+                const target = source.replace(reports, 'build/reports');  //It's will be remove
+                await fs.copyFile(files[0].path, source, (err) => {
+                    console.log(err)
+                })
+                await fs.copyFile(files[0].path, target, (err) => {  //It's will be remove
+                    console.log(err)                    //It's will be remove
+                })
+                fs.unlinkSync(files[0].path);
+                res.status(201).json({ message: 'Dodanie sprawozdania zakończone sukcesem', newReport });
+            } catch (err) {
+                next(new HttpException(404, 'Nieudane dodanie sprawozdania'));
+            }
         }
     }
 }

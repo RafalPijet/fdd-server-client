@@ -38,7 +38,9 @@ import {
     UPDATE_NEWS_OF_DATA,
     UpdateNewsOfDataAction,
     SET_CHILDREN_LIST,
-    SetChildrenListAction
+    SetChildrenListAction,
+    SET_AVAILABLE_REPORTS_YEARS,
+    SetAvailableReportsYearsAction
 } from '../actions/generalActions';
 import { GeneralState, ModalAYSModes, NewsState, SearchUserType } from '../../types/global';
 
@@ -66,7 +68,9 @@ const initialState: GeneralState = {
     selectedUserType: SearchUserType.child,
     selectedQuantity: null,
     news: null,
-    childrenList: null
+    childrenList: null,
+    availableReportsYears: [],
+    selectedYearPeriod: null
 }
 
 const generalReducer = (
@@ -77,7 +81,7 @@ const generalReducer = (
         UpdateSelectedPersonChildAvatarAction | AddChildToSelectedPersonAction | SetAllNewsAction |
         UpdateSelectedPersonUserDataAction | SetSelectedQuantityAction | UpdateNewsOfDataAction |
         UpdateSelectedPersonChildInvoicesListAction | UpdatePicturesOfCurrentNewsAction |
-        SetChildrenListAction
+        SetChildrenListAction | SetAvailableReportsYearsAction
 ) => {
     switch (action.type) {
         case SET_TOAST:
@@ -212,6 +216,11 @@ const generalReducer = (
             return {
                 ...state,
                 childrenList: action.payload
+            }
+        case SET_AVAILABLE_REPORTS_YEARS:
+            return {
+                ...state,
+                availableReportsYears: action.payload
             }
         default:
             return { ...state }

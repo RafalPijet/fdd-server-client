@@ -23,6 +23,7 @@ export const UPDATE_PICTURES_OF_CURRENT_NEWS = 'general/update_pictures_of_curre
 export const UPDATE_NEWS_OF_PUBLICATION = 'general/update_news_of_publication';
 export const UPDATE_NEWS_OF_DATA = 'general/update_news_of_data';
 export const SET_CHILDREN_LIST = 'general/set_children_list';
+export const SET_AVAILABLE_REPORTS_YEARS = 'general/set_available_reports_years';
 
 //ACTIONS TYPES
 export interface SetToastAction extends Action<typeof SET_TOAST> {
@@ -86,6 +87,9 @@ export interface UpdateNewsOfDataAction extends Action<typeof UPDATE_NEWS_OF_DAT
 }
 export interface SetChildrenListAction extends Action<typeof SET_CHILDREN_LIST> {
     payload: GeneralState["childrenList"]
+}
+export interface SetAvailableReportsYearsAction extends Action<typeof SET_AVAILABLE_REPORTS_YEARS> {
+    payload: GeneralState["availableReportsYears"]
 }
 
 //CREATORS OF ACTIONS
@@ -171,6 +175,10 @@ export const setChildrenList = (payload: GeneralState["childrenList"]): SetChild
     type: SET_CHILDREN_LIST,
     payload
 })
+export const setAvailableReportsYears = (payload: GeneralState["availableReportsYears"]): SetAvailableReportsYearsAction => ({
+    type: SET_AVAILABLE_REPORTS_YEARS,
+    payload
+})
 
 //SELECTORS
 export const getGeneral = (rootState: RootState) => rootState.general;
@@ -185,3 +193,4 @@ export const getSelectedUserType = (rootState: RootState) => getGeneral(rootStat
 export const getSelectedQuantity = (rootState: RootState) => getGeneral(rootState).selectedQuantity;
 export const getNews = (rootState: RootState) => getGeneral(rootState).news;
 export const getChildrenList = (rootState: RootState) => getGeneral(rootState).childrenList;
+export const getAvailableReportsYears = (rootState: RootState) => getGeneral(rootState).availableReportsYears;

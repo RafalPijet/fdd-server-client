@@ -3,11 +3,21 @@ import { Request, Response, NextFunction } from 'express';
 import { controller, bodyValidator, ValidatorKeys } from './decorators';
 import { createToken } from './token.service';
 import { get, post } from '../routes';
-import { UserModel, IUser, buildUser, IOutsideMessage, buildOutSideMessage, NewsModel, ChildModel } from '../models';
+import {
+    UserModel,
+    IUser,
+    buildUser,
+    IOutsideMessage,
+    buildOutSideMessage,
+    NewsModel,
+    ChildModel,
+    ReportModel,
+    IReport
+} from '../models';
 import HttpException from '../exceptions/HttpException';
 import UserWithThatEmailAlreadyExistsException from '../exceptions/UserWithThatEmailAlreadyExistsException';
 import WrongCredentialsException from '../exceptions/WrongCredentialException';
-import { UserDto } from '../utils/functions';
+import { UserDto, removeDuplicates } from '../utils/functions';
 
 @controller('/api/auth')
 class AuthController {
@@ -149,6 +159,28 @@ class AuthController {
         } catch (err) {
             next(new HttpException(404,
                 `Brak dostępnych danych. - ${err}`))
+        }
+    }
+
+    @get('/reports/years')
+    async getReportsYears(req: Request, res: Response, next: NextFunction): Promise<void> {
+
+        try {
+            const reports = await ReportModel.find();
+            if (!reports) {
+                next(new HttpException(404,
+                    `Brak dostępnych danych`))
+            } else {
+                const years = reports.map((report: IReport) => {
+                    if (report.createdAt) {
+                        return { year: report.createdAt.toISOString().substring(0, 4) };
+                    }
+                })
+                const availableYears = removeDuplicates(years, (item: any) => item.year)
+                res.status(200).json({ availableYears });
+            }
+        } catch (err) {
+            next(new HttpException(404, 'Nieudane pobranie danych o zakresie lat sprawozdań'));
         }
     }
 }

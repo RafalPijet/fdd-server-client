@@ -23,12 +23,7 @@ import {
 } from '../../../redux/actions/requestActions';
 import { EventChangeAvailableDestination } from '../../../types/global';
 import { addInvoiceToChild } from '../../../redux/thunks';
-import {
-  PropsClasses,
-  useStyles,
-  StyleProps,
-  Props,
-} from './AddingInvoicesStyle';
+import { useStyles, Props } from './AddingInvoicesStyle';
 
 const AddingInvoices: React.FC<Props> = (props) => {
   const { childId, name } = props;
@@ -37,7 +32,7 @@ const AddingInvoices: React.FC<Props> = (props) => {
   const isSuccess = useSelector(getAddingSuccess);
   const eventChange = useSelector(getEventChange);
   const eventData = eventChange.data as EventChangeAvailableDestination;
-  const classes: PropsClasses = useStyles({} as StyleProps);
+  const classes = useStyles();
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
   const [switchIsOn, setSwitchIsOn] = useState<boolean>(false);
   const [invoiceFiles, setInvoiceFiles] = useState<[any, any]>([null, null]);

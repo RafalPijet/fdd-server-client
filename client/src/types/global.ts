@@ -97,6 +97,18 @@ export interface InvoiceState {
     content: string[];
 }
 
+export interface AvailableReportsYears {
+    year: string;
+}
+
+export interface ReportState {
+    _id: string;
+    createdAt: Date;
+    uptatedAt: Date;
+    report: string;
+    title: string;
+}
+
 export interface NewsState {
     _id?: string;
     publication: boolean;
@@ -234,6 +246,8 @@ export interface GeneralState {
     selectedQuantity: number | null;
     news: NewsState[] | null;
     childrenList: ChildBasicState[] | null;
+    availableReportsYears: AvailableReportsYears[];
+    selectedYearPeriod: ReportState[] | null;
 }
 
 export enum TargetOptions {

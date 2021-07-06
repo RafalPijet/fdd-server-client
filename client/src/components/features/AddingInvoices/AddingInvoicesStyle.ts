@@ -1,9 +1,7 @@
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import { makeStyles } from '@material-ui/core/styles';
-import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { AvailableDestinations } from '../../../types/global';
 
-const addingInvoicesStyle = (theme: Theme) => ({
+export const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
         minHeight: '490px',
     },
@@ -16,19 +14,9 @@ const addingInvoicesStyle = (theme: Theme) => ({
     footer: {
         justifyContent: 'center'
     }
-})
-
-export interface StyleProps {
-    root: BaseCSSProperties;
-    back: BaseCSSProperties;
-    active: BaseCSSProperties;
-    footer: BaseCSSProperties;
-}
+}))
 
 export interface Props {
     childId: string | null;
     name: AvailableDestinations;
 }
-
-export type PropsClasses = Record<keyof StyleProps, string>;
-export const useStyles = makeStyles(addingInvoicesStyle as any);

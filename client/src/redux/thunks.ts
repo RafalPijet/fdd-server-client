@@ -80,7 +80,9 @@ import {
     updateNewsOfData,
     UpdateNewsOfDataAction,
     SetChildrenListAction,
-    setChildrenList
+    setChildrenList,
+    SetAvailableReportsYearsAction,
+    setAvailableReportsYears
 } from './actions/generalActions';
 import { State as ImagesLists } from '../components/common/RemovingImage/RemovingImageStyle';
 import {
@@ -687,6 +689,40 @@ export const addChildToParent = (payload: IChildData, userId?: string): ThunkAct
     }
 }
 
+export const addReportRequest = (payload: { reportFile: File, reportTitle: string }): ThunkAction<
+    Promise<void>,
+    any,
+    RootState,
+    StartAddingRequestAction | StopAddingRequestAction | ErrorAddingRequestAction |
+    SetToastAction
+> => async (dispatch, getState) => {
+    dispatch(startAddingRequest());
+
+    try {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        const formData = new FormData();
+        formData.append('image', payload.reportFile);
+        formData.append('title', payload.reportTitle);
+        let res: AxiosResponse = await axios.post(`${API_URL}/admin/reports`, formData, {
+            headers: {
+                'Authorization': localStorage.getItem('tokenFDD'),
+                "Content-type": "multipart/form-data",
+            },
+        })
+        console.log(res.data);
+        dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
+        dispatch(stopAddingRequest());
+    } catch (err) {
+        if (err.response !== undefined) {
+            err.response.data.message ?
+                dispatch(errorAddingRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorAddingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        } else {
+            dispatch(errorAddingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        }
+    }
+}
+
 export const addInvoiceToChild = (payload: any, childId: string): ThunkAction<
     Promise<void>,
     any,
@@ -1134,6 +1170,34 @@ export const removeCurrentNewsRequest = (newsId: string, images: string[]): Thun
             })
         dispatch(setIsRemoved(true));
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
+        dispatch(stopRequest());
+    } catch (err) {
+        if (err.response !== undefined) {
+            err.response.data.message ?
+                dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        } else {
+            dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        }
+    }
+}
+
+export const getReportsYearsRequest = (): ThunkAction<
+    Promise<void>,
+    any,
+    RootState,
+    StartRequestAction | StopRequestAction | ErrorRequestAction | SetAvailableReportsYearsAction
+> => async (dispatch, getState) => {
+    dispatch(startRequest());
+
+    try {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        let res: AxiosResponse = await axios.get(`${API_URL}/auth/reports/years`, {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        dispatch(setAvailableReportsYears(res.data.availableYears));
         dispatch(stopRequest());
     } catch (err) {
         if (err.response !== undefined) {

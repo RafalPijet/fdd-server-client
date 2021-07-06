@@ -1,8 +1,6 @@
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import { makeStyles } from '@material-ui/core/styles';
-import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 
-const previewInvoiceItemStyle = (theme: Theme) => ({
+export const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
         display: 'flex',
         justifyContent: 'center',
@@ -41,18 +39,7 @@ const previewInvoiceItemStyle = (theme: Theme) => ({
         display: 'flex',
         justifyContent: 'space-between'
     }
-})
-
-export interface StyleProps {
-    root: BaseCSSProperties;
-    image: BaseCSSProperties;
-    document: BaseCSSProperties;
-    logo: BaseCSSProperties;
-    zoomIcon: BaseCSSProperties;
-    removeIcon: BaseCSSProperties;
-    dialogFooter: BaseCSSProperties;
-    disabled: BaseCSSProperties;
-}
+}))
 
 export interface Props {
     file: File | null;
@@ -69,6 +56,3 @@ export const getBase64 = (file: File) => {
         reader.onerror = (error) => reject(error);
     });
 };
-
-export type PropsClasses = Record<keyof StyleProps, string>;
-export const useStyles = makeStyles(previewInvoiceItemStyle as any);

@@ -65,6 +65,7 @@ app.use('/images', express_1.default.static(path_1.default.join(__dirname, 'imag
 app.use('/avatars', express_1.default.static(path_1.default.join(__dirname, 'avatars')));
 app.use('/invoices', express_1.default.static(path_1.default.join(__dirname, 'invoices')));
 app.use('/pictures', express_1.default.static(path_1.default.join(__dirname, 'pictures')));
+app.use('/reports', express_1.default.static(path_1.default.join(__dirname, 'reports')));
 app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', "*");
     res.setHeader('Access-Control-Allow-Methods', "GET, POST, PUT, PATCH, DELETE, OPTIONS");
