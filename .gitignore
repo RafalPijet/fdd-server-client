@@ -9,3 +9,4 @@ node_modules
 /server/uploads
 /server/invoices
 /server/pictures
+/server/reports

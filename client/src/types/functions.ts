@@ -60,3 +60,10 @@ export const urltoFile = (url: string, filename: string, mimeType?: any) => {
 export const isEven = (value: number) => {
     return (value % 2 === 0)
 }
+
+export const a11yProps = (index: any, name: string) => {
+    return {
+        id: `${name}-tab-${index}`,
+        'aria-controls': `${name}-tabpanel-${index}`,
+    };
+}

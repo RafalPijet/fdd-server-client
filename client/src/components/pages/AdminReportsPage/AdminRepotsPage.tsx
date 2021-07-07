@@ -82,7 +82,7 @@ const AdminReportsPage: React.FC = () => {
         <GridContainer
           justify="center"
           alignItems="center"
-          style={{ width: '80%', margin: '0 auto' }}
+          style={{ width: '70%', margin: '0 auto' }}
         >
           <GridItem xs={12} sm={12} lg={12}>
             <ReportsList />

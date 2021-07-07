@@ -262,6 +262,10 @@ const buttonStyle = (theme: Theme) => ({
         pointerEvents: 'none',
         color: grayColor
     },
+    progress: {
+        cursor: 'progress',
+        pointerEvents: 'auto'
+    },
     lg: {
         padding: '1.125rem 2.25rem',
         fontSize: '0.875rem',
@@ -340,6 +344,7 @@ export interface Props extends ButtonProps {
     round?: boolean;
     fullWidth?: boolean;
     disabled?: boolean;
+    progress?: boolean;
     block?: boolean;
     link?: boolean;
     justIcon?: boolean;
@@ -364,6 +369,7 @@ export interface StyleProps {
     simple: BaseCSSProperties;
     transparent: BaseCSSProperties;
     disabled: BaseCSSProperties;
+    progress: BaseCSSProperties;
     lg: BaseCSSProperties;
     sm: BaseCSSProperties;
     md: BaseCSSProperties;

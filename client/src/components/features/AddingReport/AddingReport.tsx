@@ -120,9 +120,6 @@ const AddingReport: React.FC = () => {
               disabled: isAdding,
             }}
             onChange={handleTextField}
-            inputProps={{
-              autoFocus: true,
-            }}
           />
         </GridItem>
         <GridItem
@@ -138,6 +135,7 @@ const AddingReport: React.FC = () => {
               reportTitle.length === 0 ||
               isAdding
             }
+            progress={isAdding}
             setSize="md"
             setColor="primary"
             onClick={filesHandling}

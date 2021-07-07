@@ -82,7 +82,9 @@ import {
     SetChildrenListAction,
     setChildrenList,
     SetAvailableReportsYearsAction,
-    setAvailableReportsYears
+    setAvailableReportsYears,
+    SetReportsOfSelectedYearAction,
+    setReportsOfSelectedYear
 } from './actions/generalActions';
 import { State as ImagesLists } from '../components/common/RemovingImage/RemovingImageStyle';
 import {
@@ -98,7 +100,8 @@ import {
     InvoiceState,
     NewsState,
     NewsDataUpdate,
-    ChildBasicState
+    ChildBasicState,
+    ReportState
 } from '../types/global';
 import { API_URL, URL } from '../config';
 
@@ -1198,6 +1201,40 @@ export const getReportsYearsRequest = (): ThunkAction<
             },
         })
         dispatch(setAvailableReportsYears(res.data.availableYears));
+        dispatch(stopRequest());
+    } catch (err) {
+        if (err.response !== undefined) {
+            err.response.data.message ?
+                dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        } else {
+            dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        }
+    }
+}
+
+export const getReportsByYearRequest = (year: string): ThunkAction<
+    Promise<void>,
+    any,
+    RootState,
+    StartRequestAction | StopRequestAction | ErrorRequestAction | SetReportsOfSelectedYearAction
+> => async (dispatch, getState) => {
+    dispatch(startRequest());
+
+    try {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        let res: AxiosResponse = await axios.get(`${API_URL}/auth/reports/${year}`, {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        if (res.data.selectedYearReports.length) {
+            const reports = res.data.selectedYearReports.map((item: ReportState) => {
+                item.report = `${URL}${item.report}`;
+                return item
+            })
+            dispatch(setReportsOfSelectedYear(reports));
+        }
         dispatch(stopRequest());
     } catch (err) {
         if (err.response !== undefined) {

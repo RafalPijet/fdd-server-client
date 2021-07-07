@@ -167,7 +167,7 @@ class AuthController {
 
         try {
             const reports = await ReportModel.find();
-            if (!reports) {
+            if (!reports.length) {
                 next(new HttpException(404,
                     `Brak dostępnych danych`))
             } else {
@@ -181,6 +181,24 @@ class AuthController {
             }
         } catch (err) {
             next(new HttpException(404, 'Nieudane pobranie danych o zakresie lat sprawozdań'));
+        }
+    }
+
+    @get('/reports/:year')
+    async getReportsByYear(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const { year } = req.params;
+
+        try {
+            const reports = await ReportModel.find();
+            if (!reports.length) {
+                next(new HttpException(404,
+                    `Brak dostępnych danych`))
+            } else {
+                const selectedYearReports = reports.filter((report: IReport) => report.createdAt?.toISOString().substring(0, 4) === year);
+                res.status(200).json({ selectedYearReports });
+            }
+        } catch (err) {
+            next(new HttpException(404, `Nieudane pobranie sprawozdań za ${year} rok`));
         }
     }
 }
