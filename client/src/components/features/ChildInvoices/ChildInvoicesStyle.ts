@@ -1,10 +1,8 @@
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import { makeStyles } from '@material-ui/core/styles';
-import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { InvoiceState } from '../../../types/global';
 import { lightGrayColor } from '../../../styles/globalStyles';
 
-const childInvoicesStyle = (theme: Theme) => ({
+export const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
         minHeight: '390px',
         maxWidth: '1000px'
@@ -44,22 +42,8 @@ const childInvoicesStyle = (theme: Theme) => ({
         justifyContent: 'center',
         padding: 0
     }
-})
+}))
 
 export interface Props {
     invoices: InvoiceState[];
 }
-
-export interface StyleProps {
-    root: BaseCSSProperties;
-    back: BaseCSSProperties;
-    active: BaseCSSProperties;
-    icons: BaseCSSProperties;
-    center: BaseCSSProperties;
-    description: BaseCSSProperties;
-    textColor: BaseCSSProperties;
-    footer: BaseCSSProperties;
-}
-
-export type PropsClasses = Record<keyof StyleProps, string>;
-export const useStyles = makeStyles(childInvoicesStyle as any);

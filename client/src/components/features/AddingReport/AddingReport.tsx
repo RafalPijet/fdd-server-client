@@ -4,6 +4,7 @@ import { IDropzoneProps } from 'react-dropzone-uploader';
 import GridContainer from '../../common/Grid/GridContainer';
 import GridItem from '../../common/Grid/GridItem';
 import Paper from '@material-ui/core/Paper';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import CustomDropZone from '../../common/CustomDropZone/CustomDropZone';
 import PreviewInvoiceItem from '../../common/PreviewInvoiceItem/PreviewInvoiceItem';
 import CustomInput from '../../common/CustomInput/CustomInput';
@@ -14,19 +15,36 @@ import {
   resetAddingRequest,
 } from '../../../redux/actions/requestActions';
 import { addReportRequest } from '../../../redux/thunks';
-import { useStyles } from './AddingReportStyle';
+import { FddSwitch } from '../../../types/global';
+import { useStyles, Props } from './AddingReportStyle';
 
-const AddingReport: React.FC = () => {
+const AddingReport: React.FC<Props> = (props) => {
+  const { reportToEdit } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
   const isAdding = useSelector(getAdding);
   const isAddingSuccess = useSelector(getAddingSuccess);
+  const [reportId, setReportId] = useState<string>('');
   const [reportFile, setReportFile] = useState<any>(null);
   const [reportTitle, setReportTitle] = useState<string>('');
+  const [isEdit, setIsEdit] = useState<boolean>(false);
   const [isError, setIsError] = useState({
     title: false,
     file: false,
   });
+
+  useEffect(() => {
+    if (reportToEdit !== null && isEdit) {
+      setReportId(reportToEdit._id);
+      setReportFile(reportToEdit.file);
+      setReportTitle(reportToEdit.title);
+    }
+    if (!isEdit) {
+      setReportId('');
+      setReportFile(null);
+      setReportTitle('');
+    }
+  }, [isEdit, reportToEdit]);
 
   useEffect(() => {
     if (isAddingSuccess) {
@@ -45,6 +63,10 @@ const AddingReport: React.FC = () => {
       file: reportFile === null,
     });
   }, [reportTitle, reportFile]);
+
+  const switchChangeHandling = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsEdit(e.target.checked);
+  };
 
   const handleSubmit: IDropzoneProps['onSubmit'] = async (files, allFiles) => {
     if (files[0].file) {
@@ -105,7 +127,16 @@ const AddingReport: React.FC = () => {
         alignItems="center"
         style={{ width: '100%', margin: '0 auto' }}
       >
-        <GridItem xs={12} sm={12} lg={9}>
+        <GridItem
+          xs={12}
+          sm={12}
+          lg={9}
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
           <CustomInput
             labelText="Tytuł sprawozdania..."
             id="reportTitle"
@@ -120,6 +151,20 @@ const AddingReport: React.FC = () => {
               disabled: isAdding,
             }}
             onChange={handleTextField}
+          />
+          <FormControlLabel
+            disabled={isAdding}
+            classes={{
+              label: classes.edit,
+            }}
+            control={
+              <FddSwitch
+                className={classes.switch}
+                checked={isEdit}
+                onChange={switchChangeHandling}
+              />
+            }
+            label="EDIT"
           />
         </GridItem>
         <GridItem

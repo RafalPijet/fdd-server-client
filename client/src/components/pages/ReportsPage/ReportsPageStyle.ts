@@ -15,7 +15,7 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
         ...justContainer,
     },
     pageHeader: {
-        minHeight: '20vh',
+        minHeight: '30vh',
         height: 'auto',
         display: 'flex',
         position: 'relative',
@@ -52,7 +52,6 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
         color: logoColor
     },
     main: {
-        minHeight: 1500,
         backgroundImage: 'url(' + imageBack + ')',
         backgroundSize: 'cover',
         backgroundPosition: 'top center',

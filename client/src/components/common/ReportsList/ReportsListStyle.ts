@@ -5,17 +5,18 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
         margin: '20px 0',
         padding: '15px 0',
-        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+        backgroundColor: 'rgba(255, 255, 255, 0.6)',
     },
-    main: {
-        flexGrow: 1,
-        display: 'flex',
-        height: 300,
-        justifyContent: 'space-between',
+    title: {
+        margin: '10px 0 20px',
+        padding: 10,
+        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+        color: primaryColor
     },
     tabs: {
         borderRight: `1px solid ${theme.palette.divider}`,
-        width: 210
+        width: '100%',
+        height: 230
     },
     tab: {
         backgroundColor: primaryColor,
@@ -24,5 +25,27 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
     indicator: {
         backgroundColor: logoColor,
         width: 4
+    },
+    list: {
+        overflowY: 'auto',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginLeft: 20,
+        padding: '0 5%',
+        background: 'inherit',
+        height: '500px'
+    },
+    center: {
+        height: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
     }
 }))
+
+export interface Props {
+    isAdmin: boolean;
+    getSelectedReport?: (_id: string, file: File, title: string) => void;
+}

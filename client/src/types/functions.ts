@@ -49,6 +49,19 @@ export const calculateAge = (date: string, resultIsString: boolean) => {
     return result
 }
 
+export const setFileType = (type: string) => {
+    type = type.toLowerCase();
+    if (type === 'pdf') {
+        return 'application/pdf';
+    } else if (type === 'jpg') {
+        return 'image/jpg';
+    } else if (type === 'jpeg') {
+        return 'image/jpeg';
+    } else if (type === 'png') {
+        return 'image/png';
+    }
+};
+
 export const urltoFile = (url: string, filename: string, mimeType?: any) => {
     mimeType = mimeType || (url.match(/^data:([^;]+);/) || '')[1];
     return (fetch(url)

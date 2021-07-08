@@ -11,7 +11,10 @@ import AddingReport from '../../features/AddingReport/AddingReport';
 import ReportsList from '../../common/ReportsList/ReportsList';
 import {
   getAdding,
+  getPending,
   getAddingError,
+  getError,
+  resetRequest,
   resetAddingRequest,
 } from '../../../redux/actions/requestActions';
 import { getToast, setUserToast } from '../../../redux/actions/generalActions';
@@ -22,9 +25,12 @@ const AdminReportsPage: React.FC = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const isAdding = useSelector(getAdding);
+  const isPending = useSelector(getPending);
+  const pendingError = useSelector(getError);
   const addingError = useSelector(getAddingError);
   const toast = useSelector(getToast);
   const { enqueueSnackbar } = useSnackbar();
+  const [selectedReport, setSelectedReport] = useState<any>(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -42,21 +48,35 @@ const AdminReportsPage: React.FC = () => {
       handleToast(addingError.message, 'error');
       dispatch(resetAddingRequest());
     }
+    if (pendingError.isError) {
+      handleToast(pendingError.message, 'error');
+      dispatch(resetRequest());
+    }
     dispatch(setUserToast({ isOpen: false, content: '', variant: 'success' }));
-  }, [toast.isOpen, addingError.isError]);
+  }, [toast.isOpen, addingError.isError, pendingError.isError]);
 
   const handleToast = (message: string, variant: VariantType) => {
     enqueueSnackbar(message, { variant });
   };
 
+  const handleSelectedReport = (_id: string, file: File, title: string) => {
+    const data = {
+      _id,
+      file,
+      title,
+    };
+    setSelectedReport(data);
+    console.log(data);
+  };
+
   return (
     <div>
       <Header
-        isSpiner={isAdding}
+        isSpiner={isAdding || isPending}
         fixed
         color="transparent"
         brand="Fundacja Dorośli Dzieciom"
-        rightLinks={<HeaderLinks isSpiner={isAdding} />}
+        rightLinks={<HeaderLinks isSpiner={isAdding || isPending} />}
         changeColorOnScroll={{
           height: 400,
           color: 'white',
@@ -76,7 +96,7 @@ const AdminReportsPage: React.FC = () => {
           style={{ width: '70%', margin: '0 auto' }}
         >
           <GridItem xs={12} sm={12} lg={12}>
-            <AddingReport />
+            <AddingReport reportToEdit={selectedReport} />
           </GridItem>
         </GridContainer>
         <GridContainer
@@ -85,7 +105,10 @@ const AdminReportsPage: React.FC = () => {
           style={{ width: '70%', margin: '0 auto' }}
         >
           <GridItem xs={12} sm={12} lg={12}>
-            <ReportsList />
+            <ReportsList
+              isAdmin={false}
+              getSelectedReport={handleSelectedReport}
+            />
           </GridItem>
         </GridContainer>
       </div>

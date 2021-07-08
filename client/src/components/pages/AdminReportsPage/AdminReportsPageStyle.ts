@@ -16,7 +16,7 @@ export const useStyles = makeStyles((theme: Theme) =>
             ...justContainer,
         },
         pageHeader: {
-            minHeight: '30vh',
+            minHeight: '35vh',
             height: 'auto',
             display: 'flex',
             position: 'relative',
@@ -53,7 +53,6 @@ export const useStyles = makeStyles((theme: Theme) =>
             color: logoColor
         },
         main: {
-            minHeight: 1500,
             backgroundImage: 'url(' + imageBack + ')',
             backgroundSize: 'cover',
             backgroundPosition: 'top center',

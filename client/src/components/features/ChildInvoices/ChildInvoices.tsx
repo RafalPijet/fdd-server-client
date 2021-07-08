@@ -12,19 +12,14 @@ import SectionHeader from '../../common/SectionHeader/SectionHeader';
 import PreviewInvoiceItem from '../../common/PreviewInvoiceItem/PreviewInvoiceItem';
 import InvoiceItemIcon from '../../common/InvoiceItemIcon/InvoiceItemIcon';
 import CustomPagination from '../../common/CustomPagination/CustomPagination';
-import { urltoFile } from '../../../types/functions';
+import { urltoFile, setFileType } from '../../../types/functions';
 import { getCurrentlyInvoicesList } from '../../../redux/thunks';
 import {
   getSelectedQuantity,
   getSelectedChild,
 } from '../../../redux/actions/generalActions';
 import { getUpdating } from '../../../redux/actions/requestActions';
-import {
-  PropsClasses,
-  StyleProps,
-  useStyles,
-  Props,
-} from './ChildInvoicesStyle';
+import { useStyles, Props } from './ChildInvoicesStyle';
 import { InvoiceState } from '../../../types/global';
 
 const ChildInvoices: React.FC<Props> = (props) => {
@@ -33,7 +28,7 @@ const ChildInvoices: React.FC<Props> = (props) => {
   const quantity = useSelector(getSelectedQuantity);
   const childId = useSelector(getSelectedChild);
   const isUpdating = useSelector(getUpdating);
-  const classes: PropsClasses = useStyles({} as StyleProps);
+  const classes = useStyles();
   const [switchIsOn, setSwitchIsOn] = useState<boolean>(false);
   const [invoiceFiles, setInvoiceFiles] = useState<[any, any]>([null, null]);
   const [invoiceDescription, setInvoiceDscription] = useState<string>('');
@@ -88,19 +83,6 @@ const ChildInvoices: React.FC<Props> = (props) => {
   ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
-  };
-
-  const setFileType = (type: string) => {
-    type = type.toLowerCase();
-    if (type === 'pdf') {
-      return 'application/pdf';
-    } else if (type === 'jpg') {
-      return 'image/jpg';
-    } else if (type === 'jpeg') {
-      return 'image/jpeg';
-    } else if (type === 'png') {
-      return 'image/png';
-    }
   };
 
   const chosenInvoiceHandling = async (invoice: InvoiceState) => {

@@ -1200,7 +1200,9 @@ export const getReportsYearsRequest = (): ThunkAction<
                 'Content-Type': 'application/json'
             },
         })
-        dispatch(setAvailableReportsYears(res.data.availableYears));
+        if (res.data.availableYears) {
+            dispatch(setAvailableReportsYears(res.data.availableYears));
+        }
         dispatch(stopRequest());
     } catch (err) {
         if (err.response !== undefined) {
