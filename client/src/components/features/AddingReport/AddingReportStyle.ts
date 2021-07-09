@@ -1,5 +1,5 @@
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import { primaryColor } from '../../../styles/globalStyles';
+import { primaryColor, dangerColor, grayColor } from '../../../styles/globalStyles';
 
 export const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
@@ -12,6 +12,12 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
     },
     switch: {
         marginLeft: 50
+    },
+    icon: {
+        color: dangerColor
+    },
+    disabled: {
+        color: grayColor
     }
 }))
 

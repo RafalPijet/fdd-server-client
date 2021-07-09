@@ -42,9 +42,11 @@ import {
     SET_AVAILABLE_REPORTS_YEARS,
     SetAvailableReportsYearsAction,
     SET_REPORTS_OF_SELECTED_YEAR,
-    SetReportsOfSelectedYearAction
+    SetReportsOfSelectedYearAction,
+    UPDATE_REPORT_ITEM,
+    UpdateReportItemAction
 } from '../actions/generalActions';
-import { GeneralState, ModalAYSModes, NewsState, SearchUserType } from '../../types/global';
+import { GeneralState, ModalAYSModes, NewsState, ReportState, SearchUserType } from '../../types/global';
 
 const initialState: GeneralState = {
     toast: {
@@ -83,7 +85,8 @@ const generalReducer = (
         UpdateSelectedPersonChildAvatarAction | AddChildToSelectedPersonAction | SetAllNewsAction |
         UpdateSelectedPersonUserDataAction | SetSelectedQuantityAction | UpdateNewsOfDataAction |
         UpdateSelectedPersonChildInvoicesListAction | UpdatePicturesOfCurrentNewsAction |
-        SetChildrenListAction | SetAvailableReportsYearsAction | SetReportsOfSelectedYearAction
+        SetChildrenListAction | SetAvailableReportsYearsAction | SetReportsOfSelectedYearAction |
+        UpdateReportItemAction
 ) => {
     switch (action.type) {
         case SET_TOAST:
@@ -229,6 +232,22 @@ const generalReducer = (
                 ...state,
                 selectedYearPeriod: action.payload
             }
+        case UPDATE_REPORT_ITEM:
+            if (state.selectedYearPeriod !== null) {
+                return {
+                    ...state,
+                    selectedYearPeriod: state.selectedYearPeriod.map((item: ReportState) => {
+                        if (item._id === action.payload._id) {
+                            item.report = action.payload.report;
+                            item.title = action.payload.title
+                        }
+                        return item;
+                    })
+                }
+            } else {
+                return { ...state }
+            }
+
         default:
             return { ...state }
     }

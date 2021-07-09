@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import Classnames from 'classnames';
 import GridContainer from '../../common/Grid/GridContainer';
 import GridItem from '../../common/Grid/GridItem';
 import Paper from '@material-ui/core/Paper';
@@ -14,6 +15,11 @@ import {
   getReportsOfSelectedYear,
   setReportsOfSelectedYear,
 } from '../../../redux/actions/generalActions';
+import {
+  getPending,
+  getUpdating,
+  getAdding,
+} from '../../../redux/actions/requestActions';
 import { getReportsByYearRequest } from '../../../redux/thunks';
 import { a11yProps, setFileType, urltoFile } from '../../../types/functions';
 import { ReportState } from '../../../types/global';
@@ -23,12 +29,25 @@ const ReportsList: React.FC<Props> = (props) => {
   const { isAdmin, getSelectedReport } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
+  const isPending = useSelector(getPending);
+  const isUpdating = useSelector(getUpdating);
+  const isAdding = useSelector(getAdding);
   const availableReportsYears = useSelector(getAvailableReportsYears);
   const reportsOfSelectedYear = useSelector(getReportsOfSelectedYear);
   const [reportFile, setReportFile] = useState<any>(null);
   const [value, setValue] = useState<number>(0);
   const [selectedReportId, setSelectedReportId] = useState<string>('');
   const [isVisible, setIsVisible] = useState<boolean>(false);
+  const [isDisabled, setIsDisabled] = useState<boolean>(false);
+
+  const tabClasses = Classnames({
+    [classes.tab]: true,
+    [classes.pending]: isDisabled,
+  });
+
+  useEffect(() => {
+    setIsDisabled(isPending || isUpdating || isAdding);
+  }, [isPending, isUpdating, isAdding]);
 
   useEffect(() => {
     if (availableReportsYears.length) {
@@ -48,8 +67,10 @@ const ReportsList: React.FC<Props> = (props) => {
   }, [reportsOfSelectedYear]);
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
-    setValue(newValue);
-    setIsVisible(false);
+    if (!isDisabled) {
+      setValue(newValue);
+      setIsVisible(false);
+    }
   };
 
   const handleSelectedReport = async (
@@ -86,8 +107,21 @@ const ReportsList: React.FC<Props> = (props) => {
         )}
         <GridItem xs={12} sm={12} lg={8}>
           <GridContainer>
-            <GridItem xs={12} sm={12} lg={4} style={{ paddingRight: 0 }}>
-              <div className={classes.center}>
+            <GridItem
+              xs={12}
+              sm={12}
+              lg={4}
+              style={{
+                paddingRight: 0,
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+              }}
+            >
+              <Paper
+                elevation={5}
+                className={Classnames(classes.center, classes.box)}
+              >
                 {availableReportsYears.length ? (
                   <Tabs
                     orientation="vertical"
@@ -106,7 +140,7 @@ const ReportsList: React.FC<Props> = (props) => {
                         <Tab
                           key={index}
                           label={yearOfReport.toString()}
-                          className={classes.tab}
+                          className={tabClasses}
                           {...a11yProps(index, 'year')}
                         />
                       );
@@ -115,7 +149,7 @@ const ReportsList: React.FC<Props> = (props) => {
                 ) : (
                   <Typography>Czekaj...</Typography>
                 )}
-              </div>
+              </Paper>
             </GridItem>
             <GridItem xs={12} sm={12} lg={8}>
               <Fade
@@ -144,14 +178,22 @@ const ReportsList: React.FC<Props> = (props) => {
             </GridItem>
           </GridContainer>
         </GridItem>
-        <GridItem xs={12} sm={12} lg={4}>
-          <div className={classes.center}>
+        <GridItem
+          xs={12}
+          sm={12}
+          lg={4}
+          style={{ display: 'flex', justifyContent: 'center' }}
+        >
+          <Paper
+            elevation={5}
+            className={Classnames(classes.center, classes.box, classes.preview)}
+          >
             <PreviewInvoiceItem
-              isDisabled={false}
+              isDisabled={isDisabled}
               number="0"
               file={reportFile}
             />
-          </div>
+          </Paper>
         </GridItem>
       </GridContainer>
     </Paper>

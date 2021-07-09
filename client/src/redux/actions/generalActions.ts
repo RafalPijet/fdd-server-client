@@ -1,6 +1,6 @@
 import { Action } from 'redux';
 import { RootState } from '../store';
-import { GeneralState, IChildData, ChildState, UserState, NewsDataUpdate } from '../../types/global';
+import { GeneralState, IChildData, ChildState, UserState, NewsDataUpdate, ReportState } from '../../types/global';
 
 //ACTIONS NAMES
 export const SET_TOAST = 'general/set_toast';
@@ -25,6 +25,7 @@ export const UPDATE_NEWS_OF_DATA = 'general/update_news_of_data';
 export const SET_CHILDREN_LIST = 'general/set_children_list';
 export const SET_AVAILABLE_REPORTS_YEARS = 'general/set_available_reports_years';
 export const SET_REPORTS_OF_SELECTED_YEAR = 'general/set_reports_of_selected_year';
+export const UPDATE_REPORT_ITEM = 'general/update_report_item';
 
 //ACTIONS TYPES
 export interface SetToastAction extends Action<typeof SET_TOAST> {
@@ -94,6 +95,9 @@ export interface SetAvailableReportsYearsAction extends Action<typeof SET_AVAILA
 }
 export interface SetReportsOfSelectedYearAction extends Action<typeof SET_REPORTS_OF_SELECTED_YEAR> {
     payload: GeneralState["selectedYearPeriod"]
+}
+export interface UpdateReportItemAction extends Action<typeof UPDATE_REPORT_ITEM> {
+    payload: ReportState
 }
 
 //CREATORS OF ACTIONS
@@ -185,6 +189,10 @@ export const setAvailableReportsYears = (payload: GeneralState["availableReports
 })
 export const setReportsOfSelectedYear = (payload: GeneralState["selectedYearPeriod"]): SetReportsOfSelectedYearAction => ({
     type: SET_REPORTS_OF_SELECTED_YEAR,
+    payload
+})
+export const updateReportItem = (payload: ReportState): UpdateReportItemAction => ({
+    type: UPDATE_REPORT_ITEM,
     payload
 })
 

@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import ClassNames from 'classnames';
 import { IDropzoneProps } from 'react-dropzone-uploader';
 import GridContainer from '../../common/Grid/GridContainer';
 import GridItem from '../../common/Grid/GridItem';
+import IconButton from '@material-ui/core/IconButton';
+import Zoom from '@material-ui/core/Zoom';
 import Paper from '@material-ui/core/Paper';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import CustomDropZone from '../../common/CustomDropZone/CustomDropZone';
 import PreviewInvoiceItem from '../../common/PreviewInvoiceItem/PreviewInvoiceItem';
@@ -13,9 +17,12 @@ import {
   getAdding,
   getAddingSuccess,
   resetAddingRequest,
+  getUpdating,
+  getPending,
 } from '../../../redux/actions/requestActions';
-import { addReportRequest } from '../../../redux/thunks';
-import { FddSwitch } from '../../../types/global';
+import { setModalAreYouSure } from '../../../redux/actions/generalActions';
+import { addReportRequest, updateReportRequest } from '../../../redux/thunks';
+import { FddSwitch, FddTooltip, ModalAYSModes } from '../../../types/global';
 import { useStyles, Props } from './AddingReportStyle';
 
 const AddingReport: React.FC<Props> = (props) => {
@@ -23,6 +30,8 @@ const AddingReport: React.FC<Props> = (props) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const isAdding = useSelector(getAdding);
+  const isUpdating = useSelector(getUpdating);
+  const isPending = useSelector(getPending);
   const isAddingSuccess = useSelector(getAddingSuccess);
   const [reportId, setReportId] = useState<string>('');
   const [reportFile, setReportFile] = useState<any>(null);
@@ -31,6 +40,11 @@ const AddingReport: React.FC<Props> = (props) => {
   const [isError, setIsError] = useState({
     title: false,
     file: false,
+  });
+
+  const deleteButtonClasses = ClassNames({
+    [classes.icon]: isEdit,
+    [classes.disabled]: !isEdit || isPending || isAdding || isUpdating,
   });
 
   useEffect(() => {
@@ -88,7 +102,27 @@ const AddingReport: React.FC<Props> = (props) => {
   };
 
   const filesHandling = () => {
-    dispatch(addReportRequest({ reportFile, reportTitle }));
+    if (isEdit) {
+      dispatch(updateReportRequest({ reportId, reportFile, reportTitle }));
+    } else {
+      dispatch(addReportRequest({ reportFile, reportTitle }));
+    }
+  };
+
+  const removeCurrentReportHandling = () => {
+    if (reportTitle.length) {
+      dispatch(
+        setModalAreYouSure({
+          isOpen: true,
+          title: 'Usuwanie sprawozdania',
+          mode: ModalAYSModes.removeReport,
+          description: `Czy aby napewno? Potwierdzenie spowoduje bezpowrotne usunięcie sprawozdania: "${reportTitle}" wraz ze zdjęciami!`,
+          data: {
+            reportId,
+          },
+        })
+      );
+    }
   };
 
   return (
@@ -152,6 +186,26 @@ const AddingReport: React.FC<Props> = (props) => {
             }}
             onChange={handleTextField}
           />
+          <FddTooltip
+            title="Usuń sprawozdanie"
+            arrow
+            placement="top"
+            TransitionComponent={Zoom}
+            enterDelay={1000}
+            enterNextDelay={1000}
+          >
+            <span>
+              <IconButton
+                onClick={removeCurrentReportHandling}
+                disabled={isPending || isAdding || isUpdating || !isEdit}
+              >
+                <DeleteForeverIcon
+                  className={deleteButtonClasses}
+                  fontSize="large"
+                />
+              </IconButton>
+            </span>
+          </FddTooltip>
           <FormControlLabel
             disabled={isAdding}
             classes={{
@@ -178,14 +232,16 @@ const AddingReport: React.FC<Props> = (props) => {
               isError.file ||
               isError.title ||
               reportTitle.length === 0 ||
-              isAdding
+              isAdding ||
+              isUpdating ||
+              isPending
             }
-            progress={isAdding}
+            progress={isAdding || isUpdating || isPending}
             setSize="md"
             setColor="primary"
             onClick={filesHandling}
           >
-            Dodaj sprawozdanie
+            {isEdit ? 'Aktualizuj sprawozdanie' : 'Dodaj sprawozdanie'}
           </CustomButton>
         </GridItem>
       </GridContainer>

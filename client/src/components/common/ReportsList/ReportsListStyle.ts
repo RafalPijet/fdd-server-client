@@ -5,7 +5,7 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
         margin: '20px 0',
         padding: '15px 0',
-        backgroundColor: 'rgba(255, 255, 255, 0.6)',
+        backgroundColor: 'rgba(255, 255, 255, 0.4)',
     },
     title: {
         margin: '10px 0 20px',
@@ -18,6 +18,15 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
         width: '100%',
         height: 230
     },
+    box: {
+        backgroundColor: "rgba(166, 206, 57, 0.7)",
+        height: 230,
+        padding: 5
+    },
+    preview: {
+        width: 'fit-content',
+        padding: 10
+    },
     tab: {
         backgroundColor: primaryColor,
         color: lightGrayColor
@@ -25,6 +34,9 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
     indicator: {
         backgroundColor: logoColor,
         width: 4
+    },
+    pending: {
+        cursor: 'progress'
     },
     list: {
         overflowY: 'auto',
@@ -35,10 +47,10 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
         marginLeft: 20,
         padding: '0 5%',
         background: 'inherit',
-        height: '500px'
+        height: '500px',
+        backgroundColor: 'rgba(255, 255, 255, 0.3)'
     },
     center: {
-        height: '100%',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',

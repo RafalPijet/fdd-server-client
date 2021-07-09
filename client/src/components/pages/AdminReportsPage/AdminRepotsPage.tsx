@@ -7,6 +7,7 @@ import GridContainer from '../../common/Grid/GridContainer';
 import GridItem from '../../common/Grid/GridItem';
 import Header from '../../common/Header/Header';
 import HeaderLinks from '../../features/HeaderLinks/HeaderLinksAdminPage';
+import ModalAreYouSure from '../../common/ModalAreYouSure/ModalAreYouSure';
 import AddingReport from '../../features/AddingReport/AddingReport';
 import ReportsList from '../../common/ReportsList/ReportsList';
 import {
@@ -17,8 +18,14 @@ import {
   resetRequest,
   resetAddingRequest,
 } from '../../../redux/actions/requestActions';
-import { getToast, setUserToast } from '../../../redux/actions/generalActions';
+import {
+  getToast,
+  setUserToast,
+  getModalAreYouSure,
+  setModalAreYouSure,
+} from '../../../redux/actions/generalActions';
 import { getReportsYearsRequest } from '../../../redux/thunks';
+import { ModalAYSModes } from '../../../types/global';
 import { useStyles } from './AdminReportsPageStyle';
 
 const AdminReportsPage: React.FC = () => {
@@ -28,6 +35,7 @@ const AdminReportsPage: React.FC = () => {
   const isPending = useSelector(getPending);
   const pendingError = useSelector(getError);
   const addingError = useSelector(getAddingError);
+  const modalAYS = useSelector(getModalAreYouSure);
   const toast = useSelector(getToast);
   const { enqueueSnackbar } = useSnackbar();
   const [selectedReport, setSelectedReport] = useState<any>(null);
@@ -66,7 +74,27 @@ const AdminReportsPage: React.FC = () => {
       title,
     };
     setSelectedReport(data);
-    console.log(data);
+  };
+
+  const handleModalAYS = (isConfirm: boolean) => {
+    if (isConfirm) {
+      if (modalAYS.mode === ModalAYSModes.removeReport) {
+        if (modalAYS.data.reportId !== undefined) {
+          console.log(modalAYS.data.reportId);
+          //remove Report
+        }
+      }
+    }
+
+    dispatch(
+      setModalAreYouSure({
+        mode: ModalAYSModes.null,
+        isOpen: false,
+        title: '',
+        description: '',
+        data: {},
+      })
+    );
   };
 
   return (
@@ -112,6 +140,12 @@ const AdminReportsPage: React.FC = () => {
           </GridItem>
         </GridContainer>
       </div>
+      <ModalAreYouSure
+        isOpen={modalAYS.isOpen}
+        title={modalAYS.title}
+        descriprion={modalAYS.description}
+        isConfirm={handleModalAYS}
+      />
     </div>
   );
 };

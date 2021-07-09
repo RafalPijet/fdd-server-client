@@ -22,6 +22,7 @@ import {
     NewsModel,
     buildNews,
     IReport,
+    ReportModel,
     buildReport
 } from '../models';
 import { TargetOptions, IAdminMessage, SearchUserType } from '../types';
@@ -567,6 +568,47 @@ class AdminController {
             } catch (err) {
                 next(new HttpException(404, 'Nieudane dodanie sprawozdania'));
             }
+        }
+    }
+
+    @put('/reports/:id')
+    async updateReport(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const { id } = req.params;
+        const { title } = req.body;
+        // console.log(id);
+        // console.log(title);
+        // console.log(req.files);
+        try {
+            const report = await ReportModel.findById(id);
+            if (!report) {
+                next(new HttpException(404, 'Nie znaleziono sprawozdania'));
+            } else {
+                if (title !== undefined) {
+                    report.title = title;
+                    await report.save();
+                }
+                if (req.files.length) {
+                    const files = req.files as Express.Multer.File[];
+                    const reports = 'reports'
+                    const urlToRemove = report.report;
+                    const fileUrl = files[0].path.replace(files[0].destination, reports);
+                    report.report = fileUrl;
+                    await report.save();
+                    const source = files[0].path.replace('uploads', reports);  //It's will be remove
+                    const target = source.replace(reports, 'build/reports');  //It's will be remove
+                    await fs.copyFile(files[0].path, source, (err) => {
+                        console.log(err)
+                    })
+                    await fs.copyFile(files[0].path, target, (err) => {  //It's will be remove
+                        console.log(err)                    //It's will be remove
+                    })
+                    fs.unlinkSync(files[0].path);
+                    clearImage(urlToRemove);
+                }
+                res.status(201).json({ message: `Aktualizacja sprawozdania ${report.title} przebiegła poprawnie`, report });
+            }
+        } catch (err) {
+            next(new HttpException(404, 'Nieudana aktualizacja sprawozdania'));
         }
     }
 }

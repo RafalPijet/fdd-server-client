@@ -84,7 +84,9 @@ import {
     SetAvailableReportsYearsAction,
     setAvailableReportsYears,
     SetReportsOfSelectedYearAction,
-    setReportsOfSelectedYear
+    setReportsOfSelectedYear,
+    UpdateReportItemAction,
+    updateReportItem
 } from './actions/generalActions';
 import { State as ImagesLists } from '../components/common/RemovingImage/RemovingImageStyle';
 import {
@@ -692,6 +694,61 @@ export const addChildToParent = (payload: IChildData, userId?: string): ThunkAct
     }
 }
 
+export const updateReportRequest = (payload: { reportId: string, reportFile: File, reportTitle: string }): ThunkAction<
+    Promise<void>,
+    any,
+    RootState,
+    StartUpdatingRequestAction | StopUpdatingRequestAction | ErrorUpdatingRequestAction |
+    SetToastAction | UpdateReportItemAction
+> => async (dispatch, getState) => {
+
+    if (getState().general.selectedYearPeriod !== null) {
+        const result = getState().general.selectedYearPeriod.find((report: ReportState) => report._id === payload.reportId);
+        if (result) {
+            const fileName = result.report.substring(result.report.lastIndexOf('/') + 1, result.report.length)
+            if (fileName === payload.reportFile.name && result.title === payload.reportTitle) {
+                dispatch(setUserToast({ isOpen: true, content: 'Nie dokonano zmian. Aktualizacja niemożliwa', variant: "info" }));
+            } else {
+                const formData = new FormData();
+                if (fileName !== payload.reportFile.name) {
+                    formData.append('image', payload.reportFile);
+                }
+                if (result.title !== payload.reportTitle) {
+                    formData.append('title', payload.reportTitle);
+                }
+                dispatch(startUpdatingRequest());
+
+                try {
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    let res: AxiosResponse = await axios.put(`${API_URL}/admin/reports/${payload.reportId}`, formData, {
+                        headers: {
+                            'Authorization': localStorage.getItem('tokenFDD'),
+                            "Content-type": "multipart/form-data",
+                        },
+                    })
+                    if (res.data.report) {
+                        let updatedReport: ReportState = res.data.report;
+                        updatedReport.report = `${URL}${updatedReport.report}`;
+                        dispatch(updateReportItem(updatedReport));
+                        dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
+                    }
+                    dispatch(stopUpdatingRequest());
+                } catch (err) {
+                    if (err.response !== undefined) {
+                        err.response.data.message ?
+                            dispatch(errorUpdatingRequest({ isError: true, message: err.response.data.message })) :
+                            dispatch(errorUpdatingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+                    } else {
+                        dispatch(errorUpdatingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+                    }
+                }
+            }
+        } else {
+            dispatch(setUserToast({ isOpen: true, content: 'Nie znaleziono danych sprawozdania', variant: "info" }));
+        }
+    }
+}
+
 export const addReportRequest = (payload: { reportFile: File, reportTitle: string }): ThunkAction<
     Promise<void>,
     any,
@@ -712,7 +769,6 @@ export const addReportRequest = (payload: { reportFile: File, reportTitle: strin
                 "Content-type": "multipart/form-data",
             },
         })
-        console.log(res.data);
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
         dispatch(stopAddingRequest());
     } catch (err) {
