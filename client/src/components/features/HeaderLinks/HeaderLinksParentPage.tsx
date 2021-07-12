@@ -6,7 +6,6 @@ import { Link as LinkScroll } from 'react-scroll';
 import { Link } from 'react-router-dom';
 import Avatar from '@material-ui/core/Avatar';
 import classNames from 'classnames';
-import { Props, StyleProps, PropsClasses, useStyles } from './headerLinksStyle';
 import CustomButton from '../../common/CustomButton/CustomButton';
 import CustomDropdown from '../../common/CustomDropdown/CustomDropdown';
 import {
@@ -26,6 +25,7 @@ import {
   Build,
   Home,
 } from '@material-ui/icons';
+import { Props, StyleProps, PropsClasses, useStyles } from './headerLinksStyle';
 
 const HeaderList: React.FC<Props> = (props) => {
   const classes: PropsClasses = useStyles({} as StyleProps);

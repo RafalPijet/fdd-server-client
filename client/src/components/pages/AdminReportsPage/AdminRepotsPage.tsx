@@ -24,7 +24,10 @@ import {
   getModalAreYouSure,
   setModalAreYouSure,
 } from '../../../redux/actions/generalActions';
-import { getReportsYearsRequest } from '../../../redux/thunks';
+import {
+  getReportsYearsRequest,
+  removeReportRequest,
+} from '../../../redux/thunks';
 import { ModalAYSModes } from '../../../types/global';
 import { useStyles } from './AdminReportsPageStyle';
 
@@ -80,8 +83,7 @@ const AdminReportsPage: React.FC = () => {
     if (isConfirm) {
       if (modalAYS.mode === ModalAYSModes.removeReport) {
         if (modalAYS.data.reportId !== undefined) {
-          console.log(modalAYS.data.reportId);
-          //remove Report
+          dispatch(removeReportRequest(modalAYS.data.reportId));
         }
       }
     }

@@ -26,6 +26,8 @@ export const SET_CHILDREN_LIST = 'general/set_children_list';
 export const SET_AVAILABLE_REPORTS_YEARS = 'general/set_available_reports_years';
 export const SET_REPORTS_OF_SELECTED_YEAR = 'general/set_reports_of_selected_year';
 export const UPDATE_REPORT_ITEM = 'general/update_report_item';
+export const ADD_REPORT_ITEM = 'general/add_report_item';
+export const REMOVE_REPORT_ITEM = 'general/remove_report_item';
 
 //ACTIONS TYPES
 export interface SetToastAction extends Action<typeof SET_TOAST> {
@@ -98,6 +100,12 @@ export interface SetReportsOfSelectedYearAction extends Action<typeof SET_REPORT
 }
 export interface UpdateReportItemAction extends Action<typeof UPDATE_REPORT_ITEM> {
     payload: ReportState
+}
+export interface AddReportItemAction extends Action<typeof ADD_REPORT_ITEM> {
+    payload: ReportState
+}
+export interface RemoveReportItemAction extends Action<typeof REMOVE_REPORT_ITEM> {
+    reportId: string
 }
 
 //CREATORS OF ACTIONS
@@ -194,6 +202,14 @@ export const setReportsOfSelectedYear = (payload: GeneralState["selectedYearPeri
 export const updateReportItem = (payload: ReportState): UpdateReportItemAction => ({
     type: UPDATE_REPORT_ITEM,
     payload
+})
+export const addReportItem = (payload: ReportState): AddReportItemAction => ({
+    type: ADD_REPORT_ITEM,
+    payload
+})
+export const removeReportItem = (reportId: string): RemoveReportItemAction => ({
+    type: REMOVE_REPORT_ITEM,
+    reportId
 })
 
 //SELECTORS

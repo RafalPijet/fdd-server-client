@@ -44,7 +44,11 @@ import {
     SET_REPORTS_OF_SELECTED_YEAR,
     SetReportsOfSelectedYearAction,
     UPDATE_REPORT_ITEM,
-    UpdateReportItemAction
+    UpdateReportItemAction,
+    ADD_REPORT_ITEM,
+    AddReportItemAction,
+    REMOVE_REPORT_ITEM,
+    RemoveReportItemAction
 } from '../actions/generalActions';
 import { GeneralState, ModalAYSModes, NewsState, ReportState, SearchUserType } from '../../types/global';
 
@@ -86,7 +90,7 @@ const generalReducer = (
         UpdateSelectedPersonUserDataAction | SetSelectedQuantityAction | UpdateNewsOfDataAction |
         UpdateSelectedPersonChildInvoicesListAction | UpdatePicturesOfCurrentNewsAction |
         SetChildrenListAction | SetAvailableReportsYearsAction | SetReportsOfSelectedYearAction |
-        UpdateReportItemAction
+        UpdateReportItemAction | AddReportItemAction | RemoveReportItemAction
 ) => {
     switch (action.type) {
         case SET_TOAST:
@@ -247,7 +251,24 @@ const generalReducer = (
             } else {
                 return { ...state }
             }
-
+        case ADD_REPORT_ITEM:
+            if (state.selectedYearPeriod !== null) {
+                return {
+                    ...state,
+                    selectedYearPeriod: [...state.selectedYearPeriod, action.payload]
+                }
+            } else {
+                return { ...state }
+            }
+        case REMOVE_REPORT_ITEM:
+            if (state.selectedYearPeriod !== null) {
+                return {
+                    ...state,
+                    selectedYearPeriod: state.selectedYearPeriod.filter((item: ReportState) => item._id !== action.reportId)
+                }
+            } else {
+                return { ...state }
+            }
         default:
             return { ...state }
     }

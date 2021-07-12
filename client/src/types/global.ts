@@ -82,6 +82,11 @@ export enum SearchUserType {
 }
 
 export enum AvailableDestinations {
+    reports = 'reports-section',
+    outsideMessage = 'outside-message',
+    children = 'children-section',
+    news = 'news-section',
+    mainPage = 'main-page',
     mainParent = 'main-parent',
     addingImage = 'adding-image',
     removingImage = 'removing-image',

@@ -575,9 +575,7 @@ class AdminController {
     async updateReport(req: Request, res: Response, next: NextFunction): Promise<void> {
         const { id } = req.params;
         const { title } = req.body;
-        // console.log(id);
-        // console.log(title);
-        // console.log(req.files);
+
         try {
             const report = await ReportModel.findById(id);
             if (!report) {
@@ -609,6 +607,23 @@ class AdminController {
             }
         } catch (err) {
             next(new HttpException(404, 'Nieudana aktualizacja sprawozdania'));
+        }
+    }
+
+    @del('/reports/:id')
+    async removeReport(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const { id } = req.params;
+
+        try {
+            const removedReport = await ReportModel.findByIdAndDelete(id);
+            if (removedReport !== null) {
+                clearImage(removedReport.report);
+                res.status(201).json({ message: `Sprawozdanie ${removedReport.title} zostało usunięte.` })
+            } else {
+                next(new HttpException(404, 'Nie znaleziono sprawozdania!'));
+            }
+        } catch (err) {
+            next(new HttpException(404, 'Nieudane usunięcie sprawozdania'));
         }
     }
 }

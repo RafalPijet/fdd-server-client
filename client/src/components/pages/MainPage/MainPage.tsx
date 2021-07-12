@@ -28,9 +28,10 @@ import {
   getAllNewsRequest,
   getChildrenBasicDataRequest,
 } from '../../../redux/thunks';
+import { AvailableDestinations } from '../../../types/global';
 import image from '../../../images/jumbotronMain.jpg';
 import childrenButton from '../../../images/childrenButton.jpg';
-import reportsButton from '../../../images/test.jpg';
+import reportsButton from '../../../images/reportsButton.jpg';
 
 const MainPage: React.FC = () => {
   const classes = useStyles();
@@ -87,7 +88,7 @@ const MainPage: React.FC = () => {
   }
 
   return (
-    <div>
+    <div id={AvailableDestinations.mainPage}>
       <Header
         color="transparent"
         brand="Fundacja Dorośli Dzieciom"
@@ -111,7 +112,10 @@ const MainPage: React.FC = () => {
           </GridContainer>
         </div>
       </Jumbotron>
-      <div className={classNames(classes.main, classes.mainRaised)}>
+      <div
+        id={AvailableDestinations.news}
+        className={classNames(classes.main, classes.mainRaised)}
+      >
         <NewsSection news={news} />
         <div
           className={classNames(classes.commonEntracte, classes.firstEntrance)}
@@ -124,6 +128,7 @@ const MainPage: React.FC = () => {
           style={{
             width: '100%',
           }}
+          id={AvailableDestinations.children}
         >
           <span
             className={classes.imageSrc}
@@ -144,6 +149,7 @@ const MainPage: React.FC = () => {
           </div>
         </ButtonBase>
         <div
+          id={AvailableDestinations.outsideMessage}
           className={classNames(classes.commonEntracte, classes.secondEntrance)}
         ></div>
         <MessageSection isDisabled={isPending} />
@@ -158,6 +164,7 @@ const MainPage: React.FC = () => {
           style={{
             width: '100%',
           }}
+          id={AvailableDestinations.reports}
         >
           <span
             className={classes.imageSrc}

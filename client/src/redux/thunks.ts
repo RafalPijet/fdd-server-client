@@ -86,7 +86,11 @@ import {
     SetReportsOfSelectedYearAction,
     setReportsOfSelectedYear,
     UpdateReportItemAction,
-    updateReportItem
+    updateReportItem,
+    AddReportItemAction,
+    addReportItem,
+    RemoveReportItemAction,
+    removeReportItem
 } from './actions/generalActions';
 import { State as ImagesLists } from '../components/common/RemovingImage/RemovingImageStyle';
 import {
@@ -749,12 +753,42 @@ export const updateReportRequest = (payload: { reportId: string, reportFile: Fil
     }
 }
 
+export const removeReportRequest = (id: string): ThunkAction<
+    Promise<void>,
+    any,
+    RootState,
+    StartRequestAction | StopRequestAction | ErrorRequestAction | SetToastAction | RemoveReportItemAction
+> => async (dispatch, getState) => {
+
+    dispatch(startRequest());
+
+    try {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        let res: AxiosResponse = await axios.delete(`${API_URL}/admin/reports/${id}`,
+            {
+                headers: {
+                    'Authorization': localStorage.getItem('tokenFDD')
+                }
+            })
+        if (res.status === 201) dispatch(removeReportItem(id));
+        dispatch(stopRequest());
+    } catch (err) {
+        if (err.response !== undefined) {
+            err.response.data.message ?
+                dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        } else {
+            dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        }
+    }
+}
+
 export const addReportRequest = (payload: { reportFile: File, reportTitle: string }): ThunkAction<
     Promise<void>,
     any,
     RootState,
     StartAddingRequestAction | StopAddingRequestAction | ErrorAddingRequestAction |
-    SetToastAction
+    SetToastAction | AddReportItemAction
 > => async (dispatch, getState) => {
     dispatch(startAddingRequest());
 
@@ -770,6 +804,15 @@ export const addReportRequest = (payload: { reportFile: File, reportTitle: strin
             },
         })
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
+        if (getState().general.selectedYearPeriod !== null && getState().general.selectedYearPeriod.length) {
+            if (res.data.newReport) {
+                let newReport = res.data.newReport;
+                if (newReport.createdAt.substring(0, 4) === getState().general.selectedYearPeriod[0].createdAt.substring(0, 4)) {
+                    newReport.report = `${URL}${newReport.report}`;
+                    dispatch(addReportItem(newReport))
+                }
+            }
+        }
         dispatch(stopAddingRequest());
     } catch (err) {
         if (err.response !== undefined) {
