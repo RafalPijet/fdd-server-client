@@ -1,9 +1,9 @@
 import React from 'react';
 import classNames from 'classnames';
-import { Props, PropsClasses, StyleProps, useStyles } from './CardStyle';
+import { Props, useStyles } from './CardStyle';
 
 const Card: React.FC<Props> = (props) => {
-  const classes: PropsClasses = useStyles({} as StyleProps);
+  const classes = useStyles();
   const { className, children, plain, carousel, ...rest } = props;
   const cardClasses = classNames({
     [classes.card]: true,

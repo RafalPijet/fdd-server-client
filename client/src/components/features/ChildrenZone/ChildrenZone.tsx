@@ -11,12 +11,7 @@ import {
   getSelectedPerson,
 } from '../../../redux/actions/generalActions';
 import { getUserChildren } from '../../../redux/actions/userActions';
-import {
-  useStyles,
-  StyleProps,
-  PropsClasses,
-  Props,
-} from './ChildrenZoneStyle';
+import { useStyles, Props } from './ChildrenZoneStyle';
 import { ChildState } from '../../../types/global';
 import { calculateAge } from '../../../types/functions';
 import logo from '../../../images/butterfly.png';
@@ -24,7 +19,7 @@ import logo from '../../../images/butterfly.png';
 const ChildrenZone: React.FC<Props> = (props) => {
   const { childData } = props;
   const selectedPerson = useSelector(getSelectedPerson);
-  const classes: PropsClasses = useStyles({} as StyleProps);
+  const classes = useStyles();
   const [isCardAnimation, setIsCardAnimation] = useState<boolean>(true);
   const [selectedChild, setSelectedChild] = useState<ChildState | null>(null);
   const cardClasses = classNames({

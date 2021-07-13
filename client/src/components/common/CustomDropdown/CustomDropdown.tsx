@@ -9,15 +9,10 @@ import Grow from '@material-ui/core/Grow';
 import Popper from '@material-ui/core/Popper';
 import CustomButton from '../CustomButton/CustomButton';
 import { setIsOpen, getIsOpen } from '../../../redux/actions/generalActions';
-import {
-  PropsClasses,
-  useStyles,
-  Props,
-  StyleProps,
-} from './CustomDropdownStyle';
+import { useStyles, Props } from './CustomDropdownStyle';
 
 const CustomDropdown = (props: Props) => {
-  const classes: PropsClasses = useStyles({} as StyleProps);
+  const classes = useStyles();
   const {
     buttonText,
     buttonIcon,

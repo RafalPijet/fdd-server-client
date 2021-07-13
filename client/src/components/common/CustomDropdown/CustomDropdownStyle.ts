@@ -1,6 +1,4 @@
-import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
-import { makeStyles } from '@material-ui/core/styles';
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { AvailableHoverColors } from '../../../types/global';
 import { ButtonProps } from '@material-ui/core';
 import {
@@ -18,10 +16,8 @@ import {
     roseColor,
     roseBoxShadow
 } from '../../../styles/globalStyles';
-import { OverridableComponent } from '@material-ui/core/OverridableComponent';
-import { SvgIconTypeMap } from '@material-ui/core';
 
-const customDropdownStyle = (theme: Theme) => ({
+export const useStyles = makeStyles((theme: Theme) => createStyles({
     popperClose: {
         pointerEvents: "none"
     },
@@ -30,7 +26,7 @@ const customDropdownStyle = (theme: Theme) => ({
         border: "0",
         boxShadow: "0 2px 5px 0 rgba(0, 0, 0, 0.26)",
         top: "100%",
-        zIndex: "1000",
+        zIndex: 1000,
         minWidth: "160px",
         padding: "5px 0",
         margin: "2px 0 0",
@@ -44,7 +40,7 @@ const customDropdownStyle = (theme: Theme) => ({
         padding: "0"
     },
     popperResponsive: {
-        zIndex: "1200",
+        zIndex: 1200,
         [theme.breakpoints.down("sm")]: {
             zIndex: "1640",
             position: "static",
@@ -67,7 +63,7 @@ const customDropdownStyle = (theme: Theme) => ({
         transition: "all 150ms linear",
         display: "block",
         clear: "both",
-        fontWeight: "400",
+        fontWeight: 400,
         height: "fit-content",
         color: "#333",
         whiteSpace: "nowrap",
@@ -150,7 +146,7 @@ const customDropdownStyle = (theme: Theme) => ({
     noLiPadding: {
         padding: "0"
     }
-});
+}));
 
 export interface Props {
     hoverColor: AvailableHoverColors,
@@ -164,27 +160,3 @@ export interface Props {
     onClick?: React.MouseEventHandler,
     isDisabled?: boolean
 }
-
-export interface StyleProps {
-    popperClose: BaseCSSProperties;
-    dropdown: BaseCSSProperties;
-    menuList: BaseCSSProperties;
-    popperResponsive: BaseCSSProperties;
-    dropdownItem: BaseCSSProperties;
-    blackHover: BaseCSSProperties;
-    primaryHover: BaseCSSProperties;
-    infoHover: BaseCSSProperties;
-    successHover: BaseCSSProperties;
-    warningHover: BaseCSSProperties;
-    dangerHover: BaseCSSProperties;
-    roseHover: BaseCSSProperties;
-    dropdownItemRTL: BaseCSSProperties;
-    buttonIcon: BaseCSSProperties;
-    caret: BaseCSSProperties;
-    caretActive: BaseCSSProperties;
-    caretRTL: BaseCSSProperties;
-    noLiPadding: BaseCSSProperties;
-}
-
-export type PropsClasses = Record<keyof StyleProps, string>;
-export const useStyles = makeStyles(customDropdownStyle as any);

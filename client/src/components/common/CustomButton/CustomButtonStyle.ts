@@ -1,6 +1,4 @@
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import { makeStyles } from '@material-ui/core/styles';
-import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { ButtonProps } from '@material-ui/core/Button';
 import { AvailableColors } from '../../../types/global';
 import {
@@ -13,7 +11,7 @@ import {
     dangerColor
 } from '../../../styles/globalStyles';
 
-const buttonStyle = (theme: Theme) => ({
+export const useStyles = makeStyles((theme: Theme) => createStyles({
     button: {
         minHeight: 'auto',
         minWidth: 'auto',
@@ -27,7 +25,7 @@ const buttonStyle = (theme: Theme) => ({
         padding: '12px 30px',
         margin: '.3125rem 1px',
         fontSize: '12px',
-        fontWeight: '400',
+        fontWeight: 400,
         textTransform: 'uppercase',
         letterSpacing: '0',
         willChange: 'box-shadow, transform',
@@ -335,7 +333,7 @@ const buttonStyle = (theme: Theme) => ({
             },
         },
     },
-})
+}))
 
 export interface Props extends ButtonProps {
     setColor: Exclude<AvailableColors, "dark" | "black">;
@@ -351,33 +349,3 @@ export interface Props extends ButtonProps {
     children: React.ReactNode;
     className?: any
 }
-
-export interface StyleProps {
-    button: BaseCSSProperties;
-    fullWidth: BaseCSSProperties;
-    primary: BaseCSSProperties;
-    info: BaseCSSProperties;
-    success: BaseCSSProperties;
-    warning: BaseCSSProperties;
-    danger: BaseCSSProperties;
-    rose: BaseCSSProperties;
-    white: BaseCSSProperties;
-    twitter: BaseCSSProperties;
-    facebook: BaseCSSProperties;
-    google: BaseCSSProperties;
-    github: BaseCSSProperties;
-    simple: BaseCSSProperties;
-    transparent: BaseCSSProperties;
-    disabled: BaseCSSProperties;
-    progress: BaseCSSProperties;
-    lg: BaseCSSProperties;
-    sm: BaseCSSProperties;
-    md: BaseCSSProperties;
-    round: BaseCSSProperties;
-    block: BaseCSSProperties;
-    link: BaseCSSProperties;
-    justIcon: BaseCSSProperties;
-}
-
-export type PropsClasses = Record<keyof StyleProps, string>;
-export const useStyles = makeStyles(buttonStyle as any);

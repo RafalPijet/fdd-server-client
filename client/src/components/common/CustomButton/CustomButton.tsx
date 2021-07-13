@@ -1,12 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import Button from '@material-ui/core/Button';
-import {
-  PropsClasses,
-  StyleProps,
-  Props,
-  useStyles,
-} from './CustomButtonStyle';
+import { Props, useStyles } from './CustomButtonStyle';
 
 const CustomButton: React.FC<Props> = (props) => {
   const {
@@ -24,7 +19,7 @@ const CustomButton: React.FC<Props> = (props) => {
     className,
     ...rest
   } = props;
-  const classes: PropsClasses = useStyles({} as StyleProps);
+  const classes = useStyles();
 
   const btnClasses = classNames({
     [classes.button]: true,

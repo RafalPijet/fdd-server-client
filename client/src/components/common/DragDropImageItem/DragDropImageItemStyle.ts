@@ -1,9 +1,7 @@
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import { makeStyles } from '@material-ui/core/styles';
-import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { primaryColor } from '../../../styles/globalStyles';
 
-const dragDropImageItemStyle = (theme: Theme) => ({
+export const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
         display: "flex",
         padding: "3px",
@@ -19,19 +17,9 @@ const dragDropImageItemStyle = (theme: Theme) => ({
     disabled: {
         filter: 'grayscale(100%)'
     }
-})
-
-export interface StyleProps {
-    root: BaseCSSProperties;
-    active: BaseCSSProperties;
-    image: BaseCSSProperties;
-    disabled: BaseCSSProperties;
-}
+}))
 
 export interface Props {
     imageUrl: string;
     isDisabled: boolean
 }
-
-export type PropsClasses = Record<keyof StyleProps, string>;
-export const useStyles = makeStyles(dragDropImageItemStyle as any);

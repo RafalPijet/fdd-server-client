@@ -32,12 +32,7 @@ import {
   setEventChange,
 } from '../../../redux/actions/generalActions';
 import { calculateAge } from '../../../types/functions';
-import {
-  StyleProps,
-  PropsClasses,
-  useStyles,
-  Props,
-} from './ChildPersonalDataStyle';
+import { useStyles, Props } from './ChildPersonalDataStyle';
 
 const ChildPersonalData: React.FC<Props> = (props) => {
   const {
@@ -49,7 +44,7 @@ const ChildPersonalData: React.FC<Props> = (props) => {
     helpText,
     userId,
   } = props;
-  const classes: PropsClasses = useStyles({} as StyleProps);
+  const classes = useStyles();
   const dispatch = useDispatch();
   const isPending = useSelector(getPending);
   const isSuccess = useSelector(getSuccess);

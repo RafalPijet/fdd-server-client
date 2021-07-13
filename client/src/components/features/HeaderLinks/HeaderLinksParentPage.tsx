@@ -25,10 +25,10 @@ import {
   Build,
   Home,
 } from '@material-ui/icons';
-import { Props, StyleProps, PropsClasses, useStyles } from './headerLinksStyle';
+import { Props, useStyles } from './headerLinksStyle';
 
 const HeaderList: React.FC<Props> = (props) => {
-  const classes: PropsClasses = useStyles({} as StyleProps);
+  const classes = useStyles();
   const { isSpiner } = props;
   const listItemClasses = classNames({
     [classes.listItem]: true,

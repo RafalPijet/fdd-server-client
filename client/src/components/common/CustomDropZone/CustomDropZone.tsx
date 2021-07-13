@@ -1,12 +1,7 @@
 import React from 'react';
 import Dropzone from 'react-dropzone-uploader';
 import Paper from '@material-ui/core/Paper';
-import {
-  StyleProps,
-  Props,
-  PropsClasses,
-  useStyles,
-} from './CustomDropZoneStyle';
+import { Props, useStyles } from './CustomDropZoneStyle';
 import { primaryColor } from '../../../styles/globalStyles';
 
 const CustomDropZone: React.FC<Props> = (props) => {
@@ -18,7 +13,7 @@ const CustomDropZone: React.FC<Props> = (props) => {
     dropFieldLabelReject,
     acceptFiles,
   } = props;
-  const classes: PropsClasses = useStyles({} as StyleProps);
+  const classes = useStyles();
 
   return (
     <Paper elevation={3} className={classes.root}>

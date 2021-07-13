@@ -1,5 +1,4 @@
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
 import {
     warningCardHeader,
@@ -10,7 +9,7 @@ import {
 } from '../../../styles/globalStyles';
 import { ReactNode } from 'react';
 
-const cardHeaderStyle = (theme: Theme) => ({
+export const useStyles = makeStyles((theme: Theme) => createStyles({
     cardHeader: {
         borderRadius: "3px",
         padding: "1rem 15px",
@@ -29,7 +28,7 @@ const cardHeaderStyle = (theme: Theme) => ({
     dangerCardHeader,
     infoCardHeader,
     primaryCardHeader
-})
+}))
 
 export interface Props {
     className: string;
@@ -47,6 +46,3 @@ export interface StyleProps {
     infoCardHeader: BaseCSSProperties;
     primaryCardHeader: BaseCSSProperties;
 }
-
-export type PropsClasses = Record<keyof StyleProps, string>;
-export const useStyles = makeStyles(cardHeaderStyle as any);

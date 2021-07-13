@@ -1,10 +1,8 @@
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import { makeStyles } from '@material-ui/core/styles';
-import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { logoColor, dangerColor, warningColor } from '../../../styles/globalStyles';
 import { ChildState } from '../../../types/global';
 
-const childrenZoneStyle = (theme: Theme) => ({
+export const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
         fontFamily: "Roboto",
         height: '500px',
@@ -84,27 +82,8 @@ const childrenZoneStyle = (theme: Theme) => ({
         opacity: "0",
         transform: "translate3d(80px, 0, 0)"
     },
-})
-
-export interface StyleProps {
-    root: BaseCSSProperties;
-    cardHeader: BaseCSSProperties;
-    small: BaseCSSProperties;
-    large: BaseCSSProperties;
-    rowHeader: BaseCSSProperties;
-    description: BaseCSSProperties;
-    content: BaseCSSProperties;
-    cardHidden: BaseCSSProperties;
-    statusRow: BaseCSSProperties;
-    status: BaseCSSProperties;
-    active: BaseCSSProperties;
-    inactive: BaseCSSProperties;
-    none: BaseCSSProperties;
-}
+}))
 
 export interface Props {
     childData?: ChildState;
 }
-
-export type PropsClasses = Record<keyof StyleProps, string>;
-export const useStyles = makeStyles(childrenZoneStyle as any);

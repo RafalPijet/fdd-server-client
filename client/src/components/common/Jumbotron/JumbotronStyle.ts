@@ -1,9 +1,7 @@
 import { ReactNode } from 'react';
-import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
-import { makeStyles } from '@material-ui/core/styles';
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 
-const jumbotronStyle = (theme: Theme) => ({
+export const useStyles = makeStyles((theme: Theme) => createStyles({
     main: {
         height: "90vh",
         maxHeight: "1000px",
@@ -35,7 +33,7 @@ const jumbotronStyle = (theme: Theme) => ({
     small: {
         height: "380px"
     }
-})
+}))
 
 export interface Props {
     filter: boolean;
@@ -44,11 +42,3 @@ export interface Props {
     image: string;
     small?: boolean;
 }
-
-export interface StyleProps {
-    main: BaseCSSProperties;
-    filter: BaseCSSProperties;
-    small: BaseCSSProperties;
-}
-export type PropsClasses = Record<keyof StyleProps, string>;
-export const useStyles = makeStyles(jumbotronStyle as any);

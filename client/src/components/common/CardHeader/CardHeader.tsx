@@ -1,9 +1,9 @@
 import React from 'react';
 import classNames from 'classnames';
-import { Props, PropsClasses, StyleProps, useStyles } from './CardHeaderStyle';
+import { Props, useStyles } from './CardHeaderStyle';
 
 const CardHeader: React.FC<Props> = (props) => {
-  const classes: PropsClasses = useStyles({} as StyleProps);
+  const classes = useStyles();
   const { className, color, plain, children, ...rest } = props;
 
   const cardHeaderClasses = classNames({

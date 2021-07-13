@@ -4,16 +4,11 @@ import Typography from '@material-ui/core/Typography';
 import GridContainer from '../../common/Grid/GridContainer';
 import GridItem from '../../common/Grid/GridItem';
 import { SearchUserType } from '../../../types/global';
-import {
-  StyleProps,
-  PropsClasses,
-  useStyles,
-  Props,
-} from './AdminContentHeaderStyle';
+import { useStyles, Props } from './AdminContentHeaderStyle';
 
 const AdminContentHeader: React.FC<Props> = (props) => {
   const { userType } = props;
-  const classes: PropsClasses = useStyles({} as StyleProps);
+  const classes = useStyles();
   const showContent = () => {
     if (userType === SearchUserType.child) {
       return 'Wyszukaj podopiecznego';

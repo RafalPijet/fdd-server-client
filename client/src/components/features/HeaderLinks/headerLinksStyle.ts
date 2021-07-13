@@ -1,33 +1,16 @@
 import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import { makeStyles } from '@material-ui/core/styles';
-import { defaultFont, tooltipsStyle, grayColor, primaryColor } from '../../../styles/globalStyles';
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
+import { defaultFont, grayColor } from '../../../styles/globalStyles';
+
+const fonts = defaultFont as BaseCSSProperties;
 
 export interface Props {
     isSpiner?: boolean
 }
 
-export interface StyleProps {
-    list: BaseCSSProperties;
-    listItem: BaseCSSProperties;
-    listItemText: BaseCSSProperties;
-    navLink: BaseCSSProperties;
-    notificationNavLink: BaseCSSProperties;
-    registerNavLink: BaseCSSProperties;
-    navLinkActive: BaseCSSProperties;
-    icons: BaseCSSProperties;
-    avatar: BaseCSSProperties;
-    socialIcons: BaseCSSProperties;
-    dropdownLink: BaseCSSProperties;
-    marginRight5: BaseCSSProperties;
-    tooltipsStyle: BaseCSSProperties;
-    disabled: BaseCSSProperties;
-    linkScroll: BaseCSSProperties;
-}
-
-const styles = (theme: Theme) => ({
+export const useStyles = makeStyles((theme: Theme) => createStyles({
     list: {
-        ...defaultFont,
+        ...fonts,
         fontSize: '14px',
         margin: 0,
         paddingLeft: '0',
@@ -63,7 +46,7 @@ const styles = (theme: Theme) => ({
         color: 'inherit',
         position: 'relative',
         padding: '0.9375rem',
-        fontWeight: '400',
+        fontWeight: 400,
         fontSize: '12px',
         textTransform: 'uppercase',
         borderRadius: '3px',
@@ -89,7 +72,7 @@ const styles = (theme: Theme) => ({
     notificationNavLink: {
         color: 'inherit',
         padding: '0.9375rem',
-        fontWeight: '400',
+        fontWeight: 400,
         fontSize: '12px',
         textTransform: 'uppercase',
         lineHeight: '20px',
@@ -101,7 +84,7 @@ const styles = (theme: Theme) => ({
     registerNavLink: {
         top: '3px',
         position: 'relative',
-        fontWeight: '400',
+        fontWeight: 400,
         fontSize: '12px',
         textTransform: 'uppercase',
         lineHeight: '20px',
@@ -136,7 +119,6 @@ const styles = (theme: Theme) => ({
             padding: '10px 20px',
         },
     },
-    ...tooltipsStyle,
     marginRight5: {
         marginRight: '5px',
     },
@@ -148,7 +130,4 @@ const styles = (theme: Theme) => ({
         alignItems: 'center',
         padding: "5px"
     }
-});
-
-export type PropsClasses = Record<keyof StyleProps, string>;
-export const useStyles = makeStyles(styles as any);
+}));

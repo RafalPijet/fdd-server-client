@@ -10,10 +10,10 @@ import RemovingImage from '../RemovingImage/RemovingImage';
 import ChildPersonalData from '../ChildPersonalData/ChildPersonalData';
 import UserPersonalData from '../UserPersonalData/UserPersonalData';
 import AddingInvoices from '../../features/AddingInvoices/AddingInvoices';
-import { StyleProps, PropsClasses, useStyles } from './ChildHandlingStyle';
+import { useStyles } from './ChildHandlingStyle';
 
 const ChildHandling: React.FC = () => {
-  const classes: PropsClasses = useStyles({} as StyleProps);
+  const classes = useStyles();
   const [selectedChild, setSelectedChild] = useState<ChildState | undefined>();
   const childId = useSelector(getSelectedChild);
   const user = useSelector(getUser);

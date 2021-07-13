@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Cropper from 'react-cropper';
 import Paper from '@material-ui/core/Paper';
-import { Props, StyleProps, useStyles, PropsClasses } from './ImageEditorStyle';
+import { Props, useStyles } from './ImageEditorStyle';
 import 'cropperjs/dist/cropper.css';
 import logo from '../../../images/butterfly.png';
 import { ArrowsDirection } from '../../../types/global';
@@ -18,7 +18,7 @@ const ImageEditor: React.FC<Props> = (props) => {
     arrow,
     isDisabled,
   } = props;
-  const classes: PropsClasses = useStyles({} as StyleProps);
+  const classes = useStyles();
   const [cropper, setCropper] = useState<any>();
   const [cropData, setCropData] = useState<any>(null);
 

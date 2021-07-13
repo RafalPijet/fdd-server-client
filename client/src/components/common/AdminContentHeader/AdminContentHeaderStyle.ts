@@ -1,9 +1,7 @@
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import { makeStyles } from '@material-ui/core/styles';
-import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { SearchUserType } from '../../../types/global';
 
-const adminContentHeaderStyle = (theme: Theme) => ({
+export const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
         width: "100%",
         margin: "20px auto",
@@ -22,17 +20,8 @@ const adminContentHeaderStyle = (theme: Theme) => ({
         color: '#fff',
         textAlign: 'center'
     },
-})
-
-export interface StyleProps {
-    root: BaseCSSProperties;
-    header: BaseCSSProperties;
-    text: BaseCSSProperties;
-}
+}))
 
 export interface Props {
     userType: SearchUserType
 }
-
-export type PropsClasses = Record<keyof StyleProps, string>;
-export const useStyles = makeStyles(adminContentHeaderStyle as any);

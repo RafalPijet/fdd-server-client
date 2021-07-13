@@ -1,6 +1,5 @@
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import { ReactNode } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
 import { AvailableColors } from '../../../types/global';
 import {
@@ -17,7 +16,9 @@ import {
     drawerWidth
 } from '../../../styles/globalStyles';
 
-const headerStyle = (theme: Theme) => ({
+const fonts = defaultFont as BaseCSSProperties;
+
+export const useStyles = makeStyles((theme: Theme) => createStyles({
     appBar: {
         display: "flex",
         border: "0",
@@ -39,11 +40,11 @@ const headerStyle = (theme: Theme) => ({
     },
     absolute: {
         position: "absolute",
-        zIndex: "1100"
+        zIndex: 1100
     },
     fixed: {
         position: "fixed",
-        zIndex: "1100"
+        zIndex: 1100
     },
     container: {
         ...container,
@@ -61,7 +62,7 @@ const headerStyle = (theme: Theme) => ({
         flex: 1
     },
     title: {
-        ...defaultFont,
+        ...fonts,
         lineHeight: "30px",
         fontSize: "18px",
         borderRadius: "3px",
@@ -156,7 +157,7 @@ const headerStyle = (theme: Theme) => ({
         paddingLeft: "0",
         ...transition
     }
-})
+}))
 
 type Colors = Exclude<AvailableColors, "facebook" | "twitter" | "google" | "github" | "black">
 
@@ -173,27 +174,3 @@ export interface Props {
     }
     isSpiner?: boolean
 }
-
-export interface StyleProps {
-    appBar: BaseCSSProperties;
-    absolute: BaseCSSProperties;
-    fixed: BaseCSSProperties;
-    container: BaseCSSProperties;
-    progressContainer: BaseCSSProperties;
-    flex: BaseCSSProperties;
-    title: BaseCSSProperties;
-    appResponsive: BaseCSSProperties;
-    primary: BaseCSSProperties;
-    info: BaseCSSProperties;
-    success: BaseCSSProperties;
-    warning: BaseCSSProperties;
-    danger: BaseCSSProperties;
-    rose: BaseCSSProperties;
-    transparent: BaseCSSProperties;
-    dark: BaseCSSProperties;
-    white: BaseCSSProperties;
-    drawerPaper: BaseCSSProperties;
-}
-
-export type PropsClasses = Record<keyof StyleProps, string>;
-export const useStyles = makeStyles(headerStyle as any);

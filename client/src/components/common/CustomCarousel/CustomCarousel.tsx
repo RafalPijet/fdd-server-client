@@ -11,8 +11,6 @@ const CustomCarousel: React.FC<Props> = (props) => {
   const { images, isAutoPlay } = props;
   return (
     <Carousel
-      // showArrows
-      // showThumbs={false}
       autoFocus
       infiniteLoop
       autoPlay={isAutoPlay}

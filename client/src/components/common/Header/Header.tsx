@@ -10,7 +10,7 @@ import Menu from '@material-ui/icons/Menu';
 import RequestProgress from '../RequestProgress/RequestProgress';
 import ModalFddInfo from '../ModalFddInfo/ModalFddInfo';
 import { InfoType } from '../ModalFddInfo/ModalFddInfoStyle';
-import { Props, PropsClasses, useStyles, StyleProps } from './HeaderStyle';
+import { Props, useStyles } from './HeaderStyle';
 import logo from '../../../images/butterflyMini.png';
 
 const Header: React.FC<Props> = (props) => {
@@ -24,7 +24,7 @@ const Header: React.FC<Props> = (props) => {
     changeColorOnScroll,
     isSpiner,
   } = props;
-  const classes: PropsClasses = useStyles({} as StyleProps);
+  const classes = useStyles();
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);
   const [isModalInfo, setIsModalInfo] = useState<boolean>(false);
 

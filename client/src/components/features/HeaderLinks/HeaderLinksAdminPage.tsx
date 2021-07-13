@@ -16,14 +16,14 @@ import {
 } from '../../../redux/actions/generalActions';
 import { loadUserMessages } from '../../../redux/actions/messageActions';
 import { SearchUserType, ModalAYSModes } from '../../../types/global';
-import { Props, StyleProps, PropsClasses, useStyles } from './headerLinksStyle';
+import { Props, useStyles } from './headerLinksStyle';
 import CustomButton from '../../common/CustomButton/CustomButton';
 import CustomDropdown from '../../common/CustomDropdown/CustomDropdown';
 
 import { Apps, ExitToApp } from '@material-ui/icons';
 
 const HeaderList: React.FC<Props> = (props) => {
-  const classes: PropsClasses = useStyles({} as StyleProps);
+  const classes = useStyles();
   const { isSpiner } = props;
   const dispatch = useDispatch();
   const listItemClasses = classNames({

@@ -1,10 +1,8 @@
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import { makeStyles } from '@material-ui/core/styles';
-import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { InputLabelProps, InputProps, FormControlProps } from '@material-ui/core';
-import { primaryColor, dangerColor, successColor, defaultFont, grayColor } from '../../../styles/globalStyles';
+import { primaryColor, dangerColor, successColor, defaultFont } from '../../../styles/globalStyles';
 
-const customInputStyle = (theme: Theme) => ({
+export const useStyles = makeStyles((theme: Theme) => createStyles({
     disabled: {
         "&:before": {
             borderColor: "transparent !important"
@@ -40,7 +38,7 @@ const customInputStyle = (theme: Theme) => ({
     labelRoot: {
         ...defaultFont,
         color: "#AAAAAA",
-        fontWeight: "400",
+        fontWeight: 400,
         fontSize: "14px",
         lineHeight: "1.42857",
         top: "10px",
@@ -83,7 +81,7 @@ const customInputStyle = (theme: Theme) => ({
             opacity: "1"
         }
     }
-});
+}));
 
 export interface Props {
     value?: string;
@@ -104,20 +102,3 @@ export interface Props {
     iconType?: "edit" | "phone" | "done";
     isDisabled?: boolean;
 }
-
-export interface StyleProps {
-    disabled: BaseCSSProperties;
-    underline: BaseCSSProperties;
-    underlineError: BaseCSSProperties;
-    underlineSuccess: BaseCSSProperties;
-    whiteUnderline: BaseCSSProperties
-    labelRoot: BaseCSSProperties
-    labelRootError: BaseCSSProperties
-    labelRootSuccess: BaseCSSProperties
-    formControl: BaseCSSProperties
-    input: BaseCSSProperties
-    whiteInput: BaseCSSProperties;
-}
-
-export type PropsClasses = Record<keyof StyleProps, string>;
-export const useStyles = makeStyles(customInputStyle as any);

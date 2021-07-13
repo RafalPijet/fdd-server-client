@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import classNames from 'classnames';
 import { useSelector, useDispatch } from 'react-redux';
 import { VariantType, useSnackbar } from 'notistack';
-import { useStyles, StyleProps } from './AdminPageStyle';
 import {
   getPending,
   getError,
@@ -38,6 +37,7 @@ import { removeMessage, updateUserStatus } from '../../../redux/thunks';
 import { ModalAYSModes, SearchUserType } from '../../../types/global';
 import AdminContent from '../../features/AdminContent/AdminContent';
 import image from '../../../images/jumbotronAdmin.jpg';
+import { useStyles, StyleProps } from './AdminPageStyle';
 
 const AdminPage: React.FC = () => {
   const classes = useStyles({} as StyleProps);

@@ -1,16 +1,11 @@
 import React, { useState } from 'react';
 import Paper from '@material-ui/core/Paper';
 import ClassNames from 'classnames';
-import {
-  Props,
-  StyleProps,
-  useStyles,
-  PropsClasses,
-} from './DragDropImageItemStyle';
+import { Props, useStyles } from './DragDropImageItemStyle';
 
 const DragDropImageItem: React.FC<Props> = (props) => {
   const { imageUrl, isDisabled } = props;
-  const classes: PropsClasses = useStyles({} as StyleProps);
+  const classes = useStyles();
   const [isActive, setIsActive] = useState<boolean>(false);
   const rootClasses = ClassNames({
     [classes.root]: true,

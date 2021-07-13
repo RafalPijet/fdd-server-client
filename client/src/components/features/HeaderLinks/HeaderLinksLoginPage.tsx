@@ -3,12 +3,12 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
-import { Props, StyleProps, PropsClasses, useStyles } from './headerLinksStyle';
+import { Props, useStyles } from './headerLinksStyle';
 import HomeIcon from '@material-ui/icons/Home';
 import CustomButton from '../../common/CustomButton/CustomButton';
 
 const HeaderLinks: React.FC<Props> = (props) => {
-  const classes: PropsClasses = useStyles({} as StyleProps);
+  const classes = useStyles();
   const { isSpiner } = props;
   const listItemClasses = classNames({
     [classes.listItem]: true,

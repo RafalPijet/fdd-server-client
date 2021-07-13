@@ -16,10 +16,10 @@ import CustomButton from '../../common/CustomButton/CustomButton';
 import CustomDropdown from '../../common/CustomDropdown/CustomDropdown';
 import { setIsOpen } from '../../../redux/actions/generalActions';
 import { AvailableDestinations } from '../../../types/global';
-import { Props, StyleProps, PropsClasses, useStyles } from './headerLinksStyle';
+import { Props, useStyles } from './headerLinksStyle';
 
 const HeaderList: React.FC<Props> = (props) => {
-  const classes: PropsClasses = useStyles({} as StyleProps);
+  const classes = useStyles();
   const dispatch = useDispatch();
   const { isSpiner } = props;
   const listItemClasses = classNames({

@@ -1,9 +1,7 @@
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import { makeStyles } from '@material-ui/core/styles';
-import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { ArrowsDirection } from '../../../types/global';
 
-const imageEditorStyle = (theme: Theme) => ({
+export const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
         padding: "0 10px",
         display: 'flex',
@@ -17,12 +15,7 @@ const imageEditorStyle = (theme: Theme) => ({
         height: "400px",
         width: "100%"
     },
-})
-
-export interface StyleProps {
-    root: BaseCSSProperties;
-    crooper: BaseCSSProperties;
-}
+}))
 
 export interface Props {
     enteredImage: any;
@@ -35,6 +28,3 @@ export interface Props {
     arrow: ArrowsDirection;
     isDisabled: boolean;
 }
-
-export type PropsClasses = Record<keyof StyleProps, string>;
-export const useStyles = makeStyles(imageEditorStyle as any);

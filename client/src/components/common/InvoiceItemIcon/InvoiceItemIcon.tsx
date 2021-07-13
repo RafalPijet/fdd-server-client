@@ -3,17 +3,12 @@ import ClassNames from 'classnames';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import DescriptionIcon from '@material-ui/icons/Description';
-import {
-  Props,
-  StyleProps,
-  PropsClasses,
-  useStyles,
-} from './InvoiceItemIconStyle';
+import { Props, useStyles } from './InvoiceItemIconStyle';
 import logo from '../../../images/butterflyMini.png';
 
 const InvoiceItemIcon: React.FC<Props> = (props) => {
   const { invoice, choisenId, getChosenInvoice, isDisabled } = props;
-  const classes: PropsClasses = useStyles({} as StyleProps);
+  const classes = useStyles();
   const [isChosen, setIsChosen] = useState<boolean>(false);
 
   const iconClasses = ClassNames({

@@ -1,9 +1,7 @@
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import { makeStyles } from '@material-ui/core/styles';
-import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import image from '../../../images/sign.jpg';
 
-const childHandlingStyle = (theme: Theme) => ({
+export const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
         height: "2970px",
         flexDirection: "column",
@@ -19,12 +17,4 @@ const childHandlingStyle = (theme: Theme) => ({
     inputIconsColor: {
         color: "#495057"
     }
-})
-
-export interface StyleProps {
-    root: BaseCSSProperties;
-    inputIconsColor: BaseCSSProperties;
-}
-
-export type PropsClasses = Record<keyof StyleProps, string>;
-export const useStyles = makeStyles(childHandlingStyle as any);
+}))

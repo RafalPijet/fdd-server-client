@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import classNames from 'classnames';
-import { Props, PropsClasses, useStyles, StyleProps } from './JumbotronStyle';
+import { Props, useStyles } from './JumbotronStyle';
 
 const Jumbotron: React.FC<Props> = (props) => {
   const { filter, children, style, image, small } = props;
-  const classes: PropsClasses = useStyles({} as StyleProps);
+  const classes = useStyles();
   const jumbotronClasses = classNames({
     [classes.main]: true,
     [classes.filter]: filter,

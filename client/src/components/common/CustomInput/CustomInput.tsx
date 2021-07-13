@@ -6,12 +6,12 @@ import Input from '@material-ui/core/Input';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import { InputProps } from '@material-ui/core';
 import { PhoneIphone, Edit, Done } from '@material-ui/icons';
-import { PropsClasses, useStyles, StyleProps, Props } from './CustomInputStyle';
+import { useStyles, Props } from './CustomInputStyle';
 
 import InputMask from 'react-input-mask';
 
 const CustomInput: React.FC<Props> = (props) => {
-  const classes: PropsClasses = useStyles({} as StyleProps);
+  const classes = useStyles();
   const {
     value,
     formControlProps,

@@ -1,9 +1,7 @@
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import { makeStyles } from '@material-ui/core/styles';
-import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { ReactNode } from 'react';
 
-const cardStyle = (theme: Theme) => ({
+export const useStyles = makeStyles((theme: Theme) => createStyles({
     card: {
         border: "0",
         marginBottom: "30px",
@@ -29,7 +27,7 @@ const cardStyle = (theme: Theme) => ({
     cardCarousel: {
         overflow: "hidden"
     }
-})
+}))
 
 export interface Props {
     className: string;
@@ -37,12 +35,3 @@ export interface Props {
     carousel?: boolean;
     children: ReactNode
 }
-
-export interface StyleProps {
-    card: BaseCSSProperties
-    cardPlain: BaseCSSProperties
-    cardCarousel: BaseCSSProperties
-}
-
-export type PropsClasses = Record<keyof StyleProps, string>;
-export const useStyles = makeStyles(cardStyle as any);

@@ -4,11 +4,11 @@ import { List, ListItem } from '@material-ui/core';
 import Favorite from '@material-ui/icons/Favorite';
 import ModalFddInfo from '../ModalFddInfo/ModalFddInfo';
 import { InfoType } from '../ModalFddInfo/ModalFddInfoStyle';
-import { PropsClasses, useStyles, StyleProps, Props } from './FooterStyle';
+import { useStyles, Props } from './FooterStyle';
 import { MAIN_URL, URL } from '../../../config';
 
 const Footer: React.FC<Props> = (props) => {
-  const classes: PropsClasses = useStyles({} as StyleProps);
+  const classes = useStyles();
   const { whiteFont } = props;
   const [isModalInfo, setIsModalInfo] = useState<boolean>(false);
   const [infoType, setInfoType] = useState<InfoType>(InfoType.aboutUs);
