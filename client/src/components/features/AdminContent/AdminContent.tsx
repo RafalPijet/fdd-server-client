@@ -22,10 +22,10 @@ import {
   UserState,
   AvailableDestinations,
 } from '../../../types/global';
-import { StyleProps, PropsClasses, useStyles } from './AdminContentStyle';
+import { useStyles } from './AdminContentStyle';
 
 const AdminContent: React.FC = () => {
-  const classes: PropsClasses = useStyles({} as StyleProps);
+  const classes = useStyles();
   const childId = useSelector(getSelectedChild);
   const userType = useSelector(getSelectedUserType);
   const selectedPerson = useSelector(getSelectedPerson);
@@ -44,7 +44,7 @@ const AdminContent: React.FC = () => {
             <>
               <GridItem xs={12} sm={12} lg={8} style={{ maxWidth: '770px' }}>
                 <Paper elevation={6} className={classes.childZone}>
-                  <ChildrenZone childData={selectedChild} />
+                  <ChildrenZone isAdmin={true} childData={selectedChild} />
                 </Paper>
               </GridItem>
               <GridItem

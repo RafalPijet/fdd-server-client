@@ -1,14 +1,15 @@
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
-import { makeStyles } from '@material-ui/core/styles';
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import { title } from '../../../styles/globalStyles';
 
-const messageStyle = (theme: Theme) => ({
+const mainTitle = title as BaseCSSProperties;
+
+export const useStyles = makeStyles((theme: Theme) => createStyles({
     section: {
         padding: "70px 100px"
     },
     title: {
-        ...title,
+        ...mainTitle,
         marginBottom: "50px",
         marginTop: "30px",
         minHeight: "32px",
@@ -27,18 +28,8 @@ const messageStyle = (theme: Theme) => ({
         marginRight: "15px",
         marginLeft: "15px"
     }
-})
+}))
 
 export interface Props {
     isDisabled?: boolean
 }
-
-export interface StyleProps {
-    section: BaseCSSProperties;
-    title: BaseCSSProperties;
-    description: BaseCSSProperties;
-    textCenter: BaseCSSProperties;
-    textArea: BaseCSSProperties
-}
-
-export const useStyles = makeStyles(messageStyle as any);

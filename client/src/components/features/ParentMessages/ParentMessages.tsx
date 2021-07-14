@@ -5,7 +5,7 @@ import { getUserName } from '../../../redux/actions/userActions';
 import { getToast, setUserToast } from '../../../redux/actions/generalActions';
 import { getQuantity } from '../../../redux/actions/messageActions';
 import { Typography } from '@material-ui/core';
-import { useStyles, StyleProps, PropsClasses } from './ParentMessagesStyle';
+import { useStyles } from './ParentMessagesStyle';
 import { MessageOptions } from '../../../types/global';
 import { addMessage, getUserMessages } from '../../../redux/thunks';
 import Zoom from '@material-ui/core/Zoom';
@@ -28,7 +28,7 @@ import MessagesBody from '../../common/MessagesBody/MessagesBody';
 import { naviMessagesData } from '../../../data/entry';
 
 const ParentMessages: React.FC = () => {
-  const classes: PropsClasses = useStyles({} as StyleProps);
+  const classes = useStyles();
   const userName = useSelector(getUserName);
   const isPending = useSelector(getMessages);
   const isSuccess = useSelector(getMessagesSuccess);

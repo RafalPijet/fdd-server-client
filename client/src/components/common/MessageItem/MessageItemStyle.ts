@@ -1,6 +1,4 @@
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import { makeStyles } from '@material-ui/core/styles';
-import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { logoColor } from '../../../styles/globalStyles';
 import { IMessage, MessageOptions } from '../../../types/global';
 
@@ -27,7 +25,7 @@ export interface Props {
     isUser?: boolean
 }
 
-const messageItemStyle = (theme: Theme) => ({
+export const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
         background: "inherit",
         color: "#fff",
@@ -73,20 +71,4 @@ const messageItemStyle = (theme: Theme) => ({
         display: 'flex',
         alignItems: 'center'
     }
-})
-
-export interface StyleProps {
-    root: BaseCSSProperties;
-    content: BaseCSSProperties;
-    right: BaseCSSProperties;
-    unread: BaseCSSProperties;
-    date: BaseCSSProperties;
-    image: BaseCSSProperties;
-    selected: BaseCSSProperties;
-    icon: BaseCSSProperties;
-    common: BaseCSSProperties;
-    message: BaseCSSProperties;
-}
-
-export type PropsClasses = Record<keyof StyleProps, string>;
-export const useStyles = makeStyles(messageItemStyle as any);
+}))

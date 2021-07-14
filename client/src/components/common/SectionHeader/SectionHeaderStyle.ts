@@ -1,9 +1,7 @@
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import { makeStyles } from '@material-ui/core/styles';
-import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { grayColor, primaryColor } from '../../../styles/globalStyles';
 
-const sectionHeaderStyle = (theme: Theme) => ({
+export const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
         display: "flex",
         justifyContent: 'space-between',
@@ -18,13 +16,7 @@ const sectionHeaderStyle = (theme: Theme) => ({
     disabled: {
         color: grayColor
     }
-})
-
-export interface StyleProps {
-    icon: BaseCSSProperties;
-    root: BaseCSSProperties;
-    disabled: BaseCSSProperties;
-}
+}))
 
 export interface Props {
     onChange: ((event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void);
@@ -33,6 +25,3 @@ export interface Props {
     text: string;
     isExistChild: boolean;
 }
-
-export type PropsClasses = Record<keyof StyleProps, string>;
-export const useStyles = makeStyles(sectionHeaderStyle as any);

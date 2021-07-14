@@ -1,9 +1,7 @@
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import { makeStyles } from '@material-ui/core/styles';
-import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { grayColor } from '../../../styles/globalStyles';
 
-const parentMessagesStyle = (theme: Theme) => ({
+export const useStyles = makeStyles((theme: Theme) => createStyles({
     cardHidden: {
         opacity: "0",
         transform: "translate3d(0, -60px, 0)"
@@ -34,16 +32,4 @@ const parentMessagesStyle = (theme: Theme) => ({
     busy: {
         color: `${grayColor} !important`
     }
-})
-
-export interface StyleProps {
-    cardHidden: BaseCSSProperties;
-    cardHeader: BaseCSSProperties;
-    cardFooter: BaseCSSProperties;
-    selectTab: BaseCSSProperties;
-    card: BaseCSSProperties;
-    busy: BaseCSSProperties;
-}
-
-export type PropsClasses = Record<keyof StyleProps, string>;
-export const useStyles = makeStyles(parentMessagesStyle as any);
+}))

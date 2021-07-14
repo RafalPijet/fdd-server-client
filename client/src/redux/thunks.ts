@@ -63,6 +63,8 @@ import {
     updateSelectedPersonalChildImagesList,
     UpdateSelectedPersonChildAvatarAction,
     updateSelectedPersonalChildAvatar,
+    UpdateSelectedPersonChildStatusAction,
+    updateSelectedPersonalChildStatus,
     AddChildToSelectedPersonAction,
     addChildToSelectedPerson,
     UpdateSelectedPersonUserDataAction,
@@ -1335,6 +1337,38 @@ export const getReportsByYearRequest = (year: string): ThunkAction<
                 return item
             })
             dispatch(setReportsOfSelectedYear(reports));
+        }
+        dispatch(stopRequest());
+    } catch (err) {
+        if (err.response !== undefined) {
+            err.response.data.message ?
+                dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        } else {
+            dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        }
+    }
+}
+
+export const updateChildStatusRequest = (_id: string, isActive: boolean): ThunkAction<
+    Promise<void>,
+    any,
+    RootState,
+    StartRequestAction | StopRequestAction | ErrorRequestAction | UpdateSelectedPersonChildStatusAction
+> => async (dispatch, getState) => {
+    dispatch(startRequest());
+    const payload = { _id, isActive }
+
+    try {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        let res: AxiosResponse = await axios.put(`${API_URL}/admin/child/status`, payload,
+            {
+                headers: {
+                    'Authorization': localStorage.getItem('tokenFDD')
+                }
+            })
+        if (res.status === 201) {
+            dispatch(updateSelectedPersonalChildStatus(isActive));
         }
         dispatch(stopRequest());
     } catch (err) {

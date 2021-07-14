@@ -32,11 +32,11 @@ import {
   setUserToast,
   setSelectedChild,
 } from '../../../redux/actions/generalActions';
-import { useStyles, StyleProps } from './ParentPageStyle';
+import { useStyles } from './ParentPageStyle';
 import image from '../../../images/jumbotronParent.jpg';
 
 const ParentPage: React.FC = () => {
-  const classes = useStyles({} as StyleProps);
+  const classes = useStyles();
   const isPending = useSelector(getPending);
   const isUpdating = useSelector(getUpdating);
   const isAdding = useSelector(getAdding);

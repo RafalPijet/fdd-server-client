@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import classNames from 'classnames';
 import Avatar from '@material-ui/core/Avatar';
+import IconButton from '@material-ui/core/IconButton';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import Card from '../../common/Card/Card';
 import CardHeader from '../../common/CardHeader/CardHeader';
 import CustomCarousel from '../../common/CustomCarousel/CustomCarousel';
@@ -9,19 +11,32 @@ import CardBody from '../../common/CardBody/CardBody';
 import {
   getSelectedChild,
   getSelectedPerson,
+  setModalAreYouSure,
 } from '../../../redux/actions/generalActions';
+import { getPending } from '../../../redux/actions/requestActions';
 import { getUserChildren } from '../../../redux/actions/userActions';
-import { useStyles, Props } from './ChildrenZoneStyle';
-import { ChildState } from '../../../types/global';
+import { updateChildStatusRequest } from '../../../redux/thunks';
+import { ChildState, FddSwitch, ModalAYSModes } from '../../../types/global';
 import { calculateAge } from '../../../types/functions';
 import logo from '../../../images/butterfly.png';
+import { useStyles, Props } from './ChildrenZoneStyle';
 
 const ChildrenZone: React.FC<Props> = (props) => {
-  const { childData } = props;
+  const { childData, isAdmin } = props;
   const selectedPerson = useSelector(getSelectedPerson);
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const childId = useSelector(getSelectedChild);
+  const children = useSelector(getUserChildren);
+  const isPending = useSelector(getPending);
   const [isCardAnimation, setIsCardAnimation] = useState<boolean>(true);
   const [selectedChild, setSelectedChild] = useState<ChildState | null>(null);
+  const [isActive, setIsActive] = useState<boolean>(false);
+
+  const deleteButtonClasses = classNames({
+    [classes.icon]: isAdmin,
+    [classes.disabled]: isPending,
+  });
   const cardClasses = classNames({
     [classes.root]: true,
     [classes.cardHidden]: isCardAnimation,
@@ -31,9 +46,13 @@ const ChildrenZone: React.FC<Props> = (props) => {
     [classes.active]: selectedChild !== null && selectedChild.active,
     [classes.inactive]: selectedChild !== null && !selectedChild.active,
     [classes.none]: selectedChild === null,
+    [classes.disabled]: isPending,
   });
-  const childId = useSelector(getSelectedChild);
-  const children = useSelector(getUserChildren);
+
+  const switchClasses = classNames({
+    [classes.disabled]: isPending,
+  });
+
   setTimeout(() => {
     setIsCardAnimation(false);
   }, 900);
@@ -41,6 +60,12 @@ const ChildrenZone: React.FC<Props> = (props) => {
   useEffect(() => {
     prepareSelectedChild();
   }, [childId, selectedPerson]);
+
+  useEffect(() => {
+    if (selectedChild !== null) {
+      setIsActive(selectedChild.active);
+    }
+  }, [selectedChild]);
 
   const prepareSelectedChild = () => {
     if (childId !== null) {
@@ -52,16 +77,57 @@ const ChildrenZone: React.FC<Props> = (props) => {
     }
   };
 
+  const switchIsActivHandling = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (selectedChild !== null && isAdmin) {
+      dispatch(updateChildStatusRequest(selectedChild._id, e.target.checked));
+    }
+  };
+
+  const removeCurrentChildHandling = () => {
+    if (selectedChild !== null && isAdmin) {
+      dispatch(
+        setModalAreYouSure({
+          isOpen: true,
+          title: 'Usuwanie podopiecznego',
+          mode: ModalAYSModes.removeChild,
+          description: `Uwaga!!! Potwierdzenie spowoduje bezpowrotne usunięcie wszystkich danych związanych z podopiecznym ${selectedChild.firstName} ${selectedChild.lastName}`,
+          data: { childId: selectedChild._id },
+        })
+      );
+    }
+  };
+
   return (
     <div>
       <Card className={cardClasses}>
         <div className={classes.rowHeader}>
+          {isAdmin && selectedChild !== null && (
+            <>
+              <span className={classes.remove}>
+                <IconButton
+                  onClick={removeCurrentChildHandling}
+                  disabled={isPending}
+                  className={classes.button}
+                >
+                  <DeleteForeverIcon className={deleteButtonClasses} />
+                </IconButton>
+              </span>
+              <span className={classes.switch}>
+                <FddSwitch
+                  onChange={switchIsActivHandling}
+                  checked={isActive}
+                  disabled={isPending}
+                  className={switchClasses}
+                />
+              </span>
+            </>
+          )}
           <span className={classes.statusRow}>
             status:
             <span className={statusClasses}>
               {selectedChild !== null
                 ? selectedChild.active
-                  ? 'AKTYWNY'
+                  ? 'PUBLIKACJA'
                   : 'NIEAKTYWNY'
                 : 'BRAK'}
             </span>

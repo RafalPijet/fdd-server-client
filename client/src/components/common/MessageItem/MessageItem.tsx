@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import { getUserId } from '../../../redux/actions/userActions';
-import { Props, StyleProps, PropsClasses, useStyles } from './MessageItemStyle';
+import { Props, useStyles } from './MessageItemStyle';
 import Paper from '@material-ui/core/Paper';
 import { cutText } from '../../../types/functions';
 import { MessageOptions } from '../../../types/global';
@@ -30,7 +30,7 @@ const MessageItem: React.FC<Props> = (props) => {
       (dataType === MessageOptions.all && isNew)
   );
   const [isSelected, setIsSelected] = useState<boolean>(false);
-  const classes: PropsClasses = useStyles({} as StyleProps);
+  const classes = useStyles();
   const userId = useSelector(getUserId);
   const contentClasses = classNames({
     [classes.content]: true,

@@ -37,10 +37,10 @@ import { removeMessage, updateUserStatus } from '../../../redux/thunks';
 import { ModalAYSModes, SearchUserType } from '../../../types/global';
 import AdminContent from '../../features/AdminContent/AdminContent';
 import image from '../../../images/jumbotronAdmin.jpg';
-import { useStyles, StyleProps } from './AdminPageStyle';
+import { useStyles } from './AdminPageStyle';
 
 const AdminPage: React.FC = () => {
-  const classes = useStyles({} as StyleProps);
+  const classes = useStyles();
   const isPending = useSelector(getPending);
   const isUpdating = useSelector(getUpdating);
   const isAdding = useSelector(getAdding);
@@ -108,6 +108,10 @@ const AdminPage: React.FC = () => {
         if (userId !== undefined && userStatus !== undefined) {
           dispatch(updateUserStatus(userId, userStatus));
         }
+      }
+      if (modalAYS.mode === ModalAYSModes.removeChild) {
+        console.log('Remove child');
+        console.log(modalAYS.data.childId);
       }
     }
 

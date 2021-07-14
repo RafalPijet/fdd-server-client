@@ -8,7 +8,6 @@ import CustomCarousel from '../../common/CustomCarousel/CustomCarousel';
 import { calculateAge } from '../../../types/functions';
 import { useStyles, Props } from './ChildPresentationStyle';
 import image from '../../../images/butterfly.png';
-import { height } from '@material-ui/system';
 
 const ChildPresentation: React.FC<Props> = (props) => {
   const { selectedChild } = props;

@@ -8,16 +8,11 @@ import GridItem from '../../common/Grid/GridItem';
 import ChildrenZone from '../../features/ChildrenZone/ChildrenZone';
 import Typography from '@material-ui/core/Typography';
 import { UserStatus } from '../../../types/global';
-import {
-  StyleProps,
-  Props,
-  PropsClasses,
-  useStyles,
-} from './ShowUserDataStyle';
+import { Props, useStyles } from './ShowUserDataStyle';
 
 const ShowUserData: React.FC<Props> = (props) => {
   const { user } = props;
-  const classes: PropsClasses = useStyles({} as StyleProps);
+  const classes = useStyles();
   const titleClasses = Classnames({
     [classes.title]: true,
     [classes.alignBaseline]: true,
@@ -116,7 +111,7 @@ const ShowUserData: React.FC<Props> = (props) => {
         {user.children.map((child, index) => (
           <GridItem key={index} xs={12} sm={12} lg={7}>
             <Paper elevation={8} className={classes.childZone}>
-              <ChildrenZone childData={child} />
+              <ChildrenZone isAdmin={true} childData={child} />
             </Paper>
           </GridItem>
         ))}

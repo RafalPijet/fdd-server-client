@@ -23,24 +23,16 @@ import {
 } from '../../../redux/actions/generalActions';
 import { getAdding } from '../../../redux/actions/requestActions';
 import { API_URL } from '../../../config';
-import {
-  useStyles,
-  StyleProps,
-  PropsClasses,
-  FddRadio,
-  SelectedPerson,
-} from './SearcherOfUsersStyle';
+import { useStyles, FddRadio, SelectedPerson } from './SearcherOfUsersStyle';
 
 const SearcherOfUsers: React.FC = () => {
-  const classes: PropsClasses = useStyles({} as StyleProps);
+  const classes = useStyles();
   const dispatch = useDispatch();
   const isAdding = useSelector(getAdding);
   const selectedUserType = useSelector(getSelectedUserType);
   const [open, setOpen] = useState<boolean>(false);
-  const [
-    selectedPersonName,
-    setSelectedPersonName,
-  ] = useState<SelectedPerson | null>(null);
+  const [selectedPersonName, setSelectedPersonName] =
+    useState<SelectedPerson | null>(null);
   const [options, setOptions] = useState<any[]>([]);
   const [isCardAnimation, setIsCardAnimation] = useState<boolean>(true);
   const [userType, setUserType] = useState<SearchUserType>(

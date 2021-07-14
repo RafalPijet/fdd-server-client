@@ -1,10 +1,8 @@
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import { makeStyles } from '@material-ui/core/styles';
-import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { logoColor, roseColor } from '../../../styles/globalStyles';
 import { MessageOptions } from '../../../types/global';
 
-const messageOperationsStyle = (theme: Theme) => ({
+export const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
         display: "flex",
         justifyContent: "space-between",
@@ -31,15 +29,7 @@ const messageOperationsStyle = (theme: Theme) => ({
         color: logoColor,
         width: "fit-content"
     }
-})
-
-export interface StyleProps {
-    root: BaseCSSProperties;
-    userInfo: BaseCSSProperties
-    direction: BaseCSSProperties
-    buttonDelete: BaseCSSProperties
-    buttonReply: BaseCSSProperties
-}
+}))
 
 export interface Props {
     isUser: boolean | undefined;
@@ -50,6 +40,3 @@ export interface Props {
     isAdminMessage: boolean;
     fromId: string | undefined;
 }
-
-export type PropsClasses = Record<keyof StyleProps, string>;
-export const useStyles = makeStyles(messageOperationsStyle as any);

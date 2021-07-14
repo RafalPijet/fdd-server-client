@@ -1,8 +1,6 @@
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import { makeStyles } from '@material-ui/core/styles';
-import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 
-const raportZoneStyle = (theme: Theme) => ({
+export const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
         fontFamily: "Roboto",
         height: '382px',
@@ -16,12 +14,4 @@ const raportZoneStyle = (theme: Theme) => ({
         opacity: "0",
         transform: "translate3d(100px, 0, 0)"
     },
-})
-
-export interface StyleProps {
-    root: BaseCSSProperties;
-    cardHidden: BaseCSSProperties;
-}
-
-export type PropsClasses = Record<keyof StyleProps, string>;
-export const useStyles = makeStyles(raportZoneStyle as any);
+}))

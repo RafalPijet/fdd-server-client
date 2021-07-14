@@ -626,4 +626,22 @@ class AdminController {
             next(new HttpException(404, 'Nieudane usunięcie sprawozdania'));
         }
     }
+
+    @put('/child/status')
+    async updateChildStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const { _id, isActive } = req.body;
+
+        try {
+            let findedChild = await ChildModel.findById({ _id });
+            if (!findedChild) {
+                next(new HttpException(404, 'Nie znaleziono podopiecznego'));
+            } else {
+                findedChild.active = isActive;
+                await findedChild.save();
+                res.status(201).send();
+            }
+        } catch (err) {
+            next(new HttpException(404, 'Aktualizacja statusu podopiecznego nieudana!'));
+        }
+    }
 }

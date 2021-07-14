@@ -1,7 +1,5 @@
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import { makeStyles, withStyles } from '@material-ui/core/styles';
+import { makeStyles, createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import Radio from '@material-ui/core/Radio';
-import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
 import { logoColor } from '../../../styles/globalStyles';
 
 export const FddRadio = withStyles({
@@ -14,7 +12,7 @@ export const FddRadio = withStyles({
     checked: {},
 })(Radio);
 
-const searcherOfUsersStyle = (theme: Theme) => ({
+export const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
         fontFamily: "Roboto",
         height: '140px',
@@ -33,18 +31,9 @@ const searcherOfUsersStyle = (theme: Theme) => ({
         backgroundColor: "rgba(166, 206, 57, 0.4)",
         padding: "30px 10px"
     }
-})
+}))
 
 export interface SelectedPerson {
     _id: string,
     name: string
 }
-
-export interface StyleProps {
-    root: BaseCSSProperties;
-    cardHidden: BaseCSSProperties;
-    searcher: BaseCSSProperties;
-}
-
-export type PropsClasses = Record<keyof StyleProps, string>;
-export const useStyles = makeStyles(searcherOfUsersStyle as any);

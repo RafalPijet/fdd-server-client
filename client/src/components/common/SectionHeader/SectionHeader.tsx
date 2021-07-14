@@ -8,18 +8,13 @@ import {
   setUserToast,
 } from '../../../redux/actions/generalActions';
 import { FddSwitch, FddTooltip } from '../../../types/global';
-import {
-  PropsClasses,
-  Props,
-  useStyles,
-  StyleProps,
-} from './SectionHeaderStyle';
+import { Props, useStyles } from './SectionHeaderStyle';
 
 const SectionHeader: React.FC<Props> = (props) => {
   const { onChange, checked, helpText, text, isExistChild } = props;
   const dispatch = useDispatch();
   const selectedChild = useSelector(getSelectedChild);
-  const classes: PropsClasses = useStyles({} as StyleProps);
+  const classes = useStyles();
   const iconClasses = ClassNames({
     [classes.icon]: true,
     [classes.disabled]: !checked,

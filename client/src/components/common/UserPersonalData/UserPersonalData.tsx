@@ -34,8 +34,6 @@ import { SUPER_ADMIN } from '../../../config';
 import { updateUser } from '../../../redux/thunks';
 import { Register } from '../../pages/LoginPage/LoginPageStyle';
 import {
-  StyleProps,
-  PropsClasses,
   useStyles,
   Props,
   UserDataProps,
@@ -44,7 +42,7 @@ import {
 
 const UserPersonalData: React.FC<Props> = (props) => {
   const { isAdmin, user, name } = props;
-  const classes: PropsClasses = useStyles({} as StyleProps);
+  const classes = useStyles();
   const dispatch = useDispatch();
   const isUpdating = useSelector(getUpdating);
   const isSuccess = useSelector(getUpdatingSuccess);

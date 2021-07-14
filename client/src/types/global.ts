@@ -58,7 +58,8 @@ export enum ModalAYSModes {
     removeMessage,
     changeUserStatus,
     removeNews,
-    removeReport
+    removeReport,
+    removeChild
 }
 
 export enum ArrowsDirection {
@@ -207,6 +208,7 @@ export interface ModalAvailableKeys {
     messageId?: string;
     isUser?: boolean;
     userId?: string;
+    childId?: string;
     userStatus?: UserStatus;
     newsStatus?: NewsState;
     reportId?: string;

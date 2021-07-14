@@ -1,10 +1,8 @@
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import { makeStyles } from '@material-ui/core/styles';
-import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { UserState, AvailableDestinations } from '../../../types/global';
 import { primaryColor } from '../../../styles/globalStyles';
 
-const userPersonalDataStyle = (theme: Theme) => ({
+export const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
         minHeight: '490px',
     },
@@ -25,24 +23,14 @@ const userPersonalDataStyle = (theme: Theme) => ({
         color: primaryColor,
         fontSize: "1rem",
         fontFamily: "Roboto",
-        fontWeight: "400"
+        fontWeight: 400
     },
     footer: {
         display: "flex",
         justifyContent: "space-around",
         minWidth: "50%"
     }
-})
-
-export interface StyleProps {
-    root: BaseCSSProperties;
-    back: BaseCSSProperties;
-    active: BaseCSSProperties;
-    inputIconsColor: BaseCSSProperties;
-    switch: BaseCSSProperties;
-    parent: BaseCSSProperties;
-    footer: BaseCSSProperties;
-}
+}))
 
 export interface Props {
     isAdmin: boolean;
@@ -77,6 +65,3 @@ export const emptyUserData = {
     street: '',
     number: '',
 }
-
-export type PropsClasses = Record<keyof StyleProps, string>;
-export const useStyles = makeStyles(userPersonalDataStyle as any);

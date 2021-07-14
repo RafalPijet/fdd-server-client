@@ -1,10 +1,8 @@
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import { makeStyles } from '@material-ui/core/styles';
-import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { UserState } from '../../../types/global';
 import { logoColor } from '../../../styles/globalStyles';
 
-const showUserDataStyle = (theme: Theme) => ({
+export const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
         margin: "20px auto",
         backgroundColor: "rgba(156, 39, 176, 0.8)",
@@ -39,22 +37,8 @@ const showUserDataStyle = (theme: Theme) => ({
         margin: '80px auto',
         padding: '70px 100px'
     }
-})
-
-export interface StyleProps {
-    root: BaseCSSProperties;
-    header: BaseCSSProperties;
-    title: BaseCSSProperties;
-    alignBaseline: BaseCSSProperties;
-    alignCenter: BaseCSSProperties;
-    text: BaseCSSProperties;
-    email: BaseCSSProperties;
-    childZone: BaseCSSProperties;
-}
+}))
 
 export interface Props {
     user: UserState;
 }
-
-export type PropsClasses = Record<keyof StyleProps, string>;
-export const useStyles = makeStyles(showUserDataStyle as any);

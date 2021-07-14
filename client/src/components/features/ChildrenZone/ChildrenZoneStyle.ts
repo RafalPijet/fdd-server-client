@@ -1,5 +1,5 @@
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import { logoColor, dangerColor, warningColor } from '../../../styles/globalStyles';
+import { logoColor, dangerColor, warningColor, grayColor, lightGrayColor } from '../../../styles/globalStyles';
 import { ChildState } from '../../../types/global';
 
 export const useStyles = makeStyles((theme: Theme) => createStyles({
@@ -37,9 +37,27 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
         top: '-20px',
         right: 0
     },
+    switch: {
+        position: 'absolute',
+        top: -55,
+        right: -10
+    },
+    remove: {
+        position: 'absolute',
+        top: -53,
+        left: 130
+    },
+    button: {
+        '&:hover': {
+            backgroundColor: dangerColor
+        }
+    },
     status: {
         paddingLeft: '5px',
         fontSize: '16px'
+    },
+    icon: {
+        color: lightGrayColor
     },
     active: {
         color: logoColor
@@ -49,6 +67,10 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
     },
     none: {
         color: dangerColor
+    },
+    disabled: {
+        color: grayColor,
+        cursor: 'progress'
     },
     description: {
         display: "flex",
@@ -86,4 +108,5 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
 
 export interface Props {
     childData?: ChildState;
+    isAdmin?: boolean;
 }

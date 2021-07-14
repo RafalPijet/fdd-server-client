@@ -8,14 +8,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { setUserToast } from '../../../redux/actions/generalActions';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { CssTextField } from '../../../types/global';
-import {
-  StyleProps,
-  PropsClasses,
-  useStyles,
-  UserName,
-  Props,
-  FddSwitch,
-} from './UsersSearcherStyle';
+import { useStyles, UserName, Props, FddSwitch } from './UsersSearcherStyle';
 
 const UsersSearcher: React.FC<Props> = (props) => {
   const { label, api, getSelectedItem, isDisabled } = props;
@@ -24,7 +17,7 @@ const UsersSearcher: React.FC<Props> = (props) => {
   const [selectedUser, setSelectedUser] = useState<UserName | null>(null);
   const [options, setOptions] = useState<UserName[]>([]);
   const loading = open && options.length === 0;
-  const classes: PropsClasses = useStyles({} as StyleProps);
+  const classes = useStyles();
   const dispatch = useDispatch();
 
   const switchLabel = classNames({

@@ -8,12 +8,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
 import CustomButton from '../CustomButton/CustomButton';
 import { TransitionProps } from '@material-ui/core/transitions';
-import {
-  Props,
-  useStyles,
-  StyleProps,
-  PropsClasses,
-} from './ModalAreYouSureStyle';
+import { Props, useStyles } from './ModalAreYouSureStyle';
 import { ReactComponent as sadSVG } from '../../../images/sad.svg';
 
 const Transition = React.forwardRef(function Transition(
@@ -25,7 +20,7 @@ const Transition = React.forwardRef(function Transition(
 
 const ModalAreYouSure: React.FC<Props> = (props) => {
   const { isOpen, isConfirm, title, descriprion } = props;
-  const classes: PropsClasses = useStyles({} as StyleProps);
+  const classes = useStyles();
 
   return (
     <Dialog

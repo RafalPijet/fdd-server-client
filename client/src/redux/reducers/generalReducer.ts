@@ -21,6 +21,8 @@ import {
     UpdateSelectedPersonChildImagesListAction,
     UPDATE_SELECTED_PERSON_CHILD_AVATAR,
     UpdateSelectedPersonChildAvatarAction,
+    UPDATE_SELECTED_PERSON_CHILD_STATUS,
+    UpdateSelectedPersonChildStatusAction,
     ADD_CHILD_TO_SELECTED_PERSON,
     AddChildToSelectedPersonAction,
     UPDATE_SELECTED_PERSON_USER_DATA,
@@ -90,7 +92,8 @@ const generalReducer = (
         UpdateSelectedPersonUserDataAction | SetSelectedQuantityAction | UpdateNewsOfDataAction |
         UpdateSelectedPersonChildInvoicesListAction | UpdatePicturesOfCurrentNewsAction |
         SetChildrenListAction | SetAvailableReportsYearsAction | SetReportsOfSelectedYearAction |
-        UpdateReportItemAction | AddReportItemAction | RemoveReportItemAction
+        UpdateReportItemAction | AddReportItemAction | RemoveReportItemAction |
+        UpdateSelectedPersonChildStatusAction
 ) => {
     switch (action.type) {
         case SET_TOAST:
@@ -134,6 +137,14 @@ const generalReducer = (
                 selectedPerson: {
                     ...state.selectedPerson,
                     avatar: action.payload
+                }
+            }
+        case UPDATE_SELECTED_PERSON_CHILD_STATUS:
+            return {
+                ...state,
+                selectedPerson: {
+                    ...state.selectedPerson,
+                    active: action.isActive
                 }
             }
         case ADD_CHILD_TO_SELECTED_PERSON:

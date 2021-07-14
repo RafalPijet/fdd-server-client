@@ -42,12 +42,12 @@ import {
   getEventChange,
   setEventChange,
 } from '../../../redux/actions/generalActions';
-import { useStyles, StyleProps, PropsClasses } from './AdminMessagesStyle';
+import { useStyles } from './AdminMessagesStyle';
 import { naviAdminMessagesData } from '../../../data/entry';
 import { UserName } from '../../common/UsersSearcher/UsersSearcherStyle';
 
 const AdminMessages: React.FC = () => {
-  const classes: PropsClasses = useStyles({} as StyleProps);
+  const classes = useStyles();
   const dispatch = useDispatch();
   const eventChange = useSelector(getEventChange);
   const eventData = eventChange.data as EventChangeReplyData;

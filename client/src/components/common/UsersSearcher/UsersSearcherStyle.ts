@@ -1,10 +1,8 @@
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import { makeStyles, withStyles } from '@material-ui/core/styles';
-import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
+import { makeStyles, createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import Switch from '@material-ui/core/Switch';
 import { logoColor, grayColor } from '../../../styles/globalStyles';
 
-const userSearcherStyle = (theme: Theme) => ({
+export const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
         width: "inherit",
         display: "flex",
@@ -21,7 +19,7 @@ const userSearcherStyle = (theme: Theme) => ({
     disabled: {
         color: grayColor
     }
-})
+}))
 
 export const FddSwitch = withStyles({
     switchBase: {
@@ -37,13 +35,6 @@ export const FddSwitch = withStyles({
     track: {},
 })(Switch);
 
-export interface StyleProps {
-    root: BaseCSSProperties;
-    input: BaseCSSProperties;
-    label: BaseCSSProperties;
-    disabled: BaseCSSProperties;
-}
-
 export interface UserName {
     _id: string;
     name: string;
@@ -56,6 +47,3 @@ export interface Props {
     getSelectedItem: (item: UserName | null) => void;
     isDisabled: boolean;
 }
-
-export type PropsClasses = Record<keyof StyleProps, string>;
-export const useStyles = makeStyles(userSearcherStyle as any);

@@ -1,9 +1,7 @@
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import { makeStyles } from '@material-ui/core/styles';
-import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import image from '../../../images/sign.jpg';
 
-const adminContentStyle = (theme: Theme) => ({
+export const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
         flexDirection: "column",
         padding: "15px",
@@ -23,13 +21,4 @@ const adminContentStyle = (theme: Theme) => ({
         background: 'rgba(156, 39, 176, 0.8)',
         padding: '30px 80px'
     }
-})
-
-export interface StyleProps {
-    root: BaseCSSProperties;
-    inputIconsColor: BaseCSSProperties;
-    childZone: BaseCSSProperties;
-}
-
-export type PropsClasses = Record<keyof StyleProps, string>;
-export const useStyles = makeStyles(adminContentStyle as any);
+}))

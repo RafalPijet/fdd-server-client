@@ -1,13 +1,11 @@
 import { container } from '../../../styles/globalStyles';
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { UserStatus } from '../../../types/global';
-import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
 
-const loginPageStyle = (theme: Theme) => ({
+export const useStyles = makeStyles((theme: Theme) => createStyles({
     container: {
         ...container,
-        zIndex: "2",
+        zIndex: 2,
         position: "relative",
         paddingTop: "20vh",
         color: "#FFFFFF",
@@ -91,20 +89,7 @@ const loginPageStyle = (theme: Theme) => ({
     inputIconsColor: {
         color: "#495057"
     }
-})
-
-export interface StyleProps {
-    container: BaseCSSProperties;
-    cardHidden: BaseCSSProperties;
-    form: BaseCSSProperties;
-    cardHeader: BaseCSSProperties;
-    pageHeader: BaseCSSProperties;
-    socialIcons: BaseCSSProperties;
-    divider: BaseCSSProperties;
-    cardFooter: BaseCSSProperties;
-    socialLine: BaseCSSProperties;
-    inputIconsColor: BaseCSSProperties;
-}
+}))
 
 export interface IUserRegister {
     firstName: string;
@@ -166,6 +151,3 @@ export interface IUserLogin {
     email: string;
     password: string;
 }
-
-export type PropsClasses = Record<keyof StyleProps, string>;
-export const useStyles = makeStyles(loginPageStyle as any);

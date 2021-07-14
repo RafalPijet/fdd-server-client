@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useStyles, StyleProps, Props } from './MessageSectionStyle';
+import { useStyles, Props } from './MessageSectionStyle';
 import { Typography } from '@material-ui/core';
 import { IOutsideMessage } from '../../../types/global';
 import GridContainer from '../../common/Grid/GridContainer';
@@ -39,7 +39,7 @@ const MessageSection: React.FC<Props> = (props) => {
   const isError = useSelector(getError).isError;
   const isToast = useSelector(getToast).isOpen;
   const isSuccess = useSelector(getSuccess);
-  const classes = useStyles({} as StyleProps);
+  const classes = useStyles();
 
   useEffect(() => {
     setIsErrorValidation({

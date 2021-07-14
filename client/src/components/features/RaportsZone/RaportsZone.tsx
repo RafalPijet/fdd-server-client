@@ -4,10 +4,10 @@ import { Typography } from '@material-ui/core';
 import Card from '../../common/Card/Card';
 import CardHeader from '../../common/CardHeader/CardHeader';
 import CardBody from '../../common/CardBody/CardBody';
-import { useStyles, StyleProps, PropsClasses } from './RaportZoneStyle';
+import { useStyles } from './RaportZoneStyle';
 
 const RaportsZone: React.FC = () => {
-  const classes: PropsClasses = useStyles({} as StyleProps);
+  const classes = useStyles();
   const [isCardAnimation, setIsCardAnimation] = useState<boolean>(true);
   const cardClasses = classNames({
     [classes.root]: true,

@@ -11,11 +11,9 @@ import {
 import { getUserStatus } from '../../../redux/actions/userActions';
 import {
   useStyles,
-  StyleProps,
   IUserLogin,
   IUserRegister,
   Register,
-  PropsClasses,
 } from './LoginPageStyle';
 import { ServiceOptions } from '../../../types/global';
 import { loginUser, addUser } from '../../../redux/thunks';
@@ -37,7 +35,7 @@ import { UserStatus } from '../../../types/global';
 import { naviLoginData } from '../../../data/entry';
 
 const LoginPage: React.FC = () => {
-  const classes: PropsClasses = useStyles({} as StyleProps);
+  const classes = useStyles();
   const dispatch = useDispatch();
   const isPendingRequest = useSelector(getPending);
   const isSuccessRequest = useSelector(getSuccess);

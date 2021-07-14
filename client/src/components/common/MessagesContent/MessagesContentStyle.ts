@@ -1,10 +1,8 @@
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import { makeStyles } from '@material-ui/core/styles';
-import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { MessageOptions } from '../../../types/global';
 import { UserName } from '../UsersSearcher/UsersSearcherStyle';
 
-const messagesContentStyle = (theme: Theme) => ({
+export const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
         height: "300px",
         display: "flex",
@@ -35,7 +33,7 @@ const messagesContentStyle = (theme: Theme) => ({
         overflow: "auto",
         padding: "0 12px"
     }
-})
+}))
 
 export interface Props {
     dataType: Exclude<MessageOptions, MessageOptions.new>;
@@ -43,15 +41,3 @@ export interface Props {
     isSearchMode?: boolean;
     getSelectedUser?: (item: UserName | null) => void;
 }
-
-export interface StyleProps {
-    root: BaseCSSProperties;
-    parentHeight: BaseCSSProperties;
-    adminHeight: BaseCSSProperties;
-    window: BaseCSSProperties;
-    content: BaseCSSProperties;
-    list: BaseCSSProperties;
-}
-
-export type PropsClasses = Record<keyof StyleProps, string>;
-export const useStyles = makeStyles(messagesContentStyle as any);

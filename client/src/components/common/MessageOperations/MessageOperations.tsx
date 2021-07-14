@@ -9,12 +9,7 @@ import {
   setEventChange,
 } from '../../../redux/actions/generalActions';
 import { ModalAYSModes, EventChangeReplyData } from '../../../types/global';
-import {
-  Props,
-  PropsClasses,
-  useStyles,
-  StyleProps,
-} from './MessageOperationsStyle';
+import { Props, useStyles } from './MessageOperationsStyle';
 
 const MessageOperations: React.FC<Props> = (props) => {
   const {
@@ -26,7 +21,7 @@ const MessageOperations: React.FC<Props> = (props) => {
     isUser,
     fromId,
   } = props;
-  const classes: PropsClasses = useStyles({} as StyleProps);
+  const classes = useStyles();
   const [isIncoming, setIsIncoming] = useState<boolean>(false);
   const dispatch = useDispatch();
 

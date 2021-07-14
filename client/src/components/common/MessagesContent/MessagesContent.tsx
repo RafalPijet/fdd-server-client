@@ -14,16 +14,11 @@ import MessageOperations from '../MessageOperations/MessageOperations';
 import UsersSearcher from '../UsersSearcher/UsersSearcher';
 import MessageItem from '../MessageItem/MessageItem';
 import { API_URL } from '../../../config';
-import {
-  StyleProps,
-  useStyles,
-  Props,
-  PropsClasses,
-} from './MessagesContentStyle';
+import { useStyles, Props } from './MessagesContentStyle';
 
 const MessagesContent: React.FC<Props> = (props) => {
   const messages = useSelector(getMessages);
-  const classes: PropsClasses = useStyles({} as StyleProps);
+  const classes = useStyles();
   const { dataType, isAdmin, isSearchMode, getSelectedUser } = props;
   const [selectedMessage, setSelectedMessage] = useState<string>('');
   const [selectedUserName, setSelectedUserName] = useState<string | undefined>(
