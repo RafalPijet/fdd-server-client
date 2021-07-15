@@ -3,13 +3,15 @@ import requestReducer from './reducers/requestReducer';
 import userReducer from './reducers/userReducer';
 import messagesReducer from './reducers/messagesReducer';
 import generalReducer from './reducers/generalReducer';
+import reportsReducer from './reducers/reportsReducer';
 import thunk from 'redux-thunk';
 
 const rootReducer = combineReducers({
     request: requestReducer,
     general: generalReducer,
     user: userReducer,
-    userMessages: messagesReducer
+    userMessages: messagesReducer,
+    reports: reportsReducer
 });
 
 export type RootState = ReturnType<typeof rootReducer>

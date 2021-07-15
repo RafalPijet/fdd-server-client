@@ -111,7 +111,7 @@ const ShowUserData: React.FC<Props> = (props) => {
         {user.children.map((child, index) => (
           <GridItem key={index} xs={12} sm={12} lg={7}>
             <Paper elevation={8} className={classes.childZone}>
-              <ChildrenZone isAdmin={true} childData={child} />
+              <ChildrenZone childData={child} />
             </Paper>
           </GridItem>
         ))}

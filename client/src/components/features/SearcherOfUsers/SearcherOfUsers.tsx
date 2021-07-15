@@ -20,6 +20,7 @@ import {
   setSelectedUserType,
   getSelectedUserType,
   setSelectedChild,
+  getSelectedPerson,
 } from '../../../redux/actions/generalActions';
 import { getAdding } from '../../../redux/actions/requestActions';
 import { API_URL } from '../../../config';
@@ -30,6 +31,7 @@ const SearcherOfUsers: React.FC = () => {
   const dispatch = useDispatch();
   const isAdding = useSelector(getAdding);
   const selectedUserType = useSelector(getSelectedUserType);
+  const selectedPerson = useSelector(getSelectedPerson);
   const [open, setOpen] = useState<boolean>(false);
   const [selectedPersonName, setSelectedPersonName] =
     useState<SelectedPerson | null>(null);
@@ -47,6 +49,12 @@ const SearcherOfUsers: React.FC = () => {
   setTimeout(() => {
     setIsCardAnimation(false);
   }, 900);
+
+  useEffect(() => {
+    if (selectedPerson === null && selectedPersonName !== null) {
+      setSelectedPersonName(null);
+    }
+  }, [selectedPerson]);
 
   useEffect(() => {
     if (userType !== selectedUserType) {

@@ -15,6 +15,10 @@ import {
     StopMessagesRequestAction,
     ErrorMessagesRequestAction,
     ResetMessagesRequestAction,
+    StartReportingRequestAction,
+    StopReportingRequestAction,
+    ErrorReportingRequestAction,
+    ResetReportingRequestAction,
     START_REQUEST,
     STOP_REQUEST,
     ERROR_REQUEST,
@@ -30,7 +34,11 @@ import {
     START_MESSAGES_REQUEST,
     STOP_MESSAGES_REQUEST,
     ERROR_MESSAGES_REQUEST,
-    RESET_MESSAGES_REQUEST
+    RESET_MESSAGES_REQUEST,
+    START_REPORTING_REQUEST,
+    STOP_REPORTING_REQUEST,
+    ERROR_REPORTING_REQUEST,
+    RESET_REPORTING_REQUEST
 } from '../actions/requestActions';
 
 export type errorContent = {
@@ -51,6 +59,9 @@ export interface RequestState {
     messages: boolean;
     messagesError: errorContent;
     messagesSuccess: boolean;
+    reporting: boolean;
+    reportingError: errorContent;
+    reportingSuccess: boolean;
 }
 
 const initialState: RequestState = {
@@ -77,7 +88,13 @@ const initialState: RequestState = {
         isError: false,
         message: ""
     },
-    messagesSuccess: false
+    messagesSuccess: false,
+    reporting: false,
+    reportingError: {
+        isError: false,
+        message: ""
+    },
+    reportingSuccess: false
 }
 
 const requestReducer = (
@@ -85,7 +102,8 @@ const requestReducer = (
     action: StartRequestAction | StopRequestAction | ErrorRequestAction | ResetRequestAction
         | StartUpdatingRequestAction | StopUpdatingRequestAction | ErrorUpdatingRequestAction | ResetUpdatingRequestAction |
         StartAddingRequestAction | StopAddingRequestAction | ErrorAddingRequestAction | ResetAddingRequestAction |
-        StartMessagesRequestAction | StopMessagesRequestAction | ErrorMessagesRequestAction | ResetMessagesRequestAction
+        StartMessagesRequestAction | StopMessagesRequestAction | ErrorMessagesRequestAction | ResetMessagesRequestAction |
+        StartReportingRequestAction | StopReportingRequestAction | ErrorReportingRequestAction | ResetReportingRequestAction
 ) => {
     switch (action.type) {
         case START_REQUEST:
@@ -140,6 +158,22 @@ const requestReducer = (
             return {
                 ...state,
                 messages: false, messagesSuccess: false, messagesError: {
+                    isError: false,
+                    message: ""
+                }
+            }
+        case START_REPORTING_REQUEST:
+            return { ...state, reporting: true }
+        case STOP_REPORTING_REQUEST:
+            return { ...state, reporting: false, reportingSuccess: true }
+        case ERROR_REPORTING_REQUEST:
+            return { ...state, reporting: false, reportingError: action.payload }
+        case RESET_REPORTING_REQUEST:
+            return {
+                ...state,
+                reporting: false,
+                reportingSuccess: false,
+                reportingError: {
                     isError: false,
                     message: ""
                 }

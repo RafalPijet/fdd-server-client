@@ -41,6 +41,8 @@ import {
     SetChildAvatarAction,
     UpdateChildDataAction,
     UpdateUserDataAction,
+    UpdateChildStatusAction,
+    updateChildStatus
 } from './actions/userActions';
 import {
     loadUserMessages,
@@ -634,7 +636,7 @@ export const updateChildDataRequest = (payload: IChildData, childId: string): Th
     any,
     RootState,
     StartRequestAction | StopRequestAction | ErrorRequestAction | SetToastAction |
-    UpdateChildDataAction | UpdateSelectedPersonChildDataAction
+    UpdateChildDataAction | UpdateSelectedPersonChildDataAction | UpdateChildStatusAction
 > => async (dispatch, getState) => {
     dispatch(startRequest());
 
@@ -648,6 +650,7 @@ export const updateChildDataRequest = (payload: IChildData, childId: string): Th
 
         if (getState().user.status === UserStatus.parent) {
             dispatch(updateChildData(childId, res.data.child));
+            dispatch(updateChildStatus(childId, res.data.child.active));
         } else {
             dispatch(updateSelectedPersonChildData(res.data.child));
         }
@@ -866,7 +869,8 @@ export const addAvatarToChild = (avatar: File, childId: string): ThunkAction<
     any,
     RootState,
     StartAddingRequestAction | StopAddingRequestAction | ErrorAddingRequestAction |
-    SetToastAction | SetChildAvatarAction | UpdateSelectedPersonChildAvatarAction
+    SetToastAction | SetChildAvatarAction | UpdateSelectedPersonChildAvatarAction |
+    UpdateChildStatusAction
 > => async (dispatch, getState) => {
     dispatch(startAddingRequest());
 
@@ -882,6 +886,7 @@ export const addAvatarToChild = (avatar: File, childId: string): ThunkAction<
         const result = `${URL}${res.data.avatar}`;
         if (getState().user.status === UserStatus.parent) {
             dispatch(setChildAvatar(childId, result));
+            dispatch(updateChildStatus(childId, res.data.isActive));
         } else {
             dispatch(updateSelectedPersonalChildAvatar(result));
         }
@@ -938,7 +943,8 @@ export const addImageToChild = (image: File, childId: string): ThunkAction<
     any,
     RootState,
     StartAddingRequestAction | StopAddingRequestAction | ErrorAddingRequestAction |
-    SetToastAction | SetChildImagesListAction | UpdateSelectedPersonChildImagesListAction
+    SetToastAction | SetChildImagesListAction | UpdateSelectedPersonChildImagesListAction |
+    UpdateChildStatusAction
 > => async (dispatch, getState) => {
     dispatch(startAddingRequest());
 
@@ -956,6 +962,7 @@ export const addImageToChild = (image: File, childId: string): ThunkAction<
         })
         if (getState().user.status === UserStatus.parent) {
             dispatch(setChildImagesList(childId, images));
+            dispatch(updateChildStatus(childId, res.data.isActive));
         } else {
             dispatch(updateSelectedPersonalChildImagesList(images));
         }
@@ -1016,7 +1023,8 @@ export const updateImagesList = (payload: ImagesLists): ThunkAction<
     any,
     RootState,
     StartUpdatingRequestAction | StopUpdatingRequestAction | ErrorUpdatingRequestAction |
-    SetToastAction | SetChildImagesListAction | UpdateSelectedPersonChildImagesListAction
+    SetToastAction | SetChildImagesListAction | UpdateSelectedPersonChildImagesListAction |
+    UpdateChildStatusAction
 > => async (dispatch, getState) => {
     try {
         dispatch(startUpdatingRequest());
@@ -1035,6 +1043,9 @@ export const updateImagesList = (payload: ImagesLists): ThunkAction<
         })
         if (getState().user.status === UserStatus.parent) {
             dispatch(setChildImagesList(payload.id!, payload.contentList));
+            if (payload.id !== null) {
+                dispatch(updateChildStatus(payload.id, res.data.isActive))
+            }
         } else {
             dispatch(updateSelectedPersonalChildImagesList(payload.contentList));
         }
@@ -1369,6 +1380,40 @@ export const updateChildStatusRequest = (_id: string, isActive: boolean): ThunkA
             })
         if (res.status === 201) {
             dispatch(updateSelectedPersonalChildStatus(isActive));
+        }
+        dispatch(stopRequest());
+    } catch (err) {
+        if (err.response !== undefined) {
+            err.response.data.message ?
+                dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        } else {
+            dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        }
+    }
+}
+
+export const removeChildRequest = (_id: string): ThunkAction<
+    Promise<void>,
+    any,
+    RootState,
+    StartRequestAction | StopRequestAction | ErrorRequestAction | SetToastAction |
+    SetSelectedChild | SetSelectedPersonAction
+> => async (dispatch, getState) => {
+    dispatch(startRequest());
+
+    try {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        let res: AxiosResponse = await axios.delete(`${API_URL}/admin/child/${_id}`,
+            {
+                headers: {
+                    'Authorization': localStorage.getItem('tokenFDD')
+                }
+            })
+        if (res.status === 201) {
+            dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
+            dispatch(setSelectedChild(null));
+            dispatch(setSelectedPerson(null));
         }
         dispatch(stopRequest());
     } catch (err) {

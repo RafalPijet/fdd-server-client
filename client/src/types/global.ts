@@ -4,7 +4,7 @@ import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import Switch from '@material-ui/core/Switch';
 import Tooltip from '@material-ui/core/Tooltip';
 import TextField from '@material-ui/core/TextField';
-
+import { SelectedPerson } from '../components/features/SearcherOfUsers/SearcherOfUsersStyle';
 import { primaryColor, grayColor } from '../styles/globalStyles';
 
 export const different = 567993596000;
@@ -106,6 +106,16 @@ export interface InvoiceState {
 
 export interface AvailableReportsYears {
     year: string;
+}
+
+export interface ReportsState {
+    users: number;
+    children: number;
+    news: number;
+    invoices: number;
+    isCurrentReport: boolean;
+    unpublicatedChildren: SelectedPerson[];
+    parentsWithoutChildren: SelectedPerson[];
 }
 
 export interface ReportState {

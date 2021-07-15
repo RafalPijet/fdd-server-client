@@ -143,7 +143,7 @@ class AuthController {
     @get('/children/names')
     async getChildrenNames(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const children = await ChildModel.find();
+            const children = await ChildModel.find({ active: true });
             if (!children) {
                 next(new HttpException(404,
                     `Brak dostępnych danych`))

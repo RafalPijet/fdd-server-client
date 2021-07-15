@@ -19,6 +19,10 @@ export const START_MESSAGES_REQUEST = 'request/start_messages_request';
 export const STOP_MESSAGES_REQUEST = 'request/stop_messages_request';
 export const ERROR_MESSAGES_REQUEST = 'request/error_messages_request';
 export const RESET_MESSAGES_REQUEST = 'request/reset_messages_request';
+export const START_REPORTING_REQUEST = 'request/start_reporting_request';
+export const STOP_REPORTING_REQUEST = 'request/stop_reporting_request';
+export const ERROR_REPORTING_REQUEST = 'request/error_reporting_request';
+export const RESET_REPORTING_REQUEST = 'request/reset_reporting_request';
 
 //ACTIONS TYPES
 export interface StartRequestAction extends Action<typeof START_REQUEST> { }
@@ -45,6 +49,12 @@ export interface ErrorMessagesRequestAction extends Action<typeof ERROR_MESSAGES
     payload: errorContent
 }
 export interface ResetMessagesRequestAction extends Action<typeof RESET_MESSAGES_REQUEST> { }
+export interface StartReportingRequestAction extends Action<typeof START_REPORTING_REQUEST> { }
+export interface StopReportingRequestAction extends Action<typeof STOP_REPORTING_REQUEST> { }
+export interface ErrorReportingRequestAction extends Action<typeof ERROR_REPORTING_REQUEST> {
+    payload: errorContent
+}
+export interface ResetReportingRequestAction extends Action<typeof RESET_REPORTING_REQUEST> { }
 
 //CREATORS OF ACTIONS
 export const startRequest = (): StartRequestAction => ({
@@ -99,6 +109,19 @@ export const errorMessagesRequest = (error: errorContent): ErrorMessagesRequestA
 export const resetMessagesRequest = (): ResetMessagesRequestAction => ({
     type: RESET_MESSAGES_REQUEST
 })
+export const startReportingRequest = (): StartReportingRequestAction => ({
+    type: START_REPORTING_REQUEST
+})
+export const stopReportingRequest = (): StopReportingRequestAction => ({
+    type: STOP_REPORTING_REQUEST
+})
+export const errorReportingRequest = (error: errorContent): ErrorReportingRequestAction => ({
+    type: ERROR_REPORTING_REQUEST,
+    payload: error
+})
+export const resetReportingRequest = (): ResetReportingRequestAction => ({
+    type: RESET_REPORTING_REQUEST
+})
 
 //SELECTORS
 export const getRequest = (rootState: RootState) => rootState.request;
@@ -114,3 +137,7 @@ export const getAddingError = (rootState: RootState) => getRequest(rootState).ad
 export const getMessages = (rootState: RootState) => getRequest(rootState).messages;
 export const getMessagesSuccess = (rootState: RootState) => getRequest(rootState).messagesSuccess;
 export const getMessagesError = (rootState: RootState) => getRequest(rootState).messagesError;
+export const getReporting = (rootState: RootState) => getRequest(rootState).reporting;
+export const getReportingSuccess = (rootState: RootState) => getRequest(rootState).reportingSuccess
+export const getReportingError = (rootState: RootState) => getRequest(rootState).reportingError;
+

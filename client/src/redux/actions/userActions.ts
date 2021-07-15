@@ -10,6 +10,7 @@ export const SET_CHILD_IMAGES_LIST = 'user/set_child_images_list';
 export const SET_CHILD_AVATAR = 'user/set_child_avatar';
 export const UPDATE_CHILD_DATA = 'user/update_child_data';
 export const UPDATE_USER_DATA = 'user/update_user_data';
+export const UPDATE_CHILD_STATUS = 'user/update_child_status';
 
 //ACTIONS TYPES
 export interface AddUserAction extends Action<typeof ADD_USER> {
@@ -33,6 +34,10 @@ export interface UpdateChildDataAction extends Action<typeof UPDATE_CHILD_DATA> 
 }
 export interface UpdateUserDataAction extends Action<typeof UPDATE_USER_DATA> {
     payload: Omit<UserState, "_id" | "status" | "children">
+}
+export interface UpdateChildStatusAction extends Action<typeof UPDATE_CHILD_STATUS> {
+    isActive: boolean,
+    childId: string
 }
 
 //CREATORS OF ACTIONS
@@ -65,6 +70,11 @@ export const updateChildData = (childId: string, payload: IChildData): UpdateChi
 export const updateUserData = (payload: Omit<UserState, "_id" | "status" | "children">): UpdateUserDataAction => ({
     type: UPDATE_USER_DATA,
     payload
+})
+export const updateChildStatus = (childId: string, isActive: boolean): UpdateChildStatusAction => ({
+    type: UPDATE_CHILD_STATUS,
+    isActive,
+    childId
 })
 
 //SELECTORS

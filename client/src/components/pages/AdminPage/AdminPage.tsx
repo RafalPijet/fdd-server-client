@@ -14,6 +14,10 @@ import {
   resetAddingRequest,
   getMessages,
   getMessagesError,
+  resetMessagesRequest,
+  getReporting,
+  getReportingError,
+  resetReportingRequest,
 } from '../../../redux/actions/requestActions';
 import Header from '../../common/Header/Header';
 import HeaderLinks from '../../features/HeaderLinks/HeaderLinksAdminPage';
@@ -33,7 +37,11 @@ import {
   setSelectedUserType,
   setSelectedQuantity,
 } from '../../../redux/actions/generalActions';
-import { removeMessage, updateUserStatus } from '../../../redux/thunks';
+import {
+  removeMessage,
+  updateUserStatus,
+  removeChildRequest,
+} from '../../../redux/thunks';
 import { ModalAYSModes, SearchUserType } from '../../../types/global';
 import AdminContent from '../../features/AdminContent/AdminContent';
 import image from '../../../images/jumbotronAdmin.jpg';
@@ -45,12 +53,14 @@ const AdminPage: React.FC = () => {
   const isUpdating = useSelector(getUpdating);
   const isAdding = useSelector(getAdding);
   const isMessages = useSelector(getMessages);
+  const isReporting = useSelector(getReporting);
   const toast = useSelector(getToast);
   const modalAYS = useSelector(getModalAreYouSure);
   const error = useSelector(getError);
   const updatingError = useSelector(getUpdatingError);
   const addingError = useSelector(getAddingError);
   const messagesError = useSelector(getMessagesError);
+  const reportingError = useSelector(getReportingError);
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -82,6 +92,11 @@ const AdminPage: React.FC = () => {
     }
     if (messagesError.isError) {
       handleToast(messagesError.message, 'error');
+      dispatch(resetMessagesRequest());
+    }
+    if (reportingError.isError) {
+      handleToast(reportingError.message, 'error');
+      dispatch(resetReportingRequest());
     }
   }, [
     toast.isOpen,
@@ -89,6 +104,7 @@ const AdminPage: React.FC = () => {
     updatingError.isError,
     addingError.isError,
     messagesError.isError,
+    reportingError.isError,
   ]);
 
   const handleToast = (message: string, variant: VariantType) => {
@@ -110,8 +126,9 @@ const AdminPage: React.FC = () => {
         }
       }
       if (modalAYS.mode === ModalAYSModes.removeChild) {
-        console.log('Remove child');
-        console.log(modalAYS.data.childId);
+        if (modalAYS.data.childId !== undefined) {
+          dispatch(removeChildRequest(modalAYS.data.childId));
+        }
       }
     }
 
@@ -129,13 +146,17 @@ const AdminPage: React.FC = () => {
   return (
     <div>
       <Header
-        isSpiner={isPending || isUpdating || isAdding || isMessages}
+        isSpiner={
+          isPending || isUpdating || isAdding || isMessages || isReporting
+        }
         color="transparent"
         brand="Fundacja Dorośli Dzieciom"
         fixed
         rightLinks={
           <HeaderLinks
-            isSpiner={isPending || isUpdating || isAdding || isMessages}
+            isSpiner={
+              isPending || isUpdating || isAdding || isMessages || isReporting
+            }
           />
         }
         changeColorOnScroll={{

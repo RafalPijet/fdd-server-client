@@ -18,7 +18,8 @@ import {
     IUser,
     UserModel,
     IInvoice,
-    buildInvoice
+    buildInvoice,
+    UserStatus
 } from '../models';
 import { clearImage, UserDto } from '../utils/functions';
 
@@ -140,19 +141,27 @@ class UserController {
     @put('/child/images')
     async updateImagesList(req: Request, res: Response, next: NextFunction): Promise<void> {
         const { contentList, removeList, id } = req.body;
+        const request = req as RequestWithUser;
+
         try {
             const child = await ChildModel.findById(id);
             if (!child) {
                 next(new HttpException(404, "Nie znaleziono dziecka"))
             } else {
                 child.images = contentList;
+                if (request.user.status === UserStatus.parent && child.active === true) {
+                    child.active = false
+                }
                 if (removeList.length) {
                     removeList.forEach((item: string) => {
                         clearImage(item)
                     })
                 }
                 await child.save();
-                res.status(201).json({ message: 'Dokonano zmian na liście zdjęć dziecka' });
+                res.status(201).json({
+                    message: 'Dokonano zmian na liście zdjęć dziecka',
+                    isActive: child.active
+                });
             }
         } catch (err) {
             next(new HttpException(404, 'Nieudana zmiana listy zdjęć'));
@@ -199,6 +208,7 @@ class UserController {
     @bodyValidator(ValidatorKeys.addChild)
     async updateChild(req: Request, res: Response, next: NextFunction): Promise<void> {
         const { childId } = req.params;
+        const request = req as RequestWithUser;
         const payload: Omit<IChild, 'parent'> = req.body;
 
         try {
@@ -208,13 +218,16 @@ class UserController {
                 child.lastName = payload.lastName;
                 child.birthDate = payload.birthDate;
                 child.info = payload.info;
+                if (request.user.status === UserStatus.parent && child.active === true) {
+                    child.active = false
+                }
                 await child.save();
                 res.status(201).json({
                     child,
                     message: `Aktualizacja danych podopiecznego ${child.firstName} ${child.lastName} przebiegła poprawnie.`
                 })
             } else {
-                next(new HttpException(404, 'Nieznaleziono podopecznego!'));
+                next(new HttpException(404, 'Nie znaleziono podopecznego!'));
             }
         } catch (err) {
             next(new HttpException(404, 'Nieudana akualizacja danych podopiecznego!'));
@@ -224,6 +237,7 @@ class UserController {
     @put('/child/avatar/:childId')
     async addChildAvatar(req: Request, res: Response, next: NextFunction): Promise<void> {
         const { childId } = req.params;
+        const request = req as RequestWithUser;
         const avatars = 'avatars';
         if (!req.files) {
             next(new HttpException(404, 'Brak portretu'));
@@ -248,11 +262,15 @@ class UserController {
                         clearImage(oldAvatar)
                     }
                     foundChild.avatar = imageUrl;
+                    if (request.user.status === UserStatus.parent && foundChild.active === true) {
+                        foundChild.active = false
+                    }
                     await foundChild.save();
                     res.status(201).json(
                         {
                             message: `Ustawiono portet dla ${foundChild.firstName} ${foundChild.lastName}`,
-                            avatar: foundChild.avatar
+                            avatar: foundChild.avatar,
+                            isActive: foundChild.active
                         });
                 } else {
                     next(new HttpException(404, 'Nieudane dodanie zdjęcia. Nie znaleziono dziecka.'));
@@ -266,6 +284,7 @@ class UserController {
     @post('/child/image/:childId')
     async addChildImage(req: Request, res: Response, next: NextFunction): Promise<void> {
         const { childId } = req.params;
+        const request = req as RequestWithUser;
         const images = 'images';
         if (!req.files) {
             next(new HttpException(404, 'Brak obrazu'));
@@ -289,11 +308,15 @@ class UserController {
                             console.log(err)                                //It's will be remove
                         })                                                  //It's will be remove
                         foundChild.images = [...foundChild.images!, imageUrl];
+                        if (request.user.status === UserStatus.parent && foundChild.active === true) {
+                            foundChild.active = false
+                        }
                         await foundChild.save()
                         res.status(201).json(
                             {
                                 message: `Dodano zdjęcia dla ${foundChild.firstName} ${foundChild.lastName}`,
-                                images: foundChild.images
+                                images: foundChild.images,
+                                isActive: foundChild.active
                             });
                     }
 

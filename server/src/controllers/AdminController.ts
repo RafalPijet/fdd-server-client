@@ -644,4 +644,28 @@ class AdminController {
             next(new HttpException(404, 'Aktualizacja statusu podopiecznego nieudana!'));
         }
     }
+
+    @del('/child/:_id')
+    async removeChild(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const { _id } = req.params;
+
+        try {
+            const removedChild = await ChildModel.findByIdAndDelete(_id);
+            if (!removedChild) {
+                next(new HttpException(404, 'Nie znaleziono podopiecznego.'));
+            } else {
+                if (removedChild.avatar) {
+                    clearImage(removedChild.avatar)
+                }
+                if (removedChild.images && removedChild.images.length) {
+                    removedChild.images.forEach((item: string) => {
+                        clearImage(item);
+                    })
+                }
+                res.status(201).json({ message: `Podopieczny ${removedChild.firstName} ${removedChild.lastName} został bezpowrotnie usunięty!` })
+            }
+        } catch (err) {
+            next(new HttpException(404, 'Nieudane usunięcie podopiecznego.'));
+        }
+    }
 }
