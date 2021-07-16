@@ -1,6 +1,6 @@
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { UserState } from '../../../types/global';
-import { logoColor } from '../../../styles/globalStyles';
+import { logoColor, dangerColor, lightGrayColor, grayColor } from '../../../styles/globalStyles';
 
 export const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
@@ -30,6 +30,17 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
     email: {
         fontSize: '1.25rem',
         textDecoration: 'none'
+    },
+    button: {
+        '&:hover': {
+            backgroundColor: dangerColor
+        }
+    },
+    icon: {
+        color: lightGrayColor
+    },
+    disabled: {
+        color: grayColor,
     },
     childZone: {
         backgroundColor: "rgba(255, 255, 255, 0.2)",

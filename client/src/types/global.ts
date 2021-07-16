@@ -59,7 +59,8 @@ export enum ModalAYSModes {
     changeUserStatus,
     removeNews,
     removeReport,
-    removeChild
+    removeChild,
+    removeParent
 }
 
 export enum ArrowsDirection {

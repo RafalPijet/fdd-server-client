@@ -662,10 +662,63 @@ class AdminController {
                         clearImage(item);
                     })
                 }
+                const parentOfRemovedChild = await UserModel.findById(removedChild.parent);
+                if (parentOfRemovedChild && parentOfRemovedChild.children && parentOfRemovedChild.children.length) {
+                    parentOfRemovedChild.children = parentOfRemovedChild.children.filter((item) => item.toString() !== removedChild._id.toString()
+                    );
+                    await parentOfRemovedChild.save();
+                }
                 res.status(201).json({ message: `Podopieczny ${removedChild.firstName} ${removedChild.lastName} został bezpowrotnie usunięty!` })
             }
         } catch (err) {
             next(new HttpException(404, 'Nieudane usunięcie podopiecznego.'));
+        }
+    }
+
+    @del('/user/:_id')
+    async removeUser(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const { _id } = req.params;
+
+        try {
+            const removedUser = await UserModel.findByIdAndDelete(_id);
+            if (!removedUser) {
+                next(new HttpException(404, 'Nie znaleziono rodzica.'));
+            } else {
+                res.status(201).json({ message: `Rodzic ${removedUser.firstName} ${removedUser.lastName} został usunięty.` })
+            }
+        } catch (err) {
+            next(new HttpException(404, 'Nieudane usunięcie podopiecznego.'));
+        }
+    }
+
+    @get('/reports')
+    async getReportsData(req: Request, res: Response, next: NextFunction): Promise<void> {
+
+        try {
+            const parentsQuantity = await UserModel.find({ status: UserStatus.parent }).countDocuments();
+            const childrenQuantity = await ChildModel.find().countDocuments();
+            const publicatedNewsQuantity = await NewsModel.find({ publication: true }).countDocuments();
+            const invoicesQuantity = await InvoiceModel.find().countDocuments();
+            const currentYear = new Date().getFullYear();
+            const result = await ReportModel.find({
+                createdAt: {
+                    $gte: new Date(currentYear, 1, 1),
+                    $lte: new Date(currentYear, 12, 31)
+                }
+            })
+            const unpublicatedChildren = await ChildModel.find({ active: false });
+            const parentsWithoutChildren = await UserModel.find({ status: UserStatus.parent, children: { $exists: true, $size: 0 } })
+            res.status(200).json({
+                parentsQuantity,
+                childrenQuantity,
+                publicatedNewsQuantity,
+                invoicesQuantity,
+                isReportDone: result && result.length ? true : false,
+                unpublicatedChildren,
+                parentsWithoutChildren
+            });
+        } catch (err) {
+            next(new HttpException(404, 'Nieudane popranie danych raportów.'));
         }
     }
 }

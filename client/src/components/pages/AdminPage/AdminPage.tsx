@@ -41,6 +41,7 @@ import {
   removeMessage,
   updateUserStatus,
   removeChildRequest,
+  removeUserRequest,
 } from '../../../redux/thunks';
 import { ModalAYSModes, SearchUserType } from '../../../types/global';
 import AdminContent from '../../features/AdminContent/AdminContent';
@@ -126,8 +127,13 @@ const AdminPage: React.FC = () => {
         }
       }
       if (modalAYS.mode === ModalAYSModes.removeChild) {
-        if (modalAYS.data.childId !== undefined) {
+        if (modalAYS.data.childId) {
           dispatch(removeChildRequest(modalAYS.data.childId));
+        }
+      }
+      if (modalAYS.mode === ModalAYSModes.removeParent) {
+        if (modalAYS.data.userId) {
+          dispatch(removeUserRequest(modalAYS.data.userId));
         }
       }
     }

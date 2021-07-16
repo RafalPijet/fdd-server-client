@@ -26,7 +26,13 @@ import {
     ErrorMessagesRequestAction,
     startMessagesRequest,
     stopMessagesRequest,
-    errorMessagesRequest
+    errorMessagesRequest,
+    StartReportingRequestAction,
+    StopReportingRequestAction,
+    ErrorReportingRequestAction,
+    startReportingRequest,
+    stopReportingRequest,
+    errorReportingRequest
 } from './actions/requestActions';
 import {
     addCurrentUser,
@@ -1423,6 +1429,68 @@ export const removeChildRequest = (_id: string): ThunkAction<
                 dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         } else {
             dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        }
+    }
+}
+
+export const removeUserRequest = (_id: string): ThunkAction<
+    Promise<void>,
+    any,
+    RootState,
+    StartRequestAction | StopRequestAction | ErrorRequestAction | SetToastAction |
+    SetSelectedPersonAction
+> => async (dispatch, getState) => {
+    dispatch(startRequest());
+
+    try {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        let res: AxiosResponse = await axios.delete(`${API_URL}/admin/user/${_id}`,
+            {
+                headers: {
+                    'Authorization': localStorage.getItem('tokenFDD')
+                }
+            })
+        if (res.status === 201) {
+            dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
+            dispatch(setSelectedPerson(null));
+        }
+        dispatch(stopRequest());
+    } catch (err) {
+        if (err.response !== undefined) {
+            err.response.data.message ?
+                dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        } else {
+            dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        }
+    }
+}
+
+export const getReportsRequest = (): ThunkAction<
+    Promise<void>,
+    any,
+    RootState,
+    StartReportingRequestAction | StopReportingRequestAction | ErrorReportingRequestAction
+> => async (dispatch, getState) => {
+    dispatch(startReportingRequest());
+
+    try {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        let res: AxiosResponse = await axios.get(`${API_URL}/admin/reports`,
+            {
+                headers: {
+                    'Authorization': localStorage.getItem('tokenFDD')
+                }
+            })
+        console.log(res.data)
+        dispatch(stopReportingRequest());
+    } catch (err) {
+        if (err.response !== undefined) {
+            err.response.data.message ?
+                dispatch(errorReportingRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorReportingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        } else {
+            dispatch(errorReportingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }
     }
 }
