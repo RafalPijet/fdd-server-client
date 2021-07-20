@@ -119,6 +119,22 @@ import {
     ChildBasicState,
     ReportState
 } from '../types/global';
+import {
+    SetUsersQuantityAction,
+    SetChildrenQuantityAction,
+    SetPublicatedNewsQuantityAction,
+    SetInvoicesQuantityAction,
+    SetCurrentYearReportIsPublicatedAction,
+    SetUnpublicatedChildrenAction,
+    SetParentsWithoutAnyChildrenAction,
+    setUsersQuantity,
+    setChildrenQuantity,
+    setPublicatedNewsQuantity,
+    setInvoicesQuantity,
+    setCurrentYearReportIsPublicated,
+    setUnpublicatedChildren,
+    setParentsWithoutAnyChildren
+} from './actions/reportsActions';
 import { API_URL, URL } from '../config';
 
 export const loginUser = (payload: IUserLogin): ThunkAction<
@@ -1470,7 +1486,9 @@ export const getReportsRequest = (): ThunkAction<
     Promise<void>,
     any,
     RootState,
-    StartReportingRequestAction | StopReportingRequestAction | ErrorReportingRequestAction
+    StartReportingRequestAction | StopReportingRequestAction | ErrorReportingRequestAction | SetUsersQuantityAction |
+    SetChildrenQuantityAction | SetPublicatedNewsQuantityAction | SetInvoicesQuantityAction |
+    SetCurrentYearReportIsPublicatedAction | SetUnpublicatedChildrenAction | SetParentsWithoutAnyChildrenAction
 > => async (dispatch, getState) => {
     dispatch(startReportingRequest());
 
@@ -1482,7 +1500,24 @@ export const getReportsRequest = (): ThunkAction<
                     'Authorization': localStorage.getItem('tokenFDD')
                 }
             })
-        console.log(res.data)
+        if (res.data) {
+            const {
+                parentsQuantity,
+                childrenQuantity,
+                publicatedNewsQuantity,
+                invoicesQuantity,
+                isReportDone,
+                unpublicatedChildren,
+                parentsWithoutChildren
+            } = res.data;
+            dispatch(setUsersQuantity(parentsQuantity));
+            dispatch(setChildrenQuantity(childrenQuantity));
+            dispatch(setPublicatedNewsQuantity(publicatedNewsQuantity));
+            dispatch(setInvoicesQuantity(invoicesQuantity));
+            dispatch(setCurrentYearReportIsPublicated(isReportDone));
+            dispatch(setUnpublicatedChildren(unpublicatedChildren));
+            dispatch(setParentsWithoutAnyChildren(parentsWithoutChildren));
+        }
         dispatch(stopReportingRequest());
     } catch (err) {
         if (err.response !== undefined) {

@@ -6,15 +6,20 @@ import helmet from 'helmet';
 import multer, { FileFilterCallback } from 'multer';
 import path from 'path';
 import uuid from 'uuid';
+import * as http from 'http';
+import * as socket from 'socket.io';
 import * as dotenv from 'dotenv';
 import { AppRouter } from './routes';
 import "./controllers/AuthController";
 import "./controllers/UserController";
 import "./controllers/AdminController";
+import { IOSocket } from './socket';
 import { errorMiddleware } from './middleware'
 dotenv.config();
 
 const app = express();
+const server: http.Server = http.createServer(app);
+export const io = new IOSocket(server).getIO();
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'uploads');
@@ -63,11 +68,15 @@ mongoose.connect(process.env.DB!, {
     useCreateIndex: true,
     useFindAndModify: false
 })
+
 let db: Connection = mongoose.connection;
 db.once('open', (): void => {
     console.log('Connected to database')
 })
 db.on('error', (err: Error): void => console.log(`Error connection: ${err}`));
-app.listen(3005, (): void => {
+io.on('connection', (socket: socket.Socket) => {
+    console.log('Client connected');
+})
+server.listen(3005, (): void => {
     console.log('Server started at port 3005');
 })

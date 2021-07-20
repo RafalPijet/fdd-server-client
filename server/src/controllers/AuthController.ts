@@ -18,6 +18,7 @@ import HttpException from '../exceptions/HttpException';
 import UserWithThatEmailAlreadyExistsException from '../exceptions/UserWithThatEmailAlreadyExistsException';
 import WrongCredentialsException from '../exceptions/WrongCredentialException';
 import { UserDto, removeDuplicates } from '../utils/functions';
+import { io } from '../index';
 
 @controller('/api/auth')
 class AuthController {
@@ -61,6 +62,7 @@ class AuthController {
                 user.password = hashedPassword;
                 const newUser = buildUser(user);
                 await newUser.save();
+                io.emit('change');
                 res.status(201).send();
             }
         } catch (err) {

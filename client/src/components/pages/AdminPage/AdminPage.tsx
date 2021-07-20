@@ -1,7 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import classNames from 'classnames';
 import { useSelector, useDispatch } from 'react-redux';
 import { VariantType, useSnackbar } from 'notistack';
+import openSocket from 'socket.io-client';
 import {
   getPending,
   getError,
@@ -43,6 +44,7 @@ import {
   removeChildRequest,
   removeUserRequest,
 } from '../../../redux/thunks';
+import { URL } from '../../../config';
 import { ModalAYSModes, SearchUserType } from '../../../types/global';
 import AdminContent from '../../features/AdminContent/AdminContent';
 import image from '../../../images/jumbotronAdmin.jpg';
@@ -62,6 +64,7 @@ const AdminPage: React.FC = () => {
   const addingError = useSelector(getAddingError);
   const messagesError = useSelector(getMessagesError);
   const reportingError = useSelector(getReportingError);
+  const socket = useMemo(() => openSocket(URL), []);
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -177,7 +180,7 @@ const AdminPage: React.FC = () => {
               <AdminMessages />
             </GridItem>
             <GridItem xs={12} sm={12} md={6}>
-              <RaportsZone />
+              <RaportsZone socket={socket} />
               <SearcherOfUsers />
             </GridItem>
           </GridContainer>

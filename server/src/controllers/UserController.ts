@@ -22,6 +22,7 @@ import {
     UserStatus
 } from '../models';
 import { clearImage, UserDto } from '../utils/functions';
+import { io } from '../index';
 
 @controller('/api/users')
 class UserController {
@@ -127,6 +128,7 @@ class UserController {
                     filesToRemove.forEach(item => {
                         fs.unlinkSync(item);
                     })
+                    io.emit('change');
                     res.status(201).json({ message: `Nowa faktura została dodana dla ${foundChild.firstName} ${foundChild.lastName}` });
                 } else {
                     next(new HttpException(404, 'Nie znaleziono dziecka'));
@@ -195,6 +197,7 @@ class UserController {
                 await user.save();
             }
             await newChild.save();
+            io.emit('change');
             res.status(201).json({
                 child: newChild,
                 message: `Do rodzica ${user.firstName} ${user.lastName} został przyporządkowany podopieczny ${newChild.firstName} ${newChild.lastName}`

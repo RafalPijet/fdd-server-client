@@ -27,6 +27,7 @@ import {
 } from '../models';
 import { TargetOptions, IAdminMessage, SearchUserType } from '../types';
 import { removeDuplicates, clearImage } from '../utils/functions';
+import { io } from '../index';
 import nodemailerSendgrid from 'nodemailer-sendgrid';
 import nodemailer from 'nodemailer';
 dotenv.config();
@@ -492,6 +493,7 @@ class AdminController {
             } else {
                 currentNews.publication = isPublication;
                 currentNews.save();
+                io.emit('change');
                 res.status(201).json({ message: `Artukuł "${currentNews.title}" ${isPublication ? "jest" : "nie jest"} publikowany.` })
             }
         } catch (err) {
@@ -534,6 +536,7 @@ class AdminController {
                     clearImage(item)
                 })
             }
+            io.emit('change');
             res.status(202).json({ message: 'Artukuł został usunięty' });
         } catch (err) {
             next(new HttpException(404, 'Nieudane usunięcie artykułu'));
@@ -564,6 +567,7 @@ class AdminController {
                     console.log(err)                    //It's will be remove
                 })
                 fs.unlinkSync(files[0].path);
+                io.emit('change');
                 res.status(201).json({ message: 'Dodanie sprawozdania zakończone sukcesem', newReport });
             } catch (err) {
                 next(new HttpException(404, 'Nieudane dodanie sprawozdania'));
@@ -618,6 +622,7 @@ class AdminController {
             const removedReport = await ReportModel.findByIdAndDelete(id);
             if (removedReport !== null) {
                 clearImage(removedReport.report);
+                io.emit('change');
                 res.status(201).json({ message: `Sprawozdanie ${removedReport.title} zostało usunięte.` })
             } else {
                 next(new HttpException(404, 'Nie znaleziono sprawozdania!'));
@@ -668,6 +673,7 @@ class AdminController {
                     );
                     await parentOfRemovedChild.save();
                 }
+                io.emit('change');
                 res.status(201).json({ message: `Podopieczny ${removedChild.firstName} ${removedChild.lastName} został bezpowrotnie usunięty!` })
             }
         } catch (err) {
@@ -684,6 +690,7 @@ class AdminController {
             if (!removedUser) {
                 next(new HttpException(404, 'Nie znaleziono rodzica.'));
             } else {
+                io.emit('change');
                 res.status(201).json({ message: `Rodzic ${removedUser.firstName} ${removedUser.lastName} został usunięty.` })
             }
         } catch (err) {
@@ -695,6 +702,8 @@ class AdminController {
     async getReportsData(req: Request, res: Response, next: NextFunction): Promise<void> {
 
         try {
+            let unpublicatedChildren;
+            let parentsWithoutChildren;
             const parentsQuantity = await UserModel.find({ status: UserStatus.parent }).countDocuments();
             const childrenQuantity = await ChildModel.find().countDocuments();
             const publicatedNewsQuantity = await NewsModel.find({ publication: true }).countDocuments();
@@ -706,8 +715,24 @@ class AdminController {
                     $lte: new Date(currentYear, 12, 31)
                 }
             })
-            const unpublicatedChildren = await ChildModel.find({ active: false });
-            const parentsWithoutChildren = await UserModel.find({ status: UserStatus.parent, children: { $exists: true, $size: 0 } })
+            const unpublicatedChildrenResult = await ChildModel.find({ active: false });
+            if (unpublicatedChildrenResult) {
+                unpublicatedChildren = unpublicatedChildrenResult.map((child) => {
+                    return {
+                        _id: child._id,
+                        name: `${child.firstName} ${child.lastName}`
+                    }
+                })
+            }
+            const parentsWithoutChildrenResult = await UserModel.find({ status: UserStatus.parent, children: { $exists: true, $size: 0 } });
+            if (parentsWithoutChildrenResult) {
+                parentsWithoutChildren = parentsWithoutChildrenResult.map((parent) => {
+                    return {
+                        _id: parent._id,
+                        name: `${parent.firstName} ${parent.lastName}`
+                    }
+                })
+            }
             res.status(200).json({
                 parentsQuantity,
                 childrenQuantity,
