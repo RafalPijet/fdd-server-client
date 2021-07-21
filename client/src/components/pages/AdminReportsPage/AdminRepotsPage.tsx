@@ -23,6 +23,8 @@ import {
   setUserToast,
   getModalAreYouSure,
   setModalAreYouSure,
+  setAvailableReportsYears,
+  setReportsOfSelectedYear,
 } from '../../../redux/actions/generalActions';
 import {
   getReportsYearsRequest,
@@ -47,7 +49,8 @@ const AdminReportsPage: React.FC = () => {
     window.scrollTo(0, 0);
     dispatch(getReportsYearsRequest());
     return () => {
-      console.log('You gonna do something');
+      dispatch(setAvailableReportsYears([]));
+      dispatch(setReportsOfSelectedYear(null));
     };
   }, []);
 

@@ -837,6 +837,8 @@ export const addReportRequest = (payload: { reportFile: File, reportTitle: strin
                 if (newReport.createdAt.substring(0, 4) === getState().general.selectedYearPeriod[0].createdAt.substring(0, 4)) {
                     newReport.report = `${URL}${newReport.report}`;
                     dispatch(addReportItem(newReport))
+                } else {
+                    dispatch(getReportsYearsRequest());
                 }
             }
         }

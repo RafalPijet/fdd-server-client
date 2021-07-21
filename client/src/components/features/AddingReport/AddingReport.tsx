@@ -20,7 +20,10 @@ import {
   getUpdating,
   getPending,
 } from '../../../redux/actions/requestActions';
-import { setModalAreYouSure } from '../../../redux/actions/generalActions';
+import {
+  setModalAreYouSure,
+  getReportsOfSelectedYear,
+} from '../../../redux/actions/generalActions';
 import { addReportRequest, updateReportRequest } from '../../../redux/thunks';
 import { FddSwitch, FddTooltip, ModalAYSModes } from '../../../types/global';
 import { useStyles, Props } from './AddingReportStyle';
@@ -33,6 +36,7 @@ const AddingReport: React.FC<Props> = (props) => {
   const isUpdating = useSelector(getUpdating);
   const isPending = useSelector(getPending);
   const isAddingSuccess = useSelector(getAddingSuccess);
+  const reportsOfSelectedYear = useSelector(getReportsOfSelectedYear);
   const [reportId, setReportId] = useState<string>('');
   const [reportFile, setReportFile] = useState<any>(null);
   const [reportTitle, setReportTitle] = useState<string>('');
@@ -46,6 +50,16 @@ const AddingReport: React.FC<Props> = (props) => {
     [classes.icon]: isEdit,
     [classes.disabled]: !isEdit || isPending || isAdding || isUpdating,
   });
+
+  useEffect(() => {
+    if (
+      reportsOfSelectedYear !== null &&
+      !reportsOfSelectedYear.length &&
+      isEdit
+    ) {
+      setIsEdit(false);
+    }
+  }, [reportsOfSelectedYear]);
 
   useEffect(() => {
     if (reportToEdit !== null && isEdit) {

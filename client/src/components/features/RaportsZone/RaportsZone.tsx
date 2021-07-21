@@ -20,11 +20,7 @@ import {
   getParentsWithoutAnyChildren,
   getParentsWithoutAnyChildrenQuantity,
 } from '../../../redux/actions/reportsActions';
-import {
-  getReporting,
-  getReportingSuccess,
-  resetReportingRequest,
-} from '../../../redux/actions/requestActions';
+import { getReporting } from '../../../redux/actions/requestActions';
 import { useStyles, Props } from './RaportZoneStyle';
 
 const RaportsZone: React.FC<Props> = (props) => {
@@ -32,7 +28,6 @@ const RaportsZone: React.FC<Props> = (props) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const isPending = useSelector(getReporting);
-  const isPendingSuccess = useSelector(getReportingSuccess);
   const parentsQuantity = useSelector(getUsersQuantity);
   const childrenQuantity = useSelector(getChildrenQuantity);
   const publicatedNewsQuantity = useSelector(getPublicatedNewsQuantity);
@@ -80,13 +75,9 @@ const RaportsZone: React.FC<Props> = (props) => {
   }, []);
 
   useEffect(() => {
-    console.log(socket);
     if (socket) {
       socket.on('change', (data) => {
-        if (isPendingSuccess) {
-          dispatch(resetReportingRequest());
-          dispatch(getReportsRequest());
-        }
+        dispatch(getReportsRequest());
       });
     }
   }, [socket]);

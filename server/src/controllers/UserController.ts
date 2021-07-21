@@ -40,6 +40,34 @@ class UserController {
             };
             const newMessage = buildMessage(message);
             await newMessage.save();
+            if (!userId) {
+                const messageToSend = {
+                    _id: newMessage._id,
+                    isUser: true,
+                    content: newMessage.content,
+                    from: newMessage.from,
+                    userName: `${request.user.firstName} ${request.user.lastName}`,
+                    userEmail: request.user.email,
+                    new: newMessage.new,
+                    to: newMessage.to,
+                    created: newMessage.created
+                }
+                io.emit('messageToAdmin', { action: 'new', message: messageToSend });
+            } else {
+                const parent = await UserModel.findById(userId);
+                const messageToSend = {
+                    _id: newMessage._id,
+                    isUser: true,
+                    content: newMessage.content,
+                    from: newMessage.from,
+                    userName: `${parent?.firstName} ${parent?.lastName}`,
+                    userEmail: parent?.email,
+                    new: newMessage.new,
+                    to: newMessage.to,
+                    created: newMessage.created
+                }
+                io.emit('messageToParent', { action: 'new', message: messageToSend });
+            }
             res.status(201).json({ message: "Wiadomość została wysłana." })
         } catch (err) {
             next(new HttpException(404, `Wiadomość nie została wysłana. - ${err}`))
@@ -123,12 +151,32 @@ class UserController {
                     }
                     const newInvoice = buildInvoice(invoice);
                     await newInvoice.save();
+                    io.emit('change');
                     foundChild.invoices?.push(newInvoice);
                     await foundChild.save();
                     filesToRemove.forEach(item => {
                         fs.unlinkSync(item);
                     })
-                    io.emit('change');
+                    const message: IMessage = {
+                        content: `Dodano fakturę dla ${foundChild.firstName} ${foundChild.lastName}, tytuł: ${description}`,
+                        from: foundChild.parent,
+                        to: process.env.ADMIN_ID
+                    };
+                    const newMessage = buildMessage(message);
+                    await newMessage.save();
+                    const parent = await UserModel.findById(foundChild.parent);
+                    const messageToSend = {
+                        _id: newMessage._id,
+                        isUser: true,
+                        content: newMessage.content,
+                        from: newMessage.from,
+                        userName: `${parent?.firstName} ${parent?.lastName}`,
+                        userEmail: parent?.email,
+                        new: newMessage.new,
+                        to: newMessage.to,
+                        created: newMessage.created
+                    }
+                    io.emit('messageToAdmin', { action: 'new', message: messageToSend });
                     res.status(201).json({ message: `Nowa faktura została dodana dla ${foundChild.firstName} ${foundChild.lastName}` });
                 } else {
                     next(new HttpException(404, 'Nie znaleziono dziecka'));
@@ -152,7 +200,8 @@ class UserController {
             } else {
                 child.images = contentList;
                 if (request.user.status === UserStatus.parent && child.active === true) {
-                    child.active = false
+                    child.active = false;
+                    io.emit('change');
                 }
                 if (removeList.length) {
                     removeList.forEach((item: string) => {
@@ -222,7 +271,8 @@ class UserController {
                 child.birthDate = payload.birthDate;
                 child.info = payload.info;
                 if (request.user.status === UserStatus.parent && child.active === true) {
-                    child.active = false
+                    child.active = false;
+                    io.emit('change');
                 }
                 await child.save();
                 res.status(201).json({
@@ -266,7 +316,8 @@ class UserController {
                     }
                     foundChild.avatar = imageUrl;
                     if (request.user.status === UserStatus.parent && foundChild.active === true) {
-                        foundChild.active = false
+                        foundChild.active = false;
+                        io.emit('change');
                     }
                     await foundChild.save();
                     res.status(201).json(
@@ -312,7 +363,8 @@ class UserController {
                         })                                                  //It's will be remove
                         foundChild.images = [...foundChild.images!, imageUrl];
                         if (request.user.status === UserStatus.parent && foundChild.active === true) {
-                            foundChild.active = false
+                            foundChild.active = false;
+                            io.emit('change');
                         }
                         await foundChild.save()
                         res.status(201).json(

@@ -1,6 +1,6 @@
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { Socket } from 'socket.io-client';
-import { lightGrayColor, logoColor } from '../../../styles/globalStyles';
+import { lightGrayColor } from '../../../styles/globalStyles';
 
 export const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
@@ -17,7 +17,7 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
         transform: "translate3d(100px, 0, 0)"
     },
     cardBody: {
-        color: logoColor
+        color: 'rgba(166, 206, 57, .7)'
     },
     content: {
         color: lightGrayColor

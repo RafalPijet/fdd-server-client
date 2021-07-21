@@ -168,7 +168,7 @@ class AuthController {
     async getReportsYears(req: Request, res: Response, next: NextFunction): Promise<void> {
 
         try {
-            const reports = await ReportModel.find();
+            const reports = await ReportModel.find().sort({ createdAt: -1 });
             if (!reports.length) {
                 next(new HttpException(404,
                     `Brak dostępnych danych`))

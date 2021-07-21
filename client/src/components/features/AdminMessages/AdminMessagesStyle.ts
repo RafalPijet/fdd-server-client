@@ -1,4 +1,5 @@
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
+import { Socket } from 'socket.io-client';
 
 export const useStyles = makeStyles((theme: Theme) => createStyles({
     cardHidden: {
@@ -25,3 +26,7 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
         backgroundColor: "rgba(255, 255, 255, 0.2)"
     },
 }))
+
+export interface Props {
+    socket?: Socket
+}

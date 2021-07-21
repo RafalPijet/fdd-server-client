@@ -20,7 +20,10 @@ import {
   getUpdating,
   getAdding,
 } from '../../../redux/actions/requestActions';
-import { getReportsByYearRequest } from '../../../redux/thunks';
+import {
+  getReportsByYearRequest,
+  getReportsYearsRequest,
+} from '../../../redux/thunks';
 import { a11yProps, setFileType, urltoFile } from '../../../types/functions';
 import { ReportState } from '../../../types/global';
 import { useStyles, Props } from './ReportsListStyle';
@@ -63,6 +66,9 @@ const ReportsList: React.FC<Props> = (props) => {
         reportsOfSelectedYear[0].title
       );
       setIsVisible(true);
+    }
+    if (reportsOfSelectedYear !== null && !reportsOfSelectedYear.length) {
+      dispatch(getReportsYearsRequest());
     }
   }, [reportsOfSelectedYear]);
 

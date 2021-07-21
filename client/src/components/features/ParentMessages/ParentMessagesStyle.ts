@@ -1,4 +1,5 @@
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
+import { Socket } from 'socket.io-client';
 import { grayColor } from '../../../styles/globalStyles';
 
 export const useStyles = makeStyles((theme: Theme) => createStyles({
@@ -33,3 +34,7 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
         color: `${grayColor} !important`
     }
 }))
+
+export interface Props {
+    socket: Socket
+}

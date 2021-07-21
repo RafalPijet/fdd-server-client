@@ -5,6 +5,7 @@ import { MessageState, IMessage } from '../../types/global';
 //ACTIONS NAMES
 export const LOAD_MESSAGES = 'messages/load_messages';
 export const SET_MESSAGE_IS_READED = 'messages/set_message_is_readed';
+export const ADD_MESSAGE_ITEM_ON_FIRST_PLACE = 'messages/add_message_item_on_first_place';
 
 //ACTIONS TYPES
 export interface LoadMessagesAction extends Action<typeof LOAD_MESSAGES> {
@@ -14,6 +15,10 @@ export interface LoadMessagesAction extends Action<typeof LOAD_MESSAGES> {
 
 export interface SetMessageIsReaded extends Action<typeof SET_MESSAGE_IS_READED> {
     _id: IMessage["_id"]
+}
+
+export interface AddMessageItemOnFirstPlaceAction extends Action<typeof ADD_MESSAGE_ITEM_ON_FIRST_PLACE> {
+    payload: IMessage
 }
 
 //CREATORS OF ACTIONS
@@ -28,6 +33,11 @@ export const loadUserMessages = (
 export const setMessageIsReaded = (_id: IMessage["_id"]): SetMessageIsReaded => ({
     type: SET_MESSAGE_IS_READED,
     _id: _id
+})
+
+export const addMessageItemOnFirstPlace = (message: IMessage): AddMessageItemOnFirstPlaceAction => ({
+    type: ADD_MESSAGE_ITEM_ON_FIRST_PLACE,
+    payload: message
 })
 
 //SELECTORS

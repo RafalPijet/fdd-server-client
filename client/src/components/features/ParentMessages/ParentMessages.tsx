@@ -5,7 +5,7 @@ import { getUserName } from '../../../redux/actions/userActions';
 import { getToast, setUserToast } from '../../../redux/actions/generalActions';
 import { getQuantity } from '../../../redux/actions/messageActions';
 import { Typography } from '@material-ui/core';
-import { useStyles } from './ParentMessagesStyle';
+import { useStyles, Props } from './ParentMessagesStyle';
 import { MessageOptions } from '../../../types/global';
 import { addMessage, getUserMessages } from '../../../redux/thunks';
 import Zoom from '@material-ui/core/Zoom';
@@ -23,11 +23,13 @@ import {
   resetMessagesRequest,
   getMessagesError,
 } from '../../../redux/actions/requestActions';
+import { addMessageItemOnFirstPlace } from '../../../redux/actions/messageActions';
 import CustomBottomNavigation from '../../common/CustomBottomNavigation/CustomBottomNavigation';
 import MessagesBody from '../../common/MessagesBody/MessagesBody';
 import { naviMessagesData } from '../../../data/entry';
 
-const ParentMessages: React.FC = () => {
+const ParentMessages: React.FC<Props> = (props) => {
+  const { socket } = props;
   const classes = useStyles();
   const userName = useSelector(getUserName);
   const isPending = useSelector(getMessages);
@@ -44,6 +46,8 @@ const ParentMessages: React.FC = () => {
   const [newMessage, setNewMessage] = useState<string>('');
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(6);
+  const [isSocket, setIsSocket] = useState<boolean>(true);
+
   const cardClasses = classNames({
     [classes.card]: true,
     [classes.cardHidden]: isCardAnimation,
@@ -53,6 +57,22 @@ const ParentMessages: React.FC = () => {
   setTimeout(() => {
     setIsCardAnimation(false);
   }, 700);
+
+  useEffect(() => {
+    if (socket && isSocket) {
+      socket.on('messageToParent', (data) => {
+        if (
+          (messageType === MessageOptions.incoming ||
+            messageType === MessageOptions.all) &&
+          data.action === 'new'
+        ) {
+          dispatch(addMessageItemOnFirstPlace(data.message));
+          setIsSocket(false);
+          setTimeout(() => setIsSocket(true), 500);
+        }
+      });
+    }
+  }, [socket]);
 
   useEffect(() => {
     if (messageType === MessageOptions.incoming) {

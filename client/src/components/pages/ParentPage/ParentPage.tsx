@@ -1,7 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import classNames from 'classnames';
 import { useSelector, useDispatch } from 'react-redux';
 import { VariantType, useSnackbar } from 'notistack';
+import openSocket from 'socket.io-client';
 import {
   getPending,
   getError,
@@ -24,7 +25,11 @@ import GridItem from '../../common/Grid/GridItem';
 import ParentMessages from '../../features/ParentMessages/ParentMessages';
 import ChildrenZone from '../../features/ChildrenZone/ChildrenZone';
 import ChildHandling from '../../common/ChildHandling/ChildHandling';
-import { cleanCurrentUser } from '../../../redux/actions/userActions';
+import {
+  cleanCurrentUser,
+  getUserId,
+  updateChildStatus,
+} from '../../../redux/actions/userActions';
 import { loadUserMessages } from '../../../redux/actions/messageActions';
 import { AvailableDestinations } from '../../../types/global';
 import {
@@ -33,10 +38,12 @@ import {
   setSelectedChild,
 } from '../../../redux/actions/generalActions';
 import { useStyles } from './ParentPageStyle';
+import { URL } from '../../../config';
 import image from '../../../images/jumbotronParent.jpg';
 
 const ParentPage: React.FC = () => {
   const classes = useStyles();
+  const userId = useSelector(getUserId);
   const isPending = useSelector(getPending);
   const isUpdating = useSelector(getUpdating);
   const isAdding = useSelector(getAdding);
@@ -48,6 +55,17 @@ const ParentPage: React.FC = () => {
   const messagesError = useSelector(getMessagesError);
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
+  const socket = useMemo(() => openSocket(URL), []);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on('update', (data) => {
+        if (data.action === 'childStatus' && data.parentId === userId) {
+          dispatch(updateChildStatus(data.childId, data.isActive));
+        }
+      });
+    }
+  }, [socket]);
 
   useEffect(() => {
     if (toast.isOpen) {
@@ -120,7 +138,7 @@ const ParentPage: React.FC = () => {
         <div className={classes.container}>
           <GridContainer>
             <GridItem xs={12} sm={12} md={6}>
-              <ParentMessages />
+              <ParentMessages socket={socket} />
             </GridItem>
             <GridItem xs={12} sm={12} md={6}>
               <ChildrenZone />

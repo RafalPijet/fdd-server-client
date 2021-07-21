@@ -16,6 +16,7 @@ import { getUserName } from '../../../redux/actions/userActions';
 import {
   getQuantity,
   loadUserMessages,
+  addMessageItemOnFirstPlace,
 } from '../../../redux/actions/messageActions';
 import {
   getMessages,
@@ -42,11 +43,12 @@ import {
   getEventChange,
   setEventChange,
 } from '../../../redux/actions/generalActions';
-import { useStyles } from './AdminMessagesStyle';
+import { useStyles, Props } from './AdminMessagesStyle';
 import { naviAdminMessagesData } from '../../../data/entry';
 import { UserName } from '../../common/UsersSearcher/UsersSearcherStyle';
 
-const AdminMessages: React.FC = () => {
+const AdminMessages: React.FC<Props> = (props) => {
+  const { socket } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
   const eventChange = useSelector(getEventChange);
@@ -71,6 +73,8 @@ const AdminMessages: React.FC = () => {
   >(undefined);
   const [page, setPage] = useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = useState<number>(6);
+  const [isSocket, setIsSocket] = useState<boolean>(true);
+
   const cardClasses = classNames({
     [classes.card]: true,
     [classes.cardHidden]: isCardAnimation,
@@ -79,6 +83,22 @@ const AdminMessages: React.FC = () => {
   setTimeout(() => {
     setIsCardAnimation(false);
   }, 700);
+
+  useEffect(() => {
+    if (socket && isSocket) {
+      socket.on('messageToAdmin', (data) => {
+        if (
+          (messageType === MessageOptions.incoming ||
+            messageType === MessageOptions.all) &&
+          data.action === 'new'
+        ) {
+          dispatch(addMessageItemOnFirstPlace(data.message));
+          setIsSocket(false);
+          setTimeout(() => setIsSocket(true), 500);
+        }
+      });
+    }
+  }, [socket]);
 
   useEffect(() => {
     getAdminMessagesRun();

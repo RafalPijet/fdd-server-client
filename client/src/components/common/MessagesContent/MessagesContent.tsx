@@ -56,7 +56,7 @@ const MessagesContent: React.FC<Props> = (props) => {
       setSelectedMessage('Brak wiadomości');
       setSelectedId('');
     }
-  }, [messages.length, isPending, isSuccess]);
+  }, [messages, isPending, isSuccess]);
 
   const selectedItemHandling = (
     id: string,

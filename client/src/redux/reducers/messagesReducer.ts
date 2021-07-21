@@ -1,8 +1,10 @@
 import {
     LOAD_MESSAGES,
     SET_MESSAGE_IS_READED,
+    ADD_MESSAGE_ITEM_ON_FIRST_PLACE,
     LoadMessagesAction,
-    SetMessageIsReaded
+    SetMessageIsReaded,
+    AddMessageItemOnFirstPlaceAction
 } from '../actions/messageActions';
 import { MessageState, IMessage } from '../../types/global';
 
@@ -13,7 +15,7 @@ const initialState: MessageState = {
 
 const messagesReducer = (
     state: MessageState = initialState,
-    action: LoadMessagesAction | SetMessageIsReaded
+    action: LoadMessagesAction | SetMessageIsReaded | AddMessageItemOnFirstPlaceAction
 ) => {
     switch (action.type) {
         case LOAD_MESSAGES:
@@ -27,6 +29,14 @@ const messagesReducer = (
                     }
                     return item;
                 })
+            }
+        case ADD_MESSAGE_ITEM_ON_FIRST_PLACE:
+            let messages: IMessage[] = state.messages;
+            messages.unshift(action.payload);
+            messages.pop();
+            return {
+                ...state,
+                messages
             }
         default:
             return { ...state };

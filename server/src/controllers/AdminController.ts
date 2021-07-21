@@ -643,6 +643,8 @@ class AdminController {
             } else {
                 findedChild.active = isActive;
                 await findedChild.save();
+                io.emit('change');
+                io.emit('update', { action: 'childStatus', parentId: findedChild.parent, childId: _id, isActive });
                 res.status(201).send();
             }
         } catch (err) {
