@@ -182,6 +182,48 @@ export const loginUser = (payload: IUserLogin): ThunkAction<
     }
 }
 
+export const getUserRequest = (): ThunkAction<
+    Promise<void>,
+    any,
+    RootState,
+    StartRequestAction | StopRequestAction | ErrorRequestAction | AddUserAction | SetSelectedChild
+> => async (dispatch, getState) => {
+    dispatch(startRequest())
+
+    try {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        let res: AxiosResponse = await axios.get(`${API_URL}/users/user`, {
+            headers: {
+                'Authorization': localStorage.getItem('tokenFDD')
+            },
+        });
+        const user: UserState = res.data.user;
+        if (user.children.length) {
+            user.children.forEach((child: ChildState) => {
+                if (child.avatar.length !== 0) {
+                    child.avatar = `${URL}${child.avatar}`;
+                }
+                child.images = child.images.map((image: string) => {
+                    return `${URL}${image}`
+                })
+            })
+            dispatch(addCurrentUser(user));
+            dispatch(setSelectedChild(user.children[0]._id));
+        } else {
+            dispatch(addCurrentUser(user));
+        }
+        dispatch(stopRequest());
+    } catch (err) {
+        if (err.response !== undefined) {
+            err.response.data.message ?
+                dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        } else {
+            dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        }
+    }
+}
+
 export const addUser = (payload: Register): ThunkAction<
     Promise<void>,
     any,

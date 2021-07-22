@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import classNames from 'classnames';
-import { getUserName } from '../../../redux/actions/userActions';
+import UIfx from 'uifx';
+import { getUserName, getUserId } from '../../../redux/actions/userActions';
 import { getToast, setUserToast } from '../../../redux/actions/generalActions';
 import { getQuantity } from '../../../redux/actions/messageActions';
 import { Typography } from '@material-ui/core';
@@ -27,11 +28,13 @@ import { addMessageItemOnFirstPlace } from '../../../redux/actions/messageAction
 import CustomBottomNavigation from '../../common/CustomBottomNavigation/CustomBottomNavigation';
 import MessagesBody from '../../common/MessagesBody/MessagesBody';
 import { naviMessagesData } from '../../../data/entry';
+import beepSound from '../../../sounds/beep.mp3';
 
 const ParentMessages: React.FC<Props> = (props) => {
   const { socket } = props;
   const classes = useStyles();
   const userName = useSelector(getUserName);
+  const userId = useSelector(getUserId);
   const isPending = useSelector(getMessages);
   const isSuccess = useSelector(getMessagesSuccess);
   const isError = useSelector(getMessagesError).isError;
@@ -53,6 +56,7 @@ const ParentMessages: React.FC<Props> = (props) => {
     [classes.cardHidden]: isCardAnimation,
   });
   const dispatch = useDispatch();
+  const beep = new UIfx(beepSound);
 
   setTimeout(() => {
     setIsCardAnimation(false);
@@ -64,9 +68,11 @@ const ParentMessages: React.FC<Props> = (props) => {
         if (
           (messageType === MessageOptions.incoming ||
             messageType === MessageOptions.all) &&
-          data.action === 'new'
+          data.action === 'new' &&
+          data.targetId === userId
         ) {
-          dispatch(addMessageItemOnFirstPlace(data.message));
+          beep.play();
+          dispatch(addMessageItemOnFirstPlace(data.message, rowsPerPage));
           setIsSocket(false);
           setTimeout(() => setIsSocket(true), 500);
         }

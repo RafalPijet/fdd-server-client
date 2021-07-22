@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Redirect } from 'react-router';
 import { VariantType, useSnackbar } from 'notistack';
+import UIfx from 'uifx';
 import {
   getPending,
   getSuccess,
@@ -31,6 +32,8 @@ import CustomButton from '../../common/CustomButton/CustomButton';
 import CustomBottomNavigation from '../../common/CustomBottomNavigation/CustomBottomNavigation';
 import { Email, Lock, Edit, Done, LockOpen } from '@material-ui/icons';
 import image from '../../../images/loginBackground.jpg';
+import notificationSound from '../../../sounds/notification.wav';
+import warningSound from '../../../sounds/warning.wav';
 import { UserStatus } from '../../../types/global';
 import { naviLoginData } from '../../../data/entry';
 
@@ -42,6 +45,8 @@ const LoginPage: React.FC = () => {
   const isErrorRequest = useSelector(getError).isError;
   const errorMessage = useSelector(getError).message;
   const userStatus = useSelector(getUserStatus);
+  const notification = new UIfx(notificationSound);
+  const warning = new UIfx(warningSound);
   const [isRedirect, setIsRedirect] = useState(false);
   const [isCardAnimation, setIsCardAnimation] = useState(true);
   const [register, setRegister] = useState<IUserRegister>({
@@ -149,6 +154,7 @@ const LoginPage: React.FC = () => {
     if (!isPendingRequest) {
       if (isSuccessRequest) {
         if (serviceType === ServiceOptions.register) {
+          notification.play(0.5);
           handleToast(
             `${register.firstName} ${register.lastName} jest zarejestrowanym rodzicem`,
             'success'
@@ -167,6 +173,7 @@ const LoginPage: React.FC = () => {
       }
       if (isErrorRequest) {
         handleToast(errorMessage, 'error');
+        warning.play(0.5);
       }
       dispatch(resetRequest());
     }

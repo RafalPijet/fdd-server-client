@@ -28,7 +28,7 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
     },
     card: {
         height: '450px',
-        backgroundColor: "rgba(255, 255, 255, 0.2)"
+        backgroundColor: "rgba(255, 255, 255, 0.2) !important"
     },
     busy: {
         color: `${grayColor} !important`

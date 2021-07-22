@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import { useSelector, useDispatch } from 'react-redux';
 import { VariantType, useSnackbar } from 'notistack';
 import openSocket from 'socket.io-client';
+import UIfx from 'uifx';
 import {
   getPending,
   getError,
@@ -15,7 +16,6 @@ import {
   resetAddingRequest,
   getMessages,
   getMessagesError,
-  resetMessagesRequest,
 } from '../../../redux/actions/requestActions';
 import Header from '../../common/Header/Header';
 import HeaderLinks from '../../features/HeaderLinks/HeaderLinksParentPage';
@@ -30,16 +30,19 @@ import {
   getUserId,
   updateChildStatus,
 } from '../../../redux/actions/userActions';
-import { loadUserMessages } from '../../../redux/actions/messageActions';
 import { AvailableDestinations } from '../../../types/global';
 import {
   getToast,
   setUserToast,
   setSelectedChild,
 } from '../../../redux/actions/generalActions';
+import { getUserRequest } from '../../../redux/thunks';
 import { useStyles } from './ParentPageStyle';
 import { URL } from '../../../config';
 import image from '../../../images/jumbotronParent.jpg';
+import notificationSound from '../../../sounds/notification.wav';
+import loginEnterSound from '../../../sounds/loginEnter.wav';
+import warningSound from '../../../sounds/warning.wav';
 
 const ParentPage: React.FC = () => {
   const classes = useStyles();
@@ -56,12 +59,24 @@ const ParentPage: React.FC = () => {
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
   const socket = useMemo(() => openSocket(URL), []);
+  const notification = new UIfx(notificationSound);
+  const loginEnter = new UIfx(loginEnterSound);
+  const warning = new UIfx(warningSound);
+
+  useEffect(() => {
+    if (!userId) {
+      dispatch(getUserRequest());
+    } else {
+      loginEnter.play(0.5);
+    }
+  }, []);
 
   useEffect(() => {
     if (socket) {
       socket.on('update', (data) => {
         if (data.action === 'childStatus' && data.parentId === userId) {
           dispatch(updateChildStatus(data.childId, data.isActive));
+          notification.play(0.5);
         }
       });
     }
@@ -69,19 +84,24 @@ const ParentPage: React.FC = () => {
 
   useEffect(() => {
     if (toast.isOpen) {
+      notification.play(0.5);
       handleToast(toast.content, toast.variant);
     }
     if (error.isError) {
+      warning.play(0.5);
       handleToast(error.message, 'error');
       dispatch(resetRequest());
     }
     if (updatingError.isError) {
+      warning.play(0.5);
       handleToast(updatingError.message, 'error');
     }
     if (addingError.isError) {
+      warning.play(0.5);
       handleToast(addingError.message, 'error');
     }
     if (messagesError.isError) {
+      warning.play(0.5);
       handleToast(messagesError.message, 'error');
     }
   }, [
@@ -94,14 +114,10 @@ const ParentPage: React.FC = () => {
 
   useEffect(() => {
     return () => {
-      localStorage.removeItem('tokenFDD');
-      localStorage.removeItem('expiresInFDD');
       dispatch(cleanCurrentUser());
       dispatch(resetRequest());
       dispatch(resetUpdatingRequest());
       dispatch(resetAddingRequest());
-      dispatch(resetMessagesRequest());
-      dispatch(loadUserMessages([], 0));
       dispatch(setSelectedChild(null));
       dispatch(
         setUserToast({

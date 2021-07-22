@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import classNames from 'classnames';
+import UIfx from 'uifx';
 import Card from '../../common/Card/Card';
 import CardHeader from '../../common/CardHeader/CardHeader';
 import CardBody from '../../common/CardBody/CardBody';
@@ -46,6 +47,7 @@ import {
 import { useStyles, Props } from './AdminMessagesStyle';
 import { naviAdminMessagesData } from '../../../data/entry';
 import { UserName } from '../../common/UsersSearcher/UsersSearcherStyle';
+import beepSound from '../../../sounds/beep.mp3';
 
 const AdminMessages: React.FC<Props> = (props) => {
   const { socket } = props;
@@ -60,6 +62,7 @@ const AdminMessages: React.FC<Props> = (props) => {
   const isToast = useSelector(getToast).isOpen;
   const isRemoved = useSelector(getIsRemoved);
   const quantity = useSelector(getQuantity);
+  const beep = new UIfx(beepSound);
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const [isCardAnimation, setIsCardAnimation] = useState<boolean>(true);
   const [isBodyAnimation, setIsBodyAnimation] = useState<boolean>(true);
@@ -92,7 +95,8 @@ const AdminMessages: React.FC<Props> = (props) => {
             messageType === MessageOptions.all) &&
           data.action === 'new'
         ) {
-          dispatch(addMessageItemOnFirstPlace(data.message));
+          beep.play();
+          dispatch(addMessageItemOnFirstPlace(data.message, rowsPerPage));
           setIsSocket(false);
           setTimeout(() => setIsSocket(true), 500);
         }

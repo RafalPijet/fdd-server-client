@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
+import UIfx from 'uifx';
 import { Typography } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
 import Card from '../../common/Card/Card';
@@ -22,6 +23,7 @@ import {
 } from '../../../redux/actions/reportsActions';
 import { getReporting } from '../../../redux/actions/requestActions';
 import { useStyles, Props } from './RaportZoneStyle';
+import notificationSound from '../../../sounds/notification.wav';
 
 const RaportsZone: React.FC<Props> = (props) => {
   const { socket } = props;
@@ -44,6 +46,7 @@ const RaportsZone: React.FC<Props> = (props) => {
     getParentsWithoutAnyChildrenQuantity
   );
   const currentYear = new Date().getFullYear().toString();
+  const notification = new UIfx(notificationSound);
   const [isCardAnimation, setIsCardAnimation] = useState<boolean>(true);
 
   const cardClasses = classNames({
@@ -77,6 +80,7 @@ const RaportsZone: React.FC<Props> = (props) => {
   useEffect(() => {
     if (socket) {
       socket.on('change', (data) => {
+        notification.play(0.5);
         dispatch(getReportsRequest());
       });
     }

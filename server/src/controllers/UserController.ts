@@ -26,6 +26,28 @@ import { io } from '../index';
 
 @controller('/api/users')
 class UserController {
+    @get('/user')
+    async getUser(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const request = req as RequestWithUser;
+
+        try {
+            let activeUser;
+            if (request.user.status === UserStatus.admin) {
+                activeUser = new UserDto(request.user);
+            } else {
+                const parentUser = await UserModel.findById(request.user._id).populate('children');
+                if (parentUser !== null) {
+                    activeUser = new UserDto(parentUser)
+                }
+            }
+            if (activeUser) {
+                res.status(200).json({ user: activeUser.getContent(true) });
+            }
+        } catch (err) {
+            next(new HttpException(404, `Nie znaleziono użytkownika. - ${err}`))
+        }
+    }
+
     @post('/message')
     async addMessage(req: Request, res: Response, next: NextFunction): Promise<void> {
         const request = req as RequestWithUser;
@@ -66,7 +88,7 @@ class UserController {
                     to: newMessage.to,
                     created: newMessage.created
                 }
-                io.emit('messageToParent', { action: 'new', message: messageToSend });
+                io.emit('messageToParent', { action: 'new', message: messageToSend, targetId: newMessage.to });
             }
             res.status(201).json({ message: "Wiadomość została wysłana." })
         } catch (err) {

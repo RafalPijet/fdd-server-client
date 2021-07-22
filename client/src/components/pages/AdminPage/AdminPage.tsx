@@ -2,6 +2,7 @@ import React, { useEffect, useMemo } from 'react';
 import classNames from 'classnames';
 import { useSelector, useDispatch } from 'react-redux';
 import { VariantType, useSnackbar } from 'notistack';
+import UIfx from 'uifx';
 import openSocket from 'socket.io-client';
 import {
   getPending,
@@ -43,15 +44,21 @@ import {
   updateUserStatus,
   removeChildRequest,
   removeUserRequest,
+  getUserRequest,
 } from '../../../redux/thunks';
 import { URL } from '../../../config';
 import { ModalAYSModes, SearchUserType } from '../../../types/global';
+import { getUserId } from '../../../redux/actions/userActions';
 import AdminContent from '../../features/AdminContent/AdminContent';
 import image from '../../../images/jumbotronAdmin.jpg';
+import loginEnterSound from '../../../sounds/loginEnter.wav';
+import notificationSound from '../../../sounds/notification.wav';
+import warningSound from '../../../sounds/warning.wav';
 import { useStyles } from './AdminPageStyle';
 
 const AdminPage: React.FC = () => {
   const classes = useStyles();
+  const userId = useSelector(getUserId);
   const isPending = useSelector(getPending);
   const isUpdating = useSelector(getUpdating);
   const isAdding = useSelector(getAdding);
@@ -66,10 +73,18 @@ const AdminPage: React.FC = () => {
   const reportingError = useSelector(getReportingError);
   const socket = useMemo(() => openSocket(URL), []);
   const dispatch = useDispatch();
+  const notification = new UIfx(notificationSound);
+  const warning = new UIfx(warningSound);
+  const loginEnter = new UIfx(loginEnterSound);
   const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    if (!userId) {
+      dispatch(getUserRequest());
+    } else {
+      loginEnter.play(0.5);
+    }
     return () => {
       dispatch(setSelectedChild(null));
       dispatch(setSelectedPerson(null));
@@ -80,25 +95,31 @@ const AdminPage: React.FC = () => {
 
   useEffect(() => {
     if (toast.isOpen) {
+      notification.play(0.5);
       handleToast(toast.content, toast.variant);
     }
     if (error.isError) {
+      warning.play(0.5);
       handleToast(error.message, 'error');
       dispatch(resetRequest());
     }
     if (updatingError.isError) {
+      warning.play(0.5);
       handleToast(updatingError.message, 'error');
       dispatch(resetUpdatingRequest());
     }
     if (addingError.isError) {
+      warning.play(0.5);
       handleToast(addingError.message, 'error');
       dispatch(resetAddingRequest());
     }
     if (messagesError.isError) {
+      warning.play(0.5);
       handleToast(messagesError.message, 'error');
       dispatch(resetMessagesRequest());
     }
     if (reportingError.isError) {
+      warning.play(0.5);
       handleToast(reportingError.message, 'error');
       dispatch(resetReportingRequest());
     }
@@ -110,6 +131,12 @@ const AdminPage: React.FC = () => {
     messagesError.isError,
     reportingError.isError,
   ]);
+
+  useEffect(() => {
+    if (modalAYS.isOpen) {
+      warning.play(0.5);
+    }
+  }, [modalAYS.isOpen]);
 
   const handleToast = (message: string, variant: VariantType) => {
     enqueueSnackbar(message, { variant });

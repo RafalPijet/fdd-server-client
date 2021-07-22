@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import ClassNames from 'classnames';
 import axios, { AxiosResponse } from 'axios';
 import { useSnackbar } from 'notistack';
+import UIfx from 'uifx';
 import Grow from '@material-ui/core/Grow';
 import Header from '../../common/Header/Header';
 import HeaderLinks from '../../features/HeaderLinks/HeaderLinksLoginPage';
@@ -31,6 +32,7 @@ import {
   getChildrenBasicDataRequest,
 } from '../../../redux/thunks';
 import { API_URL } from '../../../config';
+import childVoiceSound from '../../../sounds/childVoice.mp3';
 import { useStyles, dummyData, SelectedChild } from './ChildrenSectionStyle';
 
 const ChildrenSection: React.FC = () => {
@@ -53,9 +55,11 @@ const ChildrenSection: React.FC = () => {
   const [options, setOptions] = useState<any[]>([]);
   const [isSearchMode, setIsSearchMode] = useState<boolean>(false);
   const loading = open && options.length === 0;
+  const childVoice = new UIfx(childVoiceSound);
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    childVoice.play(0.5);
     return () => {
       dispatch(setSelectedChild(null));
       dispatch(setSelectedPerson(null));

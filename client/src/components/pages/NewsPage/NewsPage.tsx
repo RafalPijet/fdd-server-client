@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import { VariantType, useSnackbar } from 'notistack';
+import UIfx from 'uifx';
 import ClassNames from 'classnames';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
@@ -21,6 +22,7 @@ import { NewsState } from '../../../types/global';
 import { getAllNewsRequest } from '../../../redux/thunks';
 import { useStyles } from './NewsPageStyle';
 import image from '../../../images/newsBackground.jpg';
+import newsEnterSound from '../../../sounds/loginEnter.wav';
 
 const NewsPage: React.FC = () => {
   const classes = useStyles();
@@ -31,6 +33,7 @@ const NewsPage: React.FC = () => {
   const isSuccess = useSelector(getUpdatingSuccess);
   const error = useSelector(getUpdatingError);
   const location = useLocation();
+  const newsEnter = new UIfx(newsEnterSound);
   const [currentNews, setCurrentNews] = useState<NewsState | null>(null);
 
   const rootClasses = ClassNames({
@@ -38,7 +41,10 @@ const NewsPage: React.FC = () => {
     [classes.center]: isPending || currentNews === null,
   });
 
-  window.scrollTo(0, 0);
+  useEffect(() => {
+    newsEnter.play(0.5);
+    window.scrollTo(0, 0);
+  }, []);
 
   useEffect(() => {
     const newsId = location.pathname.replace('/news/', '');

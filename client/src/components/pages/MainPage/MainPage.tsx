@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import classNames from 'classnames';
 import { VariantType, useSnackbar } from 'notistack';
+import UIfx from 'uifx';
 import { Typography } from '@material-ui/core';
 import ButtonBase from '@material-ui/core/ButtonBase';
 import { Redirect } from 'react-router';
@@ -32,6 +33,8 @@ import { AvailableDestinations } from '../../../types/global';
 import image from '../../../images/jumbotronMain.jpg';
 import childrenButton from '../../../images/childrenButton.jpg';
 import reportsButton from '../../../images/reportsButton.jpg';
+import notificationSound from '../../../sounds/notification.wav';
+import warningSound from '../../../sounds/warning.wav';
 
 const MainPage: React.FC = () => {
   const classes = useStyles();
@@ -41,6 +44,8 @@ const MainPage: React.FC = () => {
   const toast = useSelector(getToast);
   const error = useSelector(getError);
   const dispatch = useDispatch();
+  const notification = new UIfx(notificationSound);
+  const warning = new UIfx(warningSound);
   const [isRedirectToChildren, setIsRedirectToChildren] =
     useState<boolean>(false);
   const [isRedirectToReports, setIsRedirectToReports] =
@@ -48,9 +53,11 @@ const MainPage: React.FC = () => {
 
   useEffect(() => {
     if (toast.isOpen) {
+      notification.play(0.5);
       handleToast(toast.content, toast.variant);
     }
     if (error.isError) {
+      warning.play(0.5);
       handleToast(error.message, 'error');
     }
   }, [toast.isOpen, error.isError]);
@@ -104,9 +111,18 @@ const MainPage: React.FC = () => {
         <div className={classes.container}>
           <GridContainer>
             <GridItem xs={12} sm={12} md={6}>
-              <Typography variant="h3" className={classes.title}>
-                Zapewnienie każdej osobie możliwości pomocy dzieciom w leczeniu,
-                nauce i rozwoju
+              <Typography variant="h4" className={classes.title}>
+                Człowiek jest wielki nie przez to, co posiada, lecz przez to kim
+                jest; nie przez to co ma, lecz przez to, czym dzieli się z
+                innymi.
+              </Typography>
+              <Typography
+                variant="h6"
+                align="right"
+                className={classes.title}
+                style={{ width: '100%' }}
+              >
+                św. Jan Paweł II
               </Typography>
             </GridItem>
           </GridContainer>

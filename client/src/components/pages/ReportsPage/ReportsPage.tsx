@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import ClassNames from 'classnames';
+import UIfx from 'uifx';
 import GridContainer from '../../common/Grid/GridContainer';
 import GridItem from '../../common/Grid/GridItem';
 import { Typography } from '@material-ui/core';
@@ -10,14 +11,17 @@ import ReportsList from '../../common/ReportsList/ReportsList';
 import { getReportsYearsRequest } from '../../../redux/thunks';
 import { getPending } from '../../../redux/actions/requestActions';
 import { useStyles } from './ReportsPageStyle';
+import reportsEnterSound from '../../../sounds/reportsEnter.wav';
 
 const ReportsPage: React.FC = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const isPending = useSelector(getPending);
+  const reportsEnter = new UIfx(reportsEnterSound);
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    reportsEnter.play(0.5);
     dispatch(getReportsYearsRequest());
   }, []);
 

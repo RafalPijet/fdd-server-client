@@ -32,8 +32,12 @@ const messagesReducer = (
             }
         case ADD_MESSAGE_ITEM_ON_FIRST_PLACE:
             let messages: IMessage[] = state.messages;
-            messages.unshift(action.payload);
-            messages.pop();
+            if (state.messages.length === action.messageQuantity) {
+                messages.unshift(action.message);
+                messages.pop();
+            } else {
+                messages.unshift(action.message);
+            }
             return {
                 ...state,
                 messages

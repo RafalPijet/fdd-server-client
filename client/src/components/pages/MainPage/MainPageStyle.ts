@@ -16,7 +16,8 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
         position: "relative",
         marginTop: "30px",
         minHeight: "32px",
-        color: "#FFFFFF",
+        color: lightGrayColor,
+        lineHeight: '60px',
         textDecoration: "none"
     },
     subtitle: {

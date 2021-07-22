@@ -18,7 +18,8 @@ export interface SetMessageIsReaded extends Action<typeof SET_MESSAGE_IS_READED>
 }
 
 export interface AddMessageItemOnFirstPlaceAction extends Action<typeof ADD_MESSAGE_ITEM_ON_FIRST_PLACE> {
-    payload: IMessage
+    message: IMessage,
+    messageQuantity: number
 }
 
 //CREATORS OF ACTIONS
@@ -35,9 +36,10 @@ export const setMessageIsReaded = (_id: IMessage["_id"]): SetMessageIsReaded => 
     _id: _id
 })
 
-export const addMessageItemOnFirstPlace = (message: IMessage): AddMessageItemOnFirstPlaceAction => ({
+export const addMessageItemOnFirstPlace = (message: IMessage, messageQuantity: number): AddMessageItemOnFirstPlaceAction => ({
     type: ADD_MESSAGE_ITEM_ON_FIRST_PLACE,
-    payload: message
+    message,
+    messageQuantity
 })
 
 //SELECTORS
