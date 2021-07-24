@@ -135,6 +135,7 @@ import {
     setUnpublicatedChildren,
     setParentsWithoutAnyChildren
 } from './actions/reportsActions';
+import { setExpiryDate } from '../types/functions';
 import { API_URL, URL } from '../config';
 
 export const loginUser = (payload: IUserLogin): ThunkAction<
@@ -154,6 +155,7 @@ export const loginUser = (payload: IUserLogin): ThunkAction<
         });
         localStorage.setItem('tokenFDD', res.data.authorization.token);
         localStorage.setItem('expiresInFDD', res.data.authorization.expiresIn);
+        setExpiryDate(15);
         const user: UserState = res.data.dto;
         if (user.children.length) {
             user.children.forEach((child: ChildState) => {
@@ -180,6 +182,19 @@ export const loginUser = (payload: IUserLogin): ThunkAction<
             dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }
     }
+}
+
+export const unfreezeUserRequest = (): ThunkAction<
+    Promise<void>,
+    any,
+    RootState,
+    StartRequestAction | StopRequestAction | ErrorRequestAction | AddUserAction | SetSelectedChild
+> => async (dispatch, getState) => {
+    dispatch(startRequest());
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    setExpiryDate(15);
+    // console.log('unfreezeUserRequest')
+    dispatch(stopRequest());
 }
 
 export const getUserRequest = (): ThunkAction<

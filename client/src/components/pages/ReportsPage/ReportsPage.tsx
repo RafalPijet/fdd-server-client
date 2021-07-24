@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import ClassNames from 'classnames';
 import UIfx from 'uifx';
@@ -9,7 +9,11 @@ import Header from '../../common/Header/Header';
 import HeaderLinks from '../../features/HeaderLinks/HeaderLinksLoginPage';
 import ReportsList from '../../common/ReportsList/ReportsList';
 import { getReportsYearsRequest } from '../../../redux/thunks';
-import { getPending } from '../../../redux/actions/requestActions';
+import {
+  getPending,
+  getSuccess,
+  resetRequest,
+} from '../../../redux/actions/requestActions';
 import { useStyles } from './ReportsPageStyle';
 import reportsEnterSound from '../../../sounds/reportsEnter.wav';
 
@@ -17,13 +21,26 @@ const ReportsPage: React.FC = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const isPending = useSelector(getPending);
+  const isSuccess = useSelector(getSuccess);
   const reportsEnter = new UIfx(reportsEnterSound);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
-    reportsEnter.play(0.5);
+    window.onload = () => {
+      setIsLoading(true);
+    };
     dispatch(getReportsYearsRequest());
+    return () => {
+      dispatch(resetRequest());
+      setIsLoading(false);
+    };
   }, []);
+
+  useEffect(() => {
+    if (!isLoading && isSuccess) {
+      reportsEnter.play(0.5);
+    }
+  }, [isLoading, isSuccess]);
 
   return (
     <div>

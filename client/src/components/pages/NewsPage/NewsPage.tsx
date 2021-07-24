@@ -35,6 +35,7 @@ const NewsPage: React.FC = () => {
   const location = useLocation();
   const newsEnter = new UIfx(newsEnterSound);
   const [currentNews, setCurrentNews] = useState<NewsState | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const rootClasses = ClassNames({
     [classes.root]: true,
@@ -42,9 +43,21 @@ const NewsPage: React.FC = () => {
   });
 
   useEffect(() => {
-    newsEnter.play(0.5);
+    window.onload = () => {
+      setIsLoading(true);
+    };
     window.scrollTo(0, 0);
+    return () => {
+      dispatch(resetUpdatingRequest());
+      setIsLoading(false);
+    };
   }, []);
+
+  useEffect(() => {
+    if (!isLoading && isSuccess) {
+      newsEnter.play(0.5);
+    }
+  }, [isLoading, isSuccess]);
 
   useEffect(() => {
     const newsId = location.pathname.replace('/news/', '');
@@ -61,9 +74,6 @@ const NewsPage: React.FC = () => {
   useEffect(() => {
     if (error.isError) {
       handleToast(error.message, 'error');
-      dispatch(resetUpdatingRequest());
-    }
-    if (isSuccess) {
       dispatch(resetUpdatingRequest());
     }
   }, [error.isError, isSuccess]);

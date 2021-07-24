@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import classNames from 'classnames';
 import { useSelector, useDispatch } from 'react-redux';
 import { VariantType, useSnackbar } from 'notistack';
@@ -45,15 +45,18 @@ import {
   removeChildRequest,
   removeUserRequest,
   getUserRequest,
+  unfreezeUserRequest,
 } from '../../../redux/thunks';
 import { URL } from '../../../config';
 import { ModalAYSModes, SearchUserType } from '../../../types/global';
 import { getUserId } from '../../../redux/actions/userActions';
 import AdminContent from '../../features/AdminContent/AdminContent';
+import ModalLogin from '../../common/ModalLogin/ModalLogin';
 import image from '../../../images/jumbotronAdmin.jpg';
 import loginEnterSound from '../../../sounds/loginEnter.wav';
 import notificationSound from '../../../sounds/notification.wav';
 import warningSound from '../../../sounds/warning.wav';
+import { setExpiryDate } from '../../../types/functions';
 import { useStyles } from './AdminPageStyle';
 
 const AdminPage: React.FC = () => {
@@ -77,6 +80,11 @@ const AdminPage: React.FC = () => {
   const warning = new UIfx(warningSound);
   const loginEnter = new UIfx(loginEnterSound);
   const { enqueueSnackbar } = useSnackbar();
+  const [isModalLogin, setIsModalLogin] = useState<boolean>(false);
+  const [expiryDate, setExpiryDate] = useState<string | null>(
+    localStorage.getItem('expiryDate')
+  );
+  let timer: any = null;
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -92,6 +100,16 @@ const AdminPage: React.FC = () => {
       dispatch(setSelectedUserType(SearchUserType.child));
     };
   }, []);
+
+  useEffect(() => {
+    if (isPending || isUpdating || isAdding || !isMessages) {
+      setExpiryDate(localStorage.getItem('expiryDate'));
+    }
+  }, [isPending, isUpdating, isAdding, isMessages]);
+
+  useEffect(() => {
+    console.log(expiryDate);
+  }, [expiryDate]);
 
   useEffect(() => {
     if (toast.isOpen) {
@@ -140,6 +158,11 @@ const AdminPage: React.FC = () => {
 
   const handleToast = (message: string, variant: VariantType) => {
     enqueueSnackbar(message, { variant });
+  };
+
+  const handleModalLogin = (isConfirm: boolean) => {
+    console.log(isConfirm);
+    setIsModalLogin(false);
   };
 
   const handleModalAYS = (isConfirm: boolean) => {
@@ -209,6 +232,14 @@ const AdminPage: React.FC = () => {
             <GridItem xs={12} sm={12} md={6}>
               <RaportsZone socket={socket} />
               <SearcherOfUsers />
+              <button
+                onClick={() => {
+                  // setIsModalLogin(true);
+                  dispatch(unfreezeUserRequest());
+                }}
+              >
+                Modal
+              </button>
             </GridItem>
           </GridContainer>
         </div>
@@ -224,6 +255,7 @@ const AdminPage: React.FC = () => {
         descriprion={modalAYS.description}
         isConfirm={handleModalAYS}
       />
+      <ModalLogin isOpen={isModalLogin} isConfirm={handleModalLogin} />
     </div>
   );
 };

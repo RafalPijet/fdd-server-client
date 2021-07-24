@@ -25,7 +25,10 @@ import {
   setSelectedChild,
   getSelectedQuantity,
 } from '../../../redux/actions/generalActions';
-import { getUpdating } from '../../../redux/actions/requestActions';
+import {
+  getUpdating,
+  getUpdatingSuccess,
+} from '../../../redux/actions/requestActions';
 import { ChildBasicState, CssTextField } from '../../../types/global';
 import {
   getChildByIdRequest,
@@ -43,6 +46,7 @@ const ChildrenSection: React.FC = () => {
   const selectedPerson = useSelector(getSelectedPerson);
   const selectedId = useSelector(getSelectedChild);
   const isUpdating = useSelector(getUpdating);
+  const isSuccess = useSelector(getUpdatingSuccess);
   const quantity = useSelector(getSelectedQuantity);
   const [isReady, setIsReady] = useState<boolean>(false);
   const [isListReady, setIsListReady] = useState<boolean>(false);
@@ -54,17 +58,27 @@ const ChildrenSection: React.FC = () => {
     useState<SelectedChild | null>(null);
   const [options, setOptions] = useState<any[]>([]);
   const [isSearchMode, setIsSearchMode] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const loading = open && options.length === 0;
   const childVoice = new UIfx(childVoiceSound);
 
   useEffect(() => {
+    window.onload = () => {
+      setIsLoading(true);
+    };
     window.scrollTo(0, 0);
-    childVoice.play(0.5);
     return () => {
       dispatch(setSelectedChild(null));
       dispatch(setSelectedPerson(null));
+      setIsLoading(false);
     };
   }, []);
+
+  useEffect(() => {
+    if (!isLoading && isSuccess) {
+      childVoice.play(0.5);
+    }
+  }, [isLoading, isSuccess]);
 
   useEffect(() => {
     if (selectedId !== childId) {

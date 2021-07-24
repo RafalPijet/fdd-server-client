@@ -80,3 +80,17 @@ export const a11yProps = (index: any, name: string) => {
         'aria-controls': `${name}-tabpanel-${index}`,
     };
 }
+
+export const setExpiryDate = (minutes: number) => {
+    const remainingMilliseconds = minutes * 60 * 1000;
+    const expiryDate = new Date(
+        new Date().getTime() + remainingMilliseconds
+    );
+    localStorage.setItem('expiryDate', expiryDate.toISOString());
+}
+
+export const clearLocalStorage = () => {
+    localStorage.removeItem('tokenFDD');
+    localStorage.removeItem('expiresInFDD');
+    localStorage.removeItem('expiryDate');
+}
