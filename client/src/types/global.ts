@@ -268,6 +268,7 @@ export interface GeneralState {
     childrenList: ChildBasicState[] | null;
     availableReportsYears: AvailableReportsYears[];
     selectedYearPeriod: ReportState[] | null;
+    isFrozen: boolean;
 }
 
 export enum TargetOptions {

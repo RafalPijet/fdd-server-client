@@ -2,7 +2,6 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 
 export interface Props {
     isOpen: boolean;
-    isConfirm: (isConfirm: boolean) => void;
 }
 
 export const useStyles = makeStyles((theme: Theme) => createStyles({

@@ -100,7 +100,9 @@ import {
     AddReportItemAction,
     addReportItem,
     RemoveReportItemAction,
-    removeReportItem
+    removeReportItem,
+    SetIsFrozenAction,
+    setIsFrozen
 } from './actions/generalActions';
 import { State as ImagesLists } from '../components/common/RemovingImage/RemovingImageStyle';
 import {
@@ -135,14 +137,22 @@ import {
     setUnpublicatedChildren,
     setParentsWithoutAnyChildren
 } from './actions/reportsActions';
-import { setExpiryDate } from '../types/functions';
+import { setExpiryDate, countRemainingTime, clearLocalStorage } from '../types/functions';
 import { API_URL, URL } from '../config';
+
+let timer;
+
+export const clearAndLogout = () => {
+    setTimeout(() => window.location.replace(`${window.location.origin}/login`), 3000)
+    clearLocalStorage();
+}
 
 export const loginUser = (payload: IUserLogin): ThunkAction<
     Promise<void>,
     any,
     RootState,
-    StartRequestAction | StopRequestAction | ErrorRequestAction | AddUserAction | SetSelectedChild
+    StartRequestAction | StopRequestAction | ErrorRequestAction | AddUserAction |
+    SetSelectedChild | SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startRequest())
 
@@ -155,7 +165,7 @@ export const loginUser = (payload: IUserLogin): ThunkAction<
         });
         localStorage.setItem('tokenFDD', res.data.authorization.token);
         localStorage.setItem('expiresInFDD', res.data.authorization.expiresIn);
-        setExpiryDate(15);
+        setExpiryDate(1);
         const user: UserState = res.data.dto;
         if (user.children.length) {
             user.children.forEach((child: ChildState) => {
@@ -171,6 +181,7 @@ export const loginUser = (payload: IUserLogin): ThunkAction<
         } else {
             dispatch(addCurrentUser(user));
         }
+        timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopRequest());
 
     } catch (err) {
@@ -184,16 +195,18 @@ export const loginUser = (payload: IUserLogin): ThunkAction<
     }
 }
 
-export const unfreezeUserRequest = (): ThunkAction<
+export const unfreezeUserRequest = (password: string): ThunkAction<
     Promise<void>,
     any,
     RootState,
-    StartRequestAction | StopRequestAction | ErrorRequestAction | AddUserAction | SetSelectedChild
+    StartRequestAction | StopRequestAction | ErrorRequestAction | SetIsFrozenAction
 > => async (dispatch, getState) => {
+    setExpiryDate(1);
     dispatch(startRequest());
     await new Promise(resolve => setTimeout(resolve, 2000));
-    setExpiryDate(15);
-    // console.log('unfreezeUserRequest')
+    console.log('unfreezeUserRequest')
+    dispatch(setIsFrozen(false));
+    timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
     dispatch(stopRequest());
 }
 
@@ -201,10 +214,11 @@ export const getUserRequest = (): ThunkAction<
     Promise<void>,
     any,
     RootState,
-    StartRequestAction | StopRequestAction | ErrorRequestAction | AddUserAction | SetSelectedChild
+    StartRequestAction | StopRequestAction | ErrorRequestAction | AddUserAction |
+    SetSelectedChild | SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startRequest())
-
+    timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
     try {
         await new Promise(resolve => setTimeout(resolve, 2000));
         let res: AxiosResponse = await axios.get(`${API_URL}/users/user`, {
@@ -233,6 +247,9 @@ export const getUserRequest = (): ThunkAction<
             err.response.data.message ?
                 dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
                 dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+            if (err.response.status === 401 && err.response.statusText === 'Unauthorized') {
+                clearAndLogout();
+            }
         } else {
             dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }
@@ -274,7 +291,6 @@ export const getAllNewsRequest = (): ThunkAction<
     dispatch(startUpdatingRequest());
 
     try {
-        // await new Promise(resolve => setTimeout(resolve, 2000));
         let res: AxiosResponse = await axios.get(`${API_URL}/auth/news`);
         const news: NewsState[] = res.data.news;
         if (news.length) {
@@ -320,6 +336,9 @@ export const updateUserStatus = (userId: string, status: UserStatus): ThunkActio
             err.response.data.message ?
                 dispatch(errorUpdatingRequest({ isError: true, message: err.response.data.message })) :
                 dispatch(errorUpdatingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+            if (err.response.status === 401 && err.response.statusText === 'Unauthorized') {
+                clearAndLogout();
+            }
         } else {
             dispatch(errorUpdatingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }
@@ -382,6 +401,9 @@ export const updateUser = (payload: any, dataType: UpdateUserTypeData, userId: s
             err.response.data.message ?
                 dispatch(errorUpdatingRequest({ isError: true, message: err.response.data.message })) :
                 dispatch(errorUpdatingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+            if (err.response.status === 401 && err.response.statusText === 'Unauthorized') {
+                clearAndLogout();
+            }
         } else {
             dispatch(errorUpdatingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }
@@ -451,6 +473,9 @@ export const getPersonByIdRequest = (type: SearchUserType, id: string): ThunkAct
             err.response.data.message ?
                 dispatch(errorAddingRequest({ isError: true, message: err.response.data.message })) :
                 dispatch(errorAddingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+            if (err.response.status === 401 && err.response.statusText === 'Unauthorized') {
+                clearAndLogout();
+            }
         } else {
             dispatch(errorAddingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }
@@ -480,6 +505,9 @@ export const addMessage = (payload: string, _id?: string): ThunkAction<
             err.response.data.message ?
                 dispatch(errorMessagesRequest({ isError: true, message: err.response.data.message })) :
                 dispatch(errorMessagesRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+            if (err.response.status === 401 && err.response.statusText === 'Unauthorized') {
+                clearAndLogout();
+            }
         } else {
             dispatch(errorMessagesRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }
@@ -510,6 +538,9 @@ export const removeMessage = (messageId: string, isUser: boolean): ThunkAction<
             err.response.data.message ?
                 dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
                 dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+            if (err.response.status === 401 && err.response.statusText === 'Unauthorized') {
+                clearAndLogout();
+            }
         } else {
             dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }
@@ -562,6 +593,9 @@ export const addAnswerToOutsideMessage = (content: string, email: string, name: 
             err.response.data.message ?
                 dispatch(errorMessagesRequest({ isError: true, message: err.response.data.message })) :
                 dispatch(errorMessagesRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+            if (err.response.status === 401 && err.response.statusText === 'Unauthorized') {
+                clearAndLogout();
+            }
         } else {
             dispatch(errorMessagesRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }
@@ -589,6 +623,9 @@ export const sendMessageByEmail = (content: string, email: string, name: string)
             err.response.data.message ?
                 dispatch(errorMessagesRequest({ isError: true, message: err.response.data.message })) :
                 dispatch(errorMessagesRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+            if (err.response.status === 401 && err.response.statusText === 'Unauthorized') {
+                clearAndLogout();
+            }
         } else {
             dispatch(errorMessagesRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }
@@ -619,6 +656,9 @@ export const getUserMessages = (target: TargetOptions, page: number, rowsPerPage
             err.response.data.message ?
                 dispatch(errorMessagesRequest({ isError: true, message: err.response.data.message })) :
                 dispatch(errorMessagesRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+            if (err.response.status === 401 && err.response.statusText === 'Unauthorized') {
+                clearAndLogout();
+            }
         } else {
             dispatch(errorMessagesRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }
@@ -649,6 +689,9 @@ export const getAdminMessages = (target: TargetOptions, page: number, rowsPerPag
             err.response.data.message ?
                 dispatch(errorMessagesRequest({ isError: true, message: err.response.data.message })) :
                 dispatch(errorMessagesRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+            if (err.response.status === 401 && err.response.statusText === 'Unauthorized') {
+                clearAndLogout();
+            }
         } else {
             dispatch(errorMessagesRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }
@@ -679,6 +722,9 @@ export const getAdminMessagesByUser = (isParent: boolean, user: string, page: nu
             err.response.data.message ?
                 dispatch(errorMessagesRequest({ isError: true, message: err.response.data.message })) :
                 dispatch(errorMessagesRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+            if (err.response.status === 401 && err.response.statusText === 'Unauthorized') {
+                clearAndLogout();
+            }
         } else {
             dispatch(errorMessagesRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }
@@ -704,6 +750,9 @@ export const updateMessageIsReaded = (_id: IMessage["_id"], isAdmin: boolean, is
             err.response.data.message ?
                 dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
                 dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+            if (err.response.status === 401 && err.response.statusText === 'Unauthorized') {
+                clearAndLogout();
+            }
         } else {
             dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }
@@ -740,6 +789,9 @@ export const updateChildDataRequest = (payload: IChildData, childId: string): Th
             err.response.data.message ?
                 dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
                 dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+            if (err.response.status === 401 && err.response.statusText === 'Unauthorized') {
+                clearAndLogout();
+            }
         } else {
             dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }
@@ -776,6 +828,9 @@ export const addChildToParent = (payload: IChildData, userId?: string): ThunkAct
             err.response.data.message ?
                 dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
                 dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+            if (err.response.status === 401 && err.response.statusText === 'Unauthorized') {
+                clearAndLogout();
+            }
         } else {
             dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }
@@ -826,6 +881,9 @@ export const updateReportRequest = (payload: { reportId: string, reportFile: Fil
                         err.response.data.message ?
                             dispatch(errorUpdatingRequest({ isError: true, message: err.response.data.message })) :
                             dispatch(errorUpdatingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+                        if (err.response.status === 401 && err.response.statusText === 'Unauthorized') {
+                            clearAndLogout();
+                        }
                     } else {
                         dispatch(errorUpdatingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
                     }
@@ -861,6 +919,9 @@ export const removeReportRequest = (id: string): ThunkAction<
             err.response.data.message ?
                 dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
                 dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+            if (err.response.status === 401 && err.response.statusText === 'Unauthorized') {
+                clearAndLogout();
+            }
         } else {
             dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }
@@ -905,6 +966,9 @@ export const addReportRequest = (payload: { reportFile: File, reportTitle: strin
             err.response.data.message ?
                 dispatch(errorAddingRequest({ isError: true, message: err.response.data.message })) :
                 dispatch(errorAddingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+            if (err.response.status === 401 && err.response.statusText === 'Unauthorized') {
+                clearAndLogout();
+            }
         } else {
             dispatch(errorAddingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }
@@ -939,6 +1003,9 @@ export const addInvoiceToChild = (payload: any, childId: string): ThunkAction<
             err.response.data.message ?
                 dispatch(errorAddingRequest({ isError: true, message: err.response.data.message })) :
                 dispatch(errorAddingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+            if (err.response.status === 401 && err.response.statusText === 'Unauthorized') {
+                clearAndLogout();
+            }
         } else {
             dispatch(errorAddingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }
@@ -978,6 +1045,9 @@ export const addAvatarToChild = (avatar: File, childId: string): ThunkAction<
             err.response.data.message ?
                 dispatch(errorAddingRequest({ isError: true, message: err.response.data.message })) :
                 dispatch(errorAddingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+            if (err.response.status === 401 && err.response.statusText === 'Unauthorized') {
+                clearAndLogout();
+            }
         } else {
             dispatch(errorAddingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }
@@ -1013,6 +1083,9 @@ export const addPictureToNewsRequest = (picture: File, newsId: string): ThunkAct
             err.response.data.message ?
                 dispatch(errorAddingRequest({ isError: true, message: err.response.data.message })) :
                 dispatch(errorAddingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+            if (err.response.status === 401 && err.response.statusText === 'Unauthorized') {
+                clearAndLogout();
+            }
         } else {
             dispatch(errorAddingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }
@@ -1054,6 +1127,9 @@ export const addImageToChild = (image: File, childId: string): ThunkAction<
             err.response.data.message ?
                 dispatch(errorAddingRequest({ isError: true, message: err.response.data.message })) :
                 dispatch(errorAddingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+            if (err.response.status === 401 && err.response.statusText === 'Unauthorized') {
+                clearAndLogout();
+            }
         } else {
             dispatch(errorAddingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }
@@ -1093,6 +1169,9 @@ export const updatePicturesListRequest = (payload: ImagesLists): ThunkAction<
             err.response.data.message ?
                 dispatch(errorUpdatingRequest({ isError: true, message: err.response.data.message })) :
                 dispatch(errorUpdatingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+            if (err.response.status === 401 && err.response.statusText === 'Unauthorized') {
+                clearAndLogout();
+            }
         } else {
             dispatch(errorUpdatingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }
@@ -1137,6 +1216,9 @@ export const updateImagesList = (payload: ImagesLists): ThunkAction<
             err.response.data.message ?
                 dispatch(errorUpdatingRequest({ isError: true, message: err.response.data.message })) :
                 dispatch(errorUpdatingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+            if (err.response.status === 401 && err.response.statusText === 'Unauthorized') {
+                clearAndLogout();
+            }
         } else {
             dispatch(errorUpdatingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }
@@ -1248,6 +1330,9 @@ export const getCurrentlyInvoicesList = (childId: string, page: number, rowsPerP
             err.response.data.message ?
                 dispatch(errorUpdatingRequest({ isError: true, message: err.response.data.message })) :
                 dispatch(errorUpdatingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+            if (err.response.status === 401 && err.response.statusText === 'Unauthorized') {
+                clearAndLogout();
+            }
         } else {
             dispatch(errorUpdatingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }
@@ -1276,6 +1361,9 @@ export const addNewsRequest = (payload: NewsState): ThunkAction<
             err.response.data.message ?
                 dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
                 dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+            if (err.response.status === 401 && err.response.statusText === 'Unauthorized') {
+                clearAndLogout();
+            }
         } else {
             dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }
@@ -1307,6 +1395,9 @@ export const updateNewsPublication = (newsId: string, isPublication: boolean): T
             err.response.data.message ?
                 dispatch(errorUpdatingRequest({ isError: true, message: err.response.data.message })) :
                 dispatch(errorUpdatingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+            if (err.response.status === 401 && err.response.statusText === 'Unauthorized') {
+                clearAndLogout();
+            }
         } else {
             dispatch(errorUpdatingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }
@@ -1338,6 +1429,9 @@ export const updateNewsDataRequest = (payload: NewsDataUpdate): ThunkAction<
             err.response.data.message ?
                 dispatch(errorUpdatingRequest({ isError: true, message: err.response.data.message })) :
                 dispatch(errorUpdatingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+            if (err.response.status === 401 && err.response.statusText === 'Unauthorized') {
+                clearAndLogout();
+            }
         } else {
             dispatch(errorUpdatingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }
@@ -1372,6 +1466,9 @@ export const removeCurrentNewsRequest = (newsId: string, images: string[]): Thun
             err.response.data.message ?
                 dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
                 dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+            if (err.response.status === 401 && err.response.statusText === 'Unauthorized') {
+                clearAndLogout();
+            }
         } else {
             dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }
@@ -1468,6 +1565,9 @@ export const updateChildStatusRequest = (_id: string, isActive: boolean): ThunkA
             err.response.data.message ?
                 dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
                 dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+            if (err.response.status === 401 && err.response.statusText === 'Unauthorized') {
+                clearAndLogout();
+            }
         } else {
             dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }
@@ -1502,6 +1602,9 @@ export const removeChildRequest = (_id: string): ThunkAction<
             err.response.data.message ?
                 dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
                 dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+            if (err.response.status === 401 && err.response.statusText === 'Unauthorized') {
+                clearAndLogout();
+            }
         } else {
             dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }
@@ -1535,6 +1638,9 @@ export const removeUserRequest = (_id: string): ThunkAction<
             err.response.data.message ?
                 dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
                 dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+            if (err.response.status === 401 && err.response.statusText === 'Unauthorized') {
+                clearAndLogout();
+            }
         } else {
             dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }
@@ -1583,6 +1689,9 @@ export const getReportsRequest = (): ThunkAction<
             err.response.data.message ?
                 dispatch(errorReportingRequest({ isError: true, message: err.response.data.message })) :
                 dispatch(errorReportingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+            if (err.response.status === 401 && err.response.statusText === 'Unauthorized') {
+                clearAndLogout();
+            }
         } else {
             dispatch(errorReportingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
         }

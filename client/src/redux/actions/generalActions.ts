@@ -29,6 +29,7 @@ export const SET_REPORTS_OF_SELECTED_YEAR = 'general/set_reports_of_selected_yea
 export const UPDATE_REPORT_ITEM = 'general/update_report_item';
 export const ADD_REPORT_ITEM = 'general/add_report_item';
 export const REMOVE_REPORT_ITEM = 'general/remove_report_item';
+export const SET_IS_FROZEN = 'general/set_is_frozen';
 
 //ACTIONS TYPES
 export interface SetToastAction extends Action<typeof SET_TOAST> {
@@ -110,6 +111,9 @@ export interface AddReportItemAction extends Action<typeof ADD_REPORT_ITEM> {
 }
 export interface RemoveReportItemAction extends Action<typeof REMOVE_REPORT_ITEM> {
     reportId: string
+}
+export interface SetIsFrozenAction extends Action<typeof SET_IS_FROZEN> {
+    isFrozen: boolean
 }
 
 //CREATORS OF ACTIONS
@@ -219,6 +223,10 @@ export const removeReportItem = (reportId: string): RemoveReportItemAction => ({
     type: REMOVE_REPORT_ITEM,
     reportId
 })
+export const setIsFrozen = (isFrozen: boolean): SetIsFrozenAction => ({
+    type: SET_IS_FROZEN,
+    isFrozen
+})
 
 //SELECTORS
 export const getGeneral = (rootState: RootState) => rootState.general;
@@ -235,3 +243,4 @@ export const getNews = (rootState: RootState) => getGeneral(rootState).news;
 export const getChildrenList = (rootState: RootState) => getGeneral(rootState).childrenList;
 export const getAvailableReportsYears = (rootState: RootState) => getGeneral(rootState).availableReportsYears;
 export const getReportsOfSelectedYear = (rootState: RootState) => getGeneral(rootState).selectedYearPeriod;
+export const getIsFrozen = (rootState: RootState) => getGeneral(rootState).isFrozen;

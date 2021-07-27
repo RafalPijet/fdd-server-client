@@ -50,7 +50,9 @@ import {
     ADD_REPORT_ITEM,
     AddReportItemAction,
     REMOVE_REPORT_ITEM,
-    RemoveReportItemAction
+    RemoveReportItemAction,
+    SET_IS_FROZEN,
+    SetIsFrozenAction
 } from '../actions/generalActions';
 import { GeneralState, ModalAYSModes, NewsState, ReportState, SearchUserType } from '../../types/global';
 
@@ -80,7 +82,8 @@ const initialState: GeneralState = {
     news: null,
     childrenList: null,
     availableReportsYears: [],
-    selectedYearPeriod: null
+    selectedYearPeriod: null,
+    isFrozen: false
 }
 
 const generalReducer = (
@@ -93,7 +96,7 @@ const generalReducer = (
         UpdateSelectedPersonChildInvoicesListAction | UpdatePicturesOfCurrentNewsAction |
         SetChildrenListAction | SetAvailableReportsYearsAction | SetReportsOfSelectedYearAction |
         UpdateReportItemAction | AddReportItemAction | RemoveReportItemAction |
-        UpdateSelectedPersonChildStatusAction
+        UpdateSelectedPersonChildStatusAction | SetIsFrozenAction
 ) => {
     switch (action.type) {
         case SET_TOAST:
@@ -279,6 +282,11 @@ const generalReducer = (
                 }
             } else {
                 return { ...state }
+            }
+        case SET_IS_FROZEN:
+            return {
+                ...state,
+                isFrozen: action.isFrozen
             }
         default:
             return { ...state }

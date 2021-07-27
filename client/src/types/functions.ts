@@ -94,3 +94,9 @@ export const clearLocalStorage = () => {
     localStorage.removeItem('expiresInFDD');
     localStorage.removeItem('expiryDate');
 }
+
+export const countRemainingTime = () => {
+    const expiryDate: string | null = localStorage.getItem('expiryDate');
+    if (expiryDate !== null)
+        return new Date(expiryDate).getTime() - new Date().getTime();
+}

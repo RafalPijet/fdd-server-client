@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { Redirect } from 'react-router';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -11,7 +12,16 @@ import { Lock, LockOpen } from '@material-ui/icons';
 import { TransitionProps } from '@material-ui/core/transitions';
 import CustomInput from '../../common/CustomInput/CustomInput';
 import CustomButton from '../CustomButton/CustomButton';
-import { getUserEmail } from '../../../redux/actions/userActions';
+import {
+  getUserEmail,
+  addCurrentUser,
+} from '../../../redux/actions/userActions';
+import { setIsFrozen } from '../../../redux/actions/generalActions';
+import { loadUserMessages } from '../../../redux/actions/messageActions';
+import { getPending } from '../../../redux/actions/requestActions';
+import { unfreezeUserRequest } from '../../../redux/thunks';
+import { clearLocalStorage } from '../../../types/functions';
+import { UserStatus } from '../../../types/global';
 import { Props, useStyles } from './ModalLoginStyle';
 
 const Transition = React.forwardRef(function Transition(
@@ -22,10 +32,13 @@ const Transition = React.forwardRef(function Transition(
 });
 
 const ModalLogin: React.FC<Props> = (props) => {
-  const { isOpen, isConfirm } = props;
+  const { isOpen } = props;
   const classes = useStyles();
+  const dispatch = useDispatch();
   const userEmail = useSelector(getUserEmail);
+  const isPending = useSelector(getPending);
   const [password, setPassword] = useState<string>('');
+  const [isRedirect, setIsRedirect] = useState(false);
 
   const handleTextField = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -41,9 +54,12 @@ const ModalLogin: React.FC<Props> = (props) => {
     if (event.key === 'Enter') {
       event.preventDefault();
       event.stopPropagation();
-      console.log('Enter confirm');
     }
   };
+
+  if (isRedirect) {
+    return <Redirect to={'/'} />;
+  }
 
   return (
     <Dialog
@@ -59,7 +75,7 @@ const ModalLogin: React.FC<Props> = (props) => {
       aria-describedby="alert-dialog-slide-email"
     >
       <DialogTitle id="alert-dialog-slide-title" className={classes.textCenter}>
-        Zaloguj się ponownie
+        Odblokuj
       </DialogTitle>
       <DialogContent>
         <DialogContentText id="alert-dialog-slide-email">
@@ -70,7 +86,6 @@ const ModalLogin: React.FC<Props> = (props) => {
           id="password"
           isDisabled={false}
           value={password}
-          //   error={isError.password}
           formControlProps={{
             fullWidth: true,
             focused: true,
@@ -96,15 +111,43 @@ const ModalLogin: React.FC<Props> = (props) => {
         <CustomButton
           setColor="primary"
           setSize="md"
-          onClick={() => isConfirm(false)}
+          disabled={isPending}
+          progress={isPending}
+          onClick={() => {
+            clearLocalStorage();
+            setIsRedirect(true);
+            dispatch(loadUserMessages([], 0));
+            dispatch(setIsFrozen(false));
+            dispatch(
+              addCurrentUser({
+                _id: '',
+                status: UserStatus.null,
+                firstName: '',
+                lastName: '',
+                email: '',
+                phone: '',
+                children: [],
+                adress: {
+                  zipCode: '',
+                  town: '',
+                  street: '',
+                  number: '',
+                },
+              })
+            );
+          }}
         >
           Wyjdź
         </CustomButton>
         <CustomButton
           setColor="primary"
           setSize="md"
-          disabled={password.length < 5}
-          onClick={() => isConfirm(true)}
+          disabled={password.length < 5 || isPending}
+          progress={isPending}
+          onClick={() => {
+            dispatch(unfreezeUserRequest(password));
+            setPassword('');
+          }}
         >
           Potwierdź
         </CustomButton>

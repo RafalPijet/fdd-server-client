@@ -4,8 +4,11 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
+import { Apps, ExitToApp } from '@material-ui/icons';
 import { cleanCurrentUser } from '../../../redux/actions/userActions';
 import { resetMessagesRequest } from '../../../redux/actions/requestActions';
+import CustomButton from '../../common/CustomButton/CustomButton';
+import CustomDropdown from '../../common/CustomDropdown/CustomDropdown';
 import {
   setSelectedChild,
   setSelectedPerson,
@@ -16,11 +19,8 @@ import {
 } from '../../../redux/actions/generalActions';
 import { loadUserMessages } from '../../../redux/actions/messageActions';
 import { SearchUserType, ModalAYSModes } from '../../../types/global';
+import { clearLocalStorage } from '../../../types/functions';
 import { Props, useStyles } from './headerLinksStyle';
-import CustomButton from '../../common/CustomButton/CustomButton';
-import CustomDropdown from '../../common/CustomDropdown/CustomDropdown';
-
-import { Apps, ExitToApp } from '@material-ui/icons';
 
 const HeaderList: React.FC<Props> = (props) => {
   const classes = useStyles();
@@ -32,8 +32,7 @@ const HeaderList: React.FC<Props> = (props) => {
   });
 
   const logoutHandling = () => {
-    localStorage.removeItem('tokenFDD');
-    localStorage.removeItem('expiresInFDD');
+    clearLocalStorage();
     dispatch(cleanCurrentUser());
     dispatch(resetMessagesRequest());
     dispatch(setSelectedChild(null));

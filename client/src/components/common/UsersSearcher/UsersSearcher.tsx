@@ -8,6 +8,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { setUserToast } from '../../../redux/actions/generalActions';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { CssTextField } from '../../../types/global';
+import { clearAndLogout } from '../../../redux/thunks';
 import { useStyles, UserName, Props, FddSwitch } from './UsersSearcherStyle';
 
 const UsersSearcher: React.FC<Props> = (props) => {
@@ -46,13 +47,21 @@ const UsersSearcher: React.FC<Props> = (props) => {
           setOptions(names);
         }
       } catch (err) {
-        dispatch(
-          setUserToast({
-            isOpen: true,
-            content: err.response.data.message,
-            variant: 'error',
-          })
-        );
+        if (err.response) {
+          dispatch(
+            setUserToast({
+              isOpen: true,
+              content: err.response.data.message,
+              variant: 'error',
+            })
+          );
+          if (
+            err.response.status === 401 &&
+            err.response.statusText === 'Unauthorized'
+          ) {
+            clearAndLogout();
+          }
+        }
       }
     })();
 

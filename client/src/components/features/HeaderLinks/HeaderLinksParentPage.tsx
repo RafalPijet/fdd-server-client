@@ -6,15 +6,6 @@ import { Link as LinkScroll } from 'react-scroll';
 import { Link } from 'react-router-dom';
 import Avatar from '@material-ui/core/Avatar';
 import classNames from 'classnames';
-import CustomButton from '../../common/CustomButton/CustomButton';
-import CustomDropdown from '../../common/CustomDropdown/CustomDropdown';
-import {
-  setIsOpen,
-  setSelectedChild,
-  setEventChange,
-} from '../../../redux/actions/generalActions';
-import { getUserChildren } from '../../../redux/actions/userActions';
-import { ChildState, AvailableDestinations } from '../../../types/global';
 import {
   Face,
   ExitToApp,
@@ -25,6 +16,27 @@ import {
   Build,
   Home,
 } from '@material-ui/icons';
+import CustomButton from '../../common/CustomButton/CustomButton';
+import CustomDropdown from '../../common/CustomDropdown/CustomDropdown';
+import {
+  setIsOpen,
+  setSelectedChild,
+  setEventChange,
+  setUserToast,
+  setModalAreYouSure,
+} from '../../../redux/actions/generalActions';
+import {
+  getUserChildren,
+  cleanCurrentUser,
+} from '../../../redux/actions/userActions';
+import { loadUserMessages } from '../../../redux/actions/messageActions';
+import { resetMessagesRequest } from '../../../redux/actions/requestActions';
+import {
+  ChildState,
+  AvailableDestinations,
+  ModalAYSModes,
+} from '../../../types/global';
+import { clearLocalStorage } from '../../../types/functions';
 import { Props, useStyles } from './headerLinksStyle';
 
 const HeaderList: React.FC<Props> = (props) => {
@@ -36,6 +48,30 @@ const HeaderList: React.FC<Props> = (props) => {
   });
   const children = useSelector(getUserChildren);
   const dispatch = useDispatch();
+
+  const logoutHandling = () => {
+    clearLocalStorage();
+    dispatch(cleanCurrentUser());
+    dispatch(resetMessagesRequest());
+    dispatch(setSelectedChild(null));
+    dispatch(loadUserMessages([], 0));
+    dispatch(
+      setUserToast({
+        isOpen: false,
+        content: '',
+        variant: 'success',
+      })
+    );
+    dispatch(
+      setModalAreYouSure({
+        mode: ModalAYSModes.null,
+        isOpen: false,
+        title: '',
+        description: '',
+        data: {},
+      })
+    );
+  };
 
   const choiceChildHandling = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -212,6 +248,7 @@ const HeaderList: React.FC<Props> = (props) => {
           setColor="transparent"
           setSize="md"
           className={classes.navLink}
+          onClick={logoutHandling}
         >
           <Link to="/" style={{ color: 'inherit', textDecoration: 'none' }}>
             <ExitToApp className={classes.icons} />

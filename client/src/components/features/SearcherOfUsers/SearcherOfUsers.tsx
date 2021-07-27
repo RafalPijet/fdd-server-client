@@ -12,7 +12,7 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { getPersonByIdRequest } from '../../../redux/thunks';
+import { getPersonByIdRequest, clearAndLogout } from '../../../redux/thunks';
 import { SearchUserType, CssTextField } from '../../../types/global';
 import {
   setUserToast,
@@ -95,13 +95,21 @@ const SearcherOfUsers: React.FC = () => {
           setOptions(names);
         }
       } catch (err) {
-        dispatch(
-          setUserToast({
-            isOpen: true,
-            content: err.response.data.message,
-            variant: 'error',
-          })
-        );
+        if (err.response) {
+          dispatch(
+            setUserToast({
+              isOpen: true,
+              content: err.response.data.message,
+              variant: 'error',
+            })
+          );
+          if (
+            err.response.status === 401 &&
+            err.response.statusText === 'Unauthorized'
+          ) {
+            clearAndLogout();
+          }
+        }
       }
     })();
 
