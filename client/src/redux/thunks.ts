@@ -140,11 +140,15 @@ import {
 import { setExpiryDate, countRemainingTime, clearLocalStorage } from '../types/functions';
 import { API_URL, URL } from '../config';
 
-let timer;
+let timer: number;
 
 export const clearAndLogout = () => {
     setTimeout(() => window.location.replace(`${window.location.origin}/login`), 3000)
     clearLocalStorage();
+}
+
+export const clearTimer = () => {
+    clearTimeout(timer);
 }
 
 export const loginUser = (payload: IUserLogin): ThunkAction<
@@ -165,7 +169,7 @@ export const loginUser = (payload: IUserLogin): ThunkAction<
         });
         localStorage.setItem('tokenFDD', res.data.authorization.token);
         localStorage.setItem('expiresInFDD', res.data.authorization.expiresIn);
-        setExpiryDate(1);
+        setExpiryDate(15);
         const user: UserState = res.data.dto;
         if (user.children.length) {
             user.children.forEach((child: ChildState) => {
@@ -201,13 +205,38 @@ export const unfreezeUserRequest = (password: string): ThunkAction<
     RootState,
     StartRequestAction | StopRequestAction | ErrorRequestAction | SetIsFrozenAction
 > => async (dispatch, getState) => {
-    setExpiryDate(1);
+    clearTimeout(timer);
+    setExpiryDate(15);
     dispatch(startRequest());
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    console.log('unfreezeUserRequest')
-    dispatch(setIsFrozen(false));
-    timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
-    dispatch(stopRequest());
+
+    try {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        let res: AxiosResponse = await axios.get(`${API_URL}/users/user/unfreeze`, {
+            headers: {
+                'Authorization': localStorage.getItem('tokenFDD')
+            },
+            params: {
+                password
+            }
+        });
+        if (res.status === 200) {
+            dispatch(setIsFrozen(false));
+            timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
+        }
+        dispatch(stopRequest());
+    } catch (err) {
+        if (err.response !== undefined) {
+            err.response.data.message ?
+                dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+            if (err.response.status === 401 && err.response.statusText === 'Unauthorized') {
+                clearAndLogout();
+            }
+        } else {
+            dispatch(errorRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        }
+    }
+
 }
 
 export const getUserRequest = (): ThunkAction<
@@ -318,9 +347,11 @@ export const updateUserStatus = (userId: string, status: UserStatus): ThunkActio
     any,
     RootState,
     StartUpdatingRequestAction | StopUpdatingRequestAction | ErrorUpdatingRequestAction |
-    SetToastAction | SetSelectedPersonAction
+    SetToastAction | SetSelectedPersonAction | SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startUpdatingRequest());
+    clearTimeout(timer);
+    setExpiryDate(15);
 
     try {
         let res: AxiosResponse = await axios.put(`${API_URL}/admin/user/status/${userId}`, { status }, {
@@ -330,6 +361,7 @@ export const updateUserStatus = (userId: string, status: UserStatus): ThunkActio
         });
         dispatch(setSelectedPerson(null));
         dispatch(setUserToast({ isOpen: true, content: res!.data.message, variant: "success" }));
+        timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopUpdatingRequest());
     } catch (err) {
         if (err.response !== undefined) {
@@ -350,9 +382,11 @@ export const updateUser = (payload: any, dataType: UpdateUserTypeData, userId: s
     any,
     RootState,
     StartUpdatingRequestAction | StopUpdatingRequestAction | ErrorUpdatingRequestAction |
-    SetToastAction | UpdateUserDataAction | UpdateSelectedPersonUserDataAction
+    SetToastAction | UpdateUserDataAction | UpdateSelectedPersonUserDataAction | SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startUpdatingRequest());
+    clearTimeout(timer);
+    setExpiryDate(15);
 
     try {
         await new Promise(resolve => setTimeout(resolve, 2000));
@@ -395,6 +429,7 @@ export const updateUser = (payload: any, dataType: UpdateUserTypeData, userId: s
             }))
         }
         dispatch(setUserToast({ isOpen: true, content: res!.data.message, variant: "success" }));
+        timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopUpdatingRequest());
     } catch (err) {
         if (err.response !== undefined) {
@@ -415,9 +450,13 @@ export const getPersonByIdRequest = (type: SearchUserType, id: string): ThunkAct
     any,
     RootState,
     StartAddingRequestAction | StopAddingRequestAction | ErrorAddingRequestAction |
-    SetSelectedPersonAction | SetSelectedChild | SetSelectedQuantityAction
+    SetSelectedPersonAction | SetSelectedChild | SetSelectedQuantityAction | SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startAddingRequest());
+    if (getState().user._id) {
+        clearTimeout(timer);
+        setExpiryDate(15);
+    }
 
     try {
         await new Promise(resolve => setTimeout(resolve, 2000));
@@ -467,6 +506,7 @@ export const getPersonByIdRequest = (type: SearchUserType, id: string): ThunkAct
             }
             dispatch(setSelectedPerson(person));
         }
+        timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopAddingRequest());
     } catch (err) {
         if (err.response !== undefined) {
@@ -487,9 +527,12 @@ export const addMessage = (payload: string, _id?: string): ThunkAction<
     Promise<void>,
     any,
     RootState,
-    StartMessagesRequestAction | StopMessagesRequestAction | ErrorMessagesRequestAction | SetToastAction
+    StartMessagesRequestAction | StopMessagesRequestAction | ErrorMessagesRequestAction |
+    SetToastAction | SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startMessagesRequest());
+    clearTimeout(timer);
+    setExpiryDate(15);
 
     try {
         await new Promise(resolve => setTimeout(resolve, 2000));
@@ -499,6 +542,7 @@ export const addMessage = (payload: string, _id?: string): ThunkAction<
             },
         });
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }))
+        timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopMessagesRequest());
     } catch (err) {
         if (err.response !== undefined) {
@@ -518,9 +562,12 @@ export const removeMessage = (messageId: string, isUser: boolean): ThunkAction<
     Promise<void>,
     any,
     RootState,
-    StartRequestAction | StopRequestAction | ErrorRequestAction | SetToastAction | SetIsRemoved
+    StartRequestAction | StopRequestAction | ErrorRequestAction | SetToastAction |
+    SetIsRemoved | SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startRequest());
+    clearTimeout(timer);
+    setExpiryDate(15);
 
     try {
         await new Promise(resolve => setTimeout(resolve, 2000));
@@ -531,6 +578,7 @@ export const removeMessage = (messageId: string, isUser: boolean): ThunkAction<
                 }
             })
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
+        timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopRequest());
         dispatch(setIsRemoved(true));
     } catch (err) {
@@ -575,9 +623,12 @@ export const addAnswerToOutsideMessage = (content: string, email: string, name: 
     Promise<void>,
     any,
     RootState,
-    StartMessagesRequestAction | StopMessagesRequestAction | ErrorMessagesRequestAction | SetToastAction
+    StartMessagesRequestAction | StopMessagesRequestAction | ErrorMessagesRequestAction |
+    SetToastAction | SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startMessagesRequest());
+    clearTimeout(timer);
+    setExpiryDate(15);
 
     try {
         await new Promise(resolve => setTimeout(resolve, 2000));
@@ -587,6 +638,7 @@ export const addAnswerToOutsideMessage = (content: string, email: string, name: 
             },
         });
         if (res.status === 201) dispatch(setUserToast({ isOpen: true, content: `Odpowiedź do ${name} na email ${email} została wysłana.`, variant: "success" }));
+        timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopMessagesRequest());
     } catch (err) {
         if (err.response !== undefined) {
@@ -606,9 +658,13 @@ export const sendMessageByEmail = (content: string, email: string, name: string)
     Promise<void>,
     any,
     RootState,
-    StartMessagesRequestAction | StopMessagesRequestAction | ErrorMessagesRequestAction | SetToastAction
+    StartMessagesRequestAction | StopMessagesRequestAction | ErrorMessagesRequestAction |
+    SetToastAction | SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startMessagesRequest());
+    clearTimeout(timer);
+    setExpiryDate(15);
+
     try {
         await new Promise(resolve => setTimeout(resolve, 2000));
         let res: AxiosResponse = await axios.post(`${API_URL}/admin/messages/email`, { content, email, name }, {
@@ -617,6 +673,7 @@ export const sendMessageByEmail = (content: string, email: string, name: string)
             },
         });
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
+        timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopMessagesRequest());
     } catch (err) {
         if (err.response !== undefined) {
@@ -636,11 +693,16 @@ export const getUserMessages = (target: TargetOptions, page: number, rowsPerPage
     Promise<void>,
     any,
     RootState,
-    StartMessagesRequestAction | StopMessagesRequestAction | ErrorMessagesRequestAction | LoadMessagesAction
+    StartMessagesRequestAction | StopMessagesRequestAction | ErrorMessagesRequestAction |
+    LoadMessagesAction | SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startMessagesRequest());
     let start = Math.ceil(page * rowsPerPage);
     let limit = rowsPerPage;
+    if (getState().user._id) {
+        clearTimeout(timer);
+        setExpiryDate(15);
+    }
 
     try {
         await new Promise(resolve => setTimeout(resolve, 2000));
@@ -650,6 +712,7 @@ export const getUserMessages = (target: TargetOptions, page: number, rowsPerPage
             },
         })
         dispatch(loadUserMessages(res.data.messages, res.data.quantity));
+        timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopMessagesRequest());
     } catch (err) {
         if (err.response !== undefined) {
@@ -669,11 +732,17 @@ export const getAdminMessages = (target: TargetOptions, page: number, rowsPerPag
     Promise<void>,
     any,
     RootState,
-    StartMessagesRequestAction | StopMessagesRequestAction | ErrorMessagesRequestAction | LoadMessagesAction
+    StartMessagesRequestAction | StopMessagesRequestAction | ErrorMessagesRequestAction |
+    LoadMessagesAction | SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startMessagesRequest());
     let start = Math.ceil(page * rowsPerPage);
     let limit = rowsPerPage;
+    if (getState().user._id) {
+        clearTimeout(timer);
+        setExpiryDate(15);
+    }
+
     try {
         await new Promise(resolve => setTimeout(resolve, 2000));
         let res: AxiosResponse = await axios.get(`${API_URL}/admin/messages/${target}/${start}/${limit}`, {
@@ -682,6 +751,7 @@ export const getAdminMessages = (target: TargetOptions, page: number, rowsPerPag
             },
         })
         dispatch(loadUserMessages(res.data.messages, res.data.quantity));
+        timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopMessagesRequest());
 
     } catch (err) {
@@ -702,11 +772,16 @@ export const getAdminMessagesByUser = (isParent: boolean, user: string, page: nu
     Promise<void>,
     any,
     RootState,
-    StartMessagesRequestAction | StopMessagesRequestAction | ErrorMessagesRequestAction | LoadMessagesAction
+    StartMessagesRequestAction | StopMessagesRequestAction | ErrorMessagesRequestAction |
+    LoadMessagesAction | SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startMessagesRequest());
     let start = Math.ceil(page * rowsPerPage);
     let limit = rowsPerPage;
+    if (getState().user._id) {
+        clearTimeout(timer);
+        setExpiryDate(15);
+    }
 
     try {
         await new Promise(resolve => setTimeout(resolve, 2000));
@@ -716,6 +791,7 @@ export const getAdminMessagesByUser = (isParent: boolean, user: string, page: nu
             },
         })
         dispatch(loadUserMessages(res.data.messages, res.data.quantity));
+        timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopMessagesRequest());
     } catch (err) {
         if (err.response !== undefined) {
@@ -735,8 +811,10 @@ export const updateMessageIsReaded = (_id: IMessage["_id"], isAdmin: boolean, is
     Promise<void>,
     any,
     RootState,
-    ErrorRequestAction | SetMessageIsReaded
+    ErrorRequestAction | SetMessageIsReaded | SetIsFrozenAction
 > => async (dispatch, getState) => {
+    clearTimeout(timer);
+    setExpiryDate(15);
 
     try {
         let res: AxiosResponse = await axios.put(`${API_URL}/users/messages/readed`, { _id, isAdmin, isUser }, {
@@ -745,6 +823,7 @@ export const updateMessageIsReaded = (_id: IMessage["_id"], isAdmin: boolean, is
             },
         })
         if (res.status === 202) dispatch(setMessageIsReaded(_id));
+        timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
     } catch (err) {
         if (err.response !== undefined) {
             err.response.data.message ?
@@ -764,9 +843,12 @@ export const updateChildDataRequest = (payload: IChildData, childId: string): Th
     any,
     RootState,
     StartRequestAction | StopRequestAction | ErrorRequestAction | SetToastAction |
-    UpdateChildDataAction | UpdateSelectedPersonChildDataAction | UpdateChildStatusAction
+    UpdateChildDataAction | UpdateSelectedPersonChildDataAction | UpdateChildStatusAction |
+    SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startRequest());
+    clearTimeout(timer);
+    setExpiryDate(15);
 
     try {
         await new Promise(resolve => setTimeout(resolve, 2000));
@@ -783,6 +865,7 @@ export const updateChildDataRequest = (payload: IChildData, childId: string): Th
             dispatch(updateSelectedPersonChildData(res.data.child));
         }
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
+        timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopRequest());
     } catch (err) {
         if (err.response !== undefined) {
@@ -803,9 +886,12 @@ export const addChildToParent = (payload: IChildData, userId?: string): ThunkAct
     any,
     RootState,
     StartRequestAction | StopRequestAction | ErrorRequestAction | SetToastAction |
-    AddChildToUserAction | SetSelectedChild | AddChildToSelectedPersonAction
+    AddChildToUserAction | SetSelectedChild | AddChildToSelectedPersonAction |
+    SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startRequest());
+    clearTimeout(timer);
+    setExpiryDate(15);
 
     try {
         await new Promise(resolve => setTimeout(resolve, 2000));
@@ -822,6 +908,7 @@ export const addChildToParent = (payload: IChildData, userId?: string): ThunkAct
             dispatch(addChildToSelectedPerson(res.data.child));
         }
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
+        timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopRequest());
     } catch (err) {
         if (err.response !== undefined) {
@@ -842,7 +929,7 @@ export const updateReportRequest = (payload: { reportId: string, reportFile: Fil
     any,
     RootState,
     StartUpdatingRequestAction | StopUpdatingRequestAction | ErrorUpdatingRequestAction |
-    SetToastAction | UpdateReportItemAction
+    SetToastAction | UpdateReportItemAction | SetIsFrozenAction
 > => async (dispatch, getState) => {
 
     if (getState().general.selectedYearPeriod !== null) {
@@ -859,6 +946,8 @@ export const updateReportRequest = (payload: { reportId: string, reportFile: Fil
                 if (result.title !== payload.reportTitle) {
                     formData.append('title', payload.reportTitle);
                 }
+                clearTimeout(timer);
+                setExpiryDate(15);
                 dispatch(startUpdatingRequest());
 
                 try {
@@ -875,6 +964,7 @@ export const updateReportRequest = (payload: { reportId: string, reportFile: Fil
                         dispatch(updateReportItem(updatedReport));
                         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
                     }
+                    timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
                     dispatch(stopUpdatingRequest());
                 } catch (err) {
                     if (err.response !== undefined) {
@@ -899,10 +989,12 @@ export const removeReportRequest = (id: string): ThunkAction<
     Promise<void>,
     any,
     RootState,
-    StartRequestAction | StopRequestAction | ErrorRequestAction | SetToastAction | RemoveReportItemAction
+    StartRequestAction | StopRequestAction | ErrorRequestAction | SetToastAction |
+    RemoveReportItemAction | SetIsFrozenAction
 > => async (dispatch, getState) => {
-
     dispatch(startRequest());
+    clearTimeout(timer);
+    setExpiryDate(15);
 
     try {
         await new Promise(resolve => setTimeout(resolve, 2000));
@@ -913,6 +1005,7 @@ export const removeReportRequest = (id: string): ThunkAction<
                 }
             })
         if (res.status === 201) dispatch(removeReportItem(id));
+        timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopRequest());
     } catch (err) {
         if (err.response !== undefined) {
@@ -933,9 +1026,11 @@ export const addReportRequest = (payload: { reportFile: File, reportTitle: strin
     any,
     RootState,
     StartAddingRequestAction | StopAddingRequestAction | ErrorAddingRequestAction |
-    SetToastAction | AddReportItemAction
+    SetToastAction | AddReportItemAction | SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startAddingRequest());
+    clearTimeout(timer);
+    setExpiryDate(15);
 
     try {
         await new Promise(resolve => setTimeout(resolve, 2000));
@@ -960,6 +1055,7 @@ export const addReportRequest = (payload: { reportFile: File, reportTitle: strin
                 }
             }
         }
+        timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopAddingRequest());
     } catch (err) {
         if (err.response !== undefined) {
@@ -980,9 +1076,11 @@ export const addInvoiceToChild = (payload: any, childId: string): ThunkAction<
     any,
     RootState,
     StartAddingRequestAction | StopAddingRequestAction | ErrorAddingRequestAction |
-    SetToastAction
+    SetToastAction | SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startAddingRequest());
+    clearTimeout(timer);
+    setExpiryDate(15);
 
     try {
         await new Promise(resolve => setTimeout(resolve, 2000));
@@ -997,6 +1095,7 @@ export const addInvoiceToChild = (payload: any, childId: string): ThunkAction<
             },
         })
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
+        timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopAddingRequest());
     } catch (err) {
         if (err.response !== undefined) {
@@ -1018,9 +1117,11 @@ export const addAvatarToChild = (avatar: File, childId: string): ThunkAction<
     RootState,
     StartAddingRequestAction | StopAddingRequestAction | ErrorAddingRequestAction |
     SetToastAction | SetChildAvatarAction | UpdateSelectedPersonChildAvatarAction |
-    UpdateChildStatusAction
+    UpdateChildStatusAction | SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startAddingRequest());
+    clearTimeout(timer);
+    setExpiryDate(15);
 
     try {
         await new Promise(resolve => setTimeout(resolve, 2000));
@@ -1039,6 +1140,7 @@ export const addAvatarToChild = (avatar: File, childId: string): ThunkAction<
             dispatch(updateSelectedPersonalChildAvatar(result));
         }
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
+        timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopAddingRequest());
     } catch (err) {
         if (err.response !== undefined) {
@@ -1059,9 +1161,11 @@ export const addPictureToNewsRequest = (picture: File, newsId: string): ThunkAct
     any,
     RootState,
     StartAddingRequestAction | StopAddingRequestAction | ErrorAddingRequestAction |
-    SetToastAction | UpdatePicturesOfCurrentNewsAction
+    SetToastAction | UpdatePicturesOfCurrentNewsAction | SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startAddingRequest());
+    clearTimeout(timer);
+    setExpiryDate(15);
 
     try {
         await new Promise(resolve => setTimeout(resolve, 2000));
@@ -1077,6 +1181,7 @@ export const addPictureToNewsRequest = (picture: File, newsId: string): ThunkAct
         })
         dispatch(updatePicturesOfCurrentNews(newsId, images));
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
+        timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopAddingRequest());
     } catch (err) {
         if (err.response !== undefined) {
@@ -1098,9 +1203,11 @@ export const addImageToChild = (image: File, childId: string): ThunkAction<
     RootState,
     StartAddingRequestAction | StopAddingRequestAction | ErrorAddingRequestAction |
     SetToastAction | SetChildImagesListAction | UpdateSelectedPersonChildImagesListAction |
-    UpdateChildStatusAction
+    UpdateChildStatusAction | SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startAddingRequest());
+    clearTimeout(timer);
+    setExpiryDate(15);
 
     try {
         await new Promise(resolve => setTimeout(resolve, 2000));
@@ -1121,6 +1228,7 @@ export const addImageToChild = (image: File, childId: string): ThunkAction<
             dispatch(updateSelectedPersonalChildImagesList(images));
         }
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
+        timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopAddingRequest());
     } catch (err) {
         if (err.response !== undefined) {
@@ -1141,9 +1249,11 @@ export const updatePicturesListRequest = (payload: ImagesLists): ThunkAction<
     any,
     RootState,
     StartUpdatingRequestAction | StopUpdatingRequestAction | ErrorUpdatingRequestAction |
-    SetToastAction | UpdatePicturesOfCurrentNewsAction
+    SetToastAction | UpdatePicturesOfCurrentNewsAction | SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startUpdatingRequest());
+    clearTimeout(timer);
+    setExpiryDate(15);
 
     try {
         await new Promise(resolve => setTimeout(resolve, 2000));
@@ -1163,6 +1273,7 @@ export const updatePicturesListRequest = (payload: ImagesLists): ThunkAction<
             dispatch(updatePicturesOfCurrentNews(payload.id, payload.contentList))
         }
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
+        timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopUpdatingRequest());
     } catch (err) {
         if (err.response !== undefined) {
@@ -1184,10 +1295,13 @@ export const updateImagesList = (payload: ImagesLists): ThunkAction<
     RootState,
     StartUpdatingRequestAction | StopUpdatingRequestAction | ErrorUpdatingRequestAction |
     SetToastAction | SetChildImagesListAction | UpdateSelectedPersonChildImagesListAction |
-    UpdateChildStatusAction
+    UpdateChildStatusAction | SetIsFrozenAction
 > => async (dispatch, getState) => {
+    dispatch(startUpdatingRequest());
+    clearTimeout(timer);
+    setExpiryDate(15);
+
     try {
-        dispatch(startUpdatingRequest());
         await new Promise(resolve => setTimeout(resolve, 2000));
         const contentList = payload.contentList.map((item: string) => item.replace(URL, ''));
         const removeList = payload.removeList.map((item: string) => item.replace(URL, ''));
@@ -1210,6 +1324,7 @@ export const updateImagesList = (payload: ImagesLists): ThunkAction<
             dispatch(updateSelectedPersonalChildImagesList(payload.contentList));
         }
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
+        timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopUpdatingRequest());
     } catch (err) {
         if (err.response !== undefined) {
@@ -1303,11 +1418,16 @@ export const getCurrentlyInvoicesList = (childId: string, page: number, rowsPerP
     any,
     RootState,
     StartUpdatingRequestAction | StopUpdatingRequestAction | ErrorUpdatingRequestAction |
-    SetSelectedQuantityAction | UpdateSelectedPersonChildInvoicesListAction
+    SetSelectedQuantityAction | UpdateSelectedPersonChildInvoicesListAction | SetIsFrozenAction
 
 > => async (dispatch, getState) => {
+    dispatch(startUpdatingRequest());
+    if (getState().user._id) {
+        clearTimeout(timer);
+        setExpiryDate(15);
+    }
+
     try {
-        dispatch(startUpdatingRequest());
         await new Promise(resolve => setTimeout(resolve, 2000));
         let res: AxiosResponse = await axios.get(`${API_URL}/admin/child/invoices/${childId}?page=${page}&rowsPerPage=${rowsPerPage}`, {
             headers: {
@@ -1324,6 +1444,7 @@ export const getCurrentlyInvoicesList = (childId: string, page: number, rowsPerP
             dispatch(updateSelectedPersonalChildInvoicesList(invoices));
         }
         dispatch(setSelectedQuantity(quantity));
+        timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopUpdatingRequest());
     } catch (err) {
         if (err.response !== undefined) {
@@ -1343,9 +1464,11 @@ export const addNewsRequest = (payload: NewsState): ThunkAction<
     Promise<void>,
     any,
     RootState,
-    StartRequestAction | StopRequestAction | ErrorRequestAction | SetToastAction
+    StartRequestAction | StopRequestAction | ErrorRequestAction | SetToastAction | SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startRequest());
+    clearTimeout(timer);
+    setExpiryDate(15);
 
     try {
         await new Promise(resolve => setTimeout(resolve, 2000));
@@ -1355,6 +1478,7 @@ export const addNewsRequest = (payload: NewsState): ThunkAction<
             },
         })
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
+        timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopRequest());
     } catch (err) {
         if (err.response !== undefined) {
@@ -1375,10 +1499,12 @@ export const updateNewsPublication = (newsId: string, isPublication: boolean): T
     any,
     RootState,
     StartUpdatingRequestAction | StopUpdatingRequestAction | ErrorUpdatingRequestAction |
-    SetToastAction | UpdateNewsOfPublicationAction
+    SetToastAction | UpdateNewsOfPublicationAction | SetIsFrozenAction
 > => async (dispatch, getState) => {
     const payload = { newsId, isPublication };
     dispatch(startUpdatingRequest());
+    clearTimeout(timer);
+    setExpiryDate(15);
 
     try {
         await new Promise(resolve => setTimeout(resolve, 2000));
@@ -1389,6 +1515,7 @@ export const updateNewsPublication = (newsId: string, isPublication: boolean): T
         })
         dispatch(updateNewsOfPublication(newsId, isPublication));
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
+        timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopUpdatingRequest());
     } catch (err) {
         if (err.response !== undefined) {
@@ -1409,9 +1536,11 @@ export const updateNewsDataRequest = (payload: NewsDataUpdate): ThunkAction<
     any,
     RootState,
     StartUpdatingRequestAction | StopUpdatingRequestAction | ErrorUpdatingRequestAction |
-    SetToastAction | UpdateNewsOfDataAction
+    SetToastAction | UpdateNewsOfDataAction | SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startUpdatingRequest());
+    clearTimeout(timer);
+    setExpiryDate(15);
 
     try {
         await new Promise(resolve => setTimeout(resolve, 2000));
@@ -1423,6 +1552,7 @@ export const updateNewsDataRequest = (payload: NewsDataUpdate): ThunkAction<
 
         dispatch(updateNewsOfData(payload));
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
+        timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopUpdatingRequest());
     } catch (err) {
         if (err.response !== undefined) {
@@ -1443,9 +1573,12 @@ export const removeCurrentNewsRequest = (newsId: string, images: string[]): Thun
     Promise<void>,
     any,
     RootState,
-    StartRequestAction | StopRequestAction | ErrorRequestAction | SetToastAction | SetIsRemoved
+    StartRequestAction | StopRequestAction | ErrorRequestAction | SetToastAction |
+    SetIsRemoved | SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startRequest());
+    clearTimeout(timer);
+    setExpiryDate(15);
 
     try {
         await new Promise(resolve => setTimeout(resolve, 2000));
@@ -1460,6 +1593,7 @@ export const removeCurrentNewsRequest = (newsId: string, images: string[]): Thun
             })
         dispatch(setIsRemoved(true));
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
+        timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopRequest());
     } catch (err) {
         if (err.response !== undefined) {
@@ -1543,9 +1677,12 @@ export const updateChildStatusRequest = (_id: string, isActive: boolean): ThunkA
     Promise<void>,
     any,
     RootState,
-    StartRequestAction | StopRequestAction | ErrorRequestAction | UpdateSelectedPersonChildStatusAction
+    StartRequestAction | StopRequestAction | ErrorRequestAction |
+    UpdateSelectedPersonChildStatusAction | SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startRequest());
+    clearTimeout(timer);
+    setExpiryDate(15);
     const payload = { _id, isActive }
 
     try {
@@ -1559,6 +1696,7 @@ export const updateChildStatusRequest = (_id: string, isActive: boolean): ThunkA
         if (res.status === 201) {
             dispatch(updateSelectedPersonalChildStatus(isActive));
         }
+        timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopRequest());
     } catch (err) {
         if (err.response !== undefined) {
@@ -1579,9 +1717,11 @@ export const removeChildRequest = (_id: string): ThunkAction<
     any,
     RootState,
     StartRequestAction | StopRequestAction | ErrorRequestAction | SetToastAction |
-    SetSelectedChild | SetSelectedPersonAction
+    SetSelectedChild | SetSelectedPersonAction | SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startRequest());
+    clearTimeout(timer);
+    setExpiryDate(15);
 
     try {
         await new Promise(resolve => setTimeout(resolve, 2000));
@@ -1596,6 +1736,7 @@ export const removeChildRequest = (_id: string): ThunkAction<
             dispatch(setSelectedChild(null));
             dispatch(setSelectedPerson(null));
         }
+        timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopRequest());
     } catch (err) {
         if (err.response !== undefined) {
@@ -1616,9 +1757,11 @@ export const removeUserRequest = (_id: string): ThunkAction<
     any,
     RootState,
     StartRequestAction | StopRequestAction | ErrorRequestAction | SetToastAction |
-    SetSelectedPersonAction
+    SetSelectedPersonAction | SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startRequest());
+    clearTimeout(timer);
+    setExpiryDate(15);
 
     try {
         await new Promise(resolve => setTimeout(resolve, 2000));
@@ -1632,6 +1775,7 @@ export const removeUserRequest = (_id: string): ThunkAction<
             dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
             dispatch(setSelectedPerson(null));
         }
+        timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopRequest());
     } catch (err) {
         if (err.response !== undefined) {
@@ -1653,9 +1797,14 @@ export const getReportsRequest = (): ThunkAction<
     RootState,
     StartReportingRequestAction | StopReportingRequestAction | ErrorReportingRequestAction | SetUsersQuantityAction |
     SetChildrenQuantityAction | SetPublicatedNewsQuantityAction | SetInvoicesQuantityAction |
-    SetCurrentYearReportIsPublicatedAction | SetUnpublicatedChildrenAction | SetParentsWithoutAnyChildrenAction
+    SetCurrentYearReportIsPublicatedAction | SetUnpublicatedChildrenAction | SetParentsWithoutAnyChildrenAction |
+    SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startReportingRequest());
+    if (getState().user._id) {
+        clearTimeout(timer);
+        setExpiryDate(15);
+    }
 
     try {
         await new Promise(resolve => setTimeout(resolve, 2000));
@@ -1683,6 +1832,7 @@ export const getReportsRequest = (): ThunkAction<
             dispatch(setUnpublicatedChildren(unpublicatedChildren));
             dispatch(setParentsWithoutAnyChildren(parentsWithoutChildren));
         }
+        timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopReportingRequest());
     } catch (err) {
         if (err.response !== undefined) {

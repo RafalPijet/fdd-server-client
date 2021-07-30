@@ -18,6 +18,7 @@ import {
   setModalAreYouSure,
 } from '../../../redux/actions/generalActions';
 import { loadUserMessages } from '../../../redux/actions/messageActions';
+import { clearTimer } from '../../../redux/thunks';
 import { SearchUserType, ModalAYSModes } from '../../../types/global';
 import { clearLocalStorage } from '../../../types/functions';
 import { Props, useStyles } from './headerLinksStyle';
@@ -32,6 +33,7 @@ const HeaderList: React.FC<Props> = (props) => {
   });
 
   const logoutHandling = () => {
+    clearTimer();
     clearLocalStorage();
     dispatch(cleanCurrentUser());
     dispatch(resetMessagesRequest());

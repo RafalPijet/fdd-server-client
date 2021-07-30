@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { VariantType, useSnackbar } from 'notistack';
 import ClassNames from 'classnames';
+import { Redirect } from 'react-router';
 import Typography from '@material-ui/core/Typography';
 import GridContainer from '../../common/Grid/GridContainer';
 import GridItem from '../../common/Grid/GridItem';
@@ -18,6 +19,7 @@ import {
   setAllNews,
   getIsRemoved,
   setIsRemoved,
+  getIsFrozen,
 } from '../../../redux/actions/generalActions';
 import {
   getSuccess,
@@ -32,6 +34,7 @@ import {
   resetAddingRequest,
   resetUpdatingRequest,
 } from '../../../redux/actions/requestActions';
+import { getUserId } from '../../../redux/actions/userActions';
 import { NewsState, ModalAYSModes } from '../../../types/global';
 import {
   getAllNewsRequest,
@@ -50,6 +53,8 @@ const AdminNewsPage: React.FC = () => {
   const isRemoved = useSelector(getIsRemoved);
   const isSuccess = useSelector(getSuccess);
   const isUpdatingSuccess = useSelector(getUpdatingSuccess);
+  const userId = useSelector(getUserId);
+  const isFrozen = useSelector(getIsFrozen);
   const news = useSelector(getNews);
   const error = useSelector(getError);
   const updatingError = useSelector(getUpdatingError);
@@ -57,6 +62,7 @@ const AdminNewsPage: React.FC = () => {
   const { enqueueSnackbar } = useSnackbar();
   const [currentNews, setCurrentNews] = useState<NewsState | null>(null);
   const [newsQuantity, setNewsQuantity] = useState<number | null>(null);
+  const [isRedirect, setIsRedirect] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -64,6 +70,10 @@ const AdminNewsPage: React.FC = () => {
       dispatch(setAllNews(null));
     };
   }, []);
+
+  useEffect(() => {
+    setIsRedirect(!userId || isFrozen);
+  }, [userId, isFrozen]);
 
   useEffect(() => {
     if (news === null || (news !== null && isSuccess)) {
@@ -149,6 +159,10 @@ const AdminNewsPage: React.FC = () => {
       })
     );
   };
+
+  if (isRedirect) {
+    return <Redirect to={'/admin'} />;
+  }
 
   return (
     <div>

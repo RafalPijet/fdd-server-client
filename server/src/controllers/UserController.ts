@@ -6,6 +6,7 @@ import path from 'path';
 import { controller, bodyValidator, ValidatorKeys } from './decorators';
 import { post, get, put } from '../routes';
 import { RequestWithUser } from '../middleware';
+import WrongCredentialsException from '../exceptions/WrongCredentialException';
 import HttpException from '../exceptions/HttpException';
 import {
     IMessage,
@@ -42,6 +43,24 @@ class UserController {
             }
             if (activeUser) {
                 res.status(200).json({ user: activeUser.getContent(true) });
+            }
+        } catch (err) {
+            next(new HttpException(404, `Nie znaleziono użytkownika. - ${err}`))
+        }
+    }
+
+    @get('/user/unfreeze')
+    async getUnfreezeUser(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const { password } = req.query;
+        const request = req as RequestWithUser;
+
+        try {
+            if (request.user.password) {
+                if (await bcrypt.compare(password, request.user.password)) {
+                    res.status(200).send();
+                } else {
+                    next(new WrongCredentialsException('hasło'));
+                }
             }
         } catch (err) {
             next(new HttpException(404, `Nie znaleziono użytkownika. - ${err}`))

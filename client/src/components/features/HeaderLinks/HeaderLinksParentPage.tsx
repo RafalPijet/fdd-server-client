@@ -36,6 +36,7 @@ import {
   AvailableDestinations,
   ModalAYSModes,
 } from '../../../types/global';
+import { clearTimer } from '../../../redux/thunks';
 import { clearLocalStorage } from '../../../types/functions';
 import { Props, useStyles } from './headerLinksStyle';
 
@@ -50,6 +51,7 @@ const HeaderList: React.FC<Props> = (props) => {
   const dispatch = useDispatch();
 
   const logoutHandling = () => {
+    clearTimer();
     clearLocalStorage();
     dispatch(cleanCurrentUser());
     dispatch(resetMessagesRequest());

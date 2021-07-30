@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import classNames from 'classnames';
 import { useSelector, useDispatch } from 'react-redux';
 import { VariantType, useSnackbar } from 'notistack';
@@ -25,6 +25,7 @@ import GridItem from '../../common/Grid/GridItem';
 import ParentMessages from '../../features/ParentMessages/ParentMessages';
 import ChildrenZone from '../../features/ChildrenZone/ChildrenZone';
 import ChildHandling from '../../common/ChildHandling/ChildHandling';
+import ModalLogin from '../../common/ModalLogin/ModalLogin';
 import {
   cleanCurrentUser,
   getUserId,
@@ -35,6 +36,7 @@ import {
   getToast,
   setUserToast,
   setSelectedChild,
+  getIsFrozen,
 } from '../../../redux/actions/generalActions';
 import { getUserRequest } from '../../../redux/thunks';
 import { useStyles } from './ParentPageStyle';
@@ -51,6 +53,7 @@ const ParentPage: React.FC = () => {
   const isUpdating = useSelector(getUpdating);
   const isAdding = useSelector(getAdding);
   const isMessages = useSelector(getMessages);
+  const isFrozen = useSelector(getIsFrozen);
   const toast = useSelector(getToast);
   const error = useSelector(getError);
   const updatingError = useSelector(getUpdatingError);
@@ -62,6 +65,7 @@ const ParentPage: React.FC = () => {
   const notification = new UIfx(notificationSound);
   const loginEnter = new UIfx(loginEnterSound);
   const warning = new UIfx(warningSound);
+  const [isModalLogin, setIsModalLogin] = useState<boolean>(false);
 
   useEffect(() => {
     if (!userId) {
@@ -70,6 +74,10 @@ const ParentPage: React.FC = () => {
       loginEnter.play(0.5);
     }
   }, []);
+
+  useEffect(() => {
+    setIsModalLogin(isFrozen);
+  }, [isFrozen]);
 
   useEffect(() => {
     if (socket) {
@@ -167,6 +175,7 @@ const ParentPage: React.FC = () => {
           <ChildHandling />
         </div>
       </div>
+      <ModalLogin isOpen={isModalLogin} />
     </div>
   );
 };

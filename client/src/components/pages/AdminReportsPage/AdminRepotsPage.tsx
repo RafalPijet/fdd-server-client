@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { VariantType, useSnackbar } from 'notistack';
 import ClassNames from 'classnames';
+import { Redirect } from 'react-router';
 import Typography from '@material-ui/core/Typography';
 import GridContainer from '../../common/Grid/GridContainer';
 import GridItem from '../../common/Grid/GridItem';
@@ -25,7 +26,9 @@ import {
   setModalAreYouSure,
   setAvailableReportsYears,
   setReportsOfSelectedYear,
+  getIsFrozen,
 } from '../../../redux/actions/generalActions';
+import { getUserId } from '../../../redux/actions/userActions';
 import {
   getReportsYearsRequest,
   removeReportRequest,
@@ -42,8 +45,11 @@ const AdminReportsPage: React.FC = () => {
   const addingError = useSelector(getAddingError);
   const modalAYS = useSelector(getModalAreYouSure);
   const toast = useSelector(getToast);
+  const userId = useSelector(getUserId);
+  const isFrozen = useSelector(getIsFrozen);
   const { enqueueSnackbar } = useSnackbar();
   const [selectedReport, setSelectedReport] = useState<any>(null);
+  const [isRedirect, setIsRedirect] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -53,6 +59,10 @@ const AdminReportsPage: React.FC = () => {
       dispatch(setReportsOfSelectedYear(null));
     };
   }, []);
+
+  useEffect(() => {
+    setIsRedirect(!userId || isFrozen);
+  }, [userId, isFrozen]);
 
   useEffect(() => {
     if (toast.isOpen) {
@@ -101,6 +111,10 @@ const AdminReportsPage: React.FC = () => {
       })
     );
   };
+
+  if (isRedirect) {
+    return <Redirect to={'/admin'} />;
+  }
 
   return (
     <div>

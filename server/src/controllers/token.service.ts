@@ -11,8 +11,7 @@ export interface DataStoredInToken {
 }
 
 export const createToken = (user: IUser): TokenData => {
-    const expiresIn = 60;
-    // const expiresIn = 3600;
+    const expiresIn = 28800;
     const secret = process.env.SECRET_KEY;
     const dataStoredInToken: DataStoredInToken = {
         _id: user._id!,

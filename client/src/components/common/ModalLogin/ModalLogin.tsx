@@ -46,6 +46,11 @@ const ModalLogin: React.FC<Props> = (props) => {
     setPassword(event.target.value);
   };
 
+  const confirmButton = () => {
+    dispatch(unfreezeUserRequest(password));
+    setPassword('');
+  };
+
   const onKeyDown = (
     event: React.KeyboardEvent<
       HTMLButtonElement | HTMLTextAreaElement | HTMLInputElement
@@ -54,6 +59,7 @@ const ModalLogin: React.FC<Props> = (props) => {
     if (event.key === 'Enter') {
       event.preventDefault();
       event.stopPropagation();
+      confirmButton();
     }
   };
 
@@ -144,10 +150,7 @@ const ModalLogin: React.FC<Props> = (props) => {
           setSize="md"
           disabled={password.length < 5 || isPending}
           progress={isPending}
-          onClick={() => {
-            dispatch(unfreezeUserRequest(password));
-            setPassword('');
-          }}
+          onClick={() => confirmButton()}
         >
           Potwierdź
         </CustomButton>
