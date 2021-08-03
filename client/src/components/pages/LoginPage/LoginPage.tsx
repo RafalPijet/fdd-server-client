@@ -3,11 +3,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Redirect } from 'react-router';
 import { VariantType, useSnackbar } from 'notistack';
 import UIfx from 'uifx';
+import classNames from 'classnames';
 import {
   getPending,
   getSuccess,
   getError,
   resetRequest,
+  getUpdating,
+  getUpdatingError,
+  resetUpdatingRequest,
 } from '../../../redux/actions/requestActions';
 import { getUserStatus } from '../../../redux/actions/userActions';
 import {
@@ -17,8 +21,14 @@ import {
   Register,
 } from './LoginPageStyle';
 import { ServiceOptions } from '../../../types/global';
-import { loginUser, addUser } from '../../../redux/thunks';
+import { getToast, setUserToast } from '../../../redux/actions/generalActions';
+import {
+  loginUser,
+  addUser,
+  resetPasswordRequest,
+} from '../../../redux/thunks';
 import InputAdornment from '@material-ui/core/InputAdornment';
+import Button from '@material-ui/core/Button';
 import Header from '../../common/Header/Header';
 import HeaderLinks from '../../features/HeaderLinks/HeaderLinksLoginPage';
 import GridContainer from '../../common/Grid/GridContainer';
@@ -43,6 +53,10 @@ const LoginPage: React.FC = () => {
   const isPendingRequest = useSelector(getPending);
   const isSuccessRequest = useSelector(getSuccess);
   const isErrorRequest = useSelector(getError).isError;
+  const isUpdating = useSelector(getUpdating);
+  const isUpdatingError = useSelector(getUpdatingError).isError;
+  const updatingError = useSelector(getUpdatingError).message;
+  const toast = useSelector(getToast);
   const errorMessage = useSelector(getError).message;
   const userStatus = useSelector(getUserStatus);
   const notification = new UIfx(notificationSound);
@@ -82,6 +96,12 @@ const LoginPage: React.FC = () => {
   );
   const [isAccess, setIsAccess] = useState<boolean>(false);
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
+
+  const resetClasses = classNames({
+    [classes.resetSize]: true,
+    [classes.reset]: login.email.length > 0 && !isError.email,
+    [classes.resetPending]: isUpdating,
+  });
   setTimeout(() => {
     setIsCardAnimation(false);
   }, 700);
@@ -151,10 +171,26 @@ const LoginPage: React.FC = () => {
   }, [isPendingRequest]);
 
   useEffect(() => {
+    setIsDisabled(isUpdating);
+  }, [isUpdating]);
+
+  useEffect(() => {
+    if (toast.isOpen) {
+      handleToast(toast.content, toast.variant);
+    }
+    if (isUpdatingError) {
+      handleToast(updatingError, 'error');
+    }
+    // notification.play(0.5);
+    dispatch(resetUpdatingRequest());
+    dispatch(setUserToast({ isOpen: false, content: '', variant: 'success' }));
+  }, [isUpdatingError, toast.isOpen]);
+
+  useEffect(() => {
     if (!isPendingRequest) {
       if (isSuccessRequest) {
         if (serviceType === ServiceOptions.register) {
-          notification.play(0.5);
+          // notification.play(0.5);
           handleToast(
             `${register.firstName} ${register.lastName} jest zarejestrowanym rodzicem`,
             'success'
@@ -171,9 +207,9 @@ const LoginPage: React.FC = () => {
           setTimeout(() => setIsRedirect(true), 10);
         }
       }
-      if (isErrorRequest) {
+      if (isErrorRequest || isUpdatingError) {
         handleToast(errorMessage, 'error');
-        warning.play(0.5);
+        // warning.play(0.5);
       }
       dispatch(resetRequest());
     }
@@ -238,6 +274,12 @@ const LoginPage: React.FC = () => {
   };
 
   const handleToast = (message: string, variant: VariantType) => {
+    if (variant === 'error') {
+      warning.play(0.5);
+    }
+    if (variant === 'success') {
+      notification.play(0.5);
+    }
     enqueueSnackbar(message, { variant });
   };
 
@@ -447,6 +489,20 @@ const LoginPage: React.FC = () => {
                             autoComplete: 'off',
                           }}
                         />
+                        {serviceType === ServiceOptions.login && (
+                          <div className={classes.resetBox}>
+                            <Button
+                              color="default"
+                              disabled={isError.email || !login.email.length}
+                              className={resetClasses}
+                              onClick={() =>
+                                dispatch(resetPasswordRequest(login.email))
+                              }
+                            >
+                              Nie pamiętam hasła
+                            </Button>
+                          </div>
+                        )}
                         {serviceType === ServiceOptions.register && (
                           <CustomInput
                             labelText="Potwierdź hasło..."
@@ -605,6 +661,7 @@ const LoginPage: React.FC = () => {
                     <CustomButton
                       onClick={handleSendButton}
                       onKeyDown={onKeyDown}
+                      progress={isDisabled}
                       disabled={!isAccess || isDisabled}
                       setColor="primary"
                       setSize="md"

@@ -1,4 +1,4 @@
-import { container } from '../../../styles/globalStyles';
+import { container, primaryColor } from '../../../styles/globalStyles';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { UserStatus } from '../../../types/global';
 
@@ -45,6 +45,20 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
             bottom: "0",
             width: "100%"
         }
+    },
+    resetBox: {
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+    },
+    resetSize: {
+        fontSize: `10px !important`
+    },
+    resetPending: {
+        cursor: 'progress'
+    },
+    reset: {
+        color: `${primaryColor} !important`,
     },
     form: {
         margin: "0 auto",

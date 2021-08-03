@@ -1,5 +1,8 @@
 import * as bcrypt from 'bcrypt';
 import { Request, Response, NextFunction } from 'express';
+import nodemailerSendgrid from 'nodemailer-sendgrid';
+import nodemailer from 'nodemailer';
+import * as dotenv from 'dotenv';
 import { controller, bodyValidator, ValidatorKeys } from './decorators';
 import { createToken } from './token.service';
 import { get, post } from '../routes';
@@ -19,6 +22,12 @@ import UserWithThatEmailAlreadyExistsException from '../exceptions/UserWithThatE
 import WrongCredentialsException from '../exceptions/WrongCredentialException';
 import { UserDto, removeDuplicates } from '../utils/functions';
 import { io } from '../index';
+dotenv.config();
+const transporter = nodemailer.createTransport(
+    nodemailerSendgrid({
+        apiKey: process.env.SENDGRID_KEY!
+    })
+);
 
 @controller('/api/auth')
 class AuthController {
@@ -33,7 +42,7 @@ class AuthController {
 
                 if (await bcrypt.compare(password, user.password)) {
                     user.password = undefined;
-                    const tokenData = createToken(user);
+                    const tokenData = createToken(user, 28800);
 
                     const dto = new UserDto(user);
                     res.status(201).json({ dto: dto.getContent(true), authorization: tokenData });
@@ -86,6 +95,37 @@ class AuthController {
             res.status(201).json({ message: "Wiadomość została wysłana." });
         } catch (err) {
             next(new HttpException(404, `Wiadomość nie została wysłana!. - ${err}`))
+        }
+    }
+
+    @get('/reset')
+    async resetPassword(req: Request, res: Response, next: NextFunction): Promise<void> {
+        let { email } = req.query;
+        email = email?.toString()
+
+        try {
+            const user = await UserModel.findOne({ email });
+            if (user) {
+                const tokenData = createToken(user, 900);
+                transporter.sendMail({
+                    to: user.email,
+                    from: process.env.FDD_Email,
+                    subject: 'Fundacja Dorośli Dzieciom',
+                    html: `
+                    <h2>ZMIANA HASŁA</h2>
+                    <h3>Dzień dobry ${user.firstName} ${user.lastName}</h3>
+                    <p>Otrzymaliśmy zgłoszenie zmiany Twojego hasła</p>
+                    <p>Aby zmienić hasło kliknij poniższy link:</p>
+                    <a href="${process.env.URL}change/${user.email}/${tokenData.token}">link do zmiany hasła ważny przez 15 minut</a>
+                `
+                });
+                res.status(200).json({ message: `Na adres ${email} został wysłany link do zmiany hasła` })
+            } else {
+                next(new HttpException(404,
+                    `Podany adres email: ${email} nie istnieje w bazie danych!`))
+            }
+        } catch (err) {
+            next(new HttpException(404, 'Nie znaleziono użytkownika'));
         }
     }
 
