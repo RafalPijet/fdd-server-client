@@ -16,7 +16,6 @@ import {
     ChildModel,
     IChild,
     buildChild,
-    IUser,
     UserModel,
     IInvoice,
     buildInvoice,
@@ -510,6 +509,28 @@ class UserController {
             }
         } catch (err) {
             next(new HttpException(404, 'Nieudana aktualizacja danych użytkownika'));
+        }
+    }
+
+
+    @put('/change')
+    async changeUserPassword(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const { password } = req.body;
+        const request = req as RequestWithUser;
+
+        try {
+            const user = await UserModel.findById(request.user._id);
+            if (user) {
+                const hashedPassword = await bcrypt.hash(password, 10);
+                user.password = hashedPassword;
+                await user.save();
+                res.status(201).json({ message: `Hasło użytkownika ${user.firstName} ${request.user.lastName} zostało zmienione` });
+            } else {
+                next(new HttpException(404, 'Nie znaleziono użytkownika'));
+            }
+
+        } catch (err) {
+            next(new HttpException(404, 'Nieudana zmiana hasła użytkownika'));
         }
     }
 }

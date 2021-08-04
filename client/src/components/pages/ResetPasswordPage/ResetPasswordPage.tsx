@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useLocation } from 'react-router-dom';
+import { VariantType, useSnackbar } from 'notistack';
+import { Redirect } from 'react-router';
+import UIfx from 'uifx';
 import Typography from '@material-ui/core/Typography';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import { Lock, LockOpen } from '@material-ui/icons';
@@ -11,14 +14,34 @@ import CardBody from '../../common/CardBody/CardBody';
 import CardFooter from '../../common/CardFooter/CardFooter';
 import CustomInput from '../../common/CustomInput/CustomInput';
 import CustomButton from '../../common/CustomButton/CustomButton';
+import {
+  getUpdating,
+  getUpdatingSuccess,
+  getUpdatingError,
+  resetUpdatingRequest,
+} from '../../../redux/actions/requestActions';
+import { getToast, setUserToast } from '../../../redux/actions/generalActions';
+import { changePasswordRequest } from '../../../redux/thunks';
 import { IUserRegister } from '../LoginPage/LoginPageStyle';
+import notificationSound from '../../../sounds/notification.wav';
+import warningSound from '../../../sounds/warning.wav';
 import { useStyles } from './ResetPasswordPageStyle';
 import image from '../../../images/loginBackground.jpg';
 
 const ResetPasswordPage: React.FC = () => {
   const classes = useStyles();
   const location = useLocation();
+  const dispatch = useDispatch();
+  const { enqueueSnackbar } = useSnackbar();
+  const isPending = useSelector(getUpdating);
+  const isSuccess = useSelector(getUpdatingSuccess);
+  const isRequestError = useSelector(getUpdatingError).isError;
+  const requestError = useSelector(getUpdatingError).message;
+  const toast = useSelector(getToast);
+  const notification = new UIfx(notificationSound);
+  const warning = new UIfx(warningSound);
   const [isCardAnimation, setIsCardAnimation] = useState(true);
+  const [isRedirect, setIsRedirect] = useState(false);
   const [token, setToken] = useState<string>('');
   const [reset, setReset] = useState<
     Omit<
@@ -58,6 +81,34 @@ const ResetPasswordPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    if (isSuccess) {
+      setReset({
+        ...reset,
+        password: '',
+        confirmPassword: '',
+      });
+      setTimeout(() => setIsRedirect(true), 5000);
+    }
+  }, [isSuccess]);
+
+  useEffect(() => {
+    if (toast.isOpen) {
+      handleToast(toast.content, toast.variant);
+      dispatch(
+        setUserToast({
+          isOpen: false,
+          content: '',
+          variant: 'success',
+        })
+      );
+    }
+    if (isRequestError) {
+      handleToast(requestError, 'error');
+      dispatch(resetUpdatingRequest());
+    }
+  }, [isRequestError, toast.isOpen]);
+
+  useEffect(() => {
     setIsError({
       ...isError,
       password: reset.password.length > 0 && reset.password.length < 5,
@@ -76,8 +127,18 @@ const ResetPasswordPage: React.FC = () => {
     });
   };
 
+  const handleToast = (message: string, variant: VariantType) => {
+    if (variant === 'error') {
+      warning.play(0.5);
+    }
+    if (variant === 'success') {
+      notification.play(0.5);
+    }
+    enqueueSnackbar(message, { variant });
+  };
+
   const handleSendButton = () => {
-    console.log('click');
+    dispatch(changePasswordRequest(reset.password, token));
   };
 
   const onKeyDown = (
@@ -93,6 +154,10 @@ const ResetPasswordPage: React.FC = () => {
       }
     }
   };
+
+  if (isRedirect) {
+    return <Redirect to="/login" />;
+  }
 
   return (
     <div
@@ -123,7 +188,7 @@ const ResetPasswordPage: React.FC = () => {
                   <CustomInput
                     labelText="Nowe hasło..."
                     id="password"
-                    //   isDisabled={isDisabled}
+                    isDisabled={isPending}
                     value={reset.password}
                     error={isError.password}
                     formControlProps={{
@@ -147,12 +212,13 @@ const ResetPasswordPage: React.FC = () => {
                   <CustomInput
                     labelText="Potwierdź hasło..."
                     id="confirmPassword"
-                    // isDisabled={isDisabled}
+                    isDisabled={isPending}
                     value={reset.confirmPassword}
                     error={isError.confirmPassword}
                     formControlProps={{
                       fullWidth: true,
                     }}
+                    onKeyDown={onKeyDown}
                     onChange={handleTextField}
                     inputProps={{
                       type: 'password',
@@ -176,12 +242,13 @@ const ResetPasswordPage: React.FC = () => {
                   <CustomButton
                     onClick={handleSendButton}
                     onKeyDown={onKeyDown}
-                    //   progress={isDisabled}
+                    progress={isPending}
                     disabled={
                       isError.password ||
                       isError.confirmPassword ||
                       !reset.password.length ||
-                      !reset.confirmPassword.length
+                      !reset.confirmPassword.length ||
+                      isPending
                     }
                     setColor="primary"
                     setSize="md"

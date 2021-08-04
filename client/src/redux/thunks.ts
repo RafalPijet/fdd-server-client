@@ -1879,3 +1879,33 @@ export const resetPasswordRequest = (email: string): ThunkAction<
         }
     }
 }
+
+export const changePasswordRequest = (password: string, token: string): ThunkAction<
+    Promise<void>,
+    any,
+    RootState,
+    StartUpdatingRequestAction | StopUpdatingRequestAction | ErrorUpdatingRequestAction |
+    SetToastAction
+> => async (dispatch, getState) => {
+    dispatch(startUpdatingRequest());
+
+    try {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        let res: AxiosResponse = await axios.put(`${API_URL}/users/change`, { password },
+            {
+                headers: {
+                    'Authorization': token
+                }
+            })
+        dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
+        dispatch(stopUpdatingRequest());
+    } catch (err) {
+        if (err.response !== undefined) {
+            err.response.data.message ?
+                dispatch(errorUpdatingRequest({ isError: true, message: err.response.data.message })) :
+                dispatch(errorUpdatingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        } else {
+            dispatch(errorUpdatingRequest({ isError: true, message: 'Coś poszło nie tak!' }));
+        }
+    }
+}

@@ -181,7 +181,6 @@ const LoginPage: React.FC = () => {
     if (isUpdatingError) {
       handleToast(updatingError, 'error');
     }
-    // notification.play(0.5);
     dispatch(resetUpdatingRequest());
     dispatch(setUserToast({ isOpen: false, content: '', variant: 'success' }));
   }, [isUpdatingError, toast.isOpen]);
@@ -190,7 +189,6 @@ const LoginPage: React.FC = () => {
     if (!isPendingRequest) {
       if (isSuccessRequest) {
         if (serviceType === ServiceOptions.register) {
-          // notification.play(0.5);
           handleToast(
             `${register.firstName} ${register.lastName} jest zarejestrowanym rodzicem`,
             'success'
@@ -209,7 +207,6 @@ const LoginPage: React.FC = () => {
       }
       if (isErrorRequest || isUpdatingError) {
         handleToast(errorMessage, 'error');
-        // warning.play(0.5);
       }
       dispatch(resetRequest());
     }
