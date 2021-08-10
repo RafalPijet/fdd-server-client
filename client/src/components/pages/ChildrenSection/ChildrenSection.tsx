@@ -7,6 +7,7 @@ import UIfx from 'uifx';
 import Grow from '@material-ui/core/Grow';
 import Header from '../../common/Header/Header';
 import HeaderLinks from '../../features/HeaderLinks/HeaderLinksLoginPage';
+import Footer from '../../common/Footer/Footer';
 import GridContainer from '../../common/Grid/GridContainer';
 import GridItem from '../../common/Grid/GridItem';
 import { Typography } from '@material-ui/core';
@@ -366,6 +367,7 @@ const ChildrenSection: React.FC = () => {
           </GridItem>
         </GridContainer>
       </div>
+      <Footer />
     </div>
   );
 };

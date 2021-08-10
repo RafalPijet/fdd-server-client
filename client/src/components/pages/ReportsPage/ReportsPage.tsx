@@ -8,6 +8,7 @@ import { Typography } from '@material-ui/core';
 import Header from '../../common/Header/Header';
 import HeaderLinks from '../../features/HeaderLinks/HeaderLinksLoginPage';
 import ReportsList from '../../common/ReportsList/ReportsList';
+import Footer from '../../common/Footer/Footer';
 import { getReportsYearsRequest } from '../../../redux/thunks';
 import {
   getPending,
@@ -26,6 +27,7 @@ const ReportsPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     window.onload = () => {
       setIsLoading(true);
     };
@@ -73,6 +75,7 @@ const ReportsPage: React.FC = () => {
           </GridItem>
         </GridContainer>
       </div>
+      <Footer />
     </div>
   );
 };

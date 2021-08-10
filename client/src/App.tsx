@@ -2,6 +2,14 @@ import React from 'react';
 import { Router, Route, Switch, BrowserRouter } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
 
+const DonatePage = React.lazy(
+  () => import('./components/pages/DonatePage/DonatePage')
+);
+
+const PercentPage = React.lazy(
+  () => import('./components/pages/PercentPage/PercentPage')
+);
+
 const ResetPasswordPage = React.lazy(
   () => import('./components/pages/ResetPasswordPage/ResetPasswordPage')
 );
@@ -65,6 +73,8 @@ const App = () => {
             <Route exact path="/statut" component={StatutPage} />
             <Route exact path="/clause" component={ClausePage} />
             <Route exact path="/reports" component={ReportsPage} />
+            <Route exact path="/percent" component={PercentPage} />
+            <Route exact path="/donate" component={DonatePage} />
             <Route exact path="/admin/news" component={AdminNewsPage} />
             <Route exact path="/admin/reports" component={AdminReportsPage} />
             <Route exact path="/news/:id" component={NewsPage} />

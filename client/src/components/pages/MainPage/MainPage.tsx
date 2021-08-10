@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import classNames from 'classnames';
+import TextTransition, { presets } from 'react-text-transition';
 import { VariantType, useSnackbar } from 'notistack';
 import UIfx from 'uifx';
 import { Typography } from '@material-ui/core';
 import ButtonBase from '@material-ui/core/ButtonBase';
 import { Redirect } from 'react-router';
-import { useStyles } from './MainPageStyle';
 import GridContainer from '../../common/Grid/GridContainer';
 import GridItem from '../../common/Grid/GridItem';
 import Header from '../../common/Header/Header';
@@ -30,11 +30,14 @@ import {
   getChildrenBasicDataRequest,
 } from '../../../redux/thunks';
 import { AvailableDestinations } from '../../../types/global';
+import { useStyles, texts1, texts2 } from './MainPageStyle';
 import image from '../../../images/jumbotronMain.jpg';
 import childrenButton from '../../../images/childrenButton.jpg';
 import reportsButton from '../../../images/reportsButton.jpg';
 import notificationSound from '../../../sounds/notification.wav';
 import warningSound from '../../../sounds/warning.wav';
+import percentImage from '../../../images/percent.png';
+import heardImage from '../../../images/heard.png';
 
 const MainPage: React.FC = () => {
   const classes = useStyles();
@@ -50,6 +53,27 @@ const MainPage: React.FC = () => {
     useState<boolean>(false);
   const [isRedirectToReports, setIsRedirectToReports] =
     useState<boolean>(false);
+  const [isRedirectToPercent, setIsRedirectToPercent] =
+    useState<boolean>(false);
+  const [isRedirectToDonate, setIsRedirectToDonate] = useState<boolean>(false);
+  const [textIndex, setTextIndex] = useState<number>(0);
+  const [textFastIndex, setFastTextIndex] = useState<number>(0);
+
+  useEffect(() => {
+    const intervalText = setInterval(
+      () => setTextIndex((textIndex) => textIndex + 1),
+      5700
+    );
+    return () => clearTimeout(intervalText);
+  }, []);
+
+  useEffect(() => {
+    const intervalFastText = setInterval(
+      () => setFastTextIndex((textFastIndex) => textFastIndex + 1),
+      3800
+    );
+    return () => clearTimeout(intervalFastText);
+  }, []);
 
   useEffect(() => {
     if (toast.isOpen) {
@@ -94,6 +118,14 @@ const MainPage: React.FC = () => {
     return <Redirect to="/reports" />;
   }
 
+  if (isRedirectToPercent) {
+    return <Redirect to="/percent" />;
+  }
+
+  if (isRedirectToDonate) {
+    return <Redirect to="/donate" />;
+  }
+
   return (
     <div id={AvailableDestinations.mainPage}>
       <Header
@@ -124,6 +156,81 @@ const MainPage: React.FC = () => {
               >
                 św. Jan Paweł II
               </Typography>
+            </GridItem>
+            <GridItem
+              xs={12}
+              sm={12}
+              md={6}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'flex-end',
+              }}
+            >
+              <div
+                style={{
+                  width: '70%',
+                  display: 'flex',
+                  justifyContent: 'center',
+                }}
+              >
+                <Typography
+                  variant="h5"
+                  style={{ marginBottom: 0 }}
+                  className={classes.title}
+                >
+                  <TextTransition
+                    text={texts1[textIndex % texts1.length]}
+                    springConfig={presets.stiff}
+                    inline
+                    delay={500}
+                    style={{ padding: '0 5px' }}
+                  />
+                  <TextTransition
+                    text={texts2[textFastIndex % texts2.length]}
+                    springConfig={presets.stiff}
+                    inline
+                    style={{ padding: '0 5px' }}
+                  />
+                  Twój
+                </Typography>
+              </div>
+              <div className={classes.imagesBox}>
+                <ButtonBase
+                  focusRipple
+                  onClick={() =>
+                    setTimeout(() => setIsRedirectToPercent(true), 300)
+                  }
+                  className={classes.percent}
+                  focusVisibleClassName={classes.focusVisible}
+                >
+                  <span
+                    className={classes.imageSrc}
+                    style={{
+                      backgroundImage: `url(${percentImage})`,
+                      width: 140,
+                    }}
+                  />
+                </ButtonBase>
+                <ButtonBase
+                  focusRipple
+                  onClick={() =>
+                    setTimeout(() => setIsRedirectToDonate(true), 300)
+                  }
+                  className={classes.percent}
+                  focusVisibleClassName={classes.focusVisible}
+                >
+                  <span
+                    className={classes.icon}
+                    style={{
+                      backgroundImage: `url(${heardImage})`,
+                      width: 80,
+                      height: 80,
+                      paddingTop: 10,
+                    }}
+                  />
+                </ButtonBase>
+              </div>
             </GridItem>
           </GridContainer>
         </div>

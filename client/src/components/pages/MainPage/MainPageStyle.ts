@@ -89,6 +89,28 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
             }
         },
     },
+    percent: {
+        position: 'relative',
+        height: 130,
+        width: 130,
+        [theme.breakpoints.down('xs')]: {
+            width: '100% !important', // Overrides inline-style
+            height: 100,
+        },
+        '&:hover, &$focusVisible': {
+            transition: '5s',
+            '& $imageSrc, & $icon': {
+                transform: 'scale(1.5)',
+                transition: '3s'
+            },
+        },
+    },
+    imagesBox: {
+        width: '70%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     focusVisible: {},
     imageButton: {
         maxHeight: '60px',
@@ -114,6 +136,12 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
         justifyContent: 'center',
         color: theme.palette.common.white,
     },
+    icon: {
+        backgroundSize: 'cover',
+        backgroundPosition: 'center 40%',
+        transition: '3s',
+        transform: 'scale(1)',
+    },
     imageSrc: {
         position: 'absolute',
         left: 0,
@@ -122,6 +150,8 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
         bottom: 0,
         backgroundSize: 'cover',
         backgroundPosition: 'center 40%',
+        transition: '3s',
+        transform: 'scale(1)',
     },
     imageBackdrop: {
         position: 'absolute',
@@ -153,3 +183,6 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
         transition: theme.transitions.create('opacity'),
     },
 }))
+
+export const texts1 = ["Podaruj", "Przekaż", "Ofiaruj"];
+export const texts2 = ["nam", "dzieciom", "podopiecznym"];

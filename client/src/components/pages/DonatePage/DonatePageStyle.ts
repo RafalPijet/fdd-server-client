@@ -1,10 +1,8 @@
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
-import {
-    container,
-    logoColor,
-    lightGrayColor,
-} from '../../../styles/globalStyles';
+import { container, logoColor, primaryColor } from '../../../styles/globalStyles';
+import image from '../../../images/jumbotronAdmin.jpg';
+import imageBack from '../../../images/jumbotronParent.jpg';
 
 const justContainer = container as BaseCSSProperties;
 
@@ -12,27 +10,27 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
     container: {
         zIndex: 2,
         position: 'relative',
-        paddingTop: '10vh',
-        color: '#FFFFFF',
-        paddingBottom: '200px',
+        display: 'inherit',
+        justifyContent: 'center',
         ...justContainer,
     },
     root: {
-        minHeight: '80vh',
-        maxHeight: '810px',
+        margin: '50px 0',
         padding: '10px',
-        backgroundColor: 'rgba(255, 255, 255, 0.1)',
-        overflow: 'auto'
+        backgroundColor: 'rgba(255, 255, 255, 0.5)',
     },
     pageHeader: {
-        minHeight: '100vh',
+        minHeight: '20vh',
         height: 'auto',
-        display: 'inherit',
+        display: 'flex',
         position: 'relative',
         margin: '0',
         padding: '0',
         border: '0',
         alignItems: 'center',
+        backgroundImage: 'url(' + image + ')',
+        backgroundSize: 'cover',
+        backgroundPosition: 'top center',
         '&:before': {
             background: 'rgba(0, 0, 0, 0.5)',
         },
@@ -55,11 +53,25 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
             width: '100%',
         },
     },
-    title: {
-        paddingTop: 20,
-        color: logoColor,
+    titlePage: {
+        color: logoColor
     },
-    content: {
-        color: lightGrayColor
+    title: {
+        color: primaryColor,
+        padding: '50px 0',
+        fontWeight: 500
+    },
+    main: {
+        backgroundImage: 'url(' + imageBack + ')',
+        backgroundSize: 'cover',
+        backgroundPosition: 'top center',
+        position: "relative",
+        zIndex: 3
+    },
+    mainRaised: {
+        margin: "-60px 30px 0px",
+        borderRadius: "6px",
+        boxShadow:
+            "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2)"
     }
 }))
