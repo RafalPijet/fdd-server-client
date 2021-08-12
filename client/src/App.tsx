@@ -74,7 +74,7 @@ const App = () => {
             <Route exact path="/clause" component={ClausePage} />
             <Route exact path="/reports" component={ReportsPage} />
             <Route exact path="/percent" component={PercentPage} />
-            <Route exact path="/donate" component={DonatePage} />
+            <Route exact path="/donate/:id" component={DonatePage} />
             <Route exact path="/admin/news" component={AdminNewsPage} />
             <Route exact path="/admin/reports" component={AdminReportsPage} />
             <Route exact path="/news/:id" component={NewsPage} />

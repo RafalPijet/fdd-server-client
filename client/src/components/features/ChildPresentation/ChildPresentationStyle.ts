@@ -42,7 +42,21 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center'
-    }
+    },
+    focusVisible: {},
+    icon: {
+        backgroundSize: 'cover',
+        backgroundPosition: 'center 40%',
+    },
+    donate: {
+        position: 'relative',
+        height: 90,
+        width: 130,
+        [theme.breakpoints.down('xs')]: {
+            width: '100% !important', // Overrides inline-style
+            height: 100,
+        },
+    },
 }))
 
 export interface Props {

@@ -37,7 +37,7 @@ import reportsButton from '../../../images/reportsButton.jpg';
 import notificationSound from '../../../sounds/notification.wav';
 import warningSound from '../../../sounds/warning.wav';
 import percentImage from '../../../images/percent.png';
-import heardImage from '../../../images/heard.png';
+import heartImage from '../../../images/heard.png';
 
 const MainPage: React.FC = () => {
   const classes = useStyles();
@@ -123,7 +123,7 @@ const MainPage: React.FC = () => {
   }
 
   if (isRedirectToDonate) {
-    return <Redirect to="/donate" />;
+    return <Redirect to="/donate/0" />;
   }
 
   return (
@@ -223,7 +223,7 @@ const MainPage: React.FC = () => {
                   <span
                     className={classes.icon}
                     style={{
-                      backgroundImage: `url(${heardImage})`,
+                      backgroundImage: `url(${heartImage})`,
                       width: 80,
                       height: 80,
                       paddingTop: 10,
