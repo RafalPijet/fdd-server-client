@@ -101,7 +101,7 @@ const HeaderList: React.FC<Props> = (props) => {
         buttons.push(
           <CustomButton
             setSize="sm"
-            style={{ width: '100%' }}
+            style={{ width: '100%', justifyContent: 'flex-start' }}
             setColor="primary"
             id={item._id}
             onClick={choiceChildHandling}

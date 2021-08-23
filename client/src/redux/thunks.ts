@@ -161,7 +161,6 @@ export const loginUser = (payload: IUserLogin): ThunkAction<
     dispatch(startRequest())
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
         let res: AxiosResponse = await axios.post(`${API_URL}/auth/login`, payload, {
             headers: {
                 'Content-Type': 'application/json'
@@ -210,7 +209,6 @@ export const unfreezeUserRequest = (password: string): ThunkAction<
     dispatch(startRequest());
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
         let res: AxiosResponse = await axios.get(`${API_URL}/users/user/unfreeze`, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD')
@@ -249,7 +247,6 @@ export const getUserRequest = (): ThunkAction<
     dispatch(startRequest())
     timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
     try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
         let res: AxiosResponse = await axios.get(`${API_URL}/users/user`, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD')
@@ -295,7 +292,6 @@ export const addUser = (payload: Register): ThunkAction<
     payload.prepare();
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
         await axios.post(`${API_URL}/auth/user`, payload.getContent())
         dispatch(stopRequest());
     } catch (err) {
@@ -389,7 +385,6 @@ export const updateUser = (payload: any, dataType: UpdateUserTypeData, userId: s
     setExpiryDate(15);
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
         let res: AxiosResponse;
         if (dataType === UpdateUserTypeData.all) {
             res = await axios.put(`${API_URL}/users/user/alldata/${userId}`, payload, {
@@ -459,7 +454,6 @@ export const getPersonByIdRequest = (type: SearchUserType, id: string): ThunkAct
     }
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
         let res: AxiosResponse = await axios.get(`${API_URL}/admin/people/${type}/${id}`, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD')
@@ -535,7 +529,6 @@ export const addMessage = (payload: string, _id?: string): ThunkAction<
     setExpiryDate(15);
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
         let res: AxiosResponse = await axios.post(`${API_URL}/users/message`, { content: payload, userId: _id }, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD')
@@ -570,7 +563,6 @@ export const removeMessage = (messageId: string, isUser: boolean): ThunkAction<
     setExpiryDate(15);
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
         let res: AxiosResponse = await axios.delete(`${API_URL}/admin/messages`,
             {
                 data: { messageId, isUser }, headers: {
@@ -604,7 +596,6 @@ export const addOutsideMessage = (payload: Omit<IOutsideMessage, '_id' | 'create
     dispatch(startRequest());
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
         let res: AxiosResponse = await axios.post(`${API_URL}/auth/message`, payload);
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }))
         dispatch(stopRequest());
@@ -631,7 +622,6 @@ export const addAnswerToOutsideMessage = (content: string, email: string, name: 
     setExpiryDate(15);
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
         let res: AxiosResponse = await axios.put(`${API_URL}/admin/messages/update/answer`, { messageId, content, email, name }, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD')
@@ -666,7 +656,6 @@ export const sendMessageByEmail = (content: string, email: string, name: string)
     setExpiryDate(15);
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
         let res: AxiosResponse = await axios.post(`${API_URL}/admin/messages/email`, { content, email, name }, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD')
@@ -705,7 +694,6 @@ export const getUserMessages = (target: TargetOptions, page: number, rowsPerPage
     }
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
         let res: AxiosResponse = await axios.get(`${API_URL}/users/messages/${target}/${start}/${limit}`, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD')
@@ -744,7 +732,6 @@ export const getAdminMessages = (target: TargetOptions, page: number, rowsPerPag
     }
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
         let res: AxiosResponse = await axios.get(`${API_URL}/admin/messages/${target}/${start}/${limit}`, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD')
@@ -784,7 +771,6 @@ export const getAdminMessagesByUser = (isParent: boolean, user: string, page: nu
     }
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
         let res: AxiosResponse = await axios.get(`${API_URL}/admin/messages/user/${isParent}/${user}/${start}/${limit}`, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD')
@@ -851,7 +837,6 @@ export const updateChildDataRequest = (payload: IChildData, childId: string): Th
     setExpiryDate(15);
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
         let res: AxiosResponse = await axios.put(`${API_URL}/users/child/${childId}`, payload, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD')
@@ -894,7 +879,6 @@ export const addChildToParent = (payload: IChildData, userId?: string): ThunkAct
     setExpiryDate(15);
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
         let res: AxiosResponse = await axios.post(`${API_URL}/users/child/${userId}`, payload, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD')
@@ -951,7 +935,6 @@ export const updateReportRequest = (payload: { reportId: string, reportFile: Fil
                 dispatch(startUpdatingRequest());
 
                 try {
-                    await new Promise(resolve => setTimeout(resolve, 2000));
                     let res: AxiosResponse = await axios.put(`${API_URL}/admin/reports/${payload.reportId}`, formData, {
                         headers: {
                             'Authorization': localStorage.getItem('tokenFDD'),
@@ -997,7 +980,6 @@ export const removeReportRequest = (id: string): ThunkAction<
     setExpiryDate(15);
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
         let res: AxiosResponse = await axios.delete(`${API_URL}/admin/reports/${id}`,
             {
                 headers: {
@@ -1033,7 +1015,6 @@ export const addReportRequest = (payload: { reportFile: File, reportTitle: strin
     setExpiryDate(15);
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
         const formData = new FormData();
         formData.append('image', payload.reportFile);
         formData.append('title', payload.reportTitle);
@@ -1083,7 +1064,6 @@ export const addInvoiceToChild = (payload: any, childId: string): ThunkAction<
     setExpiryDate(15);
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
         const formData = new FormData();
         if (payload.files[0] !== null) formData.append('image', payload.files[0]);
         if (payload.files[1] !== null) formData.append('image', payload.files[1]);
@@ -1124,7 +1104,6 @@ export const addAvatarToChild = (avatar: File, childId: string): ThunkAction<
     setExpiryDate(15);
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
         const formData = new FormData();
         formData.append('image', avatar);
         let res: AxiosResponse = await axios.put(`${API_URL}/users/child/avatar/${childId}`, formData, {
@@ -1168,7 +1147,6 @@ export const addPictureToNewsRequest = (picture: File, newsId: string): ThunkAct
     setExpiryDate(15);
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
         const formData = new FormData();
         formData.append('image', picture);
         let res: AxiosResponse = await axios.post(`${API_URL}/admin/news/picture/${newsId}`, formData, {
@@ -1210,7 +1188,6 @@ export const addImageToChild = (image: File, childId: string): ThunkAction<
     setExpiryDate(15);
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
         const formData = new FormData();
         formData.append('image', image)
         let res: AxiosResponse = await axios.post(`${API_URL}/users/child/image/${childId}`, formData, {
@@ -1256,7 +1233,6 @@ export const updatePicturesListRequest = (payload: ImagesLists): ThunkAction<
     setExpiryDate(15);
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
         const contentList = payload.contentList.map((item: string) => item.replace(URL, ''));
         const removeList = payload.removeList.map((item: string) => item.replace(URL, ''));
         const data: ImagesLists = {
@@ -1302,7 +1278,6 @@ export const updateImagesList = (payload: ImagesLists): ThunkAction<
     setExpiryDate(15);
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
         const contentList = payload.contentList.map((item: string) => item.replace(URL, ''));
         const removeList = payload.removeList.map((item: string) => item.replace(URL, ''));
         const data: ImagesLists = {
@@ -1351,7 +1326,6 @@ export const getChildrenBasicDataRequest = (page: number, rowsPerPage: number): 
     dispatch(startUpdatingRequest());
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 1000));
         let res: AxiosResponse = await axios.get(`${API_URL}/auth/children/basic/data?page=${page}&rowsPerPage=${rowsPerPage}`, {
             headers: {
                 'Content-Type': 'application/json'
@@ -1388,7 +1362,6 @@ export const getChildByIdRequest = (childId: string): ThunkAction<
     dispatch(startUpdatingRequest());
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 1000));
         let res: AxiosResponse = await axios.get(`${API_URL}/auth/child/${childId}`, {
             headers: {
                 'Content-Type': 'application/json'
@@ -1428,7 +1401,6 @@ export const getCurrentlyInvoicesList = (childId: string, page: number, rowsPerP
     }
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
         let res: AxiosResponse = await axios.get(`${API_URL}/admin/child/invoices/${childId}?page=${page}&rowsPerPage=${rowsPerPage}`, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD')
@@ -1471,7 +1443,6 @@ export const addNewsRequest = (payload: NewsState): ThunkAction<
     setExpiryDate(15);
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
         let res: AxiosResponse = await axios.post(`${API_URL}/admin/news`, payload, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD')
@@ -1507,7 +1478,6 @@ export const updateNewsPublication = (newsId: string, isPublication: boolean): T
     setExpiryDate(15);
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
         let res: AxiosResponse = await axios.put(`${API_URL}/admin/news/publication`, payload, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD')
@@ -1543,7 +1513,6 @@ export const updateNewsDataRequest = (payload: NewsDataUpdate): ThunkAction<
     setExpiryDate(15);
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
         let res: AxiosResponse = await axios.put(`${API_URL}/admin/news/data`, payload, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD')
@@ -1581,7 +1550,6 @@ export const removeCurrentNewsRequest = (newsId: string, images: string[]): Thun
     setExpiryDate(15);
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
         if (images.length) {
             images = images.map((item: string) => item.replace(URL, ''));
         }
@@ -1618,7 +1586,6 @@ export const getReportsYearsRequest = (): ThunkAction<
     dispatch(startRequest());
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
         let res: AxiosResponse = await axios.get(`${API_URL}/auth/reports/years`, {
             headers: {
                 'Content-Type': 'application/json'
@@ -1648,7 +1615,6 @@ export const getReportsByYearRequest = (year: string): ThunkAction<
     dispatch(startRequest());
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
         let res: AxiosResponse = await axios.get(`${API_URL}/auth/reports/${year}`, {
             headers: {
                 'Content-Type': 'application/json'
@@ -1686,7 +1652,6 @@ export const updateChildStatusRequest = (_id: string, isActive: boolean): ThunkA
     const payload = { _id, isActive }
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
         let res: AxiosResponse = await axios.put(`${API_URL}/admin/child/status`, payload,
             {
                 headers: {
@@ -1724,7 +1689,6 @@ export const removeChildRequest = (_id: string): ThunkAction<
     setExpiryDate(15);
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
         let res: AxiosResponse = await axios.delete(`${API_URL}/admin/child/${_id}`,
             {
                 headers: {
@@ -1764,7 +1728,6 @@ export const removeUserRequest = (_id: string): ThunkAction<
     setExpiryDate(15);
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
         let res: AxiosResponse = await axios.delete(`${API_URL}/admin/user/${_id}`,
             {
                 headers: {
@@ -1807,7 +1770,6 @@ export const getReportsRequest = (): ThunkAction<
     }
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
         let res: AxiosResponse = await axios.get(`${API_URL}/admin/reports`,
             {
                 headers: {
@@ -1858,7 +1820,6 @@ export const resetPasswordRequest = (email: string): ThunkAction<
     dispatch(startUpdatingRequest());
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
         let res: AxiosResponse = await axios.get(`${API_URL}/auth/reset`, {
             params: {
                 email
@@ -1890,7 +1851,6 @@ export const changePasswordRequest = (password: string, token: string): ThunkAct
     dispatch(startUpdatingRequest());
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
         let res: AxiosResponse = await axios.put(`${API_URL}/users/change`, { password },
             {
                 headers: {

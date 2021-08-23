@@ -221,6 +221,7 @@ const AddingInvoices: React.FC<Props> = (props) => {
       <CardFooter className={classes.footer}>
         <CustomButton
           disabled={isDisabled || !switchIsOn}
+          progress={isAdding}
           setSize="md"
           setColor="primary"
           onClick={filesHandling}

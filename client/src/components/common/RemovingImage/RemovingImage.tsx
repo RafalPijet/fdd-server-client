@@ -249,6 +249,7 @@ const RemovingImage: React.FC<Props> = (props) => {
       <CardFooter className={classes.footer}>
         <CustomBotton
           disabled={!switchIsOn || isNotChanged || isUpdating}
+          progress={isUpdating}
           setSize="md"
           setColor="primary"
           onClick={confirmButtonHandling}

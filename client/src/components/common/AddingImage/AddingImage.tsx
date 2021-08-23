@@ -324,6 +324,7 @@ const AddingImage: React.FC<Props> = (props) => {
             <CustomButton
               setColor="primary"
               setSize="md"
+              progress={isAdding}
               disabled={
                 !switchIsOn ||
                 isAdding ||
@@ -337,6 +338,7 @@ const AddingImage: React.FC<Props> = (props) => {
             <CustomButton
               setColor="primary"
               setSize="md"
+              progress={isAdding}
               disabled={!switchIsOn || isAdding || file === undefined}
               onClick={cancelSelectedImage}
             >

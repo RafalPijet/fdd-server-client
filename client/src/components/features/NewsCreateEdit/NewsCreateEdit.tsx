@@ -334,6 +334,7 @@ const NewsCreateEdit: React.FC<Props> = (props) => {
                     setSize="md"
                     setColor="primary"
                     onClick={confirmButtonHandling}
+                    progress={isPending || isAdding || isUpdating}
                     disabled={isDisabled || isPending || isAdding || isUpdating}
                   >
                     {isEdit ? 'AKTUALIZUJ PUBLIKACJĘ' : 'DODAJ PUBLIKACJĘ'}

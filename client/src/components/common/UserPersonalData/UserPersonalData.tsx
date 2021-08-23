@@ -654,6 +654,7 @@ const UserPersonalData: React.FC<Props> = (props) => {
             onClick={handleSendButton}
             onKeyDown={onKeyDown}
             disabled={!switchIsOn || !isDisabled || isUpdating}
+            progress={isUpdating}
             setColor="primary"
             setSize="md"
           >

@@ -375,6 +375,7 @@ const ChildPersonalData: React.FC<Props> = (props) => {
           >
             <CustomButton
               disabled={!isReady}
+              progress={isPending}
               setSize="md"
               setColor="primary"
               onClick={confirmButtonHandling}

@@ -204,6 +204,7 @@ const ParentMessages: React.FC<Props> = (props) => {
           ) : (
             <CustomButton
               disabled={isDisabled || newMessage.length === 0}
+              progress={isPending}
               setColor="primary"
               setSize="md"
               onClick={setMessageHandling}
