@@ -47,7 +47,6 @@ import {
   removeUserRequest,
   getUserRequest,
 } from '../../../redux/thunks';
-import { URL } from '../../../config';
 import { ModalAYSModes, SearchUserType } from '../../../types/global';
 import { getUserId } from '../../../redux/actions/userActions';
 import AdminContent from '../../features/AdminContent/AdminContent';
@@ -74,7 +73,7 @@ const AdminPage: React.FC = () => {
   const addingError = useSelector(getAddingError);
   const messagesError = useSelector(getMessagesError);
   const reportingError = useSelector(getReportingError);
-  const socket = useMemo(() => openSocket(URL), []);
+  const socket = useMemo(() => openSocket(`${process.env.REACT_APP_URL}`), []);
   const dispatch = useDispatch();
   const notification = new UIfx(notificationSound);
   const warning = new UIfx(warningSound);

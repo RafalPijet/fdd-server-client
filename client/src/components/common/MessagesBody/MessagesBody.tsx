@@ -6,7 +6,6 @@ import UsersSearcher from '../UsersSearcher/UsersSearcher';
 import { getEventChange } from '../../../redux/actions/generalActions';
 import { UserName } from '../UsersSearcher/UsersSearcherStyle';
 import { MessageOptions, EventChangeReplyData } from '../../../types/global';
-import { API_URL } from '../../../config';
 
 interface MessagesBodyProps {
   messageType: MessageOptions;
@@ -75,7 +74,7 @@ const MessagesBody: React.FC<MessagesBodyProps> = (props) => {
             </p>
           ) : (
             <UsersSearcher
-              api={`${API_URL}/admin/names/`}
+              api={`${process.env.REACT_APP_API_URL}/admin/names/`}
               label="Wyszukaj..."
               getSelectedItem={userHandling}
               isDisabled={disabled}

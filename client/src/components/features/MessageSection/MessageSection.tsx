@@ -104,10 +104,9 @@ const MessageSection: React.FC<Props> = (props) => {
             Napisz do nas
           </Typography>
           <Typography className={classes.description}>
-            Divide details about your product or agency work into parts. Write a
-            few lines about each one and contact us about any further
-            collaboration. We will responde get back to you in a couple of
-            hours.
+            Jeśli macie Państwo pytania lub wątpliwości zapraszamy do kontaktu
+            poprzez niniejszy formularz. Chętnie udzielimy konkretnych i
+            wyczerpujących odpowiedzi.
           </Typography>
           <form>
             <GridContainer>

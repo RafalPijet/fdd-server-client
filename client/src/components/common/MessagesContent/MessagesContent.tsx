@@ -13,7 +13,6 @@ import { IMessage, MessageOptions } from '../../../types/global';
 import MessageOperations from '../MessageOperations/MessageOperations';
 import UsersSearcher from '../UsersSearcher/UsersSearcher';
 import MessageItem from '../MessageItem/MessageItem';
-import { API_URL } from '../../../config';
 import { useStyles, Props } from './MessagesContentStyle';
 
 const MessagesContent: React.FC<Props> = (props) => {
@@ -91,7 +90,7 @@ const MessagesContent: React.FC<Props> = (props) => {
       {isAdmin &&
         (isSearchMode ? (
           <UsersSearcher
-            api={`${API_URL}/admin/names/`}
+            api={`${process.env.REACT_APP_API_URL}/admin/names/`}
             label="Wyszukaj..."
             getSelectedItem={getSelectedUser!}
             isDisabled={isPending}

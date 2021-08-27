@@ -23,7 +23,6 @@ import {
   getSelectedPerson,
 } from '../../../redux/actions/generalActions';
 import { getAdding } from '../../../redux/actions/requestActions';
-import { API_URL } from '../../../config';
 import { useStyles, FddRadio, SelectedPerson } from './SearcherOfUsersStyle';
 
 const SearcherOfUsers: React.FC = () => {
@@ -80,9 +79,8 @@ const SearcherOfUsers: React.FC = () => {
 
     (async () => {
       try {
-        await new Promise((resolve) => setTimeout(resolve, 2000));
         const res: AxiosResponse = await axios.get(
-          `${API_URL}/admin/people/names/${userType}`,
+          `${process.env.REACT_APP_API_URL}/admin/people/names/${userType}`,
           {
             headers: {
               Authorization: localStorage.getItem('tokenFDD'),

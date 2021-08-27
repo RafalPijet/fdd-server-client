@@ -35,7 +35,6 @@ const UsersSearcher: React.FC<Props> = (props) => {
 
     (async () => {
       try {
-        await new Promise((resolve) => setTimeout(resolve, 2000));
         const res: AxiosResponse = await axios.get(`${api}${isParent}`, {
           headers: {
             Authorization: localStorage.getItem('tokenFDD'),

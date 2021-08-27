@@ -40,7 +40,6 @@ import {
 } from '../../../redux/actions/generalActions';
 import { getUserRequest } from '../../../redux/thunks';
 import { useStyles } from './ParentPageStyle';
-import { URL } from '../../../config';
 import image from '../../../images/jumbotronParent.jpg';
 import notificationSound from '../../../sounds/notification.wav';
 import loginEnterSound from '../../../sounds/loginEnter.wav';
@@ -61,7 +60,7 @@ const ParentPage: React.FC = () => {
   const messagesError = useSelector(getMessagesError);
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
-  const socket = useMemo(() => openSocket(URL), []);
+  const socket = useMemo(() => openSocket(`${process.env.REACT_APP_URL}`), []);
   const notification = new UIfx(notificationSound);
   const loginEnter = new UIfx(loginEnterSound);
   const warning = new UIfx(warningSound);

@@ -138,7 +138,6 @@ import {
     setParentsWithoutAnyChildren
 } from './actions/reportsActions';
 import { setExpiryDate, countRemainingTime, clearLocalStorage } from '../types/functions';
-import { API_URL, URL } from '../config';
 
 let timer: number;
 
@@ -161,7 +160,7 @@ export const loginUser = (payload: IUserLogin): ThunkAction<
     dispatch(startRequest())
 
     try {
-        let res: AxiosResponse = await axios.post(`${API_URL}/auth/login`, payload, {
+        let res: AxiosResponse = await axios.post(`${process.env.REACT_APP_API_URL}/auth/login`, payload, {
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -173,10 +172,10 @@ export const loginUser = (payload: IUserLogin): ThunkAction<
         if (user.children.length) {
             user.children.forEach((child: ChildState) => {
                 if (child.avatar.length !== 0) {
-                    child.avatar = `${URL}${child.avatar}`;
+                    child.avatar = `${process.env.REACT_APP_URL}${child.avatar}`;
                 }
                 child.images = child.images.map((image: string) => {
-                    return `${URL}${image}`
+                    return `${process.env.REACT_APP_URL}${image}`
                 })
             })
             dispatch(addCurrentUser(user));
@@ -209,7 +208,7 @@ export const unfreezeUserRequest = (password: string): ThunkAction<
     dispatch(startRequest());
 
     try {
-        let res: AxiosResponse = await axios.get(`${API_URL}/users/user/unfreeze`, {
+        let res: AxiosResponse = await axios.get(`${process.env.REACT_APP_API_URL}/users/user/unfreeze`, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD')
             },
@@ -247,7 +246,7 @@ export const getUserRequest = (): ThunkAction<
     dispatch(startRequest())
     timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
     try {
-        let res: AxiosResponse = await axios.get(`${API_URL}/users/user`, {
+        let res: AxiosResponse = await axios.get(`${process.env.REACT_APP_API_URL}/users/user`, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD')
             },
@@ -256,10 +255,10 @@ export const getUserRequest = (): ThunkAction<
         if (user.children.length) {
             user.children.forEach((child: ChildState) => {
                 if (child.avatar.length !== 0) {
-                    child.avatar = `${URL}${child.avatar}`;
+                    child.avatar = `${process.env.REACT_APP_URL}${child.avatar}`;
                 }
                 child.images = child.images.map((image: string) => {
-                    return `${URL}${image}`
+                    return `${process.env.REACT_APP_URL}${image}`
                 })
             })
             dispatch(addCurrentUser(user));
@@ -292,7 +291,7 @@ export const addUser = (payload: Register): ThunkAction<
     payload.prepare();
 
     try {
-        await axios.post(`${API_URL}/auth/user`, payload.getContent())
+        await axios.post(`${process.env.REACT_APP_API_URL}/auth/user`, payload.getContent())
         dispatch(stopRequest());
     } catch (err) {
         if (err.response !== undefined) {
@@ -316,12 +315,12 @@ export const getAllNewsRequest = (): ThunkAction<
     dispatch(startUpdatingRequest());
 
     try {
-        let res: AxiosResponse = await axios.get(`${API_URL}/auth/news`);
+        let res: AxiosResponse = await axios.get(`${process.env.REACT_APP_API_URL}/auth/news`);
         const news: NewsState[] = res.data.news;
         if (news.length) {
             news.forEach((item: NewsState) => {
                 item.images = item.images.map((image: string) => {
-                    return `${URL}${image}`
+                    return `${process.env.REACT_APP_URL}${image}`
                 })
             })
             dispatch(setAllNews(news));
@@ -350,7 +349,7 @@ export const updateUserStatus = (userId: string, status: UserStatus): ThunkActio
     setExpiryDate(15);
 
     try {
-        let res: AxiosResponse = await axios.put(`${API_URL}/admin/user/status/${userId}`, { status }, {
+        let res: AxiosResponse = await axios.put(`${process.env.REACT_APP_API_URL}/admin/user/status/${userId}`, { status }, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD')
             },
@@ -387,19 +386,19 @@ export const updateUser = (payload: any, dataType: UpdateUserTypeData, userId: s
     try {
         let res: AxiosResponse;
         if (dataType === UpdateUserTypeData.all) {
-            res = await axios.put(`${API_URL}/users/user/alldata/${userId}`, payload, {
+            res = await axios.put(`${process.env.REACT_APP_API_URL}/users/user/alldata/${userId}`, payload, {
                 headers: {
                     'Authorization': localStorage.getItem('tokenFDD')
                 },
             });
         } else if (dataType === UpdateUserTypeData.data) {
-            res = await axios.put(`${API_URL}/users/user/data/${userId}`, payload.getContent(), {
+            res = await axios.put(`${process.env.REACT_APP_API_URL}/users/user/data/${userId}`, payload.getContent(), {
                 headers: {
                     'Authorization': localStorage.getItem('tokenFDD')
                 },
             });
         } else if (dataType === UpdateUserTypeData.password) {
-            res = await axios.put(`${API_URL}/users/user/password/${userId}`, payload, {
+            res = await axios.put(`${process.env.REACT_APP_API_URL}/users/user/password/${userId}`, payload, {
                 headers: {
                     'Authorization': localStorage.getItem('tokenFDD')
                 },
@@ -454,7 +453,7 @@ export const getPersonByIdRequest = (type: SearchUserType, id: string): ThunkAct
     }
 
     try {
-        let res: AxiosResponse = await axios.get(`${API_URL}/admin/people/${type}/${id}`, {
+        let res: AxiosResponse = await axios.get(`${process.env.REACT_APP_API_URL}/admin/people/${type}/${id}`, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD')
             },
@@ -462,13 +461,13 @@ export const getPersonByIdRequest = (type: SearchUserType, id: string): ThunkAct
         if (type === SearchUserType.child) {
             dispatch(setSelectedQuantity(res.data.quantity));
             let person: ChildState = res.data.person;
-            person.avatar = `${URL}${person.avatar}`;
+            person.avatar = `${process.env.REACT_APP_URL}${person.avatar}`;
             person.images = person.images.map(item => {
-                return `${URL}${item}`
+                return `${process.env.REACT_APP_URL}${item}`
             })
             person.invoices.forEach((invoice: InvoiceState) => {
                 invoice.content = invoice.content.map(item => {
-                    return `${URL}${item}`
+                    return `${process.env.REACT_APP_URL}${item}`
                 })
             })
             dispatch(setSelectedPerson(person));
@@ -492,9 +491,9 @@ export const getPersonByIdRequest = (type: SearchUserType, id: string): ThunkAct
             if (type === SearchUserType.parent) {
 
                 person.children.forEach(child => {
-                    child.avatar = `${URL}${child.avatar}`;
+                    child.avatar = `${process.env.REACT_APP_URL}${child.avatar}`;
                     child.images = child.images.map(image => {
-                        return `${URL}${image}`
+                        return `${process.env.REACT_APP_URL}${image}`
                     })
                 })
             }
@@ -529,7 +528,7 @@ export const addMessage = (payload: string, _id?: string): ThunkAction<
     setExpiryDate(15);
 
     try {
-        let res: AxiosResponse = await axios.post(`${API_URL}/users/message`, { content: payload, userId: _id }, {
+        let res: AxiosResponse = await axios.post(`${process.env.REACT_APP_API_URL}/users/message`, { content: payload, userId: _id }, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD')
             },
@@ -563,7 +562,7 @@ export const removeMessage = (messageId: string, isUser: boolean): ThunkAction<
     setExpiryDate(15);
 
     try {
-        let res: AxiosResponse = await axios.delete(`${API_URL}/admin/messages`,
+        let res: AxiosResponse = await axios.delete(`${process.env.REACT_APP_API_URL}/admin/messages`,
             {
                 data: { messageId, isUser }, headers: {
                     'Authorization': localStorage.getItem('tokenFDD')
@@ -596,7 +595,7 @@ export const addOutsideMessage = (payload: Omit<IOutsideMessage, '_id' | 'create
     dispatch(startRequest());
 
     try {
-        let res: AxiosResponse = await axios.post(`${API_URL}/auth/message`, payload);
+        let res: AxiosResponse = await axios.post(`${process.env.REACT_APP_API_URL}/auth/message`, payload);
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }))
         dispatch(stopRequest());
     } catch (err) {
@@ -622,7 +621,7 @@ export const addAnswerToOutsideMessage = (content: string, email: string, name: 
     setExpiryDate(15);
 
     try {
-        let res: AxiosResponse = await axios.put(`${API_URL}/admin/messages/update/answer`, { messageId, content, email, name }, {
+        let res: AxiosResponse = await axios.put(`${process.env.REACT_APP_API_URL}/admin/messages/update/answer`, { messageId, content, email, name }, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD')
             },
@@ -656,7 +655,7 @@ export const sendMessageByEmail = (content: string, email: string, name: string)
     setExpiryDate(15);
 
     try {
-        let res: AxiosResponse = await axios.post(`${API_URL}/admin/messages/email`, { content, email, name }, {
+        let res: AxiosResponse = await axios.post(`${process.env.REACT_APP_API_URL}/admin/messages/email`, { content, email, name }, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD')
             },
@@ -694,7 +693,7 @@ export const getUserMessages = (target: TargetOptions, page: number, rowsPerPage
     }
 
     try {
-        let res: AxiosResponse = await axios.get(`${API_URL}/users/messages/${target}/${start}/${limit}`, {
+        let res: AxiosResponse = await axios.get(`${process.env.REACT_APP_API_URL}/users/messages/${target}/${start}/${limit}`, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD')
             },
@@ -732,7 +731,7 @@ export const getAdminMessages = (target: TargetOptions, page: number, rowsPerPag
     }
 
     try {
-        let res: AxiosResponse = await axios.get(`${API_URL}/admin/messages/${target}/${start}/${limit}`, {
+        let res: AxiosResponse = await axios.get(`${process.env.REACT_APP_API_URL}/admin/messages/${target}/${start}/${limit}`, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD')
             },
@@ -771,7 +770,7 @@ export const getAdminMessagesByUser = (isParent: boolean, user: string, page: nu
     }
 
     try {
-        let res: AxiosResponse = await axios.get(`${API_URL}/admin/messages/user/${isParent}/${user}/${start}/${limit}`, {
+        let res: AxiosResponse = await axios.get(`${process.env.REACT_APP_API_URL}/admin/messages/user/${isParent}/${user}/${start}/${limit}`, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD')
             },
@@ -803,7 +802,7 @@ export const updateMessageIsReaded = (_id: IMessage["_id"], isAdmin: boolean, is
     setExpiryDate(15);
 
     try {
-        let res: AxiosResponse = await axios.put(`${API_URL}/users/messages/readed`, { _id, isAdmin, isUser }, {
+        let res: AxiosResponse = await axios.put(`${process.env.REACT_APP_API_URL}/users/messages/readed`, { _id, isAdmin, isUser }, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD')
             },
@@ -837,7 +836,7 @@ export const updateChildDataRequest = (payload: IChildData, childId: string): Th
     setExpiryDate(15);
 
     try {
-        let res: AxiosResponse = await axios.put(`${API_URL}/users/child/${childId}`, payload, {
+        let res: AxiosResponse = await axios.put(`${process.env.REACT_APP_API_URL}/users/child/${childId}`, payload, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD')
             },
@@ -879,7 +878,7 @@ export const addChildToParent = (payload: IChildData, userId?: string): ThunkAct
     setExpiryDate(15);
 
     try {
-        let res: AxiosResponse = await axios.post(`${API_URL}/users/child/${userId}`, payload, {
+        let res: AxiosResponse = await axios.post(`${process.env.REACT_APP_API_URL}/users/child/${userId}`, payload, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD')
             },
@@ -935,7 +934,7 @@ export const updateReportRequest = (payload: { reportId: string, reportFile: Fil
                 dispatch(startUpdatingRequest());
 
                 try {
-                    let res: AxiosResponse = await axios.put(`${API_URL}/admin/reports/${payload.reportId}`, formData, {
+                    let res: AxiosResponse = await axios.put(`${process.env.REACT_APP_API_URL}/admin/reports/${payload.reportId}`, formData, {
                         headers: {
                             'Authorization': localStorage.getItem('tokenFDD'),
                             "Content-type": "multipart/form-data",
@@ -943,7 +942,7 @@ export const updateReportRequest = (payload: { reportId: string, reportFile: Fil
                     })
                     if (res.data.report) {
                         let updatedReport: ReportState = res.data.report;
-                        updatedReport.report = `${URL}${updatedReport.report}`;
+                        updatedReport.report = `${process.env.REACT_APP_URL}${updatedReport.report}`;
                         dispatch(updateReportItem(updatedReport));
                         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
                     }
@@ -980,7 +979,7 @@ export const removeReportRequest = (id: string): ThunkAction<
     setExpiryDate(15);
 
     try {
-        let res: AxiosResponse = await axios.delete(`${API_URL}/admin/reports/${id}`,
+        let res: AxiosResponse = await axios.delete(`${process.env.REACT_APP_API_URL}/admin/reports/${id}`,
             {
                 headers: {
                     'Authorization': localStorage.getItem('tokenFDD')
@@ -1018,7 +1017,7 @@ export const addReportRequest = (payload: { reportFile: File, reportTitle: strin
         const formData = new FormData();
         formData.append('image', payload.reportFile);
         formData.append('title', payload.reportTitle);
-        let res: AxiosResponse = await axios.post(`${API_URL}/admin/reports`, formData, {
+        let res: AxiosResponse = await axios.post(`${process.env.REACT_APP_API_URL}/admin/reports`, formData, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD'),
                 "Content-type": "multipart/form-data",
@@ -1029,7 +1028,7 @@ export const addReportRequest = (payload: { reportFile: File, reportTitle: strin
             if (res.data.newReport) {
                 let newReport = res.data.newReport;
                 if (newReport.createdAt.substring(0, 4) === getState().general.selectedYearPeriod[0].createdAt.substring(0, 4)) {
-                    newReport.report = `${URL}${newReport.report}`;
+                    newReport.report = `${process.env.REACT_APP_URL}${newReport.report}`;
                     dispatch(addReportItem(newReport))
                 } else {
                     dispatch(getReportsYearsRequest());
@@ -1068,7 +1067,7 @@ export const addInvoiceToChild = (payload: any, childId: string): ThunkAction<
         if (payload.files[0] !== null) formData.append('image', payload.files[0]);
         if (payload.files[1] !== null) formData.append('image', payload.files[1]);
         formData.append('description', payload.description)
-        let res: AxiosResponse = await axios.post(`${API_URL}/users/child/invoice/add/${childId}`, formData, {
+        let res: AxiosResponse = await axios.post(`${process.env.REACT_APP_API_URL}/users/child/invoice/add/${childId}`, formData, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD'),
                 "Content-type": "multipart/form-data",
@@ -1106,12 +1105,12 @@ export const addAvatarToChild = (avatar: File, childId: string): ThunkAction<
     try {
         const formData = new FormData();
         formData.append('image', avatar);
-        let res: AxiosResponse = await axios.put(`${API_URL}/users/child/avatar/${childId}`, formData, {
+        let res: AxiosResponse = await axios.put(`${process.env.REACT_APP_API_URL}/users/child/avatar/${childId}`, formData, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD')
             },
         })
-        const result = `${URL}${res.data.avatar}`;
+        const result = `${process.env.REACT_APP_URL}${res.data.avatar}`;
         if (getState().user.status === UserStatus.parent) {
             dispatch(setChildAvatar(childId, result));
             dispatch(updateChildStatus(childId, res.data.isActive));
@@ -1149,13 +1148,13 @@ export const addPictureToNewsRequest = (picture: File, newsId: string): ThunkAct
     try {
         const formData = new FormData();
         formData.append('image', picture);
-        let res: AxiosResponse = await axios.post(`${API_URL}/admin/news/picture/${newsId}`, formData, {
+        let res: AxiosResponse = await axios.post(`${process.env.REACT_APP_API_URL}/admin/news/picture/${newsId}`, formData, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD')
             },
         })
         const images = res.data.images.map((image: string) => {
-            return `${URL}${image}`
+            return `${process.env.REACT_APP_URL}${image}`
         })
         dispatch(updatePicturesOfCurrentNews(newsId, images));
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
@@ -1190,13 +1189,13 @@ export const addImageToChild = (image: File, childId: string): ThunkAction<
     try {
         const formData = new FormData();
         formData.append('image', image)
-        let res: AxiosResponse = await axios.post(`${API_URL}/users/child/image/${childId}`, formData, {
+        let res: AxiosResponse = await axios.post(`${process.env.REACT_APP_API_URL}/users/child/image/${childId}`, formData, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD')
             },
         })
         const images = res.data.images.map((image: string) => {
-            return `${URL}${image}`
+            return `${process.env.REACT_APP_URL}${image}`
         })
         if (getState().user.status === UserStatus.parent) {
             dispatch(setChildImagesList(childId, images));
@@ -1233,14 +1232,14 @@ export const updatePicturesListRequest = (payload: ImagesLists): ThunkAction<
     setExpiryDate(15);
 
     try {
-        const contentList = payload.contentList.map((item: string) => item.replace(URL, ''));
-        const removeList = payload.removeList.map((item: string) => item.replace(URL, ''));
+        const contentList = payload.contentList.map((item: string) => item.replace(`${process.env.REACT_APP_URL}`, ''));
+        const removeList = payload.removeList.map((item: string) => item.replace(`${process.env.REACT_APP_URL}`, ''));
         const data: ImagesLists = {
             contentList,
             removeList,
             id: payload.id
         }
-        let res: AxiosResponse = await axios.put(`${API_URL}/admin/news/pictures`, data, {
+        let res: AxiosResponse = await axios.put(`${process.env.REACT_APP_API_URL}/admin/news/pictures`, data, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD')
             },
@@ -1278,14 +1277,14 @@ export const updateImagesList = (payload: ImagesLists): ThunkAction<
     setExpiryDate(15);
 
     try {
-        const contentList = payload.contentList.map((item: string) => item.replace(URL, ''));
-        const removeList = payload.removeList.map((item: string) => item.replace(URL, ''));
+        const contentList = payload.contentList.map((item: string) => item.replace(`${process.env.REACT_APP_URL}`, ''));
+        const removeList = payload.removeList.map((item: string) => item.replace(`${process.env.REACT_APP_URL}`, ''));
         const data: ImagesLists = {
             contentList,
             removeList,
             id: payload.id
         }
-        let res: AxiosResponse = await axios.put(`${API_URL}/users/child/images`, data, {
+        let res: AxiosResponse = await axios.put(`${process.env.REACT_APP_API_URL}/users/child/images`, data, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD')
             },
@@ -1326,7 +1325,7 @@ export const getChildrenBasicDataRequest = (page: number, rowsPerPage: number): 
     dispatch(startUpdatingRequest());
 
     try {
-        let res: AxiosResponse = await axios.get(`${API_URL}/auth/children/basic/data?page=${page}&rowsPerPage=${rowsPerPage}`, {
+        let res: AxiosResponse = await axios.get(`${process.env.REACT_APP_API_URL}/auth/children/basic/data?page=${page}&rowsPerPage=${rowsPerPage}`, {
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -1334,7 +1333,7 @@ export const getChildrenBasicDataRequest = (page: number, rowsPerPage: number): 
         let { quantity, children } = res.data;
         if (children.length) {
             children = children.map((child: ChildBasicState) => {
-                child.avatar = `${URL}${child.avatar}`;
+                child.avatar = `${process.env.REACT_APP_URL}${child.avatar}`;
                 return child;
             })
             dispatch(setChildrenList(children));
@@ -1362,15 +1361,15 @@ export const getChildByIdRequest = (childId: string): ThunkAction<
     dispatch(startUpdatingRequest());
 
     try {
-        let res: AxiosResponse = await axios.get(`${API_URL}/auth/child/${childId}`, {
+        let res: AxiosResponse = await axios.get(`${process.env.REACT_APP_API_URL}/auth/child/${childId}`, {
             headers: {
                 'Content-Type': 'application/json'
             },
         })
         const { child } = res.data;
-        child.avatar = `${URL}${child.avatar}`;
+        child.avatar = `${process.env.REACT_APP_URL}${child.avatar}`;
         child.images = child.images.map(item => {
-            return `${URL}${item}`
+            return `${process.env.REACT_APP_URL}${item}`
         });
         dispatch(setSelectedPerson(child));
         dispatch(setSelectedChild(child._id));
@@ -1401,7 +1400,7 @@ export const getCurrentlyInvoicesList = (childId: string, page: number, rowsPerP
     }
 
     try {
-        let res: AxiosResponse = await axios.get(`${API_URL}/admin/child/invoices/${childId}?page=${page}&rowsPerPage=${rowsPerPage}`, {
+        let res: AxiosResponse = await axios.get(`${process.env.REACT_APP_API_URL}/admin/child/invoices/${childId}?page=${page}&rowsPerPage=${rowsPerPage}`, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD')
             },
@@ -1410,7 +1409,7 @@ export const getCurrentlyInvoicesList = (childId: string, page: number, rowsPerP
         if (invoices.length) {
             invoices.forEach(invoice => {
                 invoice.content = invoice.content.map(item => {
-                    return `${URL}${item}`
+                    return `${process.env.REACT_APP_URL}${item}`
                 })
             })
             dispatch(updateSelectedPersonalChildInvoicesList(invoices));
@@ -1443,7 +1442,7 @@ export const addNewsRequest = (payload: NewsState): ThunkAction<
     setExpiryDate(15);
 
     try {
-        let res: AxiosResponse = await axios.post(`${API_URL}/admin/news`, payload, {
+        let res: AxiosResponse = await axios.post(`${process.env.REACT_APP_API_URL}/admin/news`, payload, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD')
             },
@@ -1478,7 +1477,7 @@ export const updateNewsPublication = (newsId: string, isPublication: boolean): T
     setExpiryDate(15);
 
     try {
-        let res: AxiosResponse = await axios.put(`${API_URL}/admin/news/publication`, payload, {
+        let res: AxiosResponse = await axios.put(`${process.env.REACT_APP_API_URL}/admin/news/publication`, payload, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD')
             },
@@ -1513,7 +1512,7 @@ export const updateNewsDataRequest = (payload: NewsDataUpdate): ThunkAction<
     setExpiryDate(15);
 
     try {
-        let res: AxiosResponse = await axios.put(`${API_URL}/admin/news/data`, payload, {
+        let res: AxiosResponse = await axios.put(`${process.env.REACT_APP_API_URL}/admin/news/data`, payload, {
             headers: {
                 'Authorization': localStorage.getItem('tokenFDD')
             },
@@ -1551,9 +1550,9 @@ export const removeCurrentNewsRequest = (newsId: string, images: string[]): Thun
 
     try {
         if (images.length) {
-            images = images.map((item: string) => item.replace(URL, ''));
+            images = images.map((item: string) => item.replace(`${process.env.REACT_APP_URL}`, ''));
         }
-        let res: AxiosResponse = await axios.delete(`${API_URL}/admin/news`,
+        let res: AxiosResponse = await axios.delete(`${process.env.REACT_APP_API_URL}/admin/news`,
             {
                 data: { newsId, images }, headers: {
                     'Authorization': localStorage.getItem('tokenFDD')
@@ -1586,7 +1585,7 @@ export const getReportsYearsRequest = (): ThunkAction<
     dispatch(startRequest());
 
     try {
-        let res: AxiosResponse = await axios.get(`${API_URL}/auth/reports/years`, {
+        let res: AxiosResponse = await axios.get(`${process.env.REACT_APP_API_URL}/auth/reports/years`, {
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -1615,14 +1614,14 @@ export const getReportsByYearRequest = (year: string): ThunkAction<
     dispatch(startRequest());
 
     try {
-        let res: AxiosResponse = await axios.get(`${API_URL}/auth/reports/${year}`, {
+        let res: AxiosResponse = await axios.get(`${process.env.REACT_APP_API_URL}/auth/reports/${year}`, {
             headers: {
                 'Content-Type': 'application/json'
             },
         })
         if (res.data.selectedYearReports.length) {
             const reports = res.data.selectedYearReports.map((item: ReportState) => {
-                item.report = `${URL}${item.report}`;
+                item.report = `${process.env.REACT_APP_URL}${item.report}`;
                 return item
             })
             dispatch(setReportsOfSelectedYear(reports));
@@ -1652,7 +1651,7 @@ export const updateChildStatusRequest = (_id: string, isActive: boolean): ThunkA
     const payload = { _id, isActive }
 
     try {
-        let res: AxiosResponse = await axios.put(`${API_URL}/admin/child/status`, payload,
+        let res: AxiosResponse = await axios.put(`${process.env.REACT_APP_API_URL}/admin/child/status`, payload,
             {
                 headers: {
                     'Authorization': localStorage.getItem('tokenFDD')
@@ -1689,7 +1688,7 @@ export const removeChildRequest = (_id: string): ThunkAction<
     setExpiryDate(15);
 
     try {
-        let res: AxiosResponse = await axios.delete(`${API_URL}/admin/child/${_id}`,
+        let res: AxiosResponse = await axios.delete(`${process.env.REACT_APP_API_URL}/admin/child/${_id}`,
             {
                 headers: {
                     'Authorization': localStorage.getItem('tokenFDD')
@@ -1728,7 +1727,7 @@ export const removeUserRequest = (_id: string): ThunkAction<
     setExpiryDate(15);
 
     try {
-        let res: AxiosResponse = await axios.delete(`${API_URL}/admin/user/${_id}`,
+        let res: AxiosResponse = await axios.delete(`${process.env.REACT_APP_API_URL}/admin/user/${_id}`,
             {
                 headers: {
                     'Authorization': localStorage.getItem('tokenFDD')
@@ -1770,7 +1769,7 @@ export const getReportsRequest = (): ThunkAction<
     }
 
     try {
-        let res: AxiosResponse = await axios.get(`${API_URL}/admin/reports`,
+        let res: AxiosResponse = await axios.get(`${process.env.REACT_APP_API_URL}/admin/reports`,
             {
                 headers: {
                     'Authorization': localStorage.getItem('tokenFDD')
@@ -1820,7 +1819,7 @@ export const resetPasswordRequest = (email: string): ThunkAction<
     dispatch(startUpdatingRequest());
 
     try {
-        let res: AxiosResponse = await axios.get(`${API_URL}/auth/reset`, {
+        let res: AxiosResponse = await axios.get(`${process.env.REACT_APP_API_URL}/auth/reset`, {
             params: {
                 email
             },
@@ -1851,7 +1850,7 @@ export const changePasswordRequest = (password: string, token: string): ThunkAct
     dispatch(startUpdatingRequest());
 
     try {
-        let res: AxiosResponse = await axios.put(`${API_URL}/users/change`, { password },
+        let res: AxiosResponse = await axios.put(`${process.env.REACT_APP_API_URL}/users/change`, { password },
             {
                 headers: {
                     'Authorization': token

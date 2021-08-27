@@ -35,7 +35,6 @@ import {
   getChildByIdRequest,
   getChildrenBasicDataRequest,
 } from '../../../redux/thunks';
-import { API_URL } from '../../../config';
 import childVoiceSound from '../../../sounds/childVoice.mp3';
 import { useStyles, dummyData, SelectedChild } from './ChildrenSectionStyle';
 
@@ -134,9 +133,8 @@ const ChildrenSection: React.FC = () => {
 
     (async () => {
       try {
-        await new Promise((resolve) => setTimeout(resolve, 2000));
         const res: AxiosResponse = await axios.get(
-          `${API_URL}/auth/children/names`
+          `${process.env.REACT_APP_API_URL}/auth/children/names`
         );
         const names = res.data.names;
 

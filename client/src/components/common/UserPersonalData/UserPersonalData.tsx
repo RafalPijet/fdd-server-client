@@ -30,7 +30,6 @@ import {
   UpdateUserTypeData,
   EventChangeAvailableDestination,
 } from '../../../types/global';
-import { SUPER_ADMIN } from '../../../config';
 import { updateUser } from '../../../redux/thunks';
 import { Register } from '../../pages/LoginPage/LoginPageStyle';
 import {
@@ -79,7 +78,7 @@ const UserPersonalData: React.FC<Props> = (props) => {
     if (
       isAdmin &&
       user.status === UserStatus.admin &&
-      userEmail !== SUPER_ADMIN
+      userEmail !== `${process.env.REACT_APP_SUPER_ADMIN}`
     ) {
       setSwitchIsOn(userId === user._id);
     }
@@ -660,7 +659,7 @@ const UserPersonalData: React.FC<Props> = (props) => {
           >
             Aktualizuj dane
           </CustomButton>
-          {userEmail === SUPER_ADMIN && (
+          {userEmail === `${process.env.REACT_APP_SUPER_ADMIN}` && (
             <span style={{ display: 'inline-flex', alignItems: 'center' }}>
               <span className={classes.parent}>RODZIC</span>
               <FormControlLabel

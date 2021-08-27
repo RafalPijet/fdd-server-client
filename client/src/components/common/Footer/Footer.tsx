@@ -5,7 +5,6 @@ import Favorite from '@material-ui/icons/Favorite';
 import ModalFddInfo from '../ModalFddInfo/ModalFddInfo';
 import { InfoType } from '../ModalFddInfo/ModalFddInfoStyle';
 import { useStyles, Props } from './FooterStyle';
-import { MAIN_URL, URL } from '../../../config';
 
 const Footer: React.FC<Props> = (props) => {
   const classes = useStyles();
@@ -50,12 +49,18 @@ const Footer: React.FC<Props> = (props) => {
               </button>
             </ListItem>
             <ListItem className={classes.inlineBlock}>
-              <a href={`${MAIN_URL}statut`} className={classes.block}>
+              <a
+                href={`${process.env.REACT_APP_MAIN_URL}statut`}
+                className={classes.block}
+              >
                 Statut
               </a>
             </ListItem>
             <ListItem className={classes.inlineBlock}>
-              <a href={`${MAIN_URL}clause`} className={classes.block}>
+              <a
+                href={`${process.env.REACT_APP_MAIN_URL}clause`}
+                className={classes.block}
+              >
                 Klauzula informacyjna
               </a>
             </ListItem>
@@ -64,6 +69,7 @@ const Footer: React.FC<Props> = (props) => {
                 href="https://www.gov.pl/web/rodzina/przekaz-1-podatku-dla-opp"
                 className={classes.block}
                 target="_blank"
+                rel="noreferrer"
               >
                 gov.pl
               </a>
