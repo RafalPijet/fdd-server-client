@@ -13,6 +13,7 @@ import NewsCreateEdit from '../../features/NewsCreateEdit/NewsCreateEdit';
 import ModalAreYouSure from '../../common/ModalAreYouSure/ModalAreYouSure';
 import {
   getToast,
+  setUserToast,
   getModalAreYouSure,
   setModalAreYouSure,
   getNews,
@@ -120,6 +121,7 @@ const AdminNewsPage: React.FC = () => {
       handleToast(addingError.message, 'error');
       dispatch(resetAddingRequest());
     }
+    dispatch(setUserToast({ isOpen: false, content: '', variant: 'success' }));
   }, [toast.isOpen, error.isError, updatingError.isError, addingError.isError]);
 
   const selectCurrentNewsHandling = (data: NewsState | null) => {

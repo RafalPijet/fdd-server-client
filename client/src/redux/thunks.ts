@@ -139,7 +139,8 @@ import {
 } from './actions/reportsActions';
 import { setExpiryDate, countRemainingTime, clearLocalStorage } from '../types/functions';
 
-let timer: number;
+let timer: number | null = null;
+const expiryDate: number = 15;
 
 export const clearAndLogout = () => {
     setTimeout(() => window.location.replace(`${window.location.origin}/login`), 3000)
@@ -147,7 +148,10 @@ export const clearAndLogout = () => {
 }
 
 export const clearTimer = () => {
-    clearTimeout(timer);
+    if (timer !== null) {
+        clearTimeout(timer);
+        timer = null;
+    }
 }
 
 export const loginUser = (payload: IUserLogin): ThunkAction<
@@ -167,7 +171,7 @@ export const loginUser = (payload: IUserLogin): ThunkAction<
         });
         localStorage.setItem('tokenFDD', res.data.authorization.token);
         localStorage.setItem('expiresInFDD', res.data.authorization.expiresIn);
-        setExpiryDate(15);
+        setExpiryDate(expiryDate);
         const user: UserState = res.data.dto;
         if (user.children.length) {
             user.children.forEach((child: ChildState) => {
@@ -203,8 +207,8 @@ export const unfreezeUserRequest = (password: string): ThunkAction<
     RootState,
     StartRequestAction | StopRequestAction | ErrorRequestAction | SetIsFrozenAction
 > => async (dispatch, getState) => {
-    clearTimeout(timer);
-    setExpiryDate(15);
+    clearTimer();
+    setExpiryDate(expiryDate);
     dispatch(startRequest());
 
     try {
@@ -345,8 +349,8 @@ export const updateUserStatus = (userId: string, status: UserStatus): ThunkActio
     SetToastAction | SetSelectedPersonAction | SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startUpdatingRequest());
-    clearTimeout(timer);
-    setExpiryDate(15);
+    clearTimer();
+    setExpiryDate(expiryDate);
 
     try {
         let res: AxiosResponse = await axios.put(`${process.env.REACT_APP_API_URL}/admin/user/status/${userId}`, { status }, {
@@ -380,8 +384,8 @@ export const updateUser = (payload: any, dataType: UpdateUserTypeData, userId: s
     SetToastAction | UpdateUserDataAction | UpdateSelectedPersonUserDataAction | SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startUpdatingRequest());
-    clearTimeout(timer);
-    setExpiryDate(15);
+    clearTimer();
+    setExpiryDate(expiryDate);
 
     try {
         let res: AxiosResponse;
@@ -448,8 +452,8 @@ export const getPersonByIdRequest = (type: SearchUserType, id: string): ThunkAct
 > => async (dispatch, getState) => {
     dispatch(startAddingRequest());
     if (getState().user._id) {
-        clearTimeout(timer);
-        setExpiryDate(15);
+        clearTimer();
+        setExpiryDate(expiryDate);
     }
 
     try {
@@ -524,8 +528,8 @@ export const addMessage = (payload: string, _id?: string): ThunkAction<
     SetToastAction | SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startMessagesRequest());
-    clearTimeout(timer);
-    setExpiryDate(15);
+    clearTimer();
+    setExpiryDate(expiryDate);
 
     try {
         let res: AxiosResponse = await axios.post(`${process.env.REACT_APP_API_URL}/users/message`, { content: payload, userId: _id }, {
@@ -558,8 +562,8 @@ export const removeMessage = (messageId: string, isUser: boolean): ThunkAction<
     SetIsRemoved | SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startRequest());
-    clearTimeout(timer);
-    setExpiryDate(15);
+    clearTimer();
+    setExpiryDate(expiryDate);
 
     try {
         let res: AxiosResponse = await axios.delete(`${process.env.REACT_APP_API_URL}/admin/messages`,
@@ -617,8 +621,8 @@ export const addAnswerToOutsideMessage = (content: string, email: string, name: 
     SetToastAction | SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startMessagesRequest());
-    clearTimeout(timer);
-    setExpiryDate(15);
+    clearTimer();
+    setExpiryDate(expiryDate);
 
     try {
         let res: AxiosResponse = await axios.put(`${process.env.REACT_APP_API_URL}/admin/messages/update/answer`, { messageId, content, email, name }, {
@@ -651,8 +655,8 @@ export const sendMessageByEmail = (content: string, email: string, name: string)
     SetToastAction | SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startMessagesRequest());
-    clearTimeout(timer);
-    setExpiryDate(15);
+    clearTimer();
+    setExpiryDate(expiryDate);
 
     try {
         let res: AxiosResponse = await axios.post(`${process.env.REACT_APP_API_URL}/admin/messages/email`, { content, email, name }, {
@@ -688,8 +692,8 @@ export const getUserMessages = (target: TargetOptions, page: number, rowsPerPage
     let start = Math.ceil(page * rowsPerPage);
     let limit = rowsPerPage;
     if (getState().user._id) {
-        clearTimeout(timer);
-        setExpiryDate(15);
+        clearTimer();
+        setExpiryDate(expiryDate);
     }
 
     try {
@@ -726,10 +730,9 @@ export const getAdminMessages = (target: TargetOptions, page: number, rowsPerPag
     let start = Math.ceil(page * rowsPerPage);
     let limit = rowsPerPage;
     if (getState().user._id) {
-        clearTimeout(timer);
-        setExpiryDate(15);
+        clearTimer();
+        setExpiryDate(expiryDate);
     }
-
     try {
         let res: AxiosResponse = await axios.get(`${process.env.REACT_APP_API_URL}/admin/messages/${target}/${start}/${limit}`, {
             headers: {
@@ -765,8 +768,8 @@ export const getAdminMessagesByUser = (isParent: boolean, user: string, page: nu
     let start = Math.ceil(page * rowsPerPage);
     let limit = rowsPerPage;
     if (getState().user._id) {
-        clearTimeout(timer);
-        setExpiryDate(15);
+        clearTimer();
+        setExpiryDate(expiryDate);
     }
 
     try {
@@ -798,8 +801,8 @@ export const updateMessageIsReaded = (_id: IMessage["_id"], isAdmin: boolean, is
     RootState,
     ErrorRequestAction | SetMessageIsReaded | SetIsFrozenAction
 > => async (dispatch, getState) => {
-    clearTimeout(timer);
-    setExpiryDate(15);
+    clearTimer();
+    setExpiryDate(expiryDate);
 
     try {
         let res: AxiosResponse = await axios.put(`${process.env.REACT_APP_API_URL}/users/messages/readed`, { _id, isAdmin, isUser }, {
@@ -832,8 +835,8 @@ export const updateChildDataRequest = (payload: IChildData, childId: string): Th
     SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startRequest());
-    clearTimeout(timer);
-    setExpiryDate(15);
+    clearTimer();
+    setExpiryDate(expiryDate);
 
     try {
         let res: AxiosResponse = await axios.put(`${process.env.REACT_APP_API_URL}/users/child/${childId}`, payload, {
@@ -874,8 +877,8 @@ export const addChildToParent = (payload: IChildData, userId?: string): ThunkAct
     SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startRequest());
-    clearTimeout(timer);
-    setExpiryDate(15);
+    clearTimer();
+    setExpiryDate(expiryDate);
 
     try {
         let res: AxiosResponse = await axios.post(`${process.env.REACT_APP_API_URL}/users/child/${userId}`, payload, {
@@ -929,8 +932,8 @@ export const updateReportRequest = (payload: { reportId: string, reportFile: Fil
                 if (result.title !== payload.reportTitle) {
                     formData.append('title', payload.reportTitle);
                 }
-                clearTimeout(timer);
-                setExpiryDate(15);
+                clearTimer();
+                setExpiryDate(expiryDate);
                 dispatch(startUpdatingRequest());
 
                 try {
@@ -975,8 +978,8 @@ export const removeReportRequest = (id: string): ThunkAction<
     RemoveReportItemAction | SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startRequest());
-    clearTimeout(timer);
-    setExpiryDate(15);
+    clearTimer();
+    setExpiryDate(expiryDate);
 
     try {
         let res: AxiosResponse = await axios.delete(`${process.env.REACT_APP_API_URL}/admin/reports/${id}`,
@@ -985,7 +988,10 @@ export const removeReportRequest = (id: string): ThunkAction<
                     'Authorization': localStorage.getItem('tokenFDD')
                 }
             })
-        if (res.status === 201) dispatch(removeReportItem(id));
+        if (res.status === 201) {
+        }
+        dispatch(removeReportItem(id));
+        dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
         timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopRequest());
     } catch (err) {
@@ -1010,8 +1016,8 @@ export const addReportRequest = (payload: { reportFile: File, reportTitle: strin
     SetToastAction | AddReportItemAction | SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startAddingRequest());
-    clearTimeout(timer);
-    setExpiryDate(15);
+    clearTimer();
+    setExpiryDate(expiryDate);
 
     try {
         const formData = new FormData();
@@ -1059,8 +1065,8 @@ export const addInvoiceToChild = (payload: any, childId: string): ThunkAction<
     SetToastAction | SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startAddingRequest());
-    clearTimeout(timer);
-    setExpiryDate(15);
+    clearTimer();
+    setExpiryDate(expiryDate);
 
     try {
         const formData = new FormData();
@@ -1099,8 +1105,8 @@ export const addAvatarToChild = (avatar: File, childId: string): ThunkAction<
     UpdateChildStatusAction | SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startAddingRequest());
-    clearTimeout(timer);
-    setExpiryDate(15);
+    clearTimer();
+    setExpiryDate(expiryDate);
 
     try {
         const formData = new FormData();
@@ -1142,8 +1148,8 @@ export const addPictureToNewsRequest = (picture: File, newsId: string): ThunkAct
     SetToastAction | UpdatePicturesOfCurrentNewsAction | SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startAddingRequest());
-    clearTimeout(timer);
-    setExpiryDate(15);
+    clearTimer();
+    setExpiryDate(expiryDate);
 
     try {
         const formData = new FormData();
@@ -1183,8 +1189,8 @@ export const addImageToChild = (image: File, childId: string): ThunkAction<
     UpdateChildStatusAction | SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startAddingRequest());
-    clearTimeout(timer);
-    setExpiryDate(15);
+    clearTimer();
+    setExpiryDate(expiryDate);
 
     try {
         const formData = new FormData();
@@ -1228,8 +1234,8 @@ export const updatePicturesListRequest = (payload: ImagesLists): ThunkAction<
     SetToastAction | UpdatePicturesOfCurrentNewsAction | SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startUpdatingRequest());
-    clearTimeout(timer);
-    setExpiryDate(15);
+    clearTimer();
+    setExpiryDate(expiryDate);
 
     try {
         const contentList = payload.contentList.map((item: string) => item.replace(`${process.env.REACT_APP_URL}`, ''));
@@ -1273,8 +1279,8 @@ export const updateImagesList = (payload: ImagesLists): ThunkAction<
     UpdateChildStatusAction | SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startUpdatingRequest());
-    clearTimeout(timer);
-    setExpiryDate(15);
+    clearTimer();
+    setExpiryDate(expiryDate);
 
     try {
         const contentList = payload.contentList.map((item: string) => item.replace(`${process.env.REACT_APP_URL}`, ''));
@@ -1395,8 +1401,8 @@ export const getCurrentlyInvoicesList = (childId: string, page: number, rowsPerP
 > => async (dispatch, getState) => {
     dispatch(startUpdatingRequest());
     if (getState().user._id) {
-        clearTimeout(timer);
-        setExpiryDate(15);
+        clearTimer();
+        setExpiryDate(expiryDate);
     }
 
     try {
@@ -1438,8 +1444,8 @@ export const addNewsRequest = (payload: NewsState): ThunkAction<
     StartRequestAction | StopRequestAction | ErrorRequestAction | SetToastAction | SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startRequest());
-    clearTimeout(timer);
-    setExpiryDate(15);
+    clearTimer();
+    setExpiryDate(expiryDate);
 
     try {
         let res: AxiosResponse = await axios.post(`${process.env.REACT_APP_API_URL}/admin/news`, payload, {
@@ -1473,8 +1479,8 @@ export const updateNewsPublication = (newsId: string, isPublication: boolean): T
 > => async (dispatch, getState) => {
     const payload = { newsId, isPublication };
     dispatch(startUpdatingRequest());
-    clearTimeout(timer);
-    setExpiryDate(15);
+    clearTimer();
+    setExpiryDate(expiryDate);
 
     try {
         let res: AxiosResponse = await axios.put(`${process.env.REACT_APP_API_URL}/admin/news/publication`, payload, {
@@ -1508,8 +1514,8 @@ export const updateNewsDataRequest = (payload: NewsDataUpdate): ThunkAction<
     SetToastAction | UpdateNewsOfDataAction | SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startUpdatingRequest());
-    clearTimeout(timer);
-    setExpiryDate(15);
+    clearTimer();
+    setExpiryDate(expiryDate);
 
     try {
         let res: AxiosResponse = await axios.put(`${process.env.REACT_APP_API_URL}/admin/news/data`, payload, {
@@ -1545,8 +1551,8 @@ export const removeCurrentNewsRequest = (newsId: string, images: string[]): Thun
     SetIsRemoved | SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startRequest());
-    clearTimeout(timer);
-    setExpiryDate(15);
+    clearTimer();
+    setExpiryDate(expiryDate);
 
     try {
         if (images.length) {
@@ -1646,8 +1652,8 @@ export const updateChildStatusRequest = (_id: string, isActive: boolean): ThunkA
     UpdateSelectedPersonChildStatusAction | SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startRequest());
-    clearTimeout(timer);
-    setExpiryDate(15);
+    clearTimer();
+    setExpiryDate(expiryDate);
     const payload = { _id, isActive }
 
     try {
@@ -1684,8 +1690,8 @@ export const removeChildRequest = (_id: string): ThunkAction<
     SetSelectedChild | SetSelectedPersonAction | SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startRequest());
-    clearTimeout(timer);
-    setExpiryDate(15);
+    clearTimer();
+    setExpiryDate(expiryDate);
 
     try {
         let res: AxiosResponse = await axios.delete(`${process.env.REACT_APP_API_URL}/admin/child/${_id}`,
@@ -1723,8 +1729,8 @@ export const removeUserRequest = (_id: string): ThunkAction<
     SetSelectedPersonAction | SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startRequest());
-    clearTimeout(timer);
-    setExpiryDate(15);
+    clearTimer();
+    setExpiryDate(expiryDate);
 
     try {
         let res: AxiosResponse = await axios.delete(`${process.env.REACT_APP_API_URL}/admin/user/${_id}`,
@@ -1763,10 +1769,6 @@ export const getReportsRequest = (): ThunkAction<
     SetIsFrozenAction
 > => async (dispatch, getState) => {
     dispatch(startReportingRequest());
-    if (getState().user._id) {
-        clearTimeout(timer);
-        setExpiryDate(15);
-    }
 
     try {
         let res: AxiosResponse = await axios.get(`${process.env.REACT_APP_API_URL}/admin/reports`,
@@ -1793,7 +1795,6 @@ export const getReportsRequest = (): ThunkAction<
             dispatch(setUnpublicatedChildren(unpublicatedChildren));
             dispatch(setParentsWithoutAnyChildren(parentsWithoutChildren));
         }
-        timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopReportingRequest());
     } catch (err) {
         if (err.response !== undefined) {

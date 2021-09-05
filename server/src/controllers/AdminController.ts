@@ -692,6 +692,7 @@ class AdminController {
             if (!removedUser) {
                 next(new HttpException(404, 'Nie znaleziono rodzica.'));
             } else {
+                await MessageModel.deleteMany({ $or: [{ to: _id }, { from: _id }] });
                 io.emit('change');
                 res.status(201).json({ message: `Rodzic ${removedUser.firstName} ${removedUser.lastName} został usunięty.` })
             }
