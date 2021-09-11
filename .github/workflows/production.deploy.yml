@@ -1,0 +1,68 @@
+name: MyDevil Deploy
+on:
+  push:
+    branches:
+      - production
+jobs:
+  Explore-GitHub-Actions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Use Node.js 14.15.0
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14.15.0
+          cache: npm
+      - name: Build Client
+        working-directory: ./client
+        env:
+          REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL }}
+          REACT_APP_URL: ${{ secrets.REACT_APP_URL }}
+          REACT_APP_MAIN_URL: ${{ secrets.REACT_APP_MAIN_URL }}
+          REACT_APP_SUPER_ADMIN: ${{ secrets.REACT_APP_SUPER_ADMIN }}
+        run: |
+          yarn install
+          yarn build
+      - name: Prepare Server Env
+        working-directory: ./server
+        env:
+          URL: ${{ secrets.URL }}
+          DB: ${{ secrets.DB }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          ADMIN_ID: ${{ secrets.ADMIN_ID }}
+          SENDGRID_KEY: ${{ secrets.SENDGRID_KEY }}
+          FDD_Email: ${{ secrets.FDD_Email }}
+        run: |
+          echo URL=$URL > .env
+          echo DB=$DB >> .env
+          echo SECRET_KEY=$SECRET_KEY >> .env
+          echo ADMIN_ID=$ADMIN_ID >> .env
+          echo SENDGRID_KEY=$SENDGRID_KEY >> .env
+          echo FDD_Email=$FDD_Email >> .env
+          cat .env
+      - name: SSH Client Deploy
+        uses: easingthemes/ssh-deploy@v2.2.11
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          SOURCE: client/build/
+          TARGET: ${{ secrets.SSH_CLIENT_TARGET }}
+      - name: SSH Server Deploy
+        uses: easingthemes/ssh-deploy@v2.2.11
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          SOURCE: server/
+          TARGET: ${{ secrets.SSH_SERVER_TARGET }}
+      - name: Build Server Version
+        uses: kevin-leptons/ssh_action@v1
+        with:
+          # URI refers to remote host like `user@host`
+          host: ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}
+          # Private SSH key to authenticate
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          # Command to execute, Bash syntax
+          command: cd ${{ secrets.SSH_SERVER_TARGET }} && rm -rf build && yarn install && yarn start:build && mv -f build/* . && touch tmp/restart.txt
