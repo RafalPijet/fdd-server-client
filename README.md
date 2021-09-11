@@ -1,6 +1,6 @@
 ## Hosting URL
 
-### http://fdd.server496332.nazwa.pl/
+### https://doroslidzieciom.usermd.net/
 
 ## Available Scripts
 
