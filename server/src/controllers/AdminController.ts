@@ -419,7 +419,7 @@ class AdminController {
     async addPictureToNews(req: Request, res: Response, next: NextFunction): Promise<void> {
         const { newsId } = req.params;
         const pictures = 'pictures';
-        if (!req.files) {
+        if (!req?.files) {
             next(new HttpException(404, 'Brak obrazu'));
         } else {
 
@@ -547,7 +547,7 @@ class AdminController {
     async addReport(req: Request, res: Response, next: NextFunction): Promise<void> {
         const { title } = req.body;
         const reports = 'reports'
-        if (!req.files.length) {
+        if (!req?.files?.length) {
             next(new HttpException(404, 'Brak pliku ze sprawozdaniem'));
         } else {
             try {
@@ -589,7 +589,7 @@ class AdminController {
                     report.title = title;
                     await report.save();
                 }
-                if (req.files.length) {
+                if (req?.files?.length) {
                     const files = req.files as Express.Multer.File[];
                     const reports = 'reports'
                     const urlToRemove = report.report;
