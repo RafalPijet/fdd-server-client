@@ -590,7 +590,7 @@ class AdminController {
                     await report.save();
                 }
                 if (req?.files?.length) {
-                    const files = req?.files as Express.Multer.File[];
+                    const files = req.files as Express.Multer.File[];
                     const reports = 'reports'
                     const urlToRemove = report.report;
                     const fileUrl = files[0].path.replace(files[0].destination, reports);
