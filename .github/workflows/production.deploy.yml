@@ -65,4 +65,4 @@ jobs:
           # Private SSH key to authenticate
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           # Command to execute, Bash syntax
-          command: cd ${{ secrets.SSH_SERVER_TARGET }} && rm -rf build && yarn install && yarn start:build && mv -f build/* . && touch tmp/restart.txt
+          command: cd ${{ secrets.SSH_SERVER_TARGET }} && rm -rf build controllers dtoClasses exceptions middleware models routes utils && yarn install && yarn start:build && mv -f build/* . && touch tmp/restart.txt
