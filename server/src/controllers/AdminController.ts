@@ -419,7 +419,7 @@ class AdminController {
     async addPictureToNews(req: Request, res: Response, next: NextFunction): Promise<void> {
         const { newsId } = req.params;
         const pictures = 'pictures';
-        if (!req.files) {
+        if (!req?.files) {
             next(new HttpException(404, 'Brak obrazu'));
         } else {
 
@@ -429,7 +429,7 @@ class AdminController {
                     if (currentNews.images && currentNews.images.length >= 5) {
                         next(new HttpException(404, 'Przekroczony limit ilości zdjęć'));
                     } else {
-                        const files = req.files as Express.Multer.File[];
+                        const files = req?.files as Express.Multer.File[];
                         const pictureUrl = files[0].path.replace(files[0].destination, pictures);
                         const source = files[0].path.replace('uploads', pictures)  //It's will be remove
                         const target = source.replace(pictures, 'build/pictures')  //It's will be remove
@@ -547,11 +547,11 @@ class AdminController {
     async addReport(req: Request, res: Response, next: NextFunction): Promise<void> {
         const { title } = req.body;
         const reports = 'reports'
-        if (!req.files.length) {
+        if (!req?.files?.length) {
             next(new HttpException(404, 'Brak pliku ze sprawozdaniem'));
         } else {
             try {
-                const files = req.files as Express.Multer.File[];
+                const files = req?.files as Express.Multer.File[];
                 const fileUrl = files[0].path.replace(files[0].destination, reports);
                 const report = buildReport({
                     report: fileUrl,
@@ -589,8 +589,8 @@ class AdminController {
                     report.title = title;
                     await report.save();
                 }
-                if (req.files.length) {
-                    const files = req.files as Express.Multer.File[];
+                if (req?.files?.length) {
+                    const files = req?.files as Express.Multer.File[];
                     const reports = 'reports'
                     const urlToRemove = report.report;
                     const fileUrl = files[0].path.replace(files[0].destination, reports);
