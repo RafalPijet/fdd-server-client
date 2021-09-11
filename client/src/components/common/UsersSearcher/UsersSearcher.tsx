@@ -45,7 +45,7 @@ const UsersSearcher: React.FC<Props> = (props) => {
         if (active && names) {
           setOptions(names);
         }
-      } catch (err) {
+      } catch (err: any) {
         if (err.response) {
           dispatch(
             setUserToast({

@@ -92,7 +92,7 @@ const SearcherOfUsers: React.FC = () => {
         if (active && names) {
           setOptions(names);
         }
-      } catch (err) {
+      } catch (err: any) {
         if (err.response) {
           dispatch(
             setUserToast({

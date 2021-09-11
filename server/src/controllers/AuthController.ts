@@ -21,7 +21,7 @@ import HttpException from '../exceptions/HttpException';
 import UserWithThatEmailAlreadyExistsException from '../exceptions/UserWithThatEmailAlreadyExistsException';
 import WrongCredentialsException from '../exceptions/WrongCredentialException';
 import { UserDto, removeDuplicates } from '../utils/functions';
-import { io } from '../index';
+import { io } from '../app';
 dotenv.config();
 const transporter = nodemailer.createTransport(
     nodemailerSendgrid({

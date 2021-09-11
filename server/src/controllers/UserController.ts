@@ -22,7 +22,7 @@ import {
     UserStatus
 } from '../models';
 import { clearImage, UserDto } from '../utils/functions';
-import { io } from '../index';
+import { io } from '../app';
 
 @controller('/api/users')
 class UserController {

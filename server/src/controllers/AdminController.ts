@@ -27,7 +27,7 @@ import {
 } from '../models';
 import { TargetOptions, IAdminMessage, SearchUserType } from '../types';
 import { removeDuplicates, clearImage } from '../utils/functions';
-import { io } from '../index';
+import { io } from '../app';
 import nodemailerSendgrid from 'nodemailer-sendgrid';
 import nodemailer from 'nodemailer';
 dotenv.config();

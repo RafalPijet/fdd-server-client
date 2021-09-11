@@ -190,7 +190,7 @@ export const loginUser = (payload: IUserLogin): ThunkAction<
         timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopRequest());
 
-    } catch (err) {
+    } catch (err: any) {
         if (err.response !== undefined) {
             err.response.data.message ?
                 dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
@@ -225,7 +225,7 @@ export const unfreezeUserRequest = (password: string): ThunkAction<
             timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         }
         dispatch(stopRequest());
-    } catch (err) {
+    } catch (err: any) {
         if (err.response !== undefined) {
             err.response.data.message ?
                 dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
@@ -271,7 +271,7 @@ export const getUserRequest = (): ThunkAction<
             dispatch(addCurrentUser(user));
         }
         dispatch(stopRequest());
-    } catch (err) {
+    } catch (err: any) {
         if (err.response !== undefined) {
             err.response.data.message ?
                 dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
@@ -297,7 +297,7 @@ export const addUser = (payload: Register): ThunkAction<
     try {
         await axios.post(`${process.env.REACT_APP_API_URL}/auth/user`, payload.getContent())
         dispatch(stopRequest());
-    } catch (err) {
+    } catch (err: any) {
         if (err.response !== undefined) {
             err.response.data.message ?
                 dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
@@ -330,7 +330,7 @@ export const getAllNewsRequest = (): ThunkAction<
             dispatch(setAllNews(news));
         }
         dispatch(stopUpdatingRequest());
-    } catch (err) {
+    } catch (err: any) {
         if (err.response !== undefined) {
             err.response.data.message ?
                 dispatch(errorUpdatingRequest({ isError: true, message: err.response.data.message })) :
@@ -362,7 +362,7 @@ export const updateUserStatus = (userId: string, status: UserStatus): ThunkActio
         dispatch(setUserToast({ isOpen: true, content: res!.data.message, variant: "success" }));
         timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopUpdatingRequest());
-    } catch (err) {
+    } catch (err: any) {
         if (err.response !== undefined) {
             err.response.data.message ?
                 dispatch(errorUpdatingRequest({ isError: true, message: err.response.data.message })) :
@@ -429,7 +429,7 @@ export const updateUser = (payload: any, dataType: UpdateUserTypeData, userId: s
         dispatch(setUserToast({ isOpen: true, content: res!.data.message, variant: "success" }));
         timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopUpdatingRequest());
-    } catch (err) {
+    } catch (err: any) {
         if (err.response !== undefined) {
             err.response.data.message ?
                 dispatch(errorUpdatingRequest({ isError: true, message: err.response.data.message })) :
@@ -505,7 +505,7 @@ export const getPersonByIdRequest = (type: SearchUserType, id: string): ThunkAct
         }
         timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopAddingRequest());
-    } catch (err) {
+    } catch (err: any) {
         if (err.response !== undefined) {
             err.response.data.message ?
                 dispatch(errorAddingRequest({ isError: true, message: err.response.data.message })) :
@@ -540,7 +540,7 @@ export const addMessage = (payload: string, _id?: string): ThunkAction<
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }))
         timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopMessagesRequest());
-    } catch (err) {
+    } catch (err: any) {
         if (err.response !== undefined) {
             err.response.data.message ?
                 dispatch(errorMessagesRequest({ isError: true, message: err.response.data.message })) :
@@ -576,7 +576,7 @@ export const removeMessage = (messageId: string, isUser: boolean): ThunkAction<
         timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopRequest());
         dispatch(setIsRemoved(true));
-    } catch (err) {
+    } catch (err: any) {
         if (err.response !== undefined) {
             err.response.data.message ?
                 dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
@@ -602,7 +602,7 @@ export const addOutsideMessage = (payload: Omit<IOutsideMessage, '_id' | 'create
         let res: AxiosResponse = await axios.post(`${process.env.REACT_APP_API_URL}/auth/message`, payload);
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }))
         dispatch(stopRequest());
-    } catch (err) {
+    } catch (err: any) {
         if (err.response !== undefined) {
             err.response.data.message ?
                 dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
@@ -633,7 +633,7 @@ export const addAnswerToOutsideMessage = (content: string, email: string, name: 
         if (res.status === 201) dispatch(setUserToast({ isOpen: true, content: `Odpowiedź do ${name} na email ${email} została wysłana.`, variant: "success" }));
         timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopMessagesRequest());
-    } catch (err) {
+    } catch (err: any) {
         if (err.response !== undefined) {
             err.response.data.message ?
                 dispatch(errorMessagesRequest({ isError: true, message: err.response.data.message })) :
@@ -667,7 +667,7 @@ export const sendMessageByEmail = (content: string, email: string, name: string)
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
         timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopMessagesRequest());
-    } catch (err) {
+    } catch (err: any) {
         if (err.response !== undefined) {
             err.response.data.message ?
                 dispatch(errorMessagesRequest({ isError: true, message: err.response.data.message })) :
@@ -705,7 +705,7 @@ export const getUserMessages = (target: TargetOptions, page: number, rowsPerPage
         dispatch(loadUserMessages(res.data.messages, res.data.quantity));
         timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopMessagesRequest());
-    } catch (err) {
+    } catch (err: any) {
         if (err.response !== undefined) {
             err.response.data.message ?
                 dispatch(errorMessagesRequest({ isError: true, message: err.response.data.message })) :
@@ -743,7 +743,7 @@ export const getAdminMessages = (target: TargetOptions, page: number, rowsPerPag
         timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopMessagesRequest());
 
-    } catch (err) {
+    } catch (err: any) {
         if (err.response !== undefined) {
             err.response.data.message ?
                 dispatch(errorMessagesRequest({ isError: true, message: err.response.data.message })) :
@@ -781,7 +781,7 @@ export const getAdminMessagesByUser = (isParent: boolean, user: string, page: nu
         dispatch(loadUserMessages(res.data.messages, res.data.quantity));
         timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopMessagesRequest());
-    } catch (err) {
+    } catch (err: any) {
         if (err.response !== undefined) {
             err.response.data.message ?
                 dispatch(errorMessagesRequest({ isError: true, message: err.response.data.message })) :
@@ -812,7 +812,7 @@ export const updateMessageIsReaded = (_id: IMessage["_id"], isAdmin: boolean, is
         })
         if (res.status === 202) dispatch(setMessageIsReaded(_id));
         timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
-    } catch (err) {
+    } catch (err: any) {
         if (err.response !== undefined) {
             err.response.data.message ?
                 dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
@@ -854,7 +854,7 @@ export const updateChildDataRequest = (payload: IChildData, childId: string): Th
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
         timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopRequest());
-    } catch (err) {
+    } catch (err: any) {
         if (err.response !== undefined) {
             err.response.data.message ?
                 dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
@@ -896,7 +896,7 @@ export const addChildToParent = (payload: IChildData, userId?: string): ThunkAct
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
         timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopRequest());
-    } catch (err) {
+    } catch (err: any) {
         if (err.response !== undefined) {
             err.response.data.message ?
                 dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
@@ -951,7 +951,7 @@ export const updateReportRequest = (payload: { reportId: string, reportFile: Fil
                     }
                     timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
                     dispatch(stopUpdatingRequest());
-                } catch (err) {
+                } catch (err: any) {
                     if (err.response !== undefined) {
                         err.response.data.message ?
                             dispatch(errorUpdatingRequest({ isError: true, message: err.response.data.message })) :
@@ -994,7 +994,7 @@ export const removeReportRequest = (id: string): ThunkAction<
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
         timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopRequest());
-    } catch (err) {
+    } catch (err: any) {
         if (err.response !== undefined) {
             err.response.data.message ?
                 dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
@@ -1043,7 +1043,7 @@ export const addReportRequest = (payload: { reportFile: File, reportTitle: strin
         }
         timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopAddingRequest());
-    } catch (err) {
+    } catch (err: any) {
         if (err.response !== undefined) {
             err.response.data.message ?
                 dispatch(errorAddingRequest({ isError: true, message: err.response.data.message })) :
@@ -1082,7 +1082,7 @@ export const addInvoiceToChild = (payload: any, childId: string): ThunkAction<
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
         timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopAddingRequest());
-    } catch (err) {
+    } catch (err: any) {
         if (err.response !== undefined) {
             err.response.data.message ?
                 dispatch(errorAddingRequest({ isError: true, message: err.response.data.message })) :
@@ -1126,7 +1126,7 @@ export const addAvatarToChild = (avatar: File, childId: string): ThunkAction<
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
         timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopAddingRequest());
-    } catch (err) {
+    } catch (err: any) {
         if (err.response !== undefined) {
             err.response.data.message ?
                 dispatch(errorAddingRequest({ isError: true, message: err.response.data.message })) :
@@ -1166,7 +1166,7 @@ export const addPictureToNewsRequest = (picture: File, newsId: string): ThunkAct
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
         timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopAddingRequest());
-    } catch (err) {
+    } catch (err: any) {
         if (err.response !== undefined) {
             err.response.data.message ?
                 dispatch(errorAddingRequest({ isError: true, message: err.response.data.message })) :
@@ -1212,7 +1212,7 @@ export const addImageToChild = (image: File, childId: string): ThunkAction<
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
         timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopAddingRequest());
-    } catch (err) {
+    } catch (err: any) {
         if (err.response !== undefined) {
             err.response.data.message ?
                 dispatch(errorAddingRequest({ isError: true, message: err.response.data.message })) :
@@ -1256,7 +1256,7 @@ export const updatePicturesListRequest = (payload: ImagesLists): ThunkAction<
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
         timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopUpdatingRequest());
-    } catch (err) {
+    } catch (err: any) {
         if (err.response !== undefined) {
             err.response.data.message ?
                 dispatch(errorUpdatingRequest({ isError: true, message: err.response.data.message })) :
@@ -1306,7 +1306,7 @@ export const updateImagesList = (payload: ImagesLists): ThunkAction<
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
         timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopUpdatingRequest());
-    } catch (err) {
+    } catch (err: any) {
         if (err.response !== undefined) {
             err.response.data.message ?
                 dispatch(errorUpdatingRequest({ isError: true, message: err.response.data.message })) :
@@ -1346,7 +1346,7 @@ export const getChildrenBasicDataRequest = (page: number, rowsPerPage: number): 
             dispatch(setSelectedQuantity(quantity));
         }
         dispatch(stopUpdatingRequest());
-    } catch (err) {
+    } catch (err: any) {
         if (err.response !== undefined) {
             err.response.data.message ?
                 dispatch(errorUpdatingRequest({ isError: true, message: err.response.data.message })) :
@@ -1380,7 +1380,7 @@ export const getChildByIdRequest = (childId: string): ThunkAction<
         dispatch(setSelectedPerson(child));
         dispatch(setSelectedChild(child._id));
         dispatch(stopUpdatingRequest());
-    } catch (err) {
+    } catch (err: any) {
         if (err.response !== undefined) {
             err.response.data.message ?
                 dispatch(errorUpdatingRequest({ isError: true, message: err.response.data.message })) :
@@ -1423,7 +1423,7 @@ export const getCurrentlyInvoicesList = (childId: string, page: number, rowsPerP
         dispatch(setSelectedQuantity(quantity));
         timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopUpdatingRequest());
-    } catch (err) {
+    } catch (err: any) {
         if (err.response !== undefined) {
             err.response.data.message ?
                 dispatch(errorUpdatingRequest({ isError: true, message: err.response.data.message })) :
@@ -1456,7 +1456,7 @@ export const addNewsRequest = (payload: NewsState): ThunkAction<
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
         timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopRequest());
-    } catch (err) {
+    } catch (err: any) {
         if (err.response !== undefined) {
             err.response.data.message ?
                 dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
@@ -1492,7 +1492,7 @@ export const updateNewsPublication = (newsId: string, isPublication: boolean): T
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
         timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopUpdatingRequest());
-    } catch (err) {
+    } catch (err: any) {
         if (err.response !== undefined) {
             err.response.data.message ?
                 dispatch(errorUpdatingRequest({ isError: true, message: err.response.data.message })) :
@@ -1528,7 +1528,7 @@ export const updateNewsDataRequest = (payload: NewsDataUpdate): ThunkAction<
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
         timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopUpdatingRequest());
-    } catch (err) {
+    } catch (err: any) {
         if (err.response !== undefined) {
             err.response.data.message ?
                 dispatch(errorUpdatingRequest({ isError: true, message: err.response.data.message })) :
@@ -1568,7 +1568,7 @@ export const removeCurrentNewsRequest = (newsId: string, images: string[]): Thun
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
         timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopRequest());
-    } catch (err) {
+    } catch (err: any) {
         if (err.response !== undefined) {
             err.response.data.message ?
                 dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
@@ -1600,7 +1600,7 @@ export const getReportsYearsRequest = (): ThunkAction<
             dispatch(setAvailableReportsYears(res.data.availableYears));
         }
         dispatch(stopRequest());
-    } catch (err) {
+    } catch (err: any) {
         if (err.response !== undefined) {
             err.response.data.message ?
                 dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
@@ -1633,7 +1633,7 @@ export const getReportsByYearRequest = (year: string): ThunkAction<
             dispatch(setReportsOfSelectedYear(reports));
         }
         dispatch(stopRequest());
-    } catch (err) {
+    } catch (err: any) {
         if (err.response !== undefined) {
             err.response.data.message ?
                 dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
@@ -1668,7 +1668,7 @@ export const updateChildStatusRequest = (_id: string, isActive: boolean): ThunkA
         }
         timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopRequest());
-    } catch (err) {
+    } catch (err: any) {
         if (err.response !== undefined) {
             err.response.data.message ?
                 dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
@@ -1707,7 +1707,7 @@ export const removeChildRequest = (_id: string): ThunkAction<
         }
         timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopRequest());
-    } catch (err) {
+    } catch (err: any) {
         if (err.response !== undefined) {
             err.response.data.message ?
                 dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
@@ -1745,7 +1745,7 @@ export const removeUserRequest = (_id: string): ThunkAction<
         }
         timer = setTimeout(() => dispatch(setIsFrozen(true)), countRemainingTime());
         dispatch(stopRequest());
-    } catch (err) {
+    } catch (err: any) {
         if (err.response !== undefined) {
             err.response.data.message ?
                 dispatch(errorRequest({ isError: true, message: err.response.data.message })) :
@@ -1796,7 +1796,7 @@ export const getReportsRequest = (): ThunkAction<
             dispatch(setParentsWithoutAnyChildren(parentsWithoutChildren));
         }
         dispatch(stopReportingRequest());
-    } catch (err) {
+    } catch (err: any) {
         if (err.response !== undefined) {
             err.response.data.message ?
                 dispatch(errorReportingRequest({ isError: true, message: err.response.data.message })) :
@@ -1830,7 +1830,7 @@ export const resetPasswordRequest = (email: string): ThunkAction<
         });
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
         dispatch(stopUpdatingRequest());
-    } catch (err) {
+    } catch (err: any) {
         if (err.response !== undefined) {
             err.response.data.message ?
                 dispatch(errorUpdatingRequest({ isError: true, message: err.response.data.message })) :
@@ -1859,7 +1859,7 @@ export const changePasswordRequest = (password: string, token: string): ThunkAct
             })
         dispatch(setUserToast({ isOpen: true, content: res.data.message, variant: "success" }));
         dispatch(stopUpdatingRequest());
-    } catch (err) {
+    } catch (err: any) {
         if (err.response !== undefined) {
             err.response.data.message ?
                 dispatch(errorUpdatingRequest({ isError: true, message: err.response.data.message })) :

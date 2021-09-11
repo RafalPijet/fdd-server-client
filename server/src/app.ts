@@ -77,6 +77,6 @@ db.on('error', (err: Error): void => console.log(`Error connection: ${err}`));
 io.on('connection', (socket: socket.Socket) => {
     console.log('Client connected');
 })
-server.listen(3005, (): void => {
-    console.log('Server started at port 3005');
+server.listen(3000, (): void => {
+    console.log('Server started at port 3000');
 })
