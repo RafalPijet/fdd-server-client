@@ -60,8 +60,6 @@ const ReportsPage = React.lazy(
 
 const hist = createBrowserHistory();
 
-console.log('ziemniaczane');
-
 const App = () => {
   return (
     <Router history={hist}>
