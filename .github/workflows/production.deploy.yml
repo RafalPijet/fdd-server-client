@@ -32,6 +32,7 @@ jobs:
           ADMIN_ID: ${{ secrets.ADMIN_ID }}
           SENDGRID_KEY: ${{ secrets.SENDGRID_KEY }}
           FDD_Email: ${{ secrets.FDD_Email }}
+          STRIPE_API_KEY: ${{ secrets.STRIPE_API_KEY }}
         run: |
           echo URL=$URL > .env
           echo DB=$DB >> .env
@@ -39,6 +40,7 @@ jobs:
           echo ADMIN_ID=$ADMIN_ID >> .env
           echo SENDGRID_KEY=$SENDGRID_KEY >> .env
           echo FDD_Email=$FDD_Email >> .env
+          echo STRIPE_API_KEY=$STRIPE_API_KEY >> .env
           cat .env
       - name: SSH Client Deploy
         uses: easingthemes/ssh-deploy@v2.2.11
@@ -64,4 +66,4 @@ jobs:
           # Private SSH key to authenticate
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           # Command to execute, Bash syntax
-          command: cd ${{ secrets.SSH_SERVER_TARGET }} && rm -rf build controllers dtoClasses exceptions middleware models routes utils && yarn install && yarn start:build && mv -f build/* . && touch tmp/restart.txt
+          command: cd ${{ secrets.SSH_SERVER_TARGET }} && rm -rf build controllers dtoClasses exceptions middleware models routes utils && yarn install && yarn build && mv -f build/* . && touch tmp/restart.txt
