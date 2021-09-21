@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import ClassNames from 'classnames';
 import Paper from '@material-ui/core/Paper';
 import { Typography } from '@material-ui/core';
@@ -16,19 +16,49 @@ import CustomButton from '../../common/CustomButton/CustomButton';
 import { getChildrenList } from '../../../redux/actions/generalActions';
 import { ChildBasicState } from '../../../types/global';
 import { useStyles, payValues } from './DonatePageStyle';
+import axios, { AxiosResponse } from 'axios';
+import { setUserToast } from '../../../redux/actions/generalActions';
+import { VariantType, useSnackbar } from 'notistack';
 
 const DonatePage: React.FC = () => {
   const classes = useStyles();
   const location = useLocation();
   const children = useSelector(getChildrenList);
+  const dispatch = useDispatch();
   const [selectedValue, setSelectedValue] = useState<number>(100);
   const [isOtherQuota, setIsOtherQuota] = useState<boolean>(false);
   const [childId, setChildId] = useState<string>('');
   const [selectedChild, setSelectedChild] = useState<ChildBasicState | null>(
     null
   );
+  const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
+    if (window.location.hash == '#success') {
+      // dispatch(
+      //     setUserToast({
+      //         isOpen: true,
+      //         content: 'Dziękujemy za wpłatę.',
+      //         variant: 'success',
+      //     })
+      // );
+
+      enqueueSnackbar('Dziękujemy za wpłatę.', { variant: 'success' });
+    } else if (window.location.hash == '#fail') {
+      // dispatch(
+      //     setUserToast({
+      //         isOpen: true,
+      //         content: 'Płatność  nie powiodła się, prosimy spróbować ponownie.',
+      //         variant: 'error',
+      //     })
+      // );
+
+      enqueueSnackbar(
+        'Płatność  nie powiodła się, prosimy spróbować ponownie.',
+        { variant: 'error' }
+      );
+    }
+
     setChildId(
       location.pathname.substring(
         location.pathname.lastIndexOf('/') + 1,
@@ -62,9 +92,12 @@ const DonatePage: React.FC = () => {
     setSelectedValue(+event.target.value);
   };
 
-  const handleSendButton = () => {
-    console.log('payment is done');
-    console.log(selectedValue);
+  const handleSendButton = async () => {
+    let paymentUrl = `${process.env.REACT_APP_API_URL}/payments/checkout/session/${selectedValue}`;
+    if (selectedChild) {
+      paymentUrl += '/' + selectedChild.name;
+    }
+    window.location.href = paymentUrl;
   };
 
   const onKeyDown = (
