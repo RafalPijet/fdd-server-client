@@ -7,22 +7,22 @@ import dotenv from 'dotenv';
 
 @controller('/api/payments')
 class PaymentController {
-    @get('/checkout/session/:amount')
+    @get('/checkout/session/:amount/:name?')
     async getCheckoutSession(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const { amount } = req.params;
+            const { amount, name } = req.params;
             const returnRootPath = `${process.env.URL}donate/0`;
             const stripe = new Stripe(process.env.STRIPE_API_KEY || '', {
                 apiVersion: '2020-08-27',
             });
             const session = await stripe?.checkout.sessions.create({
-                payment_method_types: ['card'],
+                payment_method_types: ['card', 'p24'],
                 line_items: [
                     {
                         price_data: {
                             currency: 'pln',
                             product_data: {
-                                name: 'Darowizna dla Fundacji Dorośli Dzieciom',
+                                name: 'Darowizna dla Fundacji Dorośli Dzieciom' + (typeof name !== 'undefined' ? ` dla ${name}` : ''),
                             },
                             unit_amount: parseInt(amount) * 100 || 1000,
                         },
