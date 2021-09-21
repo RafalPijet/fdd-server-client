@@ -13,6 +13,7 @@ import { AppRouter } from './routes';
 import "./controllers/AuthController";
 import "./controllers/UserController";
 import "./controllers/AdminController";
+import "./controllers/PaymentController";
 import { IOSocket } from './socket';
 import { errorMiddleware } from './middleware'
 dotenv.config();
@@ -77,6 +78,8 @@ db.on('error', (err: Error): void => console.log(`Error connection: ${err}`));
 io.on('connection', (socket: socket.Socket) => {
     console.log('Client connected');
 })
-server.listen(3000, (): void => {
-    console.log('Server started at port 3000');
+
+const port = process.env?.PORT || 3000;
+server.listen(port, (): void => {
+    console.log(`Server started at port ${port}`);
 })

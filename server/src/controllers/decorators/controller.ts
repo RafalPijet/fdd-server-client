@@ -28,9 +28,9 @@ export const controller = (routePrefix: string) => {
             if (path) {
                 if (validationKey !== ValidatorKeys.null) {
                     const validator = validationMiddleware(availableDto[validationKey]);
-                    router[method](`${routePrefix}${path}`, routePrefix !== "/api/auth" ? authMiddleware : [], validator, routeHandler);
+                    router[method](`${routePrefix}${path}`, routePrefix !== "/api/auth" && routePrefix !== "/api/payments" ? authMiddleware : [], validator, routeHandler);
                 } else {
-                    router[method](`${routePrefix}${path}`, routePrefix !== "/api/auth" ? authMiddleware : [], routeHandler);
+                    router[method](`${routePrefix}${path}`, routePrefix !== "/api/auth" && routePrefix !== "/api/payments" ? authMiddleware : [], routeHandler);
                 }
             }
         }
