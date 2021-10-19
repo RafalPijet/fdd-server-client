@@ -30,7 +30,7 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
     list: {
         backgroundColor: "rgba(166, 206, 57, 0.2)",
         height: 48,
-        overflowY: 'scroll',
+        overflowY: 'auto',
         padding: '0 2px'
     }
 }))
