@@ -39,7 +39,6 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
         cursor: 'progress'
     },
     list: {
-        overflowY: 'auto',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',

@@ -38,7 +38,7 @@ export const useStyles = makeStyles((theme: Theme) =>
       color: lightGrayColor,
       backgroundColor: 'inherit',
       height: '230px',
-      overflow: 'scroll',
+      overflow: 'auto',
     },
     pageHeader: {
       minHeight: '100vh',
