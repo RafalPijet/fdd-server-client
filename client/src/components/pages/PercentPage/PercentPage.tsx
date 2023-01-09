@@ -26,7 +26,7 @@ const PercentPage: React.FC = () => {
       <div className={classes.pageHeader}>
         <div className={classes.container}>
           <Typography variant="h4" className={classes.titlePage}>
-            Przekaż 1% podatku
+            Przekaż 1,5% podatku
           </Typography>
         </div>
       </div>
@@ -42,14 +42,14 @@ const PercentPage: React.FC = () => {
                 wrażliwych i życzliwych osób. W imieniu podopiecznych Fundacji
                 DOROŚLI DZIECIOM apelujemy do wszystkich tych z Państwa, którzy
                 rozumieją naszą misję i chcą w niej uczestniczyć, o przekazanie
-                1% z podatku dochodowego. To nic nie kosztuje. Natomiast
+                1,5% z podatku dochodowego. To nic nie kosztuje. Natomiast
                 świadomość, że zrobiłam lub zrobiłem coś tak ważnego dla
                 skrzywdzonego przez los dziecka, daje wyjątkową satysfakcję i
                 poczucie spełnienia. Gorąco namawiamy Państwa do przeżyć z tym
                 związanych.
               </Typography>
               <Typography variant="h5" align="center" className={classes.title}>
-                Jak przekazać 1% podatku na rzecz Fundacji DOROŚLI DZIECIOM.
+                Jak przekazać 1,5% podatku na rzecz Fundacji DOROŚLI DZIECIOM.
               </Typography>
               <Typography variant="h6" align="center">
                 W rocznym zeznaniu podatkowym (PIT-36, PIT-37 lub PIT-28) należy
@@ -70,7 +70,7 @@ const PercentPage: React.FC = () => {
                 wpłata.
               </Typography>
               <Typography variant="h6" align="center">
-                Środki finansowe - 1% podatku należnego - na konto naszej
+                Środki finansowe - 1,5% podatku należnego - na konto naszej
                 Fundacji przekaże urząd skarbowy w terminie do 3 miesięcy.
               </Typography>
               <Typography variant="h6" align="center" className={classes.title}>

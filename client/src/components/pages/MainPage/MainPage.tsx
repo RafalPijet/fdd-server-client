@@ -36,7 +36,7 @@ import childrenButton from '../../../images/childrenButton.jpg';
 import reportsButton from '../../../images/reportsButton.jpg';
 import notificationSound from '../../../sounds/notification.wav';
 import warningSound from '../../../sounds/warning.wav';
-import percentImage from '../../../images/percent.png';
+import percentImage from '../../../images/percentOther.png';
 import heartImage from '../../../images/heard.png';
 
 const MainPage: React.FC = () => {
