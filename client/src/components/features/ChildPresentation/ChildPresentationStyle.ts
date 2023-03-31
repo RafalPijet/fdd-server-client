@@ -52,10 +52,10 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
         position: 'relative',
         height: 90,
         width: 130,
-        [theme.breakpoints.down('xs')]: {
-            width: '100% !important', // Overrides inline-style
-            height: 100,
-        },
+        // [theme.breakpoints.down('xs')]: {
+        //     width: '100% !important', // Overrides inline-style
+        //     height: 100,
+        // },
     },
 }))
 
