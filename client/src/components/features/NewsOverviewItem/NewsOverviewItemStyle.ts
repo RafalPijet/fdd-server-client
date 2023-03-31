@@ -7,10 +7,10 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
         position: 'relative',
         height: 200,
         width: 270,
-        [theme.breakpoints.down('xs')]: {
-            width: '100% !important', // Overrides inline-style
-            height: 100,
-        },
+        // [theme.breakpoints.down('xs')]: {
+        //     width: '100% !important', // Overrides inline-style
+        //     height: 100,
+        // },
         '&:hover, &$focusVisible': {
             zIndex: 1,
             '& $imageBackdrop': {
