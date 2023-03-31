@@ -93,10 +93,10 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
         position: 'relative',
         height: 130,
         width: 130,
-        [theme.breakpoints.down('xs')]: {
-            width: '100% !important', // Overrides inline-style
-            height: 100,
-        },
+        // [theme.breakpoints.down('xs')]: {
+        //     width: '100% !important', // Overrides inline-style
+        //     height: 100,
+        // },
         '&:hover, &$focusVisible': {
             transition: '5s',
             '& $imageSrc, & $icon': {
