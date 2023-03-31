@@ -7,7 +7,8 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
         padding: 5,
         margin: 20,
         background: "rgba(255, 255, 255, 0.7)",
-        width: 'fit-content'
+        minWidth: 130,
+        minHeight: 130
     },
     butterfly: {
         position: 'absolute',
@@ -71,6 +72,7 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
         alignItems: 'center',
         justifyContent: 'center',
         color: logoColor,
+        minHeight: 130
     },
     imageTitle: {
         paddingBottom: 5,
